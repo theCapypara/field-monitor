@@ -1,0 +1,4 @@
+data/de.capypara.ProxmoxViewer.desktop.in
+data/de.capypara.ProxmoxViewer.metainfo.xml.in
+data/de.capypara.ProxmoxViewer.gschema.xml
+src/window.ui
