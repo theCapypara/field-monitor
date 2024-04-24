@@ -1,6 +1,6 @@
 desktop_file = i18n.merge_file(
-        input: 'de.capypara.ProxmoxViewer.desktop.in',
-       output: 'de.capypara.ProxmoxViewer.desktop',
+        input: 'de.capypara.StageScreen.desktop.in',
+       output: 'de.capypara.StageScreen.desktop',
          type: 'desktop',
        po_dir: '../po',
       install: true,
@@ -13,8 +13,8 @@ if desktop_utils.found()
 endif
 
 appstream_file = i18n.merge_file(
-        input: 'de.capypara.ProxmoxViewer.metainfo.xml.in',
-       output: 'de.capypara.ProxmoxViewer.metainfo.xml',
+        input: 'de.capypara.StageScreen.metainfo.xml.in',
+       output: 'de.capypara.StageScreen.metainfo.xml',
        po_dir: '../po',
       install: true,
   install_dir: get_option('datadir') / 'metainfo'
@@ -24,7 +24,7 @@ appstreamcli = find_program('appstreamcli', required: false, disabler: true)
 test('Validate appstream file', appstreamcli,
      args: ['validate', '--no-net', '--explain', appstream_file])
 
-install_data('de.capypara.ProxmoxViewer.gschema.xml',
+install_data('de.capypara.StageScreen.gschema.xml',
   install_dir: get_option('datadir') / 'glib-2.0' / 'schemas'
 )
 

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>@app-id@</id>
+	<project_license>GPL-3.0-or-later</project_license>
+	<metadata_license>FSFAP</metadata_license>
+	<!-- Translators: The name of the application. -->
+	<name>Stage Screen</name>
+	<!-- Translators: The summary of the application in the metainfo. -->
+	<summary>XXXXXXXXXX</summary>
+	<launchable type="desktop-id">@app-id@.desktop</launchable>
+	<content_rating type="oars-1.1"/>
+	<developer_name translate="no">Marco Köpcke</developer_name>
+	<developer id="de.capypara">
+		<name translate="no">Marco Köpcke</name>
+	</developer>
+	<translation type="gettext">@gettext-package@</translation>
+
+	<categories>
+		<category>Utility</category>
+		<category>Network</category>
+	</categories>
+
+	<url type="bugtracker">https://github.com/theCapypara/StageScreen/issues</url>
+	<url type="translate">https://hosted.weblate.org/projects/stagescreen/</url>
+	<url type="donation">https://ko-fi.com/parakoopa</url>
+	<url type="contact">https://matrix.to/#/#stagescreen:matrix.org</url>
+	<url type="vcs-browser">https://github.com/theCapypara/StageScreen</url>
+
+	<description>
+		<!-- Translators: Part of the description of the application in the metainfo. -->
+		<p>
+			Stage Screen lets you connect to the consoles of virtual machines and
+			containers on Proxmox clusters and view basic information about them.
+		</p>
+	</description>
+
+	<releases>
+		<release version="46.0.0" date="2024-XX-XX">
+			<description translate="no">
+				<p>Initial Release.</p>
+			</description>
+		</release>
+	</releases>
+
+	<screenshots>
+		<screenshot type="default">
+			<!-- Translators: Subtitle of the screenshot in the metainfo -->
+			<caption>Application Overview</caption>
+			<image>...</image>
+		</screenshot>
+	</screenshots>
+
+	<recommends>
+		<control>keyboard</control>
+		<control>pointing</control>
+		<control>touch</control>
+		<internet>always</internet>
+	</recommends>
+	<requires>
+		<display_length compare="ge" side="shortest">...</display_length>
+		<display_length compare="ge" side="longest">...</display_length>
+	</requires>
+
+	<branding>
+		<color type="primary" scheme_preference="light">...</color>
+		<color type="primary" scheme_preference="dark">...</color>
+	</branding>
+
+</component>

@@ -23,22 +23,22 @@ use adw::subclass::prelude::*;
 use gtk::{gio, glib};
 
 use crate::config::VERSION;
-use crate::ProxmoxViewerWindow;
+use crate::StageScreenWindow;
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default)]
-    pub struct ProxmoxViewerApplication {}
+    pub struct StageScreenApplication {}
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ProxmoxViewerApplication {
-        const NAME: &'static str = "ProxmoxViewerApplication";
-        type Type = super::ProxmoxViewerApplication;
+    impl ObjectSubclass for StageScreenApplication {
+        const NAME: &'static str = "StageScreenApplication";
+        type Type = super::StageScreenApplication;
         type ParentType = adw::Application;
     }
 
-    impl ObjectImpl for ProxmoxViewerApplication {
+    impl ObjectImpl for StageScreenApplication {
         fn constructed(&self) {
             self.parent_constructed();
             let obj = self.obj();
@@ -47,7 +47,7 @@ mod imp {
         }
     }
 
-    impl ApplicationImpl for ProxmoxViewerApplication {
+    impl ApplicationImpl for StageScreenApplication {
         // We connect to the activate callback to create a window when the application
         // has been launched. Additionally, this callback notifies us when the user
         // tries to launch a "second instance" of the application. When they try
@@ -58,7 +58,7 @@ mod imp {
             let window = if let Some(window) = application.active_window() {
                 window
             } else {
-                let window = ProxmoxViewerWindow::new(&*application);
+                let window = StageScreenWindow::new(&*application);
                 window.upcast()
             };
 
@@ -67,17 +67,17 @@ mod imp {
         }
     }
 
-    impl GtkApplicationImpl for ProxmoxViewerApplication {}
-    impl AdwApplicationImpl for ProxmoxViewerApplication {}
+    impl GtkApplicationImpl for StageScreenApplication {}
+    impl AdwApplicationImpl for StageScreenApplication {}
 }
 
 glib::wrapper! {
-    pub struct ProxmoxViewerApplication(ObjectSubclass<imp::ProxmoxViewerApplication>)
+    pub struct StageScreenApplication(ObjectSubclass<imp::StageScreenApplication>)
         @extends gio::Application, gtk::Application, adw::Application,
         @implements gio::ActionGroup, gio::ActionMap;
 }
 
-impl ProxmoxViewerApplication {
+impl StageScreenApplication {
     pub fn new(application_id: &str, flags: &gio::ApplicationFlags) -> Self {
         glib::Object::builder()
             .property("application-id", application_id)
@@ -99,8 +99,8 @@ impl ProxmoxViewerApplication {
         let window = self.active_window().unwrap();
         let about = adw::AboutWindow::builder()
             .transient_for(&window)
-            .application_name("proxmox-viewer")
-            .application_icon("de.capypara.ProxmoxViewer")
+            .application_name("stage-screen")
+            .application_icon("de.capypara.StageScreen")
             .developer_name("Marco")
             .version(VERSION)
             .developers(vec!["Marco"])

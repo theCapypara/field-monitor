@@ -26,8 +26,8 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/de/capypara/ProxmoxViewer/window.ui")]
-    pub struct ProxmoxViewerWindow {
+    #[template(resource = "/de/capypara/StageScreen/window.ui")]
+    pub struct StageScreenWindow {
         // Template widgets
         #[template_child]
         pub header_bar: TemplateChild<adw::HeaderBar>,
@@ -36,9 +36,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ProxmoxViewerWindow {
-        const NAME: &'static str = "ProxmoxViewerWindow";
-        type Type = super::ProxmoxViewerWindow;
+    impl ObjectSubclass for StageScreenWindow {
+        const NAME: &'static str = "StageScreenWindow";
+        type Type = super::StageScreenWindow;
         type ParentType = adw::ApplicationWindow;
 
         fn class_init(klass: &mut Self::Class) {
@@ -50,19 +50,19 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for ProxmoxViewerWindow {}
-    impl WidgetImpl for ProxmoxViewerWindow {}
-    impl WindowImpl for ProxmoxViewerWindow {}
-    impl ApplicationWindowImpl for ProxmoxViewerWindow {}
-    impl AdwApplicationWindowImpl for ProxmoxViewerWindow {}
+    impl ObjectImpl for StageScreenWindow {}
+    impl WidgetImpl for StageScreenWindow {}
+    impl WindowImpl for StageScreenWindow {}
+    impl ApplicationWindowImpl for StageScreenWindow {}
+    impl AdwApplicationWindowImpl for StageScreenWindow {}
 }
 
 glib::wrapper! {
-    pub struct ProxmoxViewerWindow(ObjectSubclass<imp::ProxmoxViewerWindow>)
+    pub struct StageScreenWindow(ObjectSubclass<imp::StageScreenWindow>)
         @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow,        @implements gio::ActionGroup, gio::ActionMap;
 }
 
-impl ProxmoxViewerWindow {
+impl StageScreenWindow {
     pub fn new<P: glib::IsA<gtk::Application>>(application: &P) -> Self {
         glib::Object::builder()
             .property("application", application)

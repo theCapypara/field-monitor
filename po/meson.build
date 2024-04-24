@@ -1,1 +1,1 @@
-i18n.gettext('proxmox-viewer', preset: 'glib')
+i18n.gettext('stage-screen', preset: 'glib')

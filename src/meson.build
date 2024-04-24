@@ -1,8 +1,8 @@
 pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
 gnome = import('gnome')
 
-gnome.compile_resources('proxmox-viewer',
-  'proxmox-viewer.gresource.xml',
+gnome.compile_resources('stage-screen',
+  'stage-screen.gresource.xml',
   gresource_bundle: true,
   install: true,
   install_dir: pkgdatadir,
@@ -10,7 +10,7 @@ gnome.compile_resources('proxmox-viewer',
 
 conf = configuration_data()
 conf.set_quoted('VERSION', meson.project_version())
-conf.set_quoted('GETTEXT_PACKAGE', 'proxmox-viewer')
+conf.set_quoted('GETTEXT_PACKAGE', 'stage-screen')
 conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
 conf.set_quoted('PKGDATADIR', pkgdatadir)
 

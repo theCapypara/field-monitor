@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Stage Screen
+Exec=stage-screen
+Icon=@app-id@
+Terminal=false
+Type=Application
+X-Purism-FormFactor=Workstation;Mobile;
+Categories=GTK;Utility;Network;
+StartupNotify=true
+# Translators: The keywords from the desktop file.
+Keywords=proxmox;vnc;spice;

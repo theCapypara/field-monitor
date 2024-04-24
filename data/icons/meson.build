@@ -1,4 +1,4 @@
-application_id = 'de.capypara.ProxmoxViewer'
+application_id = 'de.capypara.StageScreen'
 
 scalable_dir = 'hicolor' / 'scalable' / 'apps'
 install_data(
