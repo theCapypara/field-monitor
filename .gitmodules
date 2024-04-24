@@ -1,0 +1,3 @@
+[submodule "rdw"]
+	path = rdw
+	url = https://gitlab.gnome.org/malureau/rdw
