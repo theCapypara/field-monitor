@@ -5,11 +5,36 @@ edition = "2021"
 
 [dependencies]
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
-gtk = { version = "0.8", package = "gtk4", features = ["v4_14"] }
-adw = { version = "0.6", package = "libadwaita", features = ["v1_5"] }
 
 vte4 = { version = "0.7", package = "vte" }
 
-rdw = { package = "rdw4",               path = "./rdw/rdw4" }
-rdw-spice = { package = "rdw4-spice",   path = "./rdw/rdw4-spice" }
-rdw-vnc = { package = "rdw4-vnc",       path = "./rdw/rdw4-vnc" }
+[dependencies.gtk]
+package = "gtk4"
+features = ["v4_14"]
+version = "0.9"
+git = "https://github.com/gtk-rs/gtk4-rs"
+branch = "master"
+
+[dependencies.adw]
+package = "libadwaita"
+features = ["v1_5"]
+version = "0.7"
+git = "https://gitlab.gnome.org/World/Rust/libadwaita-rs"
+branch = "master"
+
+[dependencies.rdw]
+package = "rdw4"
+git = "https://gitlab.gnome.org/malureau/rdw.git"
+rev = "034ccd36"
+
+[dependencies.rdw-spice]
+package = "rdw4-spice"
+git = "https://gitlab.gnome.org/malureau/rdw.git"
+rev = "034ccd36"
+default-features = false
+
+[dependencies.rdw-vnc]
+package = "rdw4-vnc"
+git = "https://gitlab.gnome.org/malureau/rdw.git"
+rev = "034ccd36"
+default-features = false

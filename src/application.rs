@@ -18,8 +18,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+use adw::prelude::AdwDialogExt;
 use gtk::prelude::*;
 use adw::subclass::prelude::*;
+use gettextrs::gettext;
 use gtk::{gio, glib};
 
 use crate::config::VERSION;
@@ -97,16 +99,20 @@ impl StageScreenApplication {
 
     fn show_about(&self) {
         let window = self.active_window().unwrap();
-        let about = adw::AboutWindow::builder()
-            .transient_for(&window)
-            .application_name("stage-screen")
+        let about = adw::AboutDialog::builder()
+            .application_name(gettext("Stage Screen"))
             .application_icon("de.capypara.StageScreen")
-            .developer_name("Marco")
+            .license_type(gtk::License::Gpl30)
+            .developer_name("Marco Köpcke")
             .version(VERSION)
-            .developers(vec!["Marco"])
-            .copyright("© 2024 Marco")
+            .developers(vec!["Marco Köpcke"])
+            .copyright("© 2024 Marco Köpcke")
+            .website("https://github.com/theCapypara/StageScreen")
+            .issue_url("https://github.com/theCapypara/StageScreen/issues")
+            .support_url("https://matrix.to/#/#stagescreen:matrix.org")
+            .translator_credits(gettext("translator-credits"))
             .build();
 
-        about.present();
+        about.present(&window);
     }
 }

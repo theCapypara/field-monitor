@@ -1,1 +1,3 @@
-.idea
+.idea/
+src/config.rs
+target/
