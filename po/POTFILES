@@ -1,4 +1,5 @@
 data/de.capypara.StageScreen.desktop.in
 data/de.capypara.StageScreen.metainfo.xml.in
 data/de.capypara.StageScreen.gschema.xml
-src/window.ui
+src/window.blp
+src/gtk/help-overlay.blp

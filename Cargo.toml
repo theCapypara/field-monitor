@@ -5,21 +5,20 @@ edition = "2021"
 
 [dependencies]
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
-
-vte4 = { version = "0.7", package = "vte" }
+isahc = { version = "1.7" }
 
 [dependencies.gtk]
 package = "gtk4"
 features = ["v4_14"]
 version = "0.9"
-git = "https://github.com/gtk-rs/gtk4-rs"
+git = "https://github.com/gtk-rs/gtk4-rs.git"
 branch = "master"
 
 [dependencies.adw]
 package = "libadwaita"
 features = ["v1_5"]
 version = "0.7"
-git = "https://gitlab.gnome.org/World/Rust/libadwaita-rs"
+git = "https://gitlab.gnome.org/World/Rust/libadwaita-rs.git"
 branch = "master"
 
 [dependencies.rdw]
@@ -38,3 +37,12 @@ package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/malureau/rdw.git"
 rev = "034ccd36"
 default-features = false
+
+[dependencies.vte]
+package = "vte4"
+git = "https://gitlab.gnome.org/World/Rust/vte4-rs.git"
+rev = "5727c217d"
+
+[dependencies.libsecret]
+git = "https://gitlab.gnome.org/World/Rust/libsecret-rs.git"
+rev = "02699954"
