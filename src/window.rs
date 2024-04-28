@@ -1,6 +1,4 @@
-/* window.rs
- *
- * Copyright 2024 Marco
+/* Copyright 2024 Marco Köpcke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,8 +24,8 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/de/capypara/StageScreen/window.ui")]
-    pub struct StageScreenWindow {
+    #[template(resource = "/de/capypara/FieldMonitor/window.ui")]
+    pub struct FieldMonitorWindow {
         // Template widgets
         #[template_child]
         pub header_bar: TemplateChild<adw::HeaderBar>,
@@ -36,9 +34,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for StageScreenWindow {
-        const NAME: &'static str = "StageScreenWindow";
-        type Type = super::StageScreenWindow;
+    impl ObjectSubclass for FieldMonitorWindow {
+        const NAME: &'static str = "FieldMonitorWindow";
+        type Type = super::FieldMonitorWindow;
         type ParentType = adw::ApplicationWindow;
 
         fn class_init(klass: &mut Self::Class) {
@@ -50,19 +48,19 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for StageScreenWindow {}
-    impl WidgetImpl for StageScreenWindow {}
-    impl WindowImpl for StageScreenWindow {}
-    impl ApplicationWindowImpl for StageScreenWindow {}
-    impl AdwApplicationWindowImpl for StageScreenWindow {}
+    impl ObjectImpl for FieldMonitorWindow {}
+    impl WidgetImpl for FieldMonitorWindow {}
+    impl WindowImpl for FieldMonitorWindow {}
+    impl ApplicationWindowImpl for FieldMonitorWindow {}
+    impl AdwApplicationWindowImpl for FieldMonitorWindow {}
 }
 
 glib::wrapper! {
-    pub struct StageScreenWindow(ObjectSubclass<imp::StageScreenWindow>)
+    pub struct FieldMonitorWindow(ObjectSubclass<imp::FieldMonitorWindow>)
         @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow,        @implements gio::ActionGroup, gio::ActionMap;
 }
 
-impl StageScreenWindow {
+impl FieldMonitorWindow {
     pub fn new<P: IsA<gtk::Application>>(application: &P) -> Self {
         glib::Object::builder()
             .property("application", application)

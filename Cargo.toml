@@ -1,5 +1,5 @@
 [package]
-name = "stage-screen"
+name = "field-monitor"
 version = "0.1.0"
 edition = "2021"
 

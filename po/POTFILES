@@ -1,5 +1,5 @@
-data/de.capypara.StageScreen.desktop.in
-data/de.capypara.StageScreen.metainfo.xml.in
-data/de.capypara.StageScreen.gschema.xml
+data/de.capypara.FieldMonitor.desktop.in
+data/de.capypara.FieldMonitor.metainfo.xml.in
+data/de.capypara.FieldMonitor.gschema.xml
 src/window.blp
 src/gtk/help-overlay.blp

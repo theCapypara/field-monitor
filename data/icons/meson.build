@@ -1,4 +1,4 @@
-application_id = 'de.capypara.StageScreen'
+application_id = 'de.capypara.FieldMonitor'
 
 scalable_dir = 'hicolor' / 'scalable' / 'apps'
 install_data(

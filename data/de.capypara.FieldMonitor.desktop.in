@@ -1,6 +1,6 @@
 [Desktop Entry]
-Name=Stage Screen
-Exec=stage-screen
+Name=Field Monitor
+Exec=de.capypara.FieldMonitor
 Icon=@app-id@
 Terminal=false
 Type=Application

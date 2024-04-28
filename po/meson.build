@@ -1,1 +1,1 @@
-i18n.gettext('stage-screen', preset: 'glib')
+i18n.gettext('de.capypara.FieldMonitor', preset: 'glib')

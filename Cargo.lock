@@ -329,6 +329,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "658bd65b1cf4c852a3cc96f18a8ce7b5640f6b703f905c7d74532294c2a63984"
 
 [[package]]
+name = "field-monitor"
+version = "0.1.0"
+dependencies = [
+ "gettext-rs",
+ "gtk4",
+ "isahc",
+ "libadwaita",
+ "libsecret",
+ "rdw4",
+ "rdw4-spice",
+ "rdw4-vnc",
+ "vte4",
+]
+
+[[package]]
 name = "field-offset"
 version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1801,21 +1816,6 @@ dependencies = [
  "gobject-sys",
  "libc",
  "system-deps 6.2.2",
-]
-
-[[package]]
-name = "stage-screen"
-version = "0.1.0"
-dependencies = [
- "gettext-rs",
- "gtk4",
- "isahc",
- "libadwaita",
- "libsecret",
- "rdw4",
- "rdw4-spice",
- "rdw4-vnc",
- "vte4",
 ]
 
 [[package]]

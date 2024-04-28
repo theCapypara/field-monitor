@@ -1,6 +1,4 @@
-/* application.rs
- *
- * Copyright 2024 Marco
+/* Copyright 2024 Marco Köpcke
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,22 +23,22 @@ use gettextrs::gettext;
 use gtk::{gio, glib};
 
 use crate::config::VERSION;
-use crate::StageScreenWindow;
+use crate::FieldMonitorWindow;
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default)]
-    pub struct StageScreenApplication {}
+    pub struct FieldMonitorApplication {}
 
     #[glib::object_subclass]
-    impl ObjectSubclass for StageScreenApplication {
-        const NAME: &'static str = "StageScreenApplication";
-        type Type = super::StageScreenApplication;
+    impl ObjectSubclass for FieldMonitorApplication {
+        const NAME: &'static str = "FieldMonitorApplication";
+        type Type = super::FieldMonitorApplication;
         type ParentType = adw::Application;
     }
 
-    impl ObjectImpl for StageScreenApplication {
+    impl ObjectImpl for FieldMonitorApplication {
         fn constructed(&self) {
             self.parent_constructed();
             let obj = self.obj();
@@ -49,7 +47,7 @@ mod imp {
         }
     }
 
-    impl ApplicationImpl for StageScreenApplication {
+    impl ApplicationImpl for FieldMonitorApplication {
         // We connect to the activate callback to create a window when the application
         // has been launched. Additionally, this callback notifies us when the user
         // tries to launch a "second instance" of the application. When they try
@@ -60,7 +58,7 @@ mod imp {
             let window = if let Some(window) = application.active_window() {
                 window
             } else {
-                let window = StageScreenWindow::new(&*application);
+                let window = FieldMonitorWindow::new(&*application);
                 window.upcast()
             };
 
@@ -69,17 +67,17 @@ mod imp {
         }
     }
 
-    impl GtkApplicationImpl for StageScreenApplication {}
-    impl AdwApplicationImpl for StageScreenApplication {}
+    impl GtkApplicationImpl for FieldMonitorApplication {}
+    impl AdwApplicationImpl for FieldMonitorApplication {}
 }
 
 glib::wrapper! {
-    pub struct StageScreenApplication(ObjectSubclass<imp::StageScreenApplication>)
+    pub struct FieldMonitorApplication(ObjectSubclass<imp::FieldMonitorApplication>)
         @extends gio::Application, gtk::Application, adw::Application,
         @implements gio::ActionGroup, gio::ActionMap;
 }
 
-impl StageScreenApplication {
+impl FieldMonitorApplication {
     pub fn new(application_id: &str, flags: &gio::ApplicationFlags) -> Self {
         glib::Object::builder()
             .property("application-id", application_id)
@@ -100,16 +98,16 @@ impl StageScreenApplication {
     fn show_about(&self) {
         let window = self.active_window().unwrap();
         let about = adw::AboutDialog::builder()
-            .application_name(gettext("Stage Screen"))
-            .application_icon("de.capypara.StageScreen")
+            .application_name(gettext("Field Monitor"))
+            .application_icon("de.capypara.FieldMonitor")
             .license_type(gtk::License::Gpl30)
             .developer_name("Marco Köpcke")
             .version(VERSION)
             .developers(vec!["Marco Köpcke"])
             .copyright("© 2024 Marco Köpcke")
-            .website("https://github.com/theCapypara/StageScreen")
-            .issue_url("https://github.com/theCapypara/StageScreen/issues")
-            .support_url("https://matrix.to/#/#stagescreen:matrix.org")
+            .website("https://github.com/theCapypara/FieldMonitor")
+            .issue_url("https://github.com/theCapypara/FieldMonitor/issues")
+            .support_url("https://matrix.to/#/#fieldmonitor:matrix.org")
             .translator_credits(gettext("translator-credits"))
             .build();
 

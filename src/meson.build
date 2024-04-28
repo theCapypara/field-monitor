@@ -10,8 +10,8 @@ blueprints = custom_target('blueprints',
   command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
 )
 
-gnome.compile_resources('stage-screen',
-  'stage-screen.gresource.xml',
+gnome.compile_resources('field-monitor',
+  'field-monitor.gresource.xml',
   gresource_bundle: true,
   install: true,
   install_dir: pkgdatadir,
@@ -20,7 +20,7 @@ gnome.compile_resources('stage-screen',
 
 conf = configuration_data()
 conf.set_quoted('VERSION', meson.project_version())
-conf.set_quoted('GETTEXT_PACKAGE', 'stage-screen')
+conf.set_quoted('GETTEXT_PACKAGE', 'de.capypara.FieldMonitor')
 conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
 conf.set_quoted('PKGDATADIR', pkgdatadir)
 
@@ -54,7 +54,7 @@ cargo_build = custom_target(
   'cargo-build',
   build_by_default: true,
   build_always_stale: true,
-  output: meson.project_name(),
+  output: 'de.capypara.FieldMonitor',
   console: true,
   install: true,
   install_dir: get_option('bindir'),

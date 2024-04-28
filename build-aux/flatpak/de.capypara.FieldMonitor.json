@@ -1,12 +1,12 @@
 {
-    "id" : "de.capypara.StageScreen",
+    "id" : "de.capypara.FieldMonitor",
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "46",
     "sdk" : "org.gnome.Sdk",
     "sdk-extensions" : [
         "org.freedesktop.Sdk.Extension.rust-stable"
     ],
-    "command" : "stage-screen",
+    "command" : "de.capypara.FieldMonitor",
     "finish-args" : [
         "--share=network",
         "--share=ipc",
@@ -21,7 +21,7 @@
         ],
         "env" : {
             "RUST_BACKTRACE" : "1",
-            "RUST_LOG" : "stage-screen=debug"
+            "RUST_LOG" : "field-monitor=debug"
         }
     },
     "cleanup" : [
@@ -184,7 +184,7 @@
             ]
         },
         {
-            "name" : "stage-screen",
+            "name" : "field-monitor",
             "builddir" : true,
             "buildsystem" : "meson",
             "sources" : [

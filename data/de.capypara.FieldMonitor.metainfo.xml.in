@@ -4,7 +4,7 @@
 	<project_license>GPL-3.0-or-later</project_license>
 	<metadata_license>FSFAP</metadata_license>
 	<!-- Translators: The name of the application. -->
-	<name>Stage Screen</name>
+	<name>Field Monitor</name>
 	<!-- Translators: The summary of the application in the metainfo. -->
 	<summary>XXXXXXXXXX</summary>
 	<launchable type="desktop-id">@app-id@.desktop</launchable>
@@ -20,16 +20,16 @@
 		<category>Network</category>
 	</categories>
 
-	<url type="bugtracker">https://github.com/theCapypara/StageScreen/issues</url>
-	<url type="translate">https://hosted.weblate.org/projects/stagescreen/</url>
+	<url type="bugtracker">https://github.com/theCapypara/FieldMonitor/issues</url>
+	<url type="translate">https://hosted.weblate.org/projects/fieldmonitor/</url>
 	<url type="donation">https://ko-fi.com/parakoopa</url>
-	<url type="contact">https://matrix.to/#/#stagescreen:matrix.org</url>
-	<url type="vcs-browser">https://github.com/theCapypara/StageScreen</url>
+	<url type="contact">https://matrix.to/#/#fieldmonitor:matrix.org</url>
+	<url type="vcs-browser">https://github.com/theCapypara/FieldMonitor</url>
 
 	<description>
 		<!-- Translators: Part of the description of the application in the metainfo. -->
 		<p>
-			Stage Screen lets you connect to the consoles of virtual machines and
+			Field Monitor lets you connect to the consoles of virtual machines and
 			containers on Proxmox clusters and view basic information about them.
 		</p>
 	</description>
