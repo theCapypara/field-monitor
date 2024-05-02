@@ -1,0 +1,65 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorConnections : Adw.Bin {
+    child: Overlay {
+        vexpand: true;
+
+        Adw.StatusPage {
+            title: _("Tab View");
+            description: _("A dynamic tabbed container");
+
+            vexpand: true;
+
+            Box {
+                spacing: 6;
+                orientation: vertical;
+
+                Label {
+                    label: _("API References");
+                }
+
+                Box {
+                    halign: center;
+
+                    LinkButton {
+                        label: _("Tab View");
+                        uri: "https://gnome.pages.gitlab.gnome.org/libadwaita/doc/1.5/class.TabView.html";
+                    }
+
+                    LinkButton {
+                        label: _("Tab Bar");
+                        uri: "https://gnome.pages.gitlab.gnome.org/libadwaita/doc/1.5/class.TabBar.html";
+                    }
+
+                    LinkButton {
+                        label: _("Tab Overview");
+                        uri: "https://gnome.pages.gitlab.gnome.org/libadwaita/doc/1.5/class.TabOverview.html";
+                    }
+                }
+
+                LinkButton {
+                    label: _("Human Interface Guidelines");
+                    uri: "https://developer.gnome.org/hig/patterns/nav/tabs.html";
+                }
+            }
+        }
+
+        [overlay]
+        Button {
+            halign: center;
+            valign: end;
+            child: Adw.ButtonContent {
+                icon-name: "list-add-symbolic";
+                label: _("Add new connection");
+            };
+            layout {
+                measure: true;
+                clip-overlay: true;
+            }
+            styles ["pill", "suggested-action", "add-connection-button"]
+        }
+    };
+
+    styles ["connection-list"]
+}

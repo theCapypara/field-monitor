@@ -17,9 +17,9 @@
  */
 
 use adw::prelude::AdwDialogExt;
-use gtk::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
+use gtk::prelude::*;
 use gtk::{gio, glib};
 
 use crate::config::VERSION;
@@ -59,6 +59,7 @@ mod imp {
                 window
             } else {
                 let window = FieldMonitorWindow::new(&*application);
+                window.open_new_connection_list();
                 window.upcast()
             };
 

@@ -1,6 +1,6 @@
 [package]
 name = "field-monitor"
-version = "0.1.0"
+description = "Viewer for virtual machines and external screens"
 edition = "2021"
 
 [dependencies]

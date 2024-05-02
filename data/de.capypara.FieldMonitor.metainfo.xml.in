@@ -29,8 +29,11 @@
 	<description>
 		<!-- Translators: Part of the description of the application in the metainfo. -->
 		<p>
-			Field Monitor lets you connect to the consoles of virtual machines and
-			containers on Proxmox clusters and view basic information about them.
+			Field Monitor lets you connect to the screens of remote computers and virtual machines.
+		</p>
+		<!-- Translators: Part of the description of the application in the metainfo. -->
+		<p>
+		    ...
 		</p>
 	</description>
 

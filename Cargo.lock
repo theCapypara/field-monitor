@@ -330,7 +330,7 @@ checksum = "658bd65b1cf4c852a3cc96f18a8ce7b5640f6b703f905c7d74532294c2a63984"
 
 [[package]]
 name = "field-monitor"
-version = "0.1.0"
+version = "0.0.0"
 dependencies = [
  "gettext-rs",
  "gtk4",
