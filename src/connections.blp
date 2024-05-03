@@ -5,43 +5,19 @@ template $FieldMonitorConnections : Adw.Bin {
     child: Overlay {
         vexpand: true;
 
-        Adw.StatusPage {
-            title: _("Tab View");
-            description: _("A dynamic tabbed container");
+        ScrolledWindow {
+            hscrollbar-policy: never;
 
-            vexpand: true;
-
-            Box {
-                spacing: 6;
-                orientation: vertical;
-
-                Label {
-                    label: _("API References");
+            Stack {
+                StackPage {
+                    name: "empty_list";
+                    child: Adw.StatusPage {
+                        title: _("Field Monitor");
+                        description: _("There are no connections configured yet.\nActivate the button below to get started.");
+                        icon-name: "de.capypara.FieldMonitor-symbolic";
+                    };
                 }
-
-                Box {
-                    halign: center;
-
-                    LinkButton {
-                        label: _("Tab View");
-                        uri: "https://gnome.pages.gitlab.gnome.org/libadwaita/doc/1.5/class.TabView.html";
-                    }
-
-                    LinkButton {
-                        label: _("Tab Bar");
-                        uri: "https://gnome.pages.gitlab.gnome.org/libadwaita/doc/1.5/class.TabBar.html";
-                    }
-
-                    LinkButton {
-                        label: _("Tab Overview");
-                        uri: "https://gnome.pages.gitlab.gnome.org/libadwaita/doc/1.5/class.TabOverview.html";
-                    }
-                }
-
-                LinkButton {
-                    label: _("Human Interface Guidelines");
-                    uri: "https://developer.gnome.org/hig/patterns/nav/tabs.html";
-                }
+                styles ["content-page"]
             }
         }
 
@@ -49,6 +25,7 @@ template $FieldMonitorConnections : Adw.Bin {
         Button {
             halign: center;
             valign: end;
+            action-name: "win.add-connection";
             child: Adw.ButtonContent {
                 icon-name: "list-add-symbolic";
                 label: _("Add new connection");

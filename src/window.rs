@@ -21,6 +21,7 @@ use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::prelude::*;
 use gtk::{gio, glib};
+use gtk::glib::Variant;
 
 mod imp {
     use super::*;
@@ -36,6 +37,8 @@ mod imp {
         pub tab_view: TemplateChild<adw::TabView>,
         #[template_child]
         pub overview: TemplateChild<adw::TabOverview>,
+        #[template_child]
+        pub button_connection_list: TemplateChild<gtk::Button>
     }
 
     #[glib::object_subclass]
@@ -47,6 +50,8 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
             Self::Type::bind_template_callbacks(klass);
+            klass.install_action("win.show-connection-list", None, Self::Type::act_show_connection_list);
+            klass.install_action("win.add-connection", None, Self::Type::act_add_connection);
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -86,19 +91,6 @@ impl FieldMonitorWindow {
     }
 
     #[template_callback]
-    fn on_button_overview_clicked(&self, _button: &gtk::Button) {
-        self.imp().overview.set_open(true);
-    }
-
-    #[template_callback]
-    fn on_button_home_clicked(&self, _button: &gtk::Button) {
-        let page = self
-            .get_open_connection_list_page()
-            .unwrap_or_else(|| self.open_new_connection_list());
-        self.imp().tab_view.set_selected_page(&page);
-    }
-
-    #[template_callback]
     fn on_tab_view_page_attached(&self, _page: &adw::TabPage, _position: i32) {
         self.configure_tab_bar_autohide();
     }
@@ -109,6 +101,32 @@ impl FieldMonitorWindow {
         if self.imp().tab_view.n_pages() == 0 {
             self.open_new_connection_list();
         }
+    }
+
+    /// Hide connection list button if already on connection list.
+    #[template_callback]
+    fn on_tab_view_notify_selected_page(&self) {
+        let selected = self.imp().tab_view.selected_page();
+        match selected {
+            Some(p) if p.child().type_().is_a(FieldMonitorConnections::static_type()) => {
+                self.imp().button_connection_list.set_visible(false);
+            }
+            _ => {
+                self.imp().button_connection_list.set_visible(true);
+            }
+        }
+    }
+}
+
+impl FieldMonitorWindow {
+    fn act_show_connection_list(&self, _action_name: &str, _param: Option<&Variant>) {
+        let page = self
+            .get_open_connection_list_page()
+            .unwrap_or_else(|| self.open_new_connection_list());
+        self.imp().tab_view.set_selected_page(&page);
+    }
+    fn act_add_connection(&self, _action_name: &str, _param: Option<&Variant>) {
+        todo!()
     }
 }
 

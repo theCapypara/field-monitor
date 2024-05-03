@@ -19,16 +19,17 @@ template $FieldMonitorWindow : Adw.ApplicationWindow {
             orientation: vertical;
 
             Adw.HeaderBar header_bar {
-                Button button_home {
-                    icon-name: "go-home-symbolic";
-                    tooltip-text: _("Connection List");
-                    clicked => $on_button_home_clicked() swapped;
-                }
-
                 Button button_overview {
                     icon-name: "view-grid-symbolic";
                     tooltip-text: _("Tab Overview");
-                    clicked => $on_button_overview_clicked() swapped;
+                    action-name: "overview.open";
+                }
+
+                Button button_connection_list {
+                    icon-name: "go-home-symbolic";
+                    tooltip-text: _("Connection List");
+                    action-name: "win.show-connection-list";
+                    visible: false;
                 }
 
                 [end]
@@ -48,6 +49,7 @@ template $FieldMonitorWindow : Adw.ApplicationWindow {
                 create-window => $on_tab_view_create_window() swapped;
                 page-attached => $on_tab_view_page_attached() swapped;
                 page-detached => $on_tab_view_page_detached(workaround) swapped;
+                notify::selected-page => $on_tab_view_notify_selected_page() swapped;
             }
         }
     };
