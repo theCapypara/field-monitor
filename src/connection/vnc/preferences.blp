@@ -1,0 +1,23 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $VncPreferences : Adw.PreferencesPage {
+    Adw.PreferencesGroup {
+        Adw.EntryRow title_entry {
+            title: _("Connection Name");
+        }
+    }
+
+    Adw.PreferencesGroup {
+        Adw.EntryRow host_entry {
+            title: _("Hostname");
+        }
+        Adw.EntryRow port_entry {
+            title: _("Port");
+            text: "5900";
+            input-purpose: number;
+        }
+    }
+
+    $VncCredentialPreferences credentials {}
+}

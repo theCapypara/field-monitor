@@ -1,0 +1,36 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorAddConnectionDialog : Adw.Dialog {
+    content-width: 420;
+    content-height: 640;
+    title: bind main_navigation_page.title;
+
+    Adw.NavigationView navigation_view {
+        Adw.NavigationPage main_navigation_page {
+            title: _("Add new connection");
+
+            Adw.ToolbarView {
+                [top]
+                Adw.HeaderBar header_bar {}
+
+                Adw.Bin content {
+                    Adw.Clamp {
+                        margin-start: 5;
+                        margin-end: 5;
+                        margin-top: 16;
+                        margin-bottom: 16;
+                        tightening-threshold: 5;
+
+                        ListBox actions {
+                            selection-mode: none;
+                            valign: start;
+
+                            styles ["boxed-list"]
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -37,6 +37,30 @@
     ],
     "modules" : [
         {
+            "name" : "libusb",
+            "config-opts" : [
+                "--disable-udev"
+            ],
+            "sources" : [
+                {
+                    "type" : "archive",
+                    "url" : "https://github.com/libusb/libusb/releases/download/v1.0.26/libusb-1.0.26.tar.bz2",
+                    "sha256" : "12ce7a61fc9854d1d2a1ffe095f7b5fac19ddba095c259e6067a46500381b5a5"
+                }
+            ]
+        },
+        {
+            "name" : "usbredir",
+            "buildsystem" : "meson",
+            "sources" : [
+                {
+                    "type" : "archive",
+                    "url" : "https://www.spice-space.org/download/usbredir/usbredir-0.13.0.tar.xz",
+                    "sha256" : "4ba6faa02c0ae6deeb4c53883d66ab54b3a5899bead42ce4ded9568b9a7dc46e"
+                }
+            ]
+        },
+        {
             "name" : "gtk-vnc",
             "buildsystem" : "meson",
             "config-opts" : [
@@ -142,26 +166,25 @@
             ]
         },
         {
-            "name" : "libusb",
-            "config-opts" : [
-                "--disable-udev"
+            "name" : "freerdp",
+            "buildsystem": "cmake-ninja",
+            "builddir": true,
+            "config-opts": [
+                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
+                "-DWITH_OPENH264=ON",
+                "-DCMAKE_INSTALL_PREFIX=/app",
+                "-DCMAKE_INSTALL_LIBDIR=lib",
+                "-DWITH_WAYLAND:BOOL=ON",
+                "-DCHANNEL_TSMF:BOOL=ON",
+                "-DWITH_FFMPEG:BOOL=OFF",
+                "-DWITH_MANPAGES:BOOL=OFF",
+                "-DWITH_SERVER:BOOL=OFF"
             ],
             "sources" : [
                 {
                     "type" : "archive",
-                    "url" : "https://github.com/libusb/libusb/releases/download/v1.0.26/libusb-1.0.26.tar.bz2",
-                    "sha256" : "12ce7a61fc9854d1d2a1ffe095f7b5fac19ddba095c259e6067a46500381b5a5"
-                }
-            ]
-        },
-        {
-            "name" : "usbredir",
-            "buildsystem" : "meson",
-            "sources" : [
-                {
-                    "type" : "archive",
-                    "url" : "https://www.spice-space.org/download/usbredir/usbredir-0.13.0.tar.xz",
-                    "sha256" : "4ba6faa02c0ae6deeb4c53883d66ab54b3a5899bead42ce4ded9568b9a7dc46e"
+                    "url" : "https://pub.freerdp.com/releases/freerdp-2.10.0.tar.gz",
+                    "sha256" : "a673d3fc21911dd9f196834f2f3a23c3ebc7e5e4deab2f7686fcec879279e2c1"
                 }
             ]
         },

@@ -16,12 +16,15 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use crate::connections::FieldMonitorConnections;
+use adw::prelude::AdwDialogExt;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
-use gtk::prelude::*;
 use gtk::{gio, glib};
 use gtk::glib::Variant;
+use gtk::prelude::*;
+
+use crate::add_connection_dialog::FieldMonitorAddConnectionDialog;
+use crate::connections::FieldMonitorConnections;
 
 mod imp {
     use super::*;
@@ -38,7 +41,7 @@ mod imp {
         #[template_child]
         pub overview: TemplateChild<adw::TabOverview>,
         #[template_child]
-        pub button_connection_list: TemplateChild<gtk::Button>
+        pub button_connection_list: TemplateChild<gtk::Button>,
     }
 
     #[glib::object_subclass]
@@ -50,7 +53,11 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
             Self::Type::bind_template_callbacks(klass);
-            klass.install_action("win.show-connection-list", None, Self::Type::act_show_connection_list);
+            klass.install_action(
+                "win.show-connection-list",
+                None,
+                Self::Type::act_show_connection_list,
+            );
             klass.install_action("win.add-connection", None, Self::Type::act_add_connection);
         }
 
@@ -108,7 +115,11 @@ impl FieldMonitorWindow {
     fn on_tab_view_notify_selected_page(&self) {
         let selected = self.imp().tab_view.selected_page();
         match selected {
-            Some(p) if p.child().type_().is_a(FieldMonitorConnections::static_type()) => {
+            Some(p)
+                if p.child()
+                    .type_()
+                    .is_a(FieldMonitorConnections::static_type()) =>
+            {
                 self.imp().button_connection_list.set_visible(false);
             }
             _ => {
@@ -126,7 +137,9 @@ impl FieldMonitorWindow {
         self.imp().tab_view.set_selected_page(&page);
     }
     fn act_add_connection(&self, _action_name: &str, _param: Option<&Variant>) {
-        todo!()
+        let dialog =
+            FieldMonitorAddConnectionDialog::new(&self.application().unwrap().downcast().unwrap());
+        dialog.present(self);
     }
 }
 

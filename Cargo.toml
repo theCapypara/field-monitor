@@ -7,6 +7,9 @@ rust-version = "1.76"
 [dependencies]
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
 isahc = { version = "1.7" }
+anyhow = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+toml = "0.8"
 
 [dependencies.gtk]
 package = "gtk4"
@@ -35,6 +38,12 @@ default-features = false
 
 [dependencies.rdw-vnc]
 package = "rdw4-vnc"
+git = "https://gitlab.gnome.org/malureau/rdw.git"
+rev = "034ccd36"
+default-features = false
+
+[dependencies.rdw-rdp]
+package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/malureau/rdw.git"
 rev = "034ccd36"
 default-features = false

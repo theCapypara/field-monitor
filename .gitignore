@@ -2,4 +2,4 @@
 src/config.rs
 target/
 /subprojects/blueprint-compiler
-src/*.ui
+src/**/*.ui
