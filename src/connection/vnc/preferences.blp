@@ -2,6 +2,10 @@ using Gtk 4.0;
 using Adw 1;
 
 template $VncPreferences : Adw.PreferencesPage {
+    title: bind title_entry.text bidirectional;
+    host: bind host_entry.text bidirectional;
+    port: bind port_entry.text bidirectional;
+
     Adw.PreferencesGroup {
         Adw.EntryRow title_entry {
             title: _("Connection Name");
@@ -19,5 +23,7 @@ template $VncPreferences : Adw.PreferencesPage {
         }
     }
 
-    $VncCredentialPreferences credentials {}
+    $VncCredentialPreferences credentials {
+        use_temporary_credentials: false;
+    }
 }

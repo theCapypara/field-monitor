@@ -19,8 +19,11 @@
 use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
 use gtk::{gio, glib};
 use gtk::prelude::*;
+use log::info;
 
 use config::{GETTEXT_PACKAGE, LOCALEDIR, PKGDATADIR};
+
+use crate::config::APP_ID;
 
 use self::application::FieldMonitorApplication;
 use self::window::FieldMonitorWindow;
@@ -32,9 +35,14 @@ mod config;
 mod connection;
 mod connections;
 mod save_credentials_button;
+mod secrets;
+pub(crate) mod util_signal_handlers;
 mod window;
 
 fn main() -> glib::ExitCode {
+    glib::log_set_default_handler(glib::rust_log_handler);
+    pretty_env_logger::init();
+
     // Set up gettext translations
     bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");
     bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8")
@@ -49,12 +57,12 @@ fn main() -> glib::ExitCode {
     // Create a new GtkApplication. The application manages our main loop,
     // application windows, integration with the window manager/compositor, and
     // desktop features such as file opening and single-instance applications.
-    let app =
-        FieldMonitorApplication::new("de.capypara.FieldMonitor", &gio::ApplicationFlags::empty());
+    let app = FieldMonitorApplication::new(APP_ID, &gio::ApplicationFlags::empty());
 
     // Run the application. This function will block until the application
     // exits. Upon return, we have our exit code to return to the shell. (This
     // is the code you see when you do `echo $?` after running a command in a
     // terminal.
+    info!("started Field Monitor");
     app.run()
 }

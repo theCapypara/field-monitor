@@ -15,49 +15,92 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use std::cell::RefCell;
 use std::num::NonZeroU32;
+use std::rc::Rc;
 
+use adw::glib::clone;
 use adw::subclass::prelude::*;
+use futures::lock::Mutex;
 use gtk::glib;
 use gtk::prelude::*;
 
-use crate::connection::types::ConnectionConfiguration;
+use crate::connection::configuration::ConnectionConfiguration;
 use crate::connection::vnc::credential_preferences::VncCredentialPreferences;
 
 pub(super) trait VncConfiguration {
-    fn title(&self) -> Option<&str>;
-    fn host(&self) -> Option<&str>;
+    fn title(&self) -> Option<String>;
+    fn host(&self) -> Option<String>;
     fn port(&self) -> Option<NonZeroU32>;
-    fn user(&self) -> Option<&str>;
-    fn password(&self) -> Option<&str>;
+    fn user(&self) -> Option<String>;
+    async fn password(&self) -> anyhow::Result<Option<String>>;
+    fn set_title(&mut self, value: &str);
+    fn set_host(&mut self, value: &str);
+    fn set_port(&mut self, value: NonZeroU32);
+    fn set_user(&mut self, value: Option<&str>);
+    fn set_password(&mut self, value: Option<&str>);
 }
 
 impl VncConfiguration for ConnectionConfiguration {
-    fn title(&self) -> Option<&str> {
-        todo!()
+    fn title(&self) -> Option<String> {
+        self.get_try_as_str("title")
     }
 
-    fn host(&self) -> Option<&str> {
-        todo!()
+    fn host(&self) -> Option<String> {
+        self.get_try_as_str("host")
     }
 
     fn port(&self) -> Option<NonZeroU32> {
-        todo!()
+        self.get_try_as_u64("port").and_then(|v| {
+            if v <= (u32::MAX as u64) {
+                NonZeroU32::new(v as u32)
+            } else {
+                None
+            }
+        })
     }
 
-    fn user(&self) -> Option<&str> {
-        todo!()
+    fn user(&self) -> Option<String> {
+        self.get_try_as_str("user")
     }
 
-    fn password(&self) -> Option<&str> {
-        todo!()
+    async fn password(&self) -> anyhow::Result<Option<String>> {
+        self.get_secret("password").await
+    }
+
+    fn set_title(&mut self, value: &str) {
+        self.set("title", value);
+    }
+
+    fn set_host(&mut self, value: &str) {
+        self.set("host", value);
+    }
+
+    fn set_port(&mut self, value: NonZeroU32) {
+        self.set("port", value.get());
+    }
+
+    fn set_user(&mut self, value: Option<&str>) {
+        let value = match value {
+            None => serde_yaml::Value::Null,
+            Some(value) => value.into(),
+        };
+        self.set("user", value);
+    }
+
+    fn set_password(&mut self, value: Option<&str>) {
+        match value {
+            None => self.clear_secret("password"),
+            Some(value) => self.set_secret("password", value),
+        }
     }
 }
 
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, gtk::CompositeTemplate)]
+    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
+    #[properties(wrapper_type = super::VncPreferences)]
     #[template(resource = "/de/capypara/FieldMonitor/connection/vnc/preferences.ui")]
     pub struct VncPreferences {
         #[template_child]
@@ -68,6 +111,13 @@ mod imp {
         pub(super) port_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub(super) credentials: TemplateChild<VncCredentialPreferences>,
+
+        #[property(get, set)]
+        pub title: RefCell<String>,
+        #[property(get, set)]
+        pub host: RefCell<String>,
+        #[property(get, set)]
+        pub port: RefCell<String>,
     }
 
     #[glib::object_subclass]
@@ -86,6 +136,7 @@ mod imp {
         }
     }
 
+    #[glib::derived_properties]
     impl ObjectImpl for VncPreferences {}
     impl WidgetImpl for VncPreferences {}
     impl PreferencesPageImpl for VncPreferences {}
@@ -97,27 +148,41 @@ glib::wrapper! {
 }
 
 impl VncPreferences {
-    pub fn new(existing_configuration: Option<&ConnectionConfiguration>) -> Self {
+    pub fn new(existing_configuration: Option<Rc<Mutex<ConnectionConfiguration>>>) -> Self {
         let slf: Self = glib::Object::builder().build();
 
         if let Some(existing_configuration) = existing_configuration {
-            if let Some(v) = existing_configuration.title() {
-                slf.imp().title_entry.set_text(v);
-            }
-            if let Some(v) = existing_configuration.host() {
-                slf.imp().host_entry.set_text(v);
-            }
-            if let Some(v) = existing_configuration.port() {
-                slf.imp().port_entry.set_text(&v.to_string());
-            }
-            if let Some(v) = existing_configuration.user() {
-                slf.imp().credentials.set_user(v);
-            }
-            if let Some(v) = existing_configuration.password() {
-                slf.imp().credentials.set_password(v);
-            }
+            glib::spawn_future_local(clone!(@weak slf => async move {
+                let config_lock = existing_configuration.lock().await;
+                if let Some(v) = config_lock.title() {
+                    slf.set_title(v);
+                }
+                if let Some(v) = config_lock.host() {
+                    slf.set_host(v);
+                }
+                if let Some(v) = config_lock.port() {
+                    slf.set_port(v.to_string());
+                }
+                if let Some(v) = config_lock.user() {
+                    slf.credentials().set_user(v);
+                }
+                if let Ok(Some(v)) = config_lock.password().await {
+                    slf.credentials().set_password(v);
+                }
+            }));
         }
         slf
+    }
+    pub fn credentials(&self) -> &VncCredentialPreferences {
+        &self.imp().credentials
+    }
+
+    pub fn port_entry_error(&self, error: bool) {
+        if error {
+            self.imp().port_entry.add_css_class("error");
+        } else {
+            self.imp().port_entry.remove_css_class("error");
+        }
     }
 }
 

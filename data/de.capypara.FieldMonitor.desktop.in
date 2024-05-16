@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Field Monitor
 Exec=de.capypara.FieldMonitor
-Icon=@app-id@
+Icon=de.capypara.FieldMonitor
 Terminal=false
 Type=Application
 X-Purism-FormFactor=Workstation;Mobile;

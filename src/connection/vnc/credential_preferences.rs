@@ -16,18 +16,25 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+use std::cell::{Cell, RefCell};
+use std::rc::Rc;
+
 use adw::subclass::prelude::*;
+use futures::lock::Mutex;
 use gtk::glib;
+use gtk::glib::clone;
 use gtk::prelude::*;
 
-use crate::connection::types::ConnectionConfiguration;
+use crate::connection::configuration::ConnectionConfiguration;
 use crate::connection::vnc::preferences::VncConfiguration;
 use crate::save_credentials_button::FieldMonitorSaveCredentialsButton;
+use crate::util_signal_handlers::clear_editable_if_becoming_not_editable;
 
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, gtk::CompositeTemplate)]
+    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
+    #[properties(wrapper_type = super::VncCredentialPreferences)]
     #[template(resource = "/de/capypara/FieldMonitor/connection/vnc/credential_preferences.ui")]
     pub struct VncCredentialPreferences {
         #[template_child]
@@ -38,6 +45,16 @@ mod imp {
         pub(super) user_entry_save_button: TemplateChild<FieldMonitorSaveCredentialsButton>,
         #[template_child]
         pub(super) password_entry_save_button: TemplateChild<FieldMonitorSaveCredentialsButton>,
+
+        #[property(get, set)]
+        pub user: RefCell<String>,
+        #[property(get, set)]
+        pub password: RefCell<String>,
+
+        #[property(get, construct_only, default = true)]
+        /// If true: If the credentials are set to "ask", then still allow the user
+        /// to input a value, if false, do not allow the user to input a value.
+        pub use_temporary_credentials: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -56,7 +73,24 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for VncCredentialPreferences {}
+    #[glib::derived_properties]
+    impl ObjectImpl for VncCredentialPreferences {
+        fn constructed(&self) {
+            self.parent_constructed();
+            if !self.use_temporary_credentials.get() {
+                self.user_entry_save_button
+                    .bind_property("save_password", &*self.user_entry, "editable")
+                    .sync_create()
+                    .build();
+                self.password_entry_save_button
+                    .bind_property("save_password", &*self.password_entry, "editable")
+                    .sync_create()
+                    .build();
+                clear_editable_if_becoming_not_editable(&*self.user_entry);
+                clear_editable_if_becoming_not_editable(&*self.password_entry);
+            }
+        }
+    }
     impl WidgetImpl for VncCredentialPreferences {}
     impl PreferencesGroupImpl for VncCredentialPreferences {}
 }
@@ -67,26 +101,37 @@ glib::wrapper! {
 }
 
 impl VncCredentialPreferences {
-    pub fn new(existing_configuration: Option<&ConnectionConfiguration>) -> Self {
+    pub fn new(existing_configuration: Option<Rc<Mutex<ConnectionConfiguration>>>) -> Self {
         let slf: Self = glib::Object::builder().build();
 
         if let Some(existing_configuration) = existing_configuration {
-            if let Some(v) = existing_configuration.user() {
-                slf.set_user(v);
-            }
-            if let Some(v) = existing_configuration.password() {
-                slf.set_password(v);
-            }
+            glib::spawn_future_local(clone!(@weak slf => async move {
+                let config_lock = existing_configuration.lock().await;
+                if let Some(v) = config_lock.user() {
+                    slf.set_user(v);
+                }
+                if let Ok(Some(v)) = config_lock.password().await {
+                    slf.set_password(v);
+                }
+            }));
         }
         slf
     }
 
-    pub fn set_user(&self, value: &str) {
-        self.imp().user_entry.set_text(value);
+    pub fn user_if_remembered(&self) -> Option<String> {
+        if self.imp().user_entry_save_button.save_password() {
+            Some(self.user())
+        } else {
+            None
+        }
     }
 
-    pub fn set_password(&self, value: &str) {
-        self.imp().password_entry.set_text(value);
+    pub fn password_if_remembered(&self) -> Option<String> {
+        if self.imp().password_entry_save_button.save_password() {
+            Some(self.password())
+        } else {
+            None
+        }
     }
 }
 

@@ -9,7 +9,17 @@ gettext-rs = { version = "0.7", features = ["gettext-system"] }
 isahc = { version = "1.7" }
 anyhow = "1.0"
 serde = { version = "1.0", features = ["derive"] }
-toml = "0.8"
+serde_yaml = "0.9"
+futures = "0.3"
+uuid = { version = "1.8", features = ["v7"] }
+log = "0.4"
+pretty_env_logger = "0.5"
+
+[dependencies.glib]
+features = ["log"]
+version = "0.20"
+git = "https://github.com/gtk-rs/gtk-rs-core.git"
+branch = "master"
 
 [dependencies.gtk]
 package = "gtk4"
@@ -53,6 +63,5 @@ package = "vte4"
 git = "https://gitlab.gnome.org/World/Rust/vte4-rs.git"
 rev = "5727c217d"
 
-[dependencies.libsecret]
-git = "https://gitlab.gnome.org/World/Rust/libsecret-rs.git"
-rev = "02699954"
+[dependencies.oo7]
+version = "0.3"

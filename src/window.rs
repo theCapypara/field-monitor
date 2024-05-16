@@ -139,7 +139,7 @@ impl FieldMonitorWindow {
     fn act_add_connection(&self, _action_name: &str, _param: Option<&Variant>) {
         let dialog =
             FieldMonitorAddConnectionDialog::new(&self.application().unwrap().downcast().unwrap());
-        dialog.present(self);
+        dialog.present(Some(self));
     }
 }
 

@@ -17,12 +17,14 @@
  */
 
 use std::borrow::Cow;
-use std::collections::HashMap;
+use std::rc::Rc;
 
-use serde::{Deserialize, Serialize};
+use futures::future::LocalBoxFuture;
+use futures::lock::Mutex;
 
 use crate::adapter::types::Adapter;
 use crate::application::FieldMonitorApplication;
+use crate::connection::configuration::ConnectionConfiguration;
 
 /// Metadata about a connection.
 #[derive(Debug, Clone)]
@@ -32,20 +34,9 @@ pub struct ConnectionMetadata {}
 #[derive(Debug, Clone)]
 pub struct ServerMetadata {}
 
-/// (De)serializable configuration for a connection.
-#[derive(Debug, Clone, Serialize, Deserialize)]
-#[serde(transparent)]
-pub struct ConnectionConfiguration {
-    config: HashMap<String, toml::Value>,
-}
-
 /// Constructor for ConnectionProvider and static members for ConnectionProviders.
 /// This is separate to allow trait objects / dynamic dispatch.
 pub trait ConnectionProviderConstructor: Send + Sync {
-    /// Tag for configuration connection. Will be serialized with configuration
-    /// and used to match connection providers.
-    fn tag(&self) -> &'static str;
-
     /// Creates the provider.
     #[allow(clippy::new_ret_no_self, clippy::wrong_self_convention)]
     fn new(&self, app: &FieldMonitorApplication) -> Box<dyn ConnectionProvider>;
@@ -54,6 +45,10 @@ pub trait ConnectionProviderConstructor: Send + Sync {
 /// A provider for creating new connections. Each provider can create new connections
 /// of a defined type.
 pub trait ConnectionProvider {
+    /// Tag for configuration connection. Will be serialized with configuration
+    /// and used to match connection providers.
+    fn tag(&self) -> &'static str;
+
     /// Title describing the provider.
     fn title(&self) -> Cow<str>;
 
@@ -70,28 +65,20 @@ pub trait ConnectionProvider {
     /// Creates a preference page (or other applicable widget) for configuring a new connection.
     ///
     /// If this is for modifying an existing configuration, the current configuration is set.
-    fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget;
-
-    /// Create a new connection configuration from a configured preference page.
-    /// It may be asserted that the  passed `preferences` are a widget returned from `preferences`.
-    ///
-    /// If an error is returned, the preferences will still be shown to the user. This means
-    /// the implementation may modify the preferences to hint at input errors.
-    fn create_connection(
-        &self,
-        preferences: &gtk::Widget,
-    ) -> anyhow::Result<ConnectionConfiguration>;
+    fn preferences(&self, configuration: Option<Rc<Mutex<ConnectionConfiguration>>>)
+        -> gtk::Widget;
 
     /// Update a connection configuration from a configured preference page.
     /// It may be asserted that the  passed `preferences` are a widget returned from `preferences`.
     ///
     /// If an error is returned, the preferences will still be shown to the user. This means
-    /// the implementation may modify the preferences to hint at input errors.
+    /// the implementation may modify the preferences to hint at input errors. It should not show
+    /// the error message of the returned result, this is presented by the caller.
     fn update_connection(
         &self,
-        preferences: &gtk::Widget,
-        configuration: &mut ConnectionConfiguration,
-    ) -> anyhow::Result<()>;
+        preferences: gtk::Widget,
+        configuration: Rc<Mutex<ConnectionConfiguration>>,
+    ) -> LocalBoxFuture<anyhow::Result<()>>;
 
     /// Creates a preference group (or another applicable widgets, such as a box to group multiple)
     /// for configuring credentials.
@@ -100,19 +87,23 @@ pub trait ConnectionProvider {
     /// could not be made, or when no credentials were stored.
     ///
     /// The passed parameter contains the current configuration before.
-    fn configure_credentials(&self, configuration: &ConnectionConfiguration) -> gtk::Widget;
+    fn configure_credentials(
+        &self,
+        configuration: Rc<Mutex<ConnectionConfiguration>>,
+    ) -> gtk::Widget;
 
     /// Update the credentials of a connection.
     /// It may be asserted that the  passed `preferences` are a widget returned from
     /// `configure_credentials`.
     ///
     /// If an error is returned, the preferences will still be shown to the user. This means
-    /// the implementation may modify the preferences to hint at input errors.
+    /// the implementation may modify the preferences to hint at input errors. It should not show
+    /// the error message of the returned result, this is presented by the caller.
     fn store_credentials(
         &self,
-        preferences: &gtk::Widget,
-        configuration: &mut ConnectionConfiguration,
-    ) -> anyhow::Result<()>;
+        preferences: gtk::Widget,
+        configuration: Rc<Mutex<ConnectionConfiguration>>,
+    ) -> LocalBoxFuture<anyhow::Result<()>>;
 
     /// Try to load a connection configuration into a connection.
     /// The tag inside the configuration must match [`Self::TAG`], otherwise the method
@@ -132,7 +123,7 @@ pub trait Connection {
     fn metadata(&self) -> &ConnectionMetadata;
 
     /// Returns the servers managed by this connection.
-    fn servers(&self) -> &[&dyn ServerConnection];
+    fn servers(&self) -> anyhow::Result<&[&dyn ServerConnection]>;
 }
 
 /// A single instance of a server to connect to.
@@ -145,7 +136,7 @@ pub trait ServerConnection {
     fn adapters(&self) -> &[&dyn Adapter];
 
     /// Returns the sub-servers grouped under this server.
-    fn servers(&self) -> &[&dyn ServerConnection] {
-        &[]
+    fn servers(&self) -> anyhow::Result<&[&dyn ServerConnection]> {
+        Ok(&[])
     }
 }
