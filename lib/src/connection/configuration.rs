@@ -22,22 +22,22 @@ use std::sync::Arc;
 
 use futures::future::{LocalBoxFuture, try_join_all};
 
-use crate::secrets::SecretManager;
+use crate::ManagesSecrets;
 
 #[derive(Clone)]
 pub struct ConnectionConfiguration {
     config: HashMap<String, serde_yaml::Value>,
     provider_tag: String,
     connection_id: String,
-    secret_manager: Arc<SecretManager>,
+    secret_manager: Arc<Box<dyn ManagesSecrets>>,
     pending_secret_changes: HashMap<String, Option<String>>,
 }
 
 impl ConnectionConfiguration {
-    pub(crate) fn new(
+    pub fn new(
         connection_id: String,
         provider_tag: String,
-        secret_manager: Arc<SecretManager>,
+        secret_manager: Arc<Box<dyn ManagesSecrets>>,
     ) -> Self {
         Self {
             config: Default::default(),
@@ -48,11 +48,11 @@ impl ConnectionConfiguration {
         }
     }
 
-    pub(crate) fn new_existing(
+    pub fn new_existing(
         connection_id: String,
         provider_tag: String,
         config: HashMap<String, serde_yaml::Value>,
-        secret_manager: Arc<SecretManager>,
+        secret_manager: Arc<Box<dyn ManagesSecrets>>,
     ) -> Self {
         Self {
             config,
@@ -63,16 +63,16 @@ impl ConnectionConfiguration {
         }
     }
 
-    pub(crate) fn tag(&self) -> &str {
+    pub fn tag(&self) -> &str {
         &self.provider_tag
     }
 
-    pub(crate) fn id(&self) -> &str {
+    pub fn id(&self) -> &str {
         &self.connection_id
     }
 
     /// Saves pending secret changes to the keychain, returns configuration.
-    pub(crate) async fn save(&mut self) -> anyhow::Result<HashMap<String, serde_yaml::Value>> {
+    pub async fn save(&mut self) -> anyhow::Result<HashMap<String, serde_yaml::Value>> {
         let pending_secret_changes = take(&mut self.pending_secret_changes);
         let mut futs: Vec<LocalBoxFuture<anyhow::Result<()>>> =
             Vec::with_capacity(pending_secret_changes.len());
@@ -134,7 +134,7 @@ impl ConnectionConfiguration {
             .map_err(Into::into)
     }
     async fn do_clear_secret(
-        secret_manager: Arc<SecretManager>,
+        secret_manager: Arc<Box<dyn ManagesSecrets>>,
         connection_id: String,
         key: impl AsRef<str>,
     ) -> anyhow::Result<()> {
@@ -144,7 +144,7 @@ impl ConnectionConfiguration {
             .map_err(Into::into)
     }
     async fn do_set_secret(
-        secret_manager: Arc<SecretManager>,
+        secret_manager: Arc<Box<dyn ManagesSecrets>>,
         connection_id: String,
         key: impl AsRef<str>,
         value: impl AsRef<str>,

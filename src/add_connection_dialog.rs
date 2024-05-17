@@ -27,9 +27,10 @@ use gtk::glib;
 use gtk::glib::clone;
 use gtk::prelude::{ButtonExt, WidgetExt};
 
+use libfieldmonitor::connection::ConnectionProvider;
+
 use crate::application::FieldMonitorApplication;
-use crate::connection::types::ConnectionProvider;
-use crate::connections::FieldMonitorConnections;
+use crate::connection_list::FieldMonitorConnectionList;
 
 mod imp {
     use super::*;
@@ -160,7 +161,8 @@ impl FieldMonitorAddConnectionDialog {
                 Ok(()) => {
                     self.force_close();
                     if let Some(parent) = self.parent() {
-                        if let Ok(connection_list) = parent.downcast::<FieldMonitorConnections>() {
+                        if let Ok(connection_list) = parent.downcast::<FieldMonitorConnectionList>()
+                        {
                             connection_list.connection_added();
                         }
                     }

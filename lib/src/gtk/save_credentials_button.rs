@@ -18,16 +18,16 @@
 
 use std::cell::Cell;
 
-use adw::subclass::prelude::*;
 use gtk::glib;
 use gtk::prelude::*;
+use gtk::subclass::prelude::*;
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
     #[properties(wrapper_type = super::FieldMonitorSaveCredentialsButton)]
-    #[template(resource = "/de/capypara/FieldMonitor/save_credentials_button.ui")]
+    #[template(resource = "/de/capypara/FieldMonitor/lib/gtk/save_credentials_button.ui")]
     pub struct FieldMonitorSaveCredentialsButton {
         #[template_child]
         pub popover: TemplateChild<gtk::Popover>,

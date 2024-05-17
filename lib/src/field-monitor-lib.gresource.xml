@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <gresource prefix="/de/capypara/FieldMonitor/lib">
+        <file preprocess="xml-stripblanks">gtk/save_credentials_button.ui</file>
+    </gresource>
+    <gresource prefix="/de/capypara/FieldMonitor/icons/scalable/actions">
+        <file preprocess="xml-stripblanks">key-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">key-off-symbolic.svg</file>
+    </gresource>
+</gresources>

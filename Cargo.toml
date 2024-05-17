@@ -1,68 +1,95 @@
-[package]
-name = "field-monitor"
-description = "Viewer for virtual machines and external screens"
+[workspace]
+members = [
+    ".",
+    "lib",
+    "connection/vnc"
+]
+
+[workspace.package]
 edition = "2021"
 rust-version = "1.76"
 
-[dependencies]
+[workspace.dependencies]
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
 isahc = { version = "1.7" }
 anyhow = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
 futures = "0.3"
-uuid = { version = "1.8", features = ["v7"] }
 log = "0.4"
-pretty_env_logger = "0.5"
 async-std = "1.12"
 
-[dependencies.glib]
+[workspace.dependencies.glib]
 features = ["log"]
 version = "0.20"
 git = "https://github.com/gtk-rs/gtk-rs-core.git"
 branch = "master"
 
-[dependencies.gtk]
+[workspace.dependencies.gtk]
 package = "gtk4"
 features = ["v4_14"]
 version = "0.9"
 git = "https://github.com/gtk-rs/gtk4-rs.git"
 branch = "master"
 
-[dependencies.adw]
+[workspace.dependencies.adw]
 package = "libadwaita"
 features = ["v1_5"]
 version = "0.7"
 git = "https://gitlab.gnome.org/World/Rust/libadwaita-rs.git"
 branch = "master"
 
-[dependencies.rdw]
+[workspace.dependencies.rdw]
 package = "rdw4"
 git = "https://gitlab.gnome.org/malureau/rdw.git"
 rev = "034ccd36"
 
-[dependencies.rdw-spice]
+[workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/malureau/rdw.git"
 rev = "034ccd36"
 default-features = false
 
-[dependencies.rdw-vnc]
+[workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/malureau/rdw.git"
 rev = "034ccd36"
 default-features = false
 
-[dependencies.rdw-rdp]
+[workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/malureau/rdw.git"
 rev = "034ccd36"
 default-features = false
 
-[dependencies.vte]
+[workspace.dependencies.vte]
 package = "vte4"
 git = "https://gitlab.gnome.org/World/Rust/vte4-rs.git"
 rev = "5727c217d"
 
-[dependencies.oo7]
+[workspace.dependencies.oo7]
 version = "0.3"
+
+
+[package]
+name = "field-monitor"
+description = "Viewer for virtual machines and external screens"
+edition = { workspace = true }
+rust-version = { workspace = true }
+
+[dependencies]
+gettext-rs = { workspace = true }
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_yaml = { workspace = true }
+futures = { workspace = true }
+uuid = { version = "1.8", features = ["v7"] }
+log = { workspace = true }
+pretty_env_logger = "0.5"
+async-std = { workspace = true }
+glib = { workspace = true }
+gtk = { workspace = true }
+adw = { workspace = true }
+oo7 = { workspace = true }
+libfieldmonitor = { path = "./lib" }
+field-monitor-vnc = { path = "./connection/vnc" }

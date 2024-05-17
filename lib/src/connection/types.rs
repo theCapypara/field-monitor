@@ -23,7 +23,6 @@ use futures::future::LocalBoxFuture;
 use futures::lock::Mutex;
 
 use crate::adapter::types::Adapter;
-use crate::application::FieldMonitorApplication;
 use crate::connection::configuration::ConnectionConfiguration;
 
 /// Metadata about a connection.
@@ -34,12 +33,14 @@ pub struct ConnectionMetadata {}
 #[derive(Debug, Clone)]
 pub struct ServerMetadata {}
 
+pub trait FieldMonitorApplication {}
+
 /// Constructor for ConnectionProvider and static members for ConnectionProviders.
 /// This is separate to allow trait objects / dynamic dispatch.
 pub trait ConnectionProviderConstructor: Send + Sync {
     /// Creates the provider.
     #[allow(clippy::new_ret_no_self, clippy::wrong_self_convention)]
-    fn new(&self, app: &FieldMonitorApplication) -> Box<dyn ConnectionProvider>;
+    fn new(&self) -> Box<dyn ConnectionProvider>;
 }
 
 /// A provider for creating new connections. Each provider can create new connections

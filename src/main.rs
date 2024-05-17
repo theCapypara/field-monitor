@@ -16,6 +16,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+use std::fs::read_dir;
+use std::path::PathBuf;
+
 use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
 use gtk::{gio, glib};
 use gtk::prelude::*;
@@ -28,15 +31,12 @@ use crate::config::APP_ID;
 use self::application::FieldMonitorApplication;
 use self::window::FieldMonitorWindow;
 
-mod adapter;
 mod add_connection_dialog;
 mod application;
 mod config;
 mod connection;
-mod connections;
-mod save_credentials_button;
+mod connection_list;
 mod secrets;
-pub(crate) mod util_signal_handlers;
 mod window;
 
 fn main() -> glib::ExitCode {
@@ -50,9 +50,19 @@ fn main() -> glib::ExitCode {
     textdomain(GETTEXT_PACKAGE).expect("Unable to switch to the text domain");
 
     // Load resources
-    let resources = gio::Resource::load(PKGDATADIR.to_owned() + "/field-monitor.gresource")
-        .expect("Could not load resources");
-    gio::resources_register(&resources);
+    for file in read_dir(PathBuf::from(PKGDATADIR)).expect("Failed to read resources dir") {
+        let file = file.expect("Failed to read resources dir");
+        if file
+            .path()
+            .file_name()
+            .expect("Failed to read resource filename")
+            .to_string_lossy()
+            .ends_with(".gresource")
+        {
+            let resources = gio::Resource::load(file.path()).expect("Could not load resources");
+            gio::resources_register(&resources);
+        }
+    }
 
     // Create a new GtkApplication. The application manages our main loop,
     // application windows, integration with the window manager/compositor, and

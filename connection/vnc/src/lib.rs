@@ -26,27 +26,25 @@ use futures::future::LocalBoxFuture;
 use futures::lock::Mutex;
 use gettextrs::gettext;
 
-use crate::adapter::types::Adapter;
-use crate::application::FieldMonitorApplication;
-use crate::connection::configuration::ConnectionConfiguration;
-use crate::connection::types::*;
-use crate::connection::vnc::credential_preferences::VncCredentialPreferences;
-use crate::connection::vnc::preferences::{VncConfiguration, VncPreferences};
+use libfieldmonitor::adapter::types::Adapter;
+use libfieldmonitor::connection::*;
+
+use crate::credential_preferences::VncCredentialPreferences;
+use crate::preferences::{VncConfiguration, VncPreferences};
 
 mod credential_preferences;
 mod preferences;
+mod util;
 
 pub struct VncConnectionProviderConstructor;
 
 impl ConnectionProviderConstructor for VncConnectionProviderConstructor {
-    fn new(&self, app: &FieldMonitorApplication) -> Box<dyn ConnectionProvider> {
-        Box::new(VncConnectionProvider { app: app.clone() })
+    fn new(&self) -> Box<dyn ConnectionProvider> {
+        Box::new(VncConnectionProvider {})
     }
 }
 
-pub struct VncConnectionProvider {
-    app: FieldMonitorApplication,
-}
+pub struct VncConnectionProvider {}
 
 impl ConnectionProvider for VncConnectionProvider {
     fn tag(&self) -> &'static str {

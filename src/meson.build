@@ -4,6 +4,9 @@ gnome = import('gnome')
 blueprints = custom_target('blueprints',
   input: files(
     'gtk/help-overlay.blp',
+    'gtk/help-overlay.blp',
+    'add_connection_dialog.blp',
+    'connection_list.blp',
     'window.blp',
   ),
   output: '.',

@@ -10,6 +10,8 @@ gnome = import('gnome')
 
 
 subdir('data')
+subdir('lib/src')
+subdir('connection/vnc/src')
 subdir('src')
 subdir('po')
 

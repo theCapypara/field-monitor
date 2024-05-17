@@ -24,7 +24,7 @@ use gtk::glib::Variant;
 use gtk::prelude::*;
 
 use crate::add_connection_dialog::FieldMonitorAddConnectionDialog;
-use crate::connections::FieldMonitorConnections;
+use crate::connection_list::FieldMonitorConnectionList;
 
 mod imp {
     use super::*;
@@ -118,7 +118,7 @@ impl FieldMonitorWindow {
             Some(p)
                 if p.child()
                     .type_()
-                    .is_a(FieldMonitorConnections::static_type()) =>
+                    .is_a(FieldMonitorConnectionList::static_type()) =>
             {
                 self.imp().button_connection_list.set_visible(false);
             }
@@ -150,7 +150,7 @@ impl FieldMonitorWindow {
             if child
                 .child()
                 .type_()
-                .is_a(FieldMonitorConnections::static_type())
+                .is_a(FieldMonitorConnectionList::static_type())
             {
                 return Some(child);
             }
@@ -169,7 +169,7 @@ impl FieldMonitorWindow {
 
     pub fn open_new_connection_list(&self) -> adw::TabPage {
         let title = gettext("Connection List");
-        let page = FieldMonitorConnections::new();
+        let page = FieldMonitorConnectionList::new();
         let tab_page = self.imp().tab_view.append(&page);
 
         tab_page.set_title(&title);

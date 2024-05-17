@@ -1,7 +1,28 @@
+/* Copyright 2024 Marco Köpcke
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
 use std::ops::Deref;
 
 use gettextrs::gettext;
 use log::warn;
+use oo7::zbus::export::futures_core::future::LocalBoxFuture;
+
+use libfieldmonitor::ManagesSecrets;
 
 use crate::config::APP_ID;
 
@@ -15,65 +36,88 @@ impl SecretManager {
         let keyring = oo7::portal::Keyring::load_default().await?;
         Ok(Self { keyring })
     }
+}
 
-    pub async fn lookup(&self, connection_id: &str, field: &str) -> anyhow::Result<Option<String>> {
-        let mut attributes = std::collections::HashMap::new();
-        attributes.insert("app", APP_ID);
-        attributes.insert("connection_id", connection_id);
-        attributes.insert("field", field);
+impl ManagesSecrets for SecretManager {
+    fn lookup(
+        &self,
+        connection_id: &str,
+        field: &str,
+    ) -> LocalBoxFuture<anyhow::Result<Option<String>>> {
+        let connection_id = connection_id.to_string();
+        let field = field.to_string();
+        Box::pin(async move {
+            let mut attributes = std::collections::HashMap::new();
+            attributes.insert("app", APP_ID);
+            attributes.insert("connection_id", &connection_id);
+            attributes.insert("field", &field);
 
-        let items = self
-            .keyring
-            .search_items(&attributes)
-            .await
-            .inspect_err(|err| {
-                warn!("failed to lookup a secret for {connection_id}/{field}: {err}")
-            })?;
+            let items = self
+                .keyring
+                .search_items(&attributes)
+                .await
+                .inspect_err(|err| {
+                    warn!("failed to lookup a secret for {connection_id}/{field}: {err}")
+                })?;
 
-        match items.first() {
-            None => Ok(None),
-            Some(item) => {
-                let secret_raw = item.secret();
-                let secret = String::from_utf8(secret_raw.deref().clone())?;
-                Ok(Some(secret))
+            match items.first() {
+                None => Ok(None),
+                Some(item) => {
+                    let secret_raw = item.secret();
+                    let secret = String::from_utf8(secret_raw.deref().clone())?;
+                    Ok(Some(secret))
+                }
             }
-        }
+        })
     }
 
-    pub async fn store(
+    fn store(
         &self,
         connection_id: &str,
         field: &str,
         password: &str,
-    ) -> anyhow::Result<()> {
-        let mut attributes = std::collections::HashMap::new();
-        attributes.insert("app", APP_ID);
-        attributes.insert("connection_id", connection_id);
-        attributes.insert("field", field);
+    ) -> LocalBoxFuture<anyhow::Result<()>> {
+        let connection_id = connection_id.to_string();
+        let field = field.to_string();
+        let password = password.to_string();
+        Box::pin(async move {
+            let mut attributes = std::collections::HashMap::new();
+            attributes.insert("app", APP_ID);
+            attributes.insert("connection_id", &connection_id);
+            attributes.insert("field", &field);
 
-        self.keyring
-            .create_item(
-                &gettext("A secret value used by Field Monitor"),
-                &attributes,
-                password,
-                true,
-            )
-            .await
-            .inspect_err(|err| warn!("failed to store a secret for {connection_id}/{field}: {err}"))
-            .map_err(Into::into)
-            .map(drop)
+            self.keyring
+                .create_item(
+                    &gettext("A secret value used by Field Monitor"),
+                    &attributes,
+                    &password,
+                    true,
+                )
+                .await
+                .inspect_err(|err| {
+                    warn!("failed to store a secret for {connection_id}/{field}: {err}")
+                })
+                .map_err(Into::into)
+                .map(drop)
+        })
     }
 
-    pub async fn clear(&self, connection_id: &str, field: &str) -> anyhow::Result<()> {
-        let mut attributes = std::collections::HashMap::new();
-        attributes.insert("app", APP_ID);
-        attributes.insert("connection_id", connection_id);
-        attributes.insert("field", field);
+    fn clear(&self, connection_id: &str, field: &str) -> LocalBoxFuture<anyhow::Result<()>> {
+        let connection_id = connection_id.to_string();
+        let field = field.to_string();
+        Box::pin(async move {
+            let mut attributes = std::collections::HashMap::new();
+            attributes.insert("app", APP_ID);
+            attributes.insert("connection_id", &connection_id);
+            attributes.insert("field", &field);
 
-        self.keyring
-            .delete(&attributes)
-            .await
-            .inspect_err(|err| warn!("failed to clear a secret for {connection_id}/{field}: {err}"))
-            .map_err(Into::into)
+            self.keyring
+                .delete(&attributes)
+                .await
+                .inspect_err(|err| {
+                    warn!("failed to clear a secret for {connection_id}/{field}: {err}")
+                })
+                .map_err(Into::into)
+        })
     }
 }

@@ -1,0 +1,19 @@
+[package]
+name = "field-monitor-vnc"
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+libfieldmonitor = { path = "../../lib" }
+gettext-rs = { workspace = true }
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_yaml = { workspace = true }
+futures = { workspace = true }
+log = { workspace = true }
+async-std = { workspace = true }
+glib = { workspace = true }
+gtk = { workspace = true }
+adw = { workspace = true }
+rdw = { workspace = true }
+rdw-vnc = { workspace = true }

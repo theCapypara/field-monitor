@@ -38,26 +38,23 @@ use log::{debug, error};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use libfieldmonitor::connection::ConnectionConfiguration;
+use libfieldmonitor::connection::ConnectionInstance;
+use libfieldmonitor::connection::ConnectionProvider;
+use libfieldmonitor::ManagesSecrets;
+
 use crate::config::{APP_ID, VERSION};
-use crate::connection::configuration::ConnectionConfiguration;
 use crate::connection::CONNECTION_PROVIDERS;
-use crate::connection::instance::ConnectionInstance;
-use crate::connection::types::ConnectionProvider;
 use crate::FieldMonitorWindow;
 use crate::secrets::SecretManager;
 
-use crate::connection::CONNECTION_PROVIDERS;
-use crate::secrets::SecretManager;
-
 mod imp {
-    use log::debug;
-
     use super::*;
 
     #[derive(Default, glib::Properties)]
     #[properties(wrapper_type = super::FieldMonitorApplication)]
     pub struct FieldMonitorApplication {
-        pub secret_manager: RefCell<Option<Arc<SecretManager>>>,
+        pub secret_manager: RefCell<Option<Arc<Box<dyn ManagesSecrets>>>>,
         pub connections: RefCell<Option<HashMap<String, ConnectionInstance>>>,
         pub providers: RefCell<HashMap<String, Rc<Box<dyn ConnectionProvider>>>>,
         /// Whether Field Monitor is currently (re-)loading all connections.
@@ -151,7 +148,7 @@ mod imp {
                     CONNECTION_PROVIDERS
                         .iter()
                         .map(|constructor| {
-                            let provider = constructor.new(&self.obj());
+                            let provider = constructor.new();
                             (provider.tag().to_owned(), Rc::new(provider))
                         })
                         .collect(),
@@ -165,7 +162,7 @@ mod imp {
                     let secrets = SecretManager::new().await;
                     match secrets {
                         Ok(secrets) => {
-                            slf.secret_manager.replace(Some(Arc::new(secrets)));
+                            slf.secret_manager.replace(Some(Arc::new(Box::new(secrets))));
                             slf.finish_activate();
                         },
                         Err(err) => {

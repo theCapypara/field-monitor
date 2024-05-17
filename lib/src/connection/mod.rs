@@ -16,14 +16,11 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use crate::connection::types::ConnectionProviderConstructor;
-use crate::connection::vnc::VncConnectionProviderConstructor;
+pub use configuration::*;
+pub use instance::*;
+pub use types::*;
 
-pub mod configuration;
-pub mod instance;
-pub mod types;
-pub mod vnc;
+mod configuration;
+mod instance;
+mod types;
 
-// TODO: Plugin system?
-pub static CONNECTION_PROVIDERS: &[&dyn ConnectionProviderConstructor] =
-    &[&VncConnectionProviderConstructor];

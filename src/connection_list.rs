@@ -25,16 +25,16 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/de/capypara/FieldMonitor/connections.ui")]
-    pub struct FieldMonitorConnections {
+    #[template(resource = "/de/capypara/FieldMonitor/connection_list.ui")]
+    pub struct FieldMonitorConnectionList {
         #[template_child]
         pub toast_overlay: TemplateChild<ToastOverlay>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for FieldMonitorConnections {
-        const NAME: &'static str = "FieldMonitorConnections";
-        type Type = super::FieldMonitorConnections;
+    impl ObjectSubclass for FieldMonitorConnectionList {
+        const NAME: &'static str = "FieldMonitorConnectionList";
+        type Type = super::FieldMonitorConnectionList;
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
@@ -47,23 +47,23 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for FieldMonitorConnections {}
-    impl WidgetImpl for FieldMonitorConnections {}
-    impl BinImpl for FieldMonitorConnections {}
+    impl ObjectImpl for FieldMonitorConnectionList {}
+    impl WidgetImpl for FieldMonitorConnectionList {}
+    impl BinImpl for FieldMonitorConnectionList {}
 }
 
 glib::wrapper! {
-    pub struct FieldMonitorConnections(ObjectSubclass<imp::FieldMonitorConnections>)
+    pub struct FieldMonitorConnectionList(ObjectSubclass<imp::FieldMonitorConnectionList>)
         @extends gtk::Widget, adw::Bin;
 }
 
-impl Default for FieldMonitorConnections {
+impl Default for FieldMonitorConnectionList {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl FieldMonitorConnections {
+impl FieldMonitorConnectionList {
     pub fn new() -> Self {
         glib::Object::builder().build()
     }
@@ -78,4 +78,4 @@ impl FieldMonitorConnections {
 }
 
 #[gtk::template_callbacks]
-impl FieldMonitorConnections {}
+impl FieldMonitorConnectionList {}

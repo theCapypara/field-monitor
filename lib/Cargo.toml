@@ -1,0 +1,15 @@
+[package]
+name = "libfieldmonitor"
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+gettext-rs = { workspace = true }
+anyhow = { workspace = true }
+serde = { workspace = true }
+serde_yaml = { workspace = true }
+futures = { workspace = true }
+log = { workspace = true }
+async-std = { workspace = true }
+glib = { workspace = true }
+gtk = { workspace = true }

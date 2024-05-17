@@ -2,16 +2,9 @@
 <gresources>
     <gresource prefix="/de/capypara/FieldMonitor">
         <file preprocess="xml-stripblanks">window.ui</file>
-        <file preprocess="xml-stripblanks">connections.ui</file>
+        <file preprocess="xml-stripblanks">connection_list.ui</file>
         <file preprocess="xml-stripblanks">add_connection_dialog.ui</file>
-        <file preprocess="xml-stripblanks">save_credentials_button.ui</file>
         <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
-        <file preprocess="xml-stripblanks">connection/vnc/credential_preferences.ui</file>
-        <file preprocess="xml-stripblanks">connection/vnc/preferences.ui</file>
         <file>style.css</file>
-    </gresource>
-    <gresource prefix="/de/capypara/FieldMonitor/icons/scalable/actions">
-        <file preprocess="xml-stripblanks">key-symbolic.svg</file>
-        <file preprocess="xml-stripblanks">key-off-symbolic.svg</file>
     </gresource>
 </gresources>

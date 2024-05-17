@@ -15,6 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+
 use std::cell::RefCell;
 use std::num::NonZeroU32;
 use std::rc::Rc;
@@ -25,8 +26,9 @@ use futures::lock::Mutex;
 use gtk::glib;
 use gtk::prelude::*;
 
-use crate::connection::configuration::ConnectionConfiguration;
-use crate::connection::vnc::credential_preferences::VncCredentialPreferences;
+use libfieldmonitor::connection::ConnectionConfiguration;
+
+use crate::credential_preferences::VncCredentialPreferences;
 
 pub(super) trait VncConfiguration {
     fn title(&self) -> Option<&str>;

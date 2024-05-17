@@ -25,10 +25,11 @@ use gtk::glib;
 use gtk::glib::clone;
 use gtk::prelude::*;
 
-use crate::connection::configuration::ConnectionConfiguration;
-use crate::connection::vnc::preferences::VncConfiguration;
-use crate::save_credentials_button::FieldMonitorSaveCredentialsButton;
-use crate::util_signal_handlers::clear_editable_if_becoming_not_editable;
+use libfieldmonitor::connection::ConnectionConfiguration;
+use libfieldmonitor::gtk::FieldMonitorSaveCredentialsButton;
+
+use crate::preferences::VncConfiguration;
+use crate::util::clear_editable_if_becoming_not_editable;
 
 mod imp {
     use super::*;

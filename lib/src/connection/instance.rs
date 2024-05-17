@@ -20,9 +20,9 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use adw::prelude::*;
-use adw::subclass::prelude::*;
-use gtk::glib;
+use glib;
+use glib::prelude::*;
+use glib::subclass::prelude::*;
 use log::debug;
 
 use crate::connection::configuration::ConnectionConfiguration;
@@ -55,7 +55,7 @@ glib::wrapper! {
 static NOT_INIT: &str = "ConnectionInstance was not properly initialized";
 
 impl ConnectionInstance {
-    pub(crate) async fn new(
+    pub async fn new(
         configuration: ConnectionConfiguration,
         provider: Rc<Box<dyn ConnectionProvider>>,
     ) -> anyhow::Result<Self> {
@@ -84,10 +84,8 @@ impl ConnectionInstance {
         Ok(slf)
     }
 
-    pub(crate) async fn set_configuration(
-        &self,
-        value: ConnectionConfiguration,
-    ) -> anyhow::Result<()> {
+    /// Changes the configuration and recreates the implementation.
+    pub async fn set_configuration(&self, value: ConnectionConfiguration) -> anyhow::Result<()> {
         let slf_imp = self.imp();
         let provider = slf_imp.provider.borrow().as_ref().expect(NOT_INIT).clone();
         let implementation = provider.load_connection(&value).await?;
@@ -96,7 +94,7 @@ impl ConnectionInstance {
         Ok(())
     }
 
-    pub(crate) fn provider_tag(&self) -> Option<String> {
+    pub fn provider_tag(&self) -> Option<String> {
         self.imp()
             .configuration
             .borrow()
@@ -104,7 +102,7 @@ impl ConnectionInstance {
             .map(|c| c.tag().to_string())
     }
 
-    pub(crate) fn id(&self) -> Option<String> {
+    pub fn id(&self) -> Option<String> {
         self.imp()
             .configuration
             .borrow()
