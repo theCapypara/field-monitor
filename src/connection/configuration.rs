@@ -16,44 +16,22 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use std::cell::RefCell;
 use std::collections::HashMap;
 use std::mem::take;
 use std::sync::Arc;
 
-use adw::subclass::prelude::*;
 use futures::future::{LocalBoxFuture, try_join_all};
-use gtk::glib;
 
 use crate::secrets::SecretManager;
 
-mod imp {
-    use super::*;
-
-    #[derive(Default)]
-    pub struct ConnectionConfiguration {
-        pub(super) config: RefCell<HashMap<String, serde_yaml::Value>>,
-        pub(super) provider_tag: RefCell<Option<String>>,
-        pub(super) connection_id: RefCell<Option<String>>,
-        pub(super) secret_manager: RefCell<Option<Arc<SecretManager>>>,
-        pub(super) pending_secret_changes: RefCell<HashMap<String, Option<String>>>,
-    }
-
-    #[glib::object_subclass]
-    impl ObjectSubclass for ConnectionConfiguration {
-        const NAME: &'static str = "ConnectionConfiguration";
-        type Type = super::ConnectionConfiguration;
-        type ParentType = glib::Object;
-    }
-
-    impl ObjectImpl for ConnectionConfiguration {}
+#[derive(Clone)]
+pub struct ConnectionConfiguration {
+    config: HashMap<String, serde_yaml::Value>,
+    provider_tag: String,
+    connection_id: String,
+    secret_manager: Arc<SecretManager>,
+    pending_secret_changes: HashMap<String, Option<String>>,
 }
-
-glib::wrapper! {
-    pub struct ConnectionConfiguration(ObjectSubclass<imp::ConnectionConfiguration>);
-}
-
-static NOT_INIT: &str = "ConnectionConfiguration was not properly initialized";
 
 impl ConnectionConfiguration {
     pub(crate) fn new(
@@ -61,36 +39,46 @@ impl ConnectionConfiguration {
         provider_tag: String,
         secret_manager: Arc<SecretManager>,
     ) -> Self {
-        let slf: Self = glib::Object::builder().build();
-        let imp = slf.imp();
-        imp.provider_tag.replace(Some(provider_tag));
-        imp.connection_id.replace(Some(connection_id));
-        imp.secret_manager.replace(Some(secret_manager));
-        slf
+        Self {
+            config: Default::default(),
+            provider_tag,
+            connection_id,
+            secret_manager,
+            pending_secret_changes: Default::default(),
+        }
     }
 
-    pub(crate) fn tag(&self) -> String {
-        self.imp().provider_tag.borrow().clone().expect(NOT_INIT)
+    pub(crate) fn new_existing(
+        connection_id: String,
+        provider_tag: String,
+        config: HashMap<String, serde_yaml::Value>,
+        secret_manager: Arc<SecretManager>,
+    ) -> Self {
+        Self {
+            config,
+            provider_tag,
+            connection_id,
+            secret_manager,
+            pending_secret_changes: Default::default(),
+        }
     }
 
-    pub(crate) fn id(&self) -> String {
-        self.imp().connection_id.borrow().clone().expect(NOT_INIT)
+    pub(crate) fn tag(&self) -> &str {
+        &self.provider_tag
+    }
+
+    pub(crate) fn id(&self) -> &str {
+        &self.connection_id
     }
 
     /// Saves pending secret changes to the keychain, returns configuration.
     pub(crate) async fn save(&mut self) -> anyhow::Result<HashMap<String, serde_yaml::Value>> {
-        let imp = self.imp();
-        let pending_secret_changes = take(&mut *imp.pending_secret_changes.borrow_mut());
+        let pending_secret_changes = take(&mut self.pending_secret_changes);
         let mut futs: Vec<LocalBoxFuture<anyhow::Result<()>>> =
             Vec::with_capacity(pending_secret_changes.len());
         for (k, v) in pending_secret_changes {
-            let secret_manager = imp
-                .secret_manager
-                .borrow()
-                .as_ref()
-                .expect(NOT_INIT)
-                .clone();
-            let connection_id = imp.connection_id.borrow().as_ref().expect(NOT_INIT).clone();
+            let secret_manager = self.secret_manager.clone();
+            let connection_id = self.connection_id.clone();
             match v {
                 None => futs.push(Box::pin(Self::do_clear_secret(
                     secret_manager,
@@ -106,15 +94,14 @@ impl ConnectionConfiguration {
             }
         }
         try_join_all(futs.into_iter()).await?;
-        Ok(imp.config.borrow().clone())
+        Ok(self.config.clone())
     }
 
-    pub fn get(&self, key: &str) -> Option<serde_yaml::Value> {
-        self.imp().config.borrow().get(key).cloned()
+    pub fn get(&self, key: &str) -> Option<&serde_yaml::Value> {
+        self.config.get(key)
     }
-    pub fn get_try_as_str(&self, key: &str) -> Option<String> {
-        self.get(key)
-            .and_then(|v| v.as_str().map(ToOwned::to_owned))
+    pub fn get_try_as_str(&self, key: &str) -> Option<&str> {
+        self.get(key).and_then(|v| v.as_str())
     }
     pub fn get_try_as_u64(&self, key: &str) -> Option<u64> {
         self.get(key).and_then(|v| v.as_u64())
@@ -123,47 +110,25 @@ impl ConnectionConfiguration {
         self.get(key).and_then(|v| v.as_i64())
     }
     pub fn set(&mut self, key: impl ToString, value: impl Into<serde_yaml::Value>) {
-        self.imp()
-            .config
-            .borrow_mut()
-            .insert(key.to_string(), value.into());
+        self.config.insert(key.to_string(), value.into());
     }
     pub async fn get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<String>> {
-        if let Some(v) = self.imp().pending_secret_changes.borrow().get(key.as_ref()) {
-            return Ok(v.clone());
+        match self.pending_secret_changes.get(key.as_ref()) {
+            None => self.do_get_secret(key).await,
+            Some(v) => Ok(v.clone()),
         }
-        self.do_get_secret(key).await
     }
     pub fn clear_secret(&mut self, key: impl ToString) {
-        self.imp()
-            .pending_secret_changes
-            .borrow_mut()
-            .insert(key.to_string(), None);
+        self.pending_secret_changes.insert(key.to_string(), None);
     }
     pub fn set_secret(&mut self, key: impl ToString, value: impl ToString) {
-        self.imp()
-            .pending_secret_changes
-            .borrow_mut()
+        self.pending_secret_changes
             .insert(key.to_string(), Some(value.to_string()));
     }
 
     async fn do_get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<String>> {
-        let secret_manager = self
-            .imp()
-            .secret_manager
-            .borrow()
-            .as_ref()
-            .expect(NOT_INIT)
-            .clone();
-        let connection_id = self
-            .imp()
-            .connection_id
-            .borrow()
-            .as_ref()
-            .expect(NOT_INIT)
-            .clone();
-        secret_manager
-            .lookup(&connection_id, key.as_ref())
+        self.secret_manager
+            .lookup(&self.connection_id, key.as_ref())
             .await
             .map(|gstr| gstr.map(Into::into))
             .map_err(Into::into)

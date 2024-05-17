@@ -17,6 +17,8 @@
  */
 
 use adw::subclass::prelude::*;
+use adw::ToastOverlay;
+use gettextrs::gettext;
 use gtk::glib;
 
 mod imp {
@@ -24,7 +26,10 @@ mod imp {
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
     #[template(resource = "/de/capypara/FieldMonitor/connections.ui")]
-    pub struct FieldMonitorConnections {}
+    pub struct FieldMonitorConnections {
+        #[template_child]
+        pub toast_overlay: TemplateChild<ToastOverlay>,
+    }
 
     #[glib::object_subclass]
     impl ObjectSubclass for FieldMonitorConnections {
@@ -61,6 +66,14 @@ impl Default for FieldMonitorConnections {
 impl FieldMonitorConnections {
     pub fn new() -> Self {
         glib::Object::builder().build()
+    }
+    pub fn connection_added(&self) {
+        self.imp().toast_overlay.add_toast(
+            adw::Toast::builder()
+                .title(gettext("Connection successfully added."))
+                .timeout(5)
+                .build(),
+        )
     }
 }
 

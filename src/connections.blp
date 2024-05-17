@@ -5,19 +5,21 @@ template $FieldMonitorConnections : Adw.Bin {
     child: Overlay {
         vexpand: true;
 
-        ScrolledWindow {
-            hscrollbar-policy: never;
+        Adw.ToastOverlay toast_overlay {
+            ScrolledWindow {
+                hscrollbar-policy: never;
 
-            Stack {
-                StackPage {
-                    name: "empty_list";
-                    child: Adw.StatusPage {
-                        title: _("Field Monitor");
-                        description: _("There are no connections configured yet.\nActivate the button below to get started.");
-                        icon-name: "de.capypara.FieldMonitor-symbolic";
-                    };
+                Stack {
+                    StackPage {
+                        name: "empty_list";
+                        child: Adw.StatusPage {
+                            title: _("Field Monitor");
+                            description: _("There are no connections configured yet.\nActivate the button below to get started.");
+                            icon-name: "de.capypara.FieldMonitor-symbolic";
+                        };
+                    }
+                    styles ["content-page"]
                 }
-                styles ["content-page"]
             }
         }
 

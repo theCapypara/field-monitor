@@ -136,8 +136,8 @@ impl ConnectionProvider for VncConnectionProvider {
 
     fn load_connection(
         &self,
-        configuration: ConnectionConfiguration,
-    ) -> anyhow::Result<Box<dyn Connection>> {
+        configuration: &ConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<Box<dyn Connection>>> {
         todo!()
     }
 }

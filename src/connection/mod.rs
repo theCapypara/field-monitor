@@ -20,6 +20,7 @@ use crate::connection::types::ConnectionProviderConstructor;
 use crate::connection::vnc::VncConnectionProviderConstructor;
 
 pub mod configuration;
+pub mod instance;
 pub mod types;
 pub mod vnc;
 

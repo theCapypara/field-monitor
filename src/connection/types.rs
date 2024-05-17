@@ -110,8 +110,8 @@ pub trait ConnectionProvider {
     /// may error or incorrectly try to load.
     fn load_connection(
         &self,
-        configuration: ConnectionConfiguration,
-    ) -> anyhow::Result<Box<dyn Connection>>;
+        configuration: &ConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<Box<dyn Connection>>>;
 }
 
 /// A connection. Represents one or more servers which are logically

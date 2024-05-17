@@ -28,8 +28,8 @@ use gtk::glib::clone;
 use gtk::prelude::{ButtonExt, WidgetExt};
 
 use crate::application::FieldMonitorApplication;
-use crate::connection::CONNECTION_PROVIDERS;
 use crate::connection::types::ConnectionProvider;
+use crate::connections::FieldMonitorConnections;
 
 mod imp {
     use super::*;
@@ -77,8 +77,7 @@ impl FieldMonitorAddConnectionDialog {
     pub fn new(app: &FieldMonitorApplication) -> Self {
         let slf: Self = glib::Object::builder().property("application", app).build();
 
-        for constructor in CONNECTION_PROVIDERS {
-            let provider = Rc::new(constructor.new(app));
+        for provider in app.connection_providers() {
             let action_row = adw::ActionRow::builder()
                 .title(provider.title())
                 .subtitle(provider.description())
@@ -160,6 +159,11 @@ impl FieldMonitorAddConnectionDialog {
             Ok(()) => match app.save_connection(&mut *config.lock().await).await {
                 Ok(()) => {
                     self.force_close();
+                    if let Some(parent) = self.parent() {
+                        if let Ok(connection_list) = parent.downcast::<FieldMonitorConnections>() {
+                            connection_list.connection_added();
+                        }
+                    }
                     return;
                 }
                 Err(err) => {

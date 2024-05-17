@@ -29,10 +29,10 @@ use crate::connection::configuration::ConnectionConfiguration;
 use crate::connection::vnc::credential_preferences::VncCredentialPreferences;
 
 pub(super) trait VncConfiguration {
-    fn title(&self) -> Option<String>;
-    fn host(&self) -> Option<String>;
+    fn title(&self) -> Option<&str>;
+    fn host(&self) -> Option<&str>;
     fn port(&self) -> Option<NonZeroU32>;
-    fn user(&self) -> Option<String>;
+    fn user(&self) -> Option<&str>;
     async fn password(&self) -> anyhow::Result<Option<String>>;
     fn set_title(&mut self, value: &str);
     fn set_host(&mut self, value: &str);
@@ -42,11 +42,11 @@ pub(super) trait VncConfiguration {
 }
 
 impl VncConfiguration for ConnectionConfiguration {
-    fn title(&self) -> Option<String> {
+    fn title(&self) -> Option<&str> {
         self.get_try_as_str("title")
     }
 
-    fn host(&self) -> Option<String> {
+    fn host(&self) -> Option<&str> {
         self.get_try_as_str("host")
     }
 
@@ -60,7 +60,7 @@ impl VncConfiguration for ConnectionConfiguration {
         })
     }
 
-    fn user(&self) -> Option<String> {
+    fn user(&self) -> Option<&str> {
         self.get_try_as_str("user")
     }
 
