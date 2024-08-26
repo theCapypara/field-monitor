@@ -426,7 +426,7 @@ dependencies = [
 [[package]]
 name = "cbindgen"
 version = "0.20.0"
-source = "git+https://gitlab.gnome.org/malureau/rdw.git?rev=034ccd36#034ccd369dddc89dc3d8a2f43f3efc7a9d33bcee"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#e30cfc63b7305d4186235c9ab1c10fb68b4fff2c"
 dependencies = [
  "clap",
  "heck 0.3.3",
@@ -1684,6 +1684,7 @@ dependencies = [
  "log",
  "serde",
  "serde_yaml",
+ "thiserror",
 ]
 
 [[package]]
@@ -2177,12 +2178,12 @@ dependencies = [
 [[package]]
 name = "rdw-keycodemap"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/malureau/rdw.git?rev=034ccd36#034ccd369dddc89dc3d8a2f43f3efc7a9d33bcee"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#e30cfc63b7305d4186235c9ab1c10fb68b4fff2c"
 
 [[package]]
 name = "rdw4"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/malureau/rdw.git?rev=034ccd36#034ccd369dddc89dc3d8a2f43f3efc7a9d33bcee"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#e30cfc63b7305d4186235c9ab1c10fb68b4fff2c"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -2212,7 +2213,7 @@ dependencies = [
 [[package]]
 name = "rdw4-vnc"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/malureau/rdw.git?rev=034ccd36#034ccd369dddc89dc3d8a2f43f3efc7a9d33bcee"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#e30cfc63b7305d4186235c9ab1c10fb68b4fff2c"
 dependencies = [
  "cargo_metadata",
  "cbindgen",

@@ -41,25 +41,25 @@ branch = "master"
 
 [workspace.dependencies.rdw]
 package = "rdw4"
-git = "https://gitlab.gnome.org/malureau/rdw.git"
-rev = "034ccd36"
+git = "https://gitlab.gnome.org/theCapypara/rdw.git"
+branch = "field-monitor"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
-git = "https://gitlab.gnome.org/malureau/rdw.git"
-rev = "034ccd36"
+git = "https://gitlab.gnome.org/theCapypara/rdw.git"
+branch = "field-monitor"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
-git = "https://gitlab.gnome.org/malureau/rdw.git"
-rev = "034ccd36"
+git = "https://gitlab.gnome.org/theCapypara/rdw.git"
+branch = "field-monitor"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
-git = "https://gitlab.gnome.org/malureau/rdw.git"
-rev = "034ccd36"
+git = "https://gitlab.gnome.org/theCapypara/rdw.git"
+branch = "field-monitor"
 default-features = false
 
 [workspace.dependencies.vte]
