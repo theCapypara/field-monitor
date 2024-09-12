@@ -15,3 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+
+pub mod add_connection_dialog;
+pub mod connection_list;
+pub mod window;

@@ -28,10 +28,12 @@
             gst_all_1.gst-plugins-base
             gst_all_1.gst-plugins-good
             gtk-vnc
+            freerdp
+            spice-protocol
+            spice-gtk
             libepoxy
           ];
           libPath = with pkgs; lib.makeLibraryPath extraLibs;
-          gvnc = pkgs.callPackage ./nix/package/gvnc.nix { };
         in
         {
           default = pkgs.mkShell {
@@ -72,6 +74,7 @@
               with pkgs;
               [
                 gtk4
+                vte-gtk4
                 libadwaita
                 meson
                 ninja
@@ -82,9 +85,14 @@
                 gst_all_1.gst-plugins-base
                 gst_all_1.gst-plugins-good
                 gtk-vnc
+                freerdp
+                spice-protocol
+                spice-gtk
                 libepoxy
                 flatpak-builder
+                python312
               ]
+              ++ (with python312Packages; [ pygobject3 ])
               ## RUST
               ++ [
                 clang

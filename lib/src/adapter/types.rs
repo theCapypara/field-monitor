@@ -15,7 +15,20 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use crate::connection::ConnectionError;
+
+/// A display widget for interacting with the remote server
+pub enum AdapterDisplay {
+    Rdw(rdw::Display),
+    Vte(vte::Terminal),
+}
 
 /// An adapter to connect to a remote server and provide widgets
 /// to interact with said server.
-pub trait Adapter {}
+pub trait Adapter {
+    fn create_and_connect_display(
+        self,
+        on_connected: &'static dyn Fn(),
+        on_disconnected: &'static dyn Fn(Result<(), ConnectionError>),
+    ) -> AdapterDisplay;
+}

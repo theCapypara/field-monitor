@@ -13,3 +13,14 @@ log = { workspace = true }
 async-std = { workspace = true }
 glib = { workspace = true }
 gtk = { workspace = true }
+rdw = { workspace = true }
+rdw-spice = { workspace = true }
+rdw-rdp = { workspace = true }
+rdw-vnc = { workspace = true }
+vte = { workspace = true }
+thiserror = "1.0"
+num_enum = { workspace = true }
+indexmap = { workspace = true }
+
+[lints]
+workspace = true

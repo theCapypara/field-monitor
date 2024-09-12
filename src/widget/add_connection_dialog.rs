@@ -26,18 +26,22 @@ use gettextrs::gettext;
 use gtk::glib;
 use gtk::glib::clone;
 use gtk::prelude::{ButtonExt, WidgetExt};
+use itertools::Itertools;
 
 use libfieldmonitor::connection::ConnectionProvider;
 
 use crate::application::FieldMonitorApplication;
-use crate::connection_list::FieldMonitorConnectionList;
 
 mod imp {
+    use std::sync::OnceLock;
+
+    use glib::subclass::Signal;
+
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
     #[properties(wrapper_type = super::FieldMonitorAddConnectionDialog)]
-    #[template(resource = "/de/capypara/FieldMonitor/add_connection_dialog.ui")]
+    #[template(resource = "/de/capypara/FieldMonitor/widget/add_connection_dialog.ui")]
     pub struct FieldMonitorAddConnectionDialog {
         #[template_child]
         pub navigation_view: TemplateChild<adw::NavigationView>,
@@ -64,7 +68,12 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for FieldMonitorAddConnectionDialog {}
+    impl ObjectImpl for FieldMonitorAddConnectionDialog {
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: OnceLock<Vec<Signal>> = OnceLock::new();
+            SIGNALS.get_or_init(|| vec![Signal::builder("finished-adding").build()])
+        }
+    }
     impl WidgetImpl for FieldMonitorAddConnectionDialog {}
     impl AdwDialogImpl for FieldMonitorAddConnectionDialog {}
 }
@@ -78,13 +87,19 @@ impl FieldMonitorAddConnectionDialog {
     pub fn new(app: &FieldMonitorApplication) -> Self {
         let slf: Self = glib::Object::builder().property("application", app).build();
 
-        for provider in app.connection_providers() {
+        for provider in app
+            .connection_providers()
+            .into_iter()
+            .sorted_by_cached_key(|p| p.title())
+        {
             let action_row = adw::ActionRow::builder()
                 .title(provider.title())
                 .subtitle(provider.description())
                 .activatable(true)
                 .build();
-            action_row.connect_activated(clone!(@weak slf =>
+            action_row.connect_activated(clone!(
+                #[weak]
+                slf,
                 move |_| {
                     slf.on_activate_provider(provider.clone());
                 }
@@ -125,14 +140,21 @@ impl FieldMonitorAddConnectionDialog {
             .build();
 
         let slf = self;
-        add_button.connect_clicked(clone!(@weak slf, @weak preferences, @weak toast_overlay => move |_| {
-            let provider_clone = provider.clone();
-            glib::spawn_future_local(
-                async move {
-                    slf.on_connection_add((*provider_clone).as_ref(), preferences, toast_overlay).await;
-                }
-            );
-        }));
+        add_button.connect_clicked(clone!(
+            #[weak]
+            slf,
+            #[weak]
+            preferences,
+            #[weak]
+            toast_overlay,
+            move |_| {
+                let provider_clone = provider.clone();
+                glib::spawn_future_local(async move {
+                    slf.on_connection_add((*provider_clone).as_ref(), preferences, toast_overlay)
+                        .await;
+                });
+            }
+        ));
 
         self.imp().navigation_view.push(&settings_nav_page);
     }
@@ -159,13 +181,8 @@ impl FieldMonitorAddConnectionDialog {
         {
             Ok(()) => match app.save_connection(&mut *config.lock().await).await {
                 Ok(()) => {
+                    self.emit_by_name::<()>("finished-adding", &[]);
                     self.force_close();
-                    if let Some(parent) = self.parent() {
-                        if let Ok(connection_list) = parent.downcast::<FieldMonitorConnectionList>()
-                        {
-                            connection_list.connection_added();
-                        }
-                    }
                     return;
                 }
                 Err(err) => {

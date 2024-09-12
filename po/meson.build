@@ -1,1 +1,1 @@
-i18n.gettext('de.capypara.FieldMonitor', preset: 'glib')
+i18n.gettext(get_option('appid'), preset: 'glib')

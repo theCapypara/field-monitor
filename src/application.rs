@@ -18,7 +18,6 @@
 
 use std::cell::Cell;
 use std::cell::RefCell;
-use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 use std::path::PathBuf;
 use std::rc::Rc;
@@ -34,10 +33,11 @@ use futures::StreamExt;
 use gettextrs::gettext;
 use glib::subclass::Signal;
 use gtk::{gio, glib};
-use log::{debug, error};
+use log::{debug, error, warn};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use libfieldmonitor::connection::Connection;
 use libfieldmonitor::connection::ConnectionConfiguration;
 use libfieldmonitor::connection::ConnectionInstance;
 use libfieldmonitor::connection::ConnectionProvider;
@@ -45,8 +45,9 @@ use libfieldmonitor::ManagesSecrets;
 
 use crate::config::{APP_ID, VERSION};
 use crate::connection::CONNECTION_PROVIDERS;
-use crate::FieldMonitorWindow;
 use crate::secrets::SecretManager;
+use crate::widget::add_connection_dialog::FieldMonitorAddConnectionDialog;
+use crate::widget::window::FieldMonitorWindow;
 
 mod imp {
     use super::*;
@@ -75,19 +76,9 @@ mod imp {
             static SIGNALS: OnceLock<Vec<Signal>> = OnceLock::new();
             SIGNALS.get_or_init(|| {
                 vec![
-                    // This signal is emitted when connections are added or updated
-                    // after the first initial load.
+                    // This signal is emitted when connections are added or updated.
                     Signal::builder("connection-updated")
                         .param_types([ConnectionInstance::static_type()])
-                        .build(),
-                    // This signal is emitted when connections was added or updated,
-                    // but it failed to initialize.
-                    Signal::builder("connection-failed-updating")
-                        .param_types([
-                            String::static_type(), // Provider Title
-                            String::static_type(), // Connection ID
-                            String::static_type(), // Error
-                        ])
                         .build(),
                     // This signal is emitted when connections are removed.
                     // Listeners should forget the connection with the given ID and drop
@@ -107,28 +98,21 @@ mod imp {
             self.obj().connect_closure(
                 "connection-updated",
                 false,
-                glib::closure_local!(move |instance: ConnectionInstance| {
-                    debug!(
-                        "connection updated: tag: {:?}, id: {:?}",
-                        instance.provider_tag(),
-                        instance.id()
-                    );
-                }),
-            );
-            self.obj().connect_closure(
-                "connection-failed-updating",
-                false,
-                glib::closure_local!(move |provider_title: String, id: String, error: String| {
-                    debug!(
-                        "connection failed updating: provider: {}, id: {}, error: {}",
-                        provider_title, id, error
-                    );
-                }),
+                glib::closure_local!(
+                    move |_: super::FieldMonitorApplication, instance: ConnectionInstance| {
+                        debug!(
+                            "connection updated: tag: {:?}, id: {:?}, title: {:?}",
+                            instance.provider_tag(),
+                            instance.connection_id(),
+                            &instance.metadata().title
+                        );
+                    }
+                ),
             );
             self.obj().connect_closure(
                 "connection-removed",
                 false,
-                glib::closure_local!(move |id: String| {
+                glib::closure_local!(move |_: super::FieldMonitorApplication, id: String| {
                     debug!("connection removed: id: {}", id);
                 }),
             );
@@ -157,16 +141,20 @@ mod imp {
             // Init secret service if not done already.
             if self.secret_manager.borrow().is_none() {
                 let slf = self;
-                glib::spawn_future_local(glib::clone!(@weak slf => async move {
-                    let _hold = hold;
-                    let secrets = SecretManager::new().await;
-                    match secrets {
-                        Ok(secrets) => {
-                            slf.secret_manager.replace(Some(Arc::new(Box::new(secrets))));
-                            slf.finish_activate();
-                        },
-                        Err(err) => {
-                            let alert = adw::MessageDialog::builder()
+                glib::spawn_future_local(glib::clone!(
+                    #[weak]
+                    slf,
+                    async move {
+                        let _hold = hold;
+                        let secrets = SecretManager::new().await;
+                        match secrets {
+                            Ok(secrets) => {
+                                slf.secret_manager
+                                    .replace(Some(Arc::new(Box::new(secrets))));
+                                slf.finish_activate();
+                            }
+                            Err(err) => {
+                                let alert = adw::MessageDialog::builder()
                                 .title(gettext("Failed to initialize"))
                                 .body(format!(
                                     "{}:\n{}",
@@ -175,11 +163,12 @@ mod imp {
                                 ))
                                 .application(&*slf.obj())
                                 .build();
-                            alert.add_response("ok", &gettext("OK"));
-                            alert.present();
+                                alert.add_response("ok", &gettext("OK"));
+                                alert.present();
+                            }
                         }
                     }
-                }));
+                ));
             } else {
                 self.finish_activate();
             }
@@ -195,9 +184,13 @@ mod imp {
             if self.connections.borrow().is_none() {
                 self.connections.borrow_mut().replace(HashMap::new());
                 let slf = self;
-                glib::spawn_future_local(glib::clone!(@weak slf => async move {
-                    slf.obj().reload_connections().await;
-                }));
+                glib::spawn_future_local(glib::clone!(
+                    #[weak]
+                    slf,
+                    async move {
+                        slf.obj().reload_connections().await;
+                    }
+                ));
             }
 
             let application = self.obj();
@@ -255,12 +248,25 @@ impl FieldMonitorApplication {
             .build();
         let reload_connections_action = gio::ActionEntry::builder("reload-connections")
             .activate(move |app: &Self, _, _| {
-                glib::spawn_future_local(
-                    glib::clone!(@weak app => async move { app.reload_connections().await; }),
-                );
+                glib::spawn_future_local(glib::clone!(
+                    #[weak]
+                    app,
+                    async move {
+                        app.reload_connections().await;
+                    }
+                ));
             })
             .build();
-        self.add_action_entries([quit_action, about_action, reload_connections_action]);
+        let add_connection_action = gio::ActionEntry::builder("add-connection")
+            .activate(move |app: &Self, _, _| app.add_connection_via_dialog())
+            .build();
+
+        self.add_action_entries([
+            quit_action,
+            about_action,
+            reload_connections_action,
+            add_connection_action,
+        ]);
     }
 
     fn show_about(&self) {
@@ -280,6 +286,25 @@ impl FieldMonitorApplication {
             .build();
 
         about.present(Some(&window));
+    }
+
+    fn add_connection_via_dialog(&self) {
+        let window = self.active_window().unwrap();
+        let dialog = FieldMonitorAddConnectionDialog::new(self);
+        dialog.connect_closure(
+            "finished-adding",
+            false,
+            glib::closure_local!(
+                #[watch]
+                window,
+                move |_: &FieldMonitorAddConnectionDialog| {
+                    if let Some(window) = window.downcast_ref::<FieldMonitorWindow>() {
+                        window.toast_connection_added();
+                    }
+                }
+            ),
+        );
+        dialog.present(Some(&window));
     }
 
     pub(crate) fn connection_providers(
@@ -313,63 +338,66 @@ impl FieldMonitorApplication {
         }
     }
 
+    /// Returns a connection by ID, if it exists.
+    pub fn connection(&self, id: &str) -> Option<ConnectionInstance> {
+        let brw = self.imp().connections.borrow();
+        brw.as_ref().and_then(|cs| cs.get(id).cloned())
+    }
+
     /// Updates or adds a new configuration, does not block, will run asynchronously in background.
-    /// Result is communicated via signals connection-updated or connection-failed-updating.
+    /// When done, the signal connection-updated is emitted.
+    /// If the connection provider was not found, the connection is ignored.
     pub fn update_connection_eventually(&self, connection: ConnectionConfiguration) {
         let slf = self;
-        glib::spawn_future_local(glib::clone!(@weak slf => async move {
-            slf.update_connection(connection).await
-        }));
+        glib::spawn_future_local(glib::clone!(
+            #[weak]
+            slf,
+            async move { slf.update_connection(connection).await }
+        ));
     }
 
     /// Updates or adds a new configuration.
-    /// Result is communicated via signals connection-updated or connection-failed-updating.
+    /// When done, the signal connection-updated is emitted.
+    /// If the connection provider was not found, the connection is ignored.
+    #[allow(clippy::await_holding_refcell_ref)]
+    /// TODO with Rust 1.81 replace with:
+    //#[expect(
+    //    clippy::await_holding_refcell_ref,
+    //    reason = "OK because we explicitly drop. See known problems of lint."
+    //)]
     pub async fn update_connection(&self, connection: ConnectionConfiguration) {
         debug!("adding connection {}", connection.id());
-        let provider_title = self.provider_title_or_unknown(&connection);
-        let connection_id = connection.id().to_string();
-        match self.try_update_connection(connection).await {
-            Ok(instance) => {
-                self.emit_by_name::<()>("connection-updated", &[&instance]);
-            }
-            Err(err) => {
-                self.emit_by_name::<()>(
-                    "connection-failed-updating",
-                    &[&provider_title, &connection_id, &err.to_string()],
-                );
-            }
-        }
-    }
 
-    // XXX: This isn't ideal but should be OK, since this is all local.
-    #[allow(clippy::await_holding_refcell_ref)]
-    async fn try_update_connection(
-        &self,
-        connection: ConnectionConfiguration,
-    ) -> anyhow::Result<ConnectionInstance> {
         let imp = self.imp();
-        let mut brw = imp.connections.borrow_mut();
-        let connections = brw.as_mut().unwrap();
-        let entry = connections.entry(connection.id().to_string());
+        let brw = imp.connections.borrow();
+        let connections = brw.as_ref().unwrap();
+        let connection_id = connection.id().to_string();
+        let entry = connections.get(&connection_id);
 
-        let provider = imp.get_provider(connection.tag()).ok_or_else(|| {
-            anyhow!(
-                "{}: {}",
-                gettext("Connection provider for connection type not found"),
-                connection.tag()
-            )
-        })?;
+        let Some(provider) = imp.get_provider(connection.tag()) else {
+            warn!("unknown connection provider tag {}", connection.tag());
+            return;
+        };
+
         let instance = match entry {
-            Entry::Occupied(slot) => {
-                let instance = slot.into_mut();
-                instance.set_configuration(connection).await?;
+            Some(entry) => {
+                let instance = entry.clone();
+                drop(brw);
+                instance.set_configuration(connection).await;
                 instance
             }
-            Entry::Vacant(slot) => {
-                slot.insert(ConnectionInstance::new(connection, provider).await?)
+            None => {
+                drop(brw);
+                let instance = ConnectionInstance::new(connection, provider).await;
+                let mut brw_mut = imp.connections.borrow_mut();
+                let connections = brw_mut.as_mut().unwrap();
+                connections.insert(connection_id.clone(), instance.clone());
+                instance
             }
         };
-        Ok(instance.clone())
+        assert_eq!(&connection_id, instance.connection_id().as_str());
+
+        self.emit_by_name::<()>("connection-updated", &[&instance]);
     }
 
     async fn update_connection_by_file(&self, path: &PathBuf) -> anyhow::Result<()> {
@@ -391,12 +419,12 @@ impl FieldMonitorApplication {
     }
 
     /// Removes a connection (or does nothing if the connection was not added before).
-    pub fn remove_connection(&self, connection: &ConnectionConfiguration) {
-        let id = connection.id();
+    pub fn remove_connection(&self, connection_id: &str) {
+        debug!("removing connection {connection_id}");
         let mut brw = self.imp().connections.borrow_mut();
         if let Some(map) = brw.as_mut() {
-            if map.remove(id).is_some() {
-                self.emit_by_name::<()>("connection-removed", &[&id]);
+            if map.remove(connection_id).is_some() {
+                self.emit_by_name::<()>("connection-removed", &[&connection_id]);
             }
         }
     }
@@ -405,6 +433,23 @@ impl FieldMonitorApplication {
     pub async fn reload_connections(&self) {
         debug!("reloading connections");
         self.imp().set_loading_connection(true);
+
+        // Remove already loaded connections
+        let connections_to_remove = {
+            let connections_brw = self.imp().connections.borrow();
+            if let Some(connections) = connections_brw.as_ref() {
+                connections
+                    .values()
+                    .map(|con| con.connection_id())
+                    .collect()
+            } else {
+                vec![]
+            }
+        };
+        for connection_id in connections_to_remove.into_iter() {
+            self.remove_connection(&connection_id);
+        }
+
         match read_dir(self.connections_dir().await).await {
             Ok(dir) => {
                 dir.for_each_concurrent(5, |dir_entry_res| async {
@@ -476,15 +521,6 @@ impl FieldMonitorApplication {
                 }
                 Err(err.into())
             }
-        }
-    }
-
-    fn provider_title_or_unknown(&self, connection: &ConnectionConfiguration) -> String {
-        let brw = self.imp().providers.borrow();
-        let provider = brw.get(connection.tag());
-        match provider {
-            None => gettext("Unknown"),
-            Some(provider) => provider.title().into_owned(),
         }
     }
 }

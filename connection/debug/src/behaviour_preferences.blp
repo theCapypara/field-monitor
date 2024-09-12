@@ -1,0 +1,22 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $DebugBehaviourPreferences : Adw.PreferencesGroup {
+    title: "Behaviour";
+    load_servers_behaviour: bind behaviour_load_servers_combo.selected bidirectional;
+    connect_behaviour: bind behaviour_connect_combo.selected bidirectional;
+
+    Adw.ComboRow behaviour_load_servers_combo {
+        title: "Behaviour on load servers";
+        model: StringList {
+            strings ["No error", "Auth error", "General error"]
+        };
+    }
+
+    Adw.ComboRow behaviour_connect_combo {
+        title: "Behaviour on connect";
+        model: StringList {
+            strings ["No error", "Auth error", "General error"]
+        };
+    }
+}

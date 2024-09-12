@@ -15,6 +15,10 @@ subdir('connection/vnc/src')
 subdir('src')
 subdir('po')
 
+if get_option('buildtype') != 'release'
+  subdir('connection/debug/src')
+endif
+
 gnome.post_install(
      glib_compile_schemas: true,
     gtk_update_icon_cache: true,

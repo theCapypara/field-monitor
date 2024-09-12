@@ -4,29 +4,36 @@ gnome = import('gnome')
 blueprints = custom_target('blueprints',
   input: files(
     'gtk/help-overlay.blp',
-    'gtk/help-overlay.blp',
-    'add_connection_dialog.blp',
-    'connection_list.blp',
-    'window.blp',
+    'widget/add_connection_dialog.blp',
+    'widget/window.blp',
+    'widget/connection_list.blp',
+    'widget/connection_list/connection_entry.blp',
   ),
   output: '.',
   command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
 )
 
-gnome.compile_resources('field-monitor',
-  'field-monitor.gresource.xml',
-  gresource_bundle: true,
-  install: true,
-  install_dir: pkgdatadir,
-  dependencies: blueprints,
-)
-
 conf = configuration_data()
 conf.set_quoted('VERSION', meson.project_version())
-conf.set_quoted('APP_ID', 'de.capypara.FieldMonitor')
-conf.set_quoted('GETTEXT_PACKAGE', 'de.capypara.FieldMonitor')
+conf.set_quoted('APP_ID', get_option('appid'))
+conf.set_quoted('APP_ID_SLASHED', get_option('appid').replace('.', '/'))
+conf.set_quoted('GETTEXT_PACKAGE', get_option('appid'))
 conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
 conf.set_quoted('PKGDATADIR', pkgdatadir)
+
+configure_file(
+    input: 'field-monitor.gresource.xml.in',
+    output: 'field-monitor.gresource.xml',
+    configuration: conf
+)
+
+# Copy the field-monitor.gresource.xml output to the source directory.
+run_command(
+  'cp',
+  meson.project_build_root() / 'src' / 'field-monitor.gresource.xml',
+  meson.project_source_root() / 'src' / 'field-monitor.gresource.xml',
+  check: true
+)
 
 configure_file(
     input: 'config.rs.in',
@@ -42,6 +49,14 @@ run_command(
   check: true
 )
 
+gnome.compile_resources('field-monitor',
+  'field-monitor.gresource.xml',
+  gresource_bundle: true,
+  install: true,
+  install_dir: pkgdatadir,
+  dependencies: blueprints,
+)
+
 cargo_bin  = find_program('cargo')
 cargo_opt  = [ '--manifest-path', meson.project_source_root() / 'Cargo.toml' ]
 cargo_opt += [ '--target-dir', meson.project_build_root()  / 'src' ]
@@ -51,6 +66,7 @@ if get_option('buildtype') == 'release'
   cargo_opt += [ '--release' ]
   rust_target = 'release'
 else
+  cargo_opt += [ '--features', 'devel' ]
   rust_target = 'debug'
 endif
 
@@ -58,7 +74,7 @@ cargo_build = custom_target(
   'cargo-build',
   build_by_default: true,
   build_always_stale: true,
-  output: 'de.capypara.FieldMonitor',
+  output: get_option('appid'),
   console: true,
   install: true,
   install_dir: get_option('bindir'),

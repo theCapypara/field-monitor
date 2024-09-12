@@ -15,7 +15,6 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
 use std::fs::read_dir;
 use std::path::PathBuf;
 
@@ -29,19 +28,16 @@ use config::{GETTEXT_PACKAGE, LOCALEDIR, PKGDATADIR};
 use crate::config::APP_ID;
 
 use self::application::FieldMonitorApplication;
-use self::window::FieldMonitorWindow;
 
-mod add_connection_dialog;
 mod application;
 mod config;
 mod connection;
-mod connection_list;
 mod secrets;
-mod window;
+mod widget;
 
 fn main() -> glib::ExitCode {
     glib::log_set_default_handler(glib::rust_log_handler);
-    pretty_env_logger::init();
+    pretty_env_logger::init_timed();
 
     // Set up gettext translations
     bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");

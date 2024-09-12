@@ -154,24 +154,28 @@ impl VncPreferences {
         let slf: Self = glib::Object::builder().build();
 
         if let Some(existing_configuration) = existing_configuration {
-            glib::spawn_future_local(clone!(@weak slf => async move {
-                let config_lock = existing_configuration.lock().await;
-                if let Some(v) = config_lock.title() {
-                    slf.set_title(v);
+            glib::spawn_future_local(clone!(
+                #[weak]
+                slf,
+                async move {
+                    let config_lock = existing_configuration.lock().await;
+                    if let Some(v) = config_lock.title() {
+                        slf.set_title(v);
+                    }
+                    if let Some(v) = config_lock.host() {
+                        slf.set_host(v);
+                    }
+                    if let Some(v) = config_lock.port() {
+                        slf.set_port(v.to_string());
+                    }
+                    if let Some(v) = config_lock.user() {
+                        slf.credentials().set_user(v);
+                    }
+                    if let Ok(Some(v)) = config_lock.password().await {
+                        slf.credentials().set_password(v);
+                    }
                 }
-                if let Some(v) = config_lock.host() {
-                    slf.set_host(v);
-                }
-                if let Some(v) = config_lock.port() {
-                    slf.set_port(v.to_string());
-                }
-                if let Some(v) = config_lock.user() {
-                    slf.credentials().set_user(v);
-                }
-                if let Ok(Some(v)) = config_lock.password().await {
-                    slf.credentials().set_password(v);
-                }
-            }));
+            ));
         }
         slf
     }

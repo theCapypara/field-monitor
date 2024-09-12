@@ -20,5 +20,8 @@ use field_monitor_vnc::VncConnectionProviderConstructor;
 use libfieldmonitor::connection::ConnectionProviderConstructor;
 
 // TODO: Plugin system?
-pub static CONNECTION_PROVIDERS: &[&dyn ConnectionProviderConstructor] =
-    &[&VncConnectionProviderConstructor];
+pub static CONNECTION_PROVIDERS: &[&dyn ConnectionProviderConstructor] = &[
+    #[cfg(feature = "devel")]
+    &::field_monitor_debug::DebugConnectionProviderConstructor,
+    &VncConnectionProviderConstructor,
+];

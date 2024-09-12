@@ -1,0 +1,106 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorCLConnectionEntry : Adw.PreferencesGroup {
+    error-text: bind error_row.subtitle bidirectional;
+    load-state: bind status_stack.visible-child-name bidirectional;
+
+    notify::connection => $on_self_connection_changed() swapped;
+
+    [header-suffix]
+    Button settings_button {
+        icon-name: "settings-symbolic";
+        tooltip-text: _("Settings");
+        action-name: "app.edit-connection";
+        action-target: bind (template.connection as <$ConnectionInstance>).connection-id;
+        valign: center;
+
+        styles ["flat"]
+    }
+
+    Stack status_stack {
+        StackPage {
+            name: "loading";
+
+            child: ListBox {
+               valign: start;
+               hexpand: true;
+               selection-mode: none;
+
+               Adw.ActionRow {
+                    [prefix]
+                    Spinner {
+                        spinning: true;
+                    }
+               }
+
+               styles ["boxed-list"]
+           };
+        }
+        StackPage {
+            name: "servers";
+
+            child: ListBox servers {
+                valign: start;
+                hexpand: true;
+                selection-mode: none;
+
+                styles ["boxed-list"]
+            };
+        }
+        StackPage {
+            name: "error";
+
+            child: ListBox {
+                valign: start;
+                hexpand: true;
+                selection-mode: none;
+
+                Adw.ActionRow error_row {
+                    activatable: false;
+                    title: _("Error loading connection");
+
+                    [prefix]
+                    Image {
+                        icon-name: "dialog-error-symbolic";
+                    }
+
+                    styles ["error"]
+                }
+
+                styles ["boxed-list"]
+            };
+        }
+        StackPage {
+            name: "auth-required";
+
+            child: ListBox {
+                valign: start;
+                hexpand: true;
+                selection-mode: none;
+
+                Adw.ActionRow {
+                    activatable-widget: auth_button;
+                    title: _("Authentication required");
+
+                    [prefix]
+                    Image {
+                        icon-name: "key-symbolic";
+                    }
+
+                    [suffix]
+                    Button auth_button {
+                        label: _("Authenticate");
+                        action-name: "app.auth-connection";
+                        action-target: bind (template.connection as <$ConnectionInstance>).connection-id;
+                        valign: center;
+                    }
+
+                    styles ["warning"]
+                }
+
+                styles ["boxed-list"]
+            };
+        }
+    }
+}

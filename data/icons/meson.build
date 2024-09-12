@@ -1,4 +1,4 @@
-application_id = 'de.capypara.FieldMonitor'
+application_id = get_option('appid')
 
 scalable_dir = 'hicolor' / 'scalable' / 'apps'
 install_data(

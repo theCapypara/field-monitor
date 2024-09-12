@@ -1,5 +1,7 @@
 .idea/
 src/config.rs
+src/field-monitor.gresource.xml
 target/
 /subprojects/blueprint-compiler
 *.ui
+.envrc

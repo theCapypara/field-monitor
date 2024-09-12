@@ -1,0 +1,119 @@
+using Gtk 4.0;
+using Adw 1;
+using Gio 2.0;
+
+Gio.ListStore connection_list_model {}
+
+SortListModel connection_list_model_sorted {
+    model: connection_list_model;
+}
+
+FilterListModel connection_list_model_sorted_filtered {
+    model: connection_list_model_sorted;
+    incremental: true;
+}
+
+StringFilter model_string_filter {
+    ignore-case: true;
+    match-mode: substring;
+}
+
+/*
+gtk::StringFilter::builder()
+                    .expression(gtk::PropertyExpression::new(
+                        gtk::StringObject::static_type(),
+                        None::<&gtk::Expression>,
+                        "string",
+                    ))
+                    .ignore_case(true)
+                    .match_mode(gtk::StringFilterMatchMode::Substring)
+                    .build()
+                    */
+
+template $FieldMonitorConnectionList : Adw.Bin {
+    child: Overlay {
+        vexpand: true;
+
+        [overlay]
+        Gtk.ProgressBar progress_bar {
+            visible: false;
+            styles ["osd"]
+        }
+
+        Box {
+            orientation: vertical;
+
+            SearchBar search_bar {
+                key-capture-widget: connection_list_box;
+
+                SearchEntry search_entry {
+                    search-delay: 100;
+                    placeholder-text: _("Search");
+
+                    search-changed => $on_search_entry_search_changed() swapped;
+                }
+            }
+
+            ScrolledWindow {
+                hscrollbar-policy: never;
+                vexpand: true;
+
+                Stack stack {
+                    StackPage {
+                        name: "welcome";
+                        child: Adw.StatusPage welcome_status_page {
+                            title: _("Field Monitor");
+                        };
+                    }
+                    StackPage {
+                        name: "list";
+                        child: ScrolledWindow {
+                            hscrollbar-policy: never;
+                            propagate-natural-height: true;
+
+                            child: Adw.Clamp {
+                                child: ListBox connection_list_box {
+                                    selection-mode: none;
+
+                                    [placeholder]
+                                    Adw.StatusPage {
+                                        icon-name: "edit-find-symbolic";
+                                        title: _("No Results");
+                                    }
+
+                                    styles ["list-inner-box", "navigation-sidebar"]
+                                };
+                            };
+                        };
+                    }
+                    StackPage {
+                        name: "empty_list";
+                        child: Adw.StatusPage empty_list_status_page {
+                            title: _("Field Monitor");
+                            description: _("There are no connections configured yet.\nActivate the button below to get started.");
+                        };
+                    }
+                    styles ["content-page"]
+                }
+            }
+        }
+
+        [overlay]
+        Button {
+            halign: center;
+            valign: end;
+            action-name: "app.add-connection";
+            child: Adw.ButtonContent {
+                icon-name: "list-add-symbolic";
+                label: _("Add New Connection");
+            };
+            layout {
+                measure: true;
+                clip-overlay: true;
+            }
+            styles ["pill", "suggested-action", "add-connection-button"]
+        }
+    };
+
+    styles ["connection-list"]
+}

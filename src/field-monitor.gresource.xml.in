@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <!--
+        For the Devel package we need some things to be under the Devel prefix,
+        while others are just hardcoded to the normal app ID for convenience
+    -->
+    <gresource prefix="de/capypara/FieldMonitor">
+        <file preprocess="xml-stripblanks">widget/window.ui</file>
+        <file preprocess="xml-stripblanks">widget/connection_list.ui</file>
+        <file preprocess="xml-stripblanks">widget/connection_list/connection_entry.ui</file>
+        <file preprocess="xml-stripblanks">widget/connection_list/server_entry.ui</file>
+        <file preprocess="xml-stripblanks">widget/add_connection_dialog.ui</file>
+    </gresource>
+    <gresource prefix=@APP_ID_SLASHED@>
+        <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
+        <file>style.css</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/dialog-error-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/display-with-window-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/edit-find-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/go-home-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/key-off-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/key-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/list-add-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/settings-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/view-grid-symbolic.svg</file>
+    </gresource>
+</gresources>

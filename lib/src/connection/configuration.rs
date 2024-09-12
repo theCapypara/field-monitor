@@ -103,15 +103,22 @@ impl ConnectionConfiguration {
     pub fn get_try_as_str(&self, key: &str) -> Option<&str> {
         self.get(key).and_then(|v| v.as_str())
     }
+    pub fn get_try_as_u32(&self, key: &str) -> Option<u32> {
+        self.get_try_as_u64(key).and_then(|v| v.try_into().ok())
+    }
     pub fn get_try_as_u64(&self, key: &str) -> Option<u64> {
         self.get(key).and_then(|v| v.as_u64())
     }
     pub fn get_try_as_i64(&self, key: &str) -> Option<i64> {
         self.get(key).and_then(|v| v.as_i64())
     }
+    pub fn get_try_as_bool(&self, key: &str) -> Option<bool> {
+        self.get(key).and_then(|v| v.as_bool())
+    }
     pub fn set(&mut self, key: impl ToString, value: impl Into<serde_yaml::Value>) {
         self.config.insert(key.to_string(), value.into());
     }
+    // TODO: Replace with returning a SecureString.
     pub async fn get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<String>> {
         match self.pending_secret_changes.get(key.as_ref()) {
             None => self.do_get_secret(key).await,

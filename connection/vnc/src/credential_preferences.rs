@@ -106,15 +106,19 @@ impl VncCredentialPreferences {
         let slf: Self = glib::Object::builder().build();
 
         if let Some(existing_configuration) = existing_configuration {
-            glib::spawn_future_local(clone!(@weak slf => async move {
-                let config_lock = existing_configuration.lock().await;
-                if let Some(v) = config_lock.user() {
-                    slf.set_user(v);
+            glib::spawn_future_local(clone!(
+                #[weak]
+                slf,
+                async move {
+                    let config_lock = existing_configuration.lock().await;
+                    if let Some(v) = config_lock.user() {
+                        slf.set_user(v);
+                    }
+                    if let Ok(Some(v)) = config_lock.password().await {
+                        slf.set_password(v);
+                    }
                 }
-                if let Ok(Some(v)) = config_lock.password().await {
-                    slf.set_password(v);
-                }
-            }));
+            ));
         }
         slf
     }

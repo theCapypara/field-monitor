@@ -1,6 +1,6 @@
 desktop_file = i18n.merge_file(
         input: 'de.capypara.FieldMonitor.desktop.in',
-       output: 'de.capypara.FieldMonitor.desktop',
+       output: get_option('appid') + '.desktop',
          type: 'desktop',
        po_dir: '../po',
       install: true,
@@ -14,7 +14,7 @@ endif
 
 appstream_file = i18n.merge_file(
         input: 'de.capypara.FieldMonitor.metainfo.xml.in',
-       output: 'de.capypara.FieldMonitor.metainfo.xml',
+       output: get_option('appid') + '.xml',
        po_dir: '../po',
       install: true,
   install_dir: get_option('datadir') / 'metainfo'
@@ -25,7 +25,8 @@ test('Validate appstream file', appstreamcli,
      args: ['validate', '--no-net', '--explain', appstream_file])
 
 install_data('de.capypara.FieldMonitor.gschema.xml',
-  install_dir: get_option('datadir') / 'glib-2.0' / 'schemas'
+  install_dir: get_option('datadir') / 'glib-2.0' / 'schemas',
+  rename: get_option('appid') + '.gschema.xml'
 )
 
 compile_schemas = find_program('glib-compile-schemas', required: false, disabler: true)

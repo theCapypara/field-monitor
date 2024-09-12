@@ -21,17 +21,58 @@ use std::rc::Rc;
 
 use futures::future::LocalBoxFuture;
 use futures::lock::Mutex;
+use indexmap::IndexMap;
+use thiserror::Error;
 
 use crate::adapter::types::Adapter;
 use crate::connection::configuration::ConnectionConfiguration;
 
+pub type ConnectionResult<T> = Result<T, ConnectionError>;
+
+#[derive(Debug, Error)]
+pub enum ConnectionError {
+    #[error("{1}")]
+    /// Authentication failed and may be required
+    AuthFailed(Option<String>, anyhow::Error),
+    #[error("{1}")]
+    /// General failure, which can not be recovered from by re-authenticating
+    General(Option<String>, anyhow::Error),
+}
+
+impl ConnectionError {
+    pub fn auth_failed(&self) -> bool {
+        match self {
+            ConnectionError::AuthFailed(_, _) => true,
+            ConnectionError::General(_, _) => false,
+        }
+    }
+    pub fn inner(&self) -> &anyhow::Error {
+        match self {
+            ConnectionError::AuthFailed(_, e) => e,
+            ConnectionError::General(_, e) => e,
+        }
+    }
+    pub fn connection_title(&self) -> Option<&str> {
+        match self {
+            ConnectionError::AuthFailed(title, _) => title.as_deref(),
+            ConnectionError::General(title, _) => title.as_deref(),
+        }
+    }
+}
+
 /// Metadata about a connection.
 #[derive(Debug, Clone)]
-pub struct ConnectionMetadata {}
+pub struct ConnectionMetadata {
+    pub title: String,
+    pub subtitle: Option<String>,
+}
 
 /// Metadata about a server.
 #[derive(Debug, Clone)]
-pub struct ServerMetadata {}
+pub struct ServerMetadata {
+    pub title: String,
+    pub subtitle: Option<String>,
+}
 
 pub trait FieldMonitorApplication {}
 
@@ -51,7 +92,7 @@ pub trait ConnectionProvider {
     fn tag(&self) -> &'static str;
 
     /// Title describing the provider.
-    fn title(&self) -> Cow<str>;
+    fn title(&self) -> Cow<'static, str>;
 
     /// Plural title of the provider. This may describe a group of multiple connections created
     /// by the provider.
@@ -107,13 +148,17 @@ pub trait ConnectionProvider {
     ) -> LocalBoxFuture<anyhow::Result<()>>;
 
     /// Try to load a connection configuration into a connection.
-    /// The tag inside the configuration must match [`Self::TAG`], otherwise the method
+    /// The tag inside the configuration must match [`Self::tag`], otherwise the method
     /// may error or incorrectly try to load.
+    /// This returns a future that should resolve ASAP, since the UI may not be able to indicate
+    /// the loading process.
     fn load_connection(
         &self,
-        configuration: &ConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<Box<dyn Connection>>>;
+        configuration: ConnectionConfiguration,
+    ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>>;
 }
+
+pub type ServerMap = IndexMap<Cow<'static, str>, Box<dyn ServerConnection>>;
 
 /// A connection. Represents one or more servers which are logically
 /// grouped together.
@@ -121,23 +166,29 @@ pub trait ConnectionProvider {
 /// It manages zero, one or multiple servers.
 pub trait Connection {
     /// Metadata about the connection.
-    fn metadata(&self) -> &ConnectionMetadata;
+    fn metadata(&self) -> ConnectionMetadata;
 
     /// Returns the servers managed by this connection.
-    fn servers(&self) -> anyhow::Result<&[&dyn ServerConnection]>;
+    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>>;
 }
 
 /// A single instance of a server to connect to.
 /// It may contain sub-servers.
 pub trait ServerConnection {
     /// Metadata about the server.
-    fn metadata(&self) -> &ServerMetadata;
+    fn metadata(&self) -> ServerMetadata;
 
-    /// List of adapters that can be used to connect to the server.
-    fn adapters(&self) -> &[&dyn Adapter];
+    /// List of supported adapters that can be used to connect to the server as tuples (tag, human-readable name)
+    fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)>;
+
+    /// Create an adapter of the given type, if supported (see `supported_adapters`). If not supported, panics.
+    fn create_adapter(
+        &self,
+        tag: &str,
+    ) -> LocalBoxFuture<Result<Box<dyn Adapter>, ConnectionError>>;
 
     /// Returns the sub-servers grouped under this server.
-    fn servers(&self) -> anyhow::Result<&[&dyn ServerConnection]> {
-        Ok(&[])
+    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+        Box::pin(async move { Ok(IndexMap::new()) })
     }
 }

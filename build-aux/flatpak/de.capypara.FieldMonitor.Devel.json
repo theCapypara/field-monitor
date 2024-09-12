@@ -1,12 +1,12 @@
 {
-    "id": "de.capypara.FieldMonitor",
+    "id": "de.capypara.FieldMonitor.Devel",
     "runtime": "org.gnome.Platform",
     "runtime-version": "46",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
         "org.freedesktop.Sdk.Extension.rust-stable"
     ],
-    "command": "de.capypara.FieldMonitor",
+    "command": "de.capypara.FieldMonitor.Devel",
     "finish-args": [
         "--talk-name=org.freedesktop.secrets",
         "--share=network",
@@ -14,7 +14,8 @@
         "--socket=fallback-x11",
         "--device=dri",
         "--socket=wayland",
-        "--env=RUST_LOG=field_monitor=info,libfieldmonitor=info"
+        "--env=RUST_LOG=field_monitor=debug,libfieldmonitor=debug,oo7=debug",
+        "--env=RUST_BACKTRACE=1"
     ],
     "build-options": {
         "append-path": "/usr/lib/sdk/rust-stable/bin",
@@ -54,9 +55,6 @@
         {
             "name": "usbredir",
             "buildsystem": "meson",
-            "config-opts": [
-                "--buildtype=release"
-            ],
             "sources": [
                 {
                     "type": "archive",
@@ -69,7 +67,6 @@
             "name": "gtk-vnc",
             "buildsystem": "meson",
             "config-opts": [
-                "--buildtype=release",
                 "-Dpulseaudio=enabled"
             ],
             "sources": [
@@ -89,7 +86,6 @@
                 }
             },
             "config-opts": [
-                "--buildtype=release",
                 "-Dvapi=enabled",
                 "-Dwebdav=enabled",
                 "-Dpolkit=disabled",
@@ -199,7 +195,6 @@
             "name": "vte",
             "buildsystem": "meson",
             "config-opts": [
-                "--buildtype=release",
                 "-Ddocs=false",
                 "-Dgtk3=false",
                 "-Dgtk4=true",
@@ -219,7 +214,8 @@
             "builddir": true,
             "buildsystem": "meson",
             "config-opts": [
-                "--buildtype=release"
+                "--buildtype=debug",
+                "-Dappid=de.capypara.FieldMonitor.Devel"
             ],
             "sources": [
                 {

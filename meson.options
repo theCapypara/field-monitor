@@ -1,0 +1,1 @@
+option('appid', type : 'string', value : 'de.capypara.FieldMonitor', description : 'The app ID to use')

@@ -16,21 +16,22 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use adw::prelude::AdwDialogExt;
+use std::sync::atomic::AtomicBool;
+
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::{gio, glib};
 use gtk::glib::Variant;
 use gtk::prelude::*;
 
-use crate::add_connection_dialog::FieldMonitorAddConnectionDialog;
-use crate::connection_list::FieldMonitorConnectionList;
+use crate::widget::connection_list::FieldMonitorConnectionList;
 
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, gtk::CompositeTemplate)]
-    #[template(resource = "/de/capypara/FieldMonitor/window.ui")]
+    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
+    #[properties(wrapper_type = super::FieldMonitorWindow)]
+    #[template(resource = "/de/capypara/FieldMonitor/widget/window.ui")]
     pub struct FieldMonitorWindow {
         #[template_child]
         pub header_bar: TemplateChild<adw::HeaderBar>,
@@ -42,6 +43,12 @@ mod imp {
         pub overview: TemplateChild<adw::TabOverview>,
         #[template_child]
         pub button_connection_list: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub button_search_in_list: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[property(get, set)]
+        pub connection_list_visible: AtomicBool,
     }
 
     #[glib::object_subclass]
@@ -58,7 +65,6 @@ mod imp {
                 None,
                 Self::Type::act_show_connection_list,
             );
-            klass.install_action("win.add-connection", None, Self::Type::act_add_connection);
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -66,6 +72,7 @@ mod imp {
         }
     }
 
+    #[glib::derived_properties]
     impl ObjectImpl for FieldMonitorWindow {}
     impl WidgetImpl for FieldMonitorWindow {}
     impl WindowImpl for FieldMonitorWindow {}
@@ -84,7 +91,27 @@ impl FieldMonitorWindow {
         let slf: Self = glib::Object::builder()
             .property("application", application)
             .build();
+        #[cfg(feature = "devel")]
+        slf.add_css_class("devel");
         slf
+    }
+
+    pub fn toast_connection_added(&self) {
+        self.imp().toast_overlay.add_toast(
+            adw::Toast::builder()
+                .title(gettext("Connection successfully added."))
+                .timeout(5)
+                .build(),
+        )
+    }
+
+    pub fn toast_connection_updated(&self) {
+        self.imp().toast_overlay.add_toast(
+            adw::Toast::builder()
+                .title(gettext("Connection successfully updated."))
+                .timeout(5)
+                .build(),
+        )
     }
 }
 
@@ -99,11 +126,17 @@ impl FieldMonitorWindow {
 
     #[template_callback]
     fn on_tab_view_page_attached(&self, _page: &adw::TabPage, _position: i32) {
+        if !self.imp().tab_view.is_bound() {
+            return;
+        }
         self.configure_tab_bar_autohide();
     }
 
     #[template_callback]
     fn on_tab_view_page_detached(&self, _page: &adw::TabPage, _position: i32) {
+        if !self.imp().tab_view.is_bound() {
+            return;
+        }
         self.configure_tab_bar_autohide();
         if self.imp().tab_view.n_pages() == 0 {
             self.open_new_connection_list();
@@ -113,6 +146,9 @@ impl FieldMonitorWindow {
     /// Hide connection list button if already on connection list.
     #[template_callback]
     fn on_tab_view_notify_selected_page(&self) {
+        if !self.imp().tab_view.is_bound() {
+            return;
+        }
         let selected = self.imp().tab_view.selected_page();
         match selected {
             Some(p)
@@ -120,10 +156,23 @@ impl FieldMonitorWindow {
                     .type_()
                     .is_a(FieldMonitorConnectionList::static_type()) =>
             {
-                self.imp().button_connection_list.set_visible(false);
+                self.set_connection_list_visible(true);
             }
             _ => {
-                self.imp().button_connection_list.set_visible(true);
+                self.set_connection_list_visible(false);
+            }
+        }
+    }
+
+    #[template_callback]
+    fn on_button_search_in_list_clicked(&self) {
+        let selected = self.imp().tab_view.selected_page();
+        if let Some(selected) = selected {
+            if let Some(list) = selected
+                .child()
+                .downcast_ref::<FieldMonitorConnectionList>()
+            {
+                list.toggle_search();
             }
         }
     }
@@ -135,11 +184,6 @@ impl FieldMonitorWindow {
             .get_open_connection_list_page()
             .unwrap_or_else(|| self.open_new_connection_list());
         self.imp().tab_view.set_selected_page(&page);
-    }
-    fn act_add_connection(&self, _action_name: &str, _param: Option<&Variant>) {
-        let dialog =
-            FieldMonitorAddConnectionDialog::new(&self.application().unwrap().downcast().unwrap());
-        dialog.present(Some(self));
     }
 }
 
@@ -169,7 +213,8 @@ impl FieldMonitorWindow {
 
     pub fn open_new_connection_list(&self) -> adw::TabPage {
         let title = gettext("Connection List");
-        let page = FieldMonitorConnectionList::new();
+        let page =
+            FieldMonitorConnectionList::new(&self.application().unwrap().downcast().unwrap());
         let tab_page = self.imp().tab_view.append(&page);
 
         tab_page.set_title(&title);

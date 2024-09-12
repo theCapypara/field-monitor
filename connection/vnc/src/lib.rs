@@ -25,8 +25,11 @@ use anyhow::anyhow;
 use futures::future::LocalBoxFuture;
 use futures::lock::Mutex;
 use gettextrs::gettext;
+use indexmap::IndexMap;
 
 use libfieldmonitor::adapter::types::Adapter;
+use libfieldmonitor::adapter::vnc::VncAdapter;
+use libfieldmonitor::config_error;
 use libfieldmonitor::connection::*;
 
 use crate::credential_preferences::VncCredentialPreferences;
@@ -51,7 +54,7 @@ impl ConnectionProvider for VncConnectionProvider {
         "vnc"
     }
 
-    fn title(&self) -> Cow<str> {
+    fn title(&self) -> Cow<'static, str> {
         gettext("VNC Connection").into()
     }
 
@@ -134,32 +137,100 @@ impl ConnectionProvider for VncConnectionProvider {
 
     fn load_connection(
         &self,
-        configuration: &ConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<Box<dyn Connection>>> {
-        todo!()
+        configuration: ConnectionConfiguration,
+    ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>> {
+        Box::pin(async move {
+            let title = configuration
+                .title()
+                .ok_or_else(|| config_error(None))?
+                .to_string();
+
+            let c: Box<dyn Connection> = Box::new(VncConnection::new(title, configuration));
+            Ok(c)
+        })
     }
 }
 
-pub struct VncConnection;
+#[derive(Clone)]
+pub struct VncConnection {
+    title: String,
+    config: ConnectionConfiguration,
+}
 
 impl Connection for VncConnection {
-    fn metadata(&self) -> &ConnectionMetadata {
-        todo!()
+    fn metadata(&self) -> ConnectionMetadata {
+        ConnectionMetadata {
+            title: self.title.clone(),
+            subtitle: None,
+        }
     }
 
-    fn servers(&self) -> anyhow::Result<&[&dyn ServerConnection]> {
-        todo!()
+    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+        Box::pin(async move {
+            let mut hm: IndexMap<_, Box<dyn ServerConnection>> = IndexMap::with_capacity(1);
+
+            hm.insert(Cow::Borrowed("server"), Box::new(self.clone()));
+
+            Ok(hm)
+        })
     }
 }
 
-pub struct VncServerConnection;
+impl VncConnection {
+    fn new(title: String, config: ConnectionConfiguration) -> Self {
+        Self { title, config }
+    }
+}
 
-impl ServerConnection for VncServerConnection {
-    fn metadata(&self) -> &ServerMetadata {
-        todo!()
+impl ServerConnection for VncConnection {
+    fn metadata(&self) -> ServerMetadata {
+        ServerMetadata {
+            title: self.title.clone(),
+            subtitle: None,
+        }
     }
 
-    fn adapters(&self) -> &[&dyn Adapter] {
-        todo!()
+    fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
+        vec![(VncAdapter::TAG, VncAdapter::label())]
+    }
+
+    fn create_adapter(
+        &self,
+        tag: &str,
+    ) -> LocalBoxFuture<Result<Box<dyn Adapter>, ConnectionError>> {
+        assert_eq!(tag, VncAdapter::TAG, "unsupported adapter type");
+        Box::pin(async move {
+            let password = match self.config.password().await {
+                Ok(pass) => pass.unwrap_or_default(),
+                Err(err) => {
+                    return Err(ConnectionError::AuthFailed(
+                        Some(gettext("Failed to load password.")),
+                        err,
+                    ));
+                }
+            };
+
+            let bx: Box<dyn Adapter> = Box::new(VncAdapter::new(
+                self.config
+                    .host()
+                    .as_ref()
+                    .map(ToString::to_string)
+                    .unwrap_or_default(),
+                self.config
+                    .port()
+                    .as_ref()
+                    .copied()
+                    .map(NonZeroU32::get)
+                    .unwrap_or_default(),
+                self.config
+                    .user()
+                    .as_ref()
+                    .map(ToString::to_string)
+                    .unwrap_or_default(),
+                password,
+            ));
+
+            Ok(bx)
+        })
     }
 }

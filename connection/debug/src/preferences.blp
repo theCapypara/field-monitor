@@ -1,0 +1,112 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $DebugPreferences : Adw.PreferencesPage {
+    title: bind title_entry.text bidirectional;
+    vnc_adapter_enable: bind adapter_vnc_switch.enable-expansion bidirectional;
+    vnc_host: bind vnc_host_entry.text bidirectional;
+    vnc_user: bind vnc_user_entry.text bidirectional;
+    vnc_password: bind vnc_password_entry.text bidirectional;
+    rdp_adapter_enable: bind adapter_rdp_switch.enable-expansion bidirectional;
+    rdp_host: bind rdp_host_entry.text bidirectional;
+    rdp_user: bind rdp_user_entry.text bidirectional;
+    rdp_password: bind rdp_password_entry.text bidirectional;
+    spice_adapter_enable: bind adapter_spice_switch.active bidirectional;
+    vte_adapter_enable: bind adapter_vte_switch.active bidirectional;
+
+    Adw.PreferencesGroup {
+        Adw.EntryRow title_entry {
+            title: "Connection Name";
+        }
+    }
+
+    Adw.PreferencesGroup {
+        title: "Mode";
+
+        Adw.ActionRow {
+            title: "Single Server";
+            subtitle: "Connection has a single server";
+            activatable-widget: radio_mode_single;
+
+            [prefix]
+            CheckButton radio_mode_single {
+                group: radio_mode_single;
+                active: true;
+            }
+        }
+
+        Adw.ActionRow {
+            title: "Multi Server";
+            subtitle: "Connection has multiple top-level servers";
+            activatable-widget: radio_mode_multi;
+
+            [prefix]
+            CheckButton radio_mode_multi {
+                group: radio_mode_single;
+            }
+        }
+
+        Adw.ActionRow {
+            title: "Nested";
+            subtitle: "Connection has complex nested servers";
+            activatable-widget: radio_mode_complex;
+
+            [prefix]
+            CheckButton radio_mode_complex {
+                group: radio_mode_single;
+            }
+        }
+    }
+
+    $DebugBehaviourPreferences behaviour {}
+
+    Adw.PreferencesGroup {
+        title: "Adapters";
+
+        Adw.ExpanderRow adapter_vnc_switch {
+            title: "VNC";
+            show-enable-switch: true;
+            enable-expansion: false;
+
+            Adw.EntryRow vnc_host_entry {
+                title: "Host:Port";
+            }
+
+            Adw.EntryRow vnc_user_entry {
+                title: "Username";
+            }
+
+            Adw.EntryRow vnc_password_entry {
+                title: "Password";
+            }
+        }
+
+        Adw.ExpanderRow adapter_rdp_switch {
+            title: "RDP";
+            show-enable-switch: true;
+            enable-expansion: false;
+
+            Adw.EntryRow rdp_host_entry {
+                title: "Host:Port";
+            }
+
+            Adw.EntryRow rdp_user_entry {
+                title: "Username";
+            }
+
+            Adw.EntryRow rdp_password_entry {
+                title: "Password";
+            }
+        }
+
+        Adw.SwitchRow adapter_spice_switch {
+            title: "SPICE";
+            active: false;
+        }
+
+        Adw.SwitchRow adapter_vte_switch {
+            title: "VTE";
+            active: false;
+        }
+    }
+}
