@@ -19,18 +19,6 @@ StringFilter model_string_filter {
     match-mode: substring;
 }
 
-/*
-gtk::StringFilter::builder()
-                    .expression(gtk::PropertyExpression::new(
-                        gtk::StringObject::static_type(),
-                        None::<&gtk::Expression>,
-                        "string",
-                    ))
-                    .ignore_case(true)
-                    .match_mode(gtk::StringFilterMatchMode::Substring)
-                    .build()
-                    */
-
 template $FieldMonitorConnectionList : Adw.Bin {
     child: Overlay {
         vexpand: true;
@@ -94,27 +82,21 @@ template $FieldMonitorConnectionList : Adw.Bin {
                         child: Adw.StatusPage empty_list_status_page {
                             title: _("Field Monitor");
                             description: _("There are no connections configured yet.\nActivate the button below to get started.");
+
+                            child: Button {
+                                halign: center;
+                                action-name: "app.add-connection";
+                                child: Adw.ButtonContent {
+                                    icon-name: "list-add-symbolic";
+                                    label: _("Add New Connection");
+                                };
+                                styles ["pill", "suggested-action", "add-connection-button"]
+                            };
                         };
                     }
                     styles ["content-page"]
                 }
             }
-        }
-
-        [overlay]
-        Button {
-            halign: center;
-            valign: end;
-            action-name: "app.add-connection";
-            child: Adw.ButtonContent {
-                icon-name: "list-add-symbolic";
-                label: _("Add New Connection");
-            };
-            layout {
-                measure: true;
-                clip-overlay: true;
-            }
-            styles ["pill", "suggested-action", "add-connection-button"]
         }
     };
 

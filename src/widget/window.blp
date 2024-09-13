@@ -42,6 +42,14 @@ template $FieldMonitorWindow : Adw.ApplicationWindow {
                         }
 
                         [end]
+                        Button {
+                            icon-name: "list-add-symbolic";
+                            tooltip-text: _("Add New Connection");
+                            action-name: "app.add-connection";
+                            visible: bind template.connection-list-visible;
+                        }
+
+                        [end]
                         Button button_search_in_list {
                             icon-name: "edit-find-symbolic";
                             tooltip-text: _("Search Connections");
