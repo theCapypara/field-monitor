@@ -12,7 +12,6 @@ template $FieldMonitorCLConnectionEntry : Adw.PreferencesGroup {
         icon-name: "settings-symbolic";
         tooltip-text: _("Settings");
         action-name: "app.edit-connection";
-        action-target: bind (template.connection as <$ConnectionInstance>).connection-id;
         valign: center;
 
         styles ["flat"]
@@ -92,7 +91,6 @@ template $FieldMonitorCLConnectionEntry : Adw.PreferencesGroup {
                     Button auth_button {
                         label: _("Authenticate");
                         action-name: "app.auth-connection";
-                        action-target: bind (template.connection as <$ConnectionInstance>).connection-id;
                         valign: center;
                     }
 

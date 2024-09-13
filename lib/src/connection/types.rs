@@ -17,10 +17,8 @@
  */
 
 use std::borrow::Cow;
-use std::rc::Rc;
 
 use futures::future::LocalBoxFuture;
-use futures::lock::Mutex;
 use indexmap::IndexMap;
 use thiserror::Error;
 
@@ -107,8 +105,7 @@ pub trait ConnectionProvider {
     /// Creates a preference page (or other applicable widget) for configuring a new connection.
     ///
     /// If this is for modifying an existing configuration, the current configuration is set.
-    fn preferences(&self, configuration: Option<Rc<Mutex<ConnectionConfiguration>>>)
-        -> gtk::Widget;
+    fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget;
 
     /// Update a connection configuration from a configured preference page.
     /// It may be asserted that the  passed `preferences` are a widget returned from `preferences`.
@@ -119,8 +116,8 @@ pub trait ConnectionProvider {
     fn update_connection(
         &self,
         preferences: gtk::Widget,
-        configuration: Rc<Mutex<ConnectionConfiguration>>,
-    ) -> LocalBoxFuture<anyhow::Result<()>>;
+        configuration: ConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>>;
 
     /// Creates a preference group (or another applicable widgets, such as a box to group multiple)
     /// for configuring credentials.
@@ -129,10 +126,7 @@ pub trait ConnectionProvider {
     /// could not be made, or when no credentials were stored.
     ///
     /// The passed parameter contains the current configuration before.
-    fn configure_credentials(
-        &self,
-        configuration: Rc<Mutex<ConnectionConfiguration>>,
-    ) -> gtk::Widget;
+    fn configure_credentials(&self, configuration: &ConnectionConfiguration) -> gtk::Widget;
 
     /// Update the credentials of a connection.
     /// It may be asserted that the  passed `preferences` are a widget returned from
@@ -144,8 +138,8 @@ pub trait ConnectionProvider {
     fn store_credentials(
         &self,
         preferences: gtk::Widget,
-        configuration: Rc<Mutex<ConnectionConfiguration>>,
-    ) -> LocalBoxFuture<anyhow::Result<()>>;
+        configuration: ConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>>;
 
     /// Try to load a connection configuration into a connection.
     /// The tag inside the configuration must match [`Self::tag`], otherwise the method

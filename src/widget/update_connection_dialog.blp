@@ -1,0 +1,37 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorUpdateConnectionDialog : Adw.Dialog {
+    content-width: 420;
+    content-height: 640;
+
+    Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar header_bar {}
+
+        Adw.ToastOverlay toast_overlay {
+
+        }
+
+        [bottom]
+        ActionBar {
+            Button {
+                icon-name: "user-trash-symbolic";
+                tooltip-text: _("Remove Connection");
+
+                clicked => $on_connection_delete() swapped;
+
+                styles ["destructive-action"]
+            }
+
+            [end]
+            Button {
+                label: _("Save");
+
+                clicked => $on_connection_update() swapped;
+
+                styles ["suggested-action"]
+            }
+        }
+    }
+}

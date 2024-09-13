@@ -18,11 +18,9 @@
 
 use std::cell::RefCell;
 use std::num::NonZeroU32;
-use std::rc::Rc;
 
 use adw::glib::clone;
 use adw::subclass::prelude::*;
-use futures::lock::Mutex;
 use gtk::glib;
 use gtk::prelude::*;
 
@@ -150,28 +148,27 @@ glib::wrapper! {
 }
 
 impl VncPreferences {
-    pub fn new(existing_configuration: Option<Rc<Mutex<ConnectionConfiguration>>>) -> Self {
+    pub fn new(existing_configuration: Option<&ConnectionConfiguration>) -> Self {
         let slf: Self = glib::Object::builder().build();
 
-        if let Some(existing_configuration) = existing_configuration {
+        if let Some(existing_configuration) = existing_configuration.cloned() {
             glib::spawn_future_local(clone!(
                 #[weak]
                 slf,
                 async move {
-                    let config_lock = existing_configuration.lock().await;
-                    if let Some(v) = config_lock.title() {
+                    if let Some(v) = existing_configuration.title() {
                         slf.set_title(v);
                     }
-                    if let Some(v) = config_lock.host() {
+                    if let Some(v) = existing_configuration.host() {
                         slf.set_host(v);
                     }
-                    if let Some(v) = config_lock.port() {
+                    if let Some(v) = existing_configuration.port() {
                         slf.set_port(v.to_string());
                     }
-                    if let Some(v) = config_lock.user() {
+                    if let Some(v) = existing_configuration.user() {
                         slf.credentials().set_user(v);
                     }
-                    if let Ok(Some(v)) = config_lock.password().await {
+                    if let Ok(Some(v)) = existing_configuration.password().await {
                         slf.credentials().set_password(v);
                     }
                 }

@@ -21,7 +21,6 @@ use std::rc::Rc;
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
-use futures::lock::Mutex;
 use gettextrs::gettext;
 use gtk::glib;
 use gtk::glib::clone;
@@ -114,9 +113,6 @@ impl FieldMonitorAddConnectionDialog {
     }
 }
 
-#[gtk::template_callbacks]
-impl FieldMonitorAddConnectionDialog {}
-
 impl FieldMonitorAddConnectionDialog {
     fn on_activate_provider(&self, provider: Rc<Box<dyn ConnectionProvider>>) {
         let add_button = gtk::Button::builder().label(gettext("Add")).build();
@@ -171,15 +167,15 @@ impl FieldMonitorAddConnectionDialog {
             .borrow()
             .clone()
             .expect("add dialog had no application");
-        let config = Rc::new(Mutex::new(app.reserve_new_connection(provider)));
+        let config = app.reserve_new_connection(provider);
 
         self.set_can_close(false);
         self.set_sensitive(false);
         match provider
-            .update_connection(configured_preferences, config.clone())
+            .update_connection(configured_preferences, config)
             .await
         {
-            Ok(()) => match app.save_connection(&mut *config.lock().await).await {
+            Ok(mut config) => match app.save_connection(&mut config).await {
                 Ok(()) => {
                     self.emit_by_name::<()>("finished-adding", &[]);
                     self.force_close();
@@ -209,3 +205,6 @@ impl FieldMonitorAddConnectionDialog {
         self.set_can_close(true);
     }
 }
+
+#[gtk::template_callbacks]
+impl FieldMonitorAddConnectionDialog {}

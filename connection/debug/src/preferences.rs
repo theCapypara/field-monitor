@@ -17,11 +17,9 @@
  */
 
 use std::cell::RefCell;
-use std::rc::Rc;
 use std::sync::atomic::AtomicBool;
 
 use adw::subclass::prelude::*;
-use futures::lock::Mutex;
 use glib::clone;
 use gtk::gio::{PropertyAction, SimpleActionGroup};
 use gtk::glib;
@@ -272,7 +270,7 @@ glib::wrapper! {
 }
 
 impl DebugPreferences {
-    pub fn new(existing_configuration: Option<Rc<Mutex<ConnectionConfiguration>>>) -> Self {
+    pub fn new(existing_configuration: Option<&ConnectionConfiguration>) -> Self {
         let slf: Self = glib::Object::builder().build();
 
         let imp = slf.imp();
@@ -293,24 +291,23 @@ impl DebugPreferences {
         imp.radio_mode_complex
             .set_action_target(Some(&2u32.to_variant()));
 
-        if let Some(existing_configuration) = existing_configuration {
+        if let Some(existing_configuration) = existing_configuration.cloned() {
             glib::spawn_future_local(clone!(
                 #[weak]
                 slf,
                 async move {
-                    let config_lock = existing_configuration.lock().await;
-                    slf.set_title(config_lock.title());
-                    slf.set_mode(config_lock.mode());
-                    slf.set_vnc_adapter_enable(config_lock.vnc_adapter_enable());
-                    slf.set_vnc_host(config_lock.vnc_host());
-                    slf.set_vnc_user(config_lock.vnc_user());
-                    slf.set_vnc_password(config_lock.vnc_password());
-                    slf.set_rdp_adapter_enable(config_lock.rdp_adapter_enable());
-                    slf.set_rdp_host(config_lock.rdp_host());
-                    slf.set_rdp_user(config_lock.rdp_user());
-                    slf.set_rdp_password(config_lock.rdp_password());
-                    slf.set_spice_adapter_enable(config_lock.spice_adapter_enable());
-                    slf.set_vte_adapter_enable(config_lock.vte_adapter_enable());
+                    slf.set_title(existing_configuration.title());
+                    slf.set_mode(existing_configuration.mode());
+                    slf.set_vnc_adapter_enable(existing_configuration.vnc_adapter_enable());
+                    slf.set_vnc_host(existing_configuration.vnc_host());
+                    slf.set_vnc_user(existing_configuration.vnc_user());
+                    slf.set_vnc_password(existing_configuration.vnc_password());
+                    slf.set_rdp_adapter_enable(existing_configuration.rdp_adapter_enable());
+                    slf.set_rdp_host(existing_configuration.rdp_host());
+                    slf.set_rdp_user(existing_configuration.rdp_user());
+                    slf.set_rdp_password(existing_configuration.rdp_password());
+                    slf.set_spice_adapter_enable(existing_configuration.spice_adapter_enable());
+                    slf.set_vte_adapter_enable(existing_configuration.vte_adapter_enable());
                 }
             ));
         }

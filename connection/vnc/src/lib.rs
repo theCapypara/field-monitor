@@ -18,12 +18,10 @@
 
 use std::borrow::Cow;
 use std::num::NonZeroU32;
-use std::rc::Rc;
 
 use adw::prelude::*;
 use anyhow::anyhow;
 use futures::future::LocalBoxFuture;
-use futures::lock::Mutex;
 use gettextrs::gettext;
 use indexmap::IndexMap;
 
@@ -70,39 +68,33 @@ impl ConnectionProvider for VncConnectionProvider {
         gettext("Setup a connection to a single VNC server.").into()
     }
 
-    fn preferences(
-        &self,
-        configuration: Option<Rc<Mutex<ConnectionConfiguration>>>,
-    ) -> gtk::Widget {
+    fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget {
         VncPreferences::new(configuration).upcast()
     }
 
     fn update_connection(
         &self,
         preferences: gtk::Widget,
-        configuration: Rc<Mutex<ConnectionConfiguration>>,
-    ) -> LocalBoxFuture<anyhow::Result<()>> {
+        mut configuration: ConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>> {
         Box::pin(async {
             let preferences = preferences
                 .downcast::<VncPreferences>()
                 .expect("update_connection got invalid widget type");
 
             // Update general config
-            {
-                let mut config_lock = configuration.lock().await;
-                config_lock.set_title(&preferences.title());
-                config_lock.set_host(&preferences.host());
-                let port_str = preferences.port();
-                let Ok(port_int) = port_str.parse::<u32>() else {
-                    preferences.port_entry_error(true);
-                    return Err(anyhow!(gettext("Please enter a valid port")));
-                };
-                let Some(port_nzint) = NonZeroU32::new(port_int) else {
-                    preferences.port_entry_error(true);
-                    return Err(anyhow!(gettext("Please enter a valid port")));
-                };
-                config_lock.set_port(port_nzint);
-            }
+            configuration.set_title(&preferences.title());
+            configuration.set_host(&preferences.host());
+            let port_str = preferences.port();
+            let Ok(port_int) = port_str.parse::<u32>() else {
+                preferences.port_entry_error(true);
+                return Err(anyhow!(gettext("Please enter a valid port")));
+            };
+            let Some(port_nzint) = NonZeroU32::new(port_int) else {
+                preferences.port_entry_error(true);
+                return Err(anyhow!(gettext("Please enter a valid port")));
+            };
+            configuration.set_port(port_nzint);
 
             // Update credentials
             let credentials = preferences.credentials();
@@ -111,27 +103,23 @@ impl ConnectionProvider for VncConnectionProvider {
         })
     }
 
-    fn configure_credentials(
-        &self,
-        configuration: Rc<Mutex<ConnectionConfiguration>>,
-    ) -> gtk::Widget {
+    fn configure_credentials(&self, configuration: &ConnectionConfiguration) -> gtk::Widget {
         VncCredentialPreferences::new(Some(configuration)).upcast()
     }
 
     fn store_credentials(
         &self,
         preferences: gtk::Widget,
-        configuration: Rc<Mutex<ConnectionConfiguration>>,
-    ) -> LocalBoxFuture<anyhow::Result<()>> {
+        mut configuration: ConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>> {
         Box::pin(async move {
             let preferences = preferences
                 .downcast::<VncCredentialPreferences>()
                 .expect("store_credentials got invalid widget type");
 
-            let mut config_lock = configuration.lock().await;
-            config_lock.set_user(preferences.user_if_remembered().as_deref());
-            config_lock.set_password(preferences.password_if_remembered().as_deref());
-            Ok(())
+            configuration.set_user(preferences.user_if_remembered().as_deref());
+            configuration.set_password(preferences.password_if_remembered().as_deref());
+            Ok(configuration)
         })
     }
 

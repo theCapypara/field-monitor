@@ -113,6 +113,15 @@ impl FieldMonitorWindow {
                 .build(),
         )
     }
+
+    pub fn toast_connection_removed(&self) {
+        self.imp().toast_overlay.add_toast(
+            adw::Toast::builder()
+                .title(gettext("Connection successfully removed."))
+                .timeout(5)
+                .build(),
+        )
+    }
 }
 
 #[gtk::template_callbacks]

@@ -17,10 +17,8 @@
  */
 
 use std::cell::RefCell;
-use std::rc::Rc;
 
 use adw::subclass::prelude::*;
-use futures::lock::Mutex;
 use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
@@ -87,17 +85,16 @@ glib::wrapper! {
 }
 
 impl DebugBehaviourPreferences {
-    pub fn new(existing_configuration: Option<Rc<Mutex<ConnectionConfiguration>>>) -> Self {
+    pub fn new(existing_configuration: Option<&ConnectionConfiguration>) -> Self {
         let slf: Self = glib::Object::builder().build();
 
-        if let Some(existing_configuration) = existing_configuration {
+        if let Some(existing_configuration) = existing_configuration.cloned() {
             glib::spawn_future_local(clone!(
                 #[weak]
                 slf,
                 async move {
-                    let config_lock = existing_configuration.lock().await;
-                    slf.set_load_servers_behaviour(config_lock.load_servers_behaviour());
-                    slf.set_connect_behaviour(config_lock.connect_behaviour());
+                    slf.set_load_servers_behaviour(existing_configuration.load_servers_behaviour());
+                    slf.set_connect_behaviour(existing_configuration.connect_behaviour());
                 }
             ));
         }

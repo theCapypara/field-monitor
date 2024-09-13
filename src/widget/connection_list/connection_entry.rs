@@ -23,6 +23,7 @@ use futures::future::try_join_all;
 use gettextrs::gettext;
 use glib::object::ObjectExt;
 use gtk::glib;
+use gtk::prelude::ActionableExtManual;
 use log::{error, info};
 
 use libfieldmonitor::connection::{
@@ -46,6 +47,10 @@ mod imp {
     pub struct FieldMonitorCLConnectionEntry {
         #[template_child]
         pub servers: TemplateChild<gtk::ListBox>,
+        #[template_child]
+        pub settings_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub auth_button: TemplateChild<gtk::Button>,
         #[property(get, set)]
         pub connection: RefCell<Option<ConnectionInstance>>,
         #[property(get, set)]
@@ -85,10 +90,19 @@ glib::wrapper! {
 
 impl FieldMonitorCLConnectionEntry {
     pub fn new(app: &FieldMonitorApplication, connection: &ConnectionInstance) -> Self {
+        let metadata = connection.metadata();
         let slf: Self = glib::Object::builder()
             .property("application", app)
             .property("connection", connection)
+            .property("title", metadata.title)
             .build();
+        let imp = slf.imp();
+
+        let connection_id = connection.connection_id();
+        // TODO: I couldn't make this work with a binding, maybe not supported this way?
+        imp.settings_button.set_action_target(Some(&connection_id));
+        imp.auth_button.set_action_target(Some(&connection_id));
+
         slf
     }
 

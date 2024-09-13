@@ -17,10 +17,8 @@
  */
 
 use std::cell::{Cell, RefCell};
-use std::rc::Rc;
 
 use adw::subclass::prelude::*;
-use futures::lock::Mutex;
 use gtk::glib;
 use gtk::glib::clone;
 use gtk::prelude::*;
@@ -102,19 +100,18 @@ glib::wrapper! {
 }
 
 impl VncCredentialPreferences {
-    pub fn new(existing_configuration: Option<Rc<Mutex<ConnectionConfiguration>>>) -> Self {
+    pub fn new(existing_configuration: Option<&ConnectionConfiguration>) -> Self {
         let slf: Self = glib::Object::builder().build();
 
-        if let Some(existing_configuration) = existing_configuration {
+        if let Some(existing_configuration) = existing_configuration.cloned() {
             glib::spawn_future_local(clone!(
                 #[weak]
                 slf,
                 async move {
-                    let config_lock = existing_configuration.lock().await;
-                    if let Some(v) = config_lock.user() {
+                    if let Some(v) = existing_configuration.user() {
                         slf.set_user(v);
                     }
-                    if let Ok(Some(v)) = config_lock.password().await {
+                    if let Ok(Some(v)) = existing_configuration.password().await {
                         slf.set_password(v);
                     }
                 }

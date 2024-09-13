@@ -27,9 +27,7 @@ use glib::prelude::*;
 use glib::subclass::prelude::*;
 use log::{debug, error};
 
-use crate::connection::{
-    ConnectionError, ConnectionMetadata, ConnectionResult, ServerConnection, ServerMap,
-};
+use crate::connection::{ConnectionError, ConnectionMetadata, ConnectionResult, ServerMap};
 use crate::connection::configuration::ConnectionConfiguration;
 use crate::connection::types::{Connection, ConnectionProvider};
 
@@ -124,6 +122,14 @@ impl ConnectionInstance {
             }
         }
         slf_imp.configuration.replace(Some(value));
+    }
+
+    pub fn configuration(&self) -> ConnectionConfiguration {
+        self.imp().configuration.borrow().as_ref().unwrap().clone()
+    }
+
+    pub fn provider(&self) -> Rc<Box<dyn ConnectionProvider>> {
+        self.imp().provider.borrow().as_ref().unwrap().clone()
     }
 
     pub fn provider_tag(&self) -> Option<String> {

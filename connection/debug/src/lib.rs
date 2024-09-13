@@ -1,12 +1,10 @@
 use std::borrow::Cow;
 use std::collections::HashMap;
-use std::rc::Rc;
 use std::time::Duration;
 
 use anyhow::anyhow;
 use async_std::task::sleep;
 use futures::future::LocalBoxFuture;
-use futures::lock::Mutex;
 use gtk::prelude::*;
 use indexmap::IndexMap;
 use rand::{Rng, thread_rng};
@@ -59,41 +57,35 @@ impl ConnectionProvider for DebugConnectionProvider {
         Cow::Borrowed("Debug Connection")
     }
 
-    fn preferences(
-        &self,
-        configuration: Option<Rc<Mutex<ConnectionConfiguration>>>,
-    ) -> gtk::Widget {
+    fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget {
         DebugPreferences::new(configuration).upcast()
     }
 
     fn update_connection(
         &self,
         preferences: gtk::Widget,
-        configuration: Rc<Mutex<ConnectionConfiguration>>,
-    ) -> LocalBoxFuture<anyhow::Result<()>> {
+        mut configuration: ConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>> {
         Box::pin(async {
-            sleep(Duration::from_secs(thread_rng().gen_range(1..12))).await;
+            sleep(Duration::from_millis(thread_rng().gen_range(100..1200))).await;
 
             let preferences = preferences
                 .downcast::<DebugPreferences>()
                 .expect("update_connection got invalid widget type");
 
             // Update general config
-            {
-                let mut config_lock = configuration.lock().await;
-                config_lock.set_title(&preferences.title());
-                config_lock.set_mode(preferences.mode());
-                config_lock.set_vnc_adapter_enable(preferences.vnc_adapter_enable());
-                config_lock.set_vnc_host(&preferences.vnc_host());
-                config_lock.set_vnc_user(&preferences.vnc_user());
-                config_lock.set_vnc_password(&preferences.vnc_password());
-                config_lock.set_rdp_adapter_enable(preferences.rdp_adapter_enable());
-                config_lock.set_rdp_host(&preferences.rdp_host());
-                config_lock.set_rdp_user(&preferences.rdp_user());
-                config_lock.set_rdp_password(&preferences.rdp_password());
-                config_lock.set_spice_adapter_enable(preferences.spice_adapter_enable());
-                config_lock.set_vte_adapter_enable(preferences.vte_adapter_enable());
-            }
+            configuration.set_title(&preferences.title());
+            configuration.set_mode(preferences.mode());
+            configuration.set_vnc_adapter_enable(preferences.vnc_adapter_enable());
+            configuration.set_vnc_host(&preferences.vnc_host());
+            configuration.set_vnc_user(&preferences.vnc_user());
+            configuration.set_vnc_password(&preferences.vnc_password());
+            configuration.set_rdp_adapter_enable(preferences.rdp_adapter_enable());
+            configuration.set_rdp_host(&preferences.rdp_host());
+            configuration.set_rdp_user(&preferences.rdp_user());
+            configuration.set_rdp_password(&preferences.rdp_password());
+            configuration.set_spice_adapter_enable(preferences.spice_adapter_enable());
+            configuration.set_vte_adapter_enable(preferences.vte_adapter_enable());
 
             // Update credentials
             let credentials = preferences.behaviour();
@@ -102,29 +94,25 @@ impl ConnectionProvider for DebugConnectionProvider {
         })
     }
 
-    fn configure_credentials(
-        &self,
-        configuration: Rc<Mutex<ConnectionConfiguration>>,
-    ) -> gtk::Widget {
+    fn configure_credentials(&self, configuration: &ConnectionConfiguration) -> gtk::Widget {
         DebugBehaviourPreferences::new(Some(configuration)).upcast()
     }
 
     fn store_credentials(
         &self,
         preferences: gtk::Widget,
-        configuration: Rc<Mutex<ConnectionConfiguration>>,
-    ) -> LocalBoxFuture<anyhow::Result<()>> {
+        mut configuration: ConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>> {
         Box::pin(async move {
-            sleep(Duration::from_secs(thread_rng().gen_range(1..12))).await;
+            sleep(Duration::from_millis(thread_rng().gen_range(100..400))).await;
 
             let preferences = preferences
                 .downcast::<DebugBehaviourPreferences>()
                 .expect("store_credentials got invalid widget type");
 
-            let mut config_lock = configuration.lock().await;
-            config_lock.set_load_servers_behaviour(preferences.load_servers_behaviour());
-            config_lock.set_connect_behaviour(preferences.connect_behaviour());
-            Ok(())
+            configuration.set_load_servers_behaviour(preferences.load_servers_behaviour());
+            configuration.set_connect_behaviour(preferences.connect_behaviour());
+            Ok(configuration)
         })
     }
 
@@ -133,7 +121,7 @@ impl ConnectionProvider for DebugConnectionProvider {
         configuration: ConnectionConfiguration,
     ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>> {
         Box::pin(async move {
-            sleep(Duration::from_millis(thread_rng().gen_range(50..3000))).await;
+            sleep(Duration::from_millis(thread_rng().gen_range(100..1200))).await;
 
             let title = configuration.title().to_string();
 
@@ -167,7 +155,7 @@ impl Connection for DebugConnection {
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move {
-            sleep(Duration::from_secs(thread_rng().gen_range(1..12))).await;
+            sleep(Duration::from_millis(thread_rng().gen_range(100..1200))).await;
 
             match self.config.load_servers_behaviour() {
                 DebugBehaviour::Ok => {
@@ -337,7 +325,7 @@ impl ServerConnection for DebugConnectionServer {
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move {
-            sleep(Duration::from_millis(thread_rng().gen_range(50..700))).await;
+            sleep(Duration::from_millis(thread_rng().gen_range(50..200))).await;
 
             let mut hm: IndexMap<Cow<_>, Box<dyn ServerConnection>> = IndexMap::new();
 

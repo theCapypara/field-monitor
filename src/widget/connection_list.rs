@@ -18,20 +18,17 @@
 use std::cell::RefCell;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
-use std::num::NonZeroUsize;
 use std::time::Duration;
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use futures::StreamExt;
-use glib::clone;
 use glib::object::ObjectExt;
 use gtk::gio;
 use gtk::glib;
-use log::{debug, warn};
-use lru::LruCache;
+use log::debug;
 
-use libfieldmonitor::connection::ConnectionInstance;
+use libfieldmonitor::connection::{Connection, ConnectionInstance};
 
 use crate::application::FieldMonitorApplication;
 use crate::widget::connection_list::connection_entry::FieldMonitorCLConnectionEntry;
@@ -40,8 +37,6 @@ mod connection_entry;
 mod server_entry;
 
 mod imp {
-    use lru::LruCache;
-
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -72,8 +67,7 @@ mod imp {
         pub search_entry: TemplateChild<gtk::SearchEntry>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
-        pub connections: RefCell<Option<HashMap<String, ConnectionInstance>>>,
-        pub cached_list_box_rows: RefCell<Option<LruCache<ConnectionInstance, gtk::ListBoxRow>>>,
+        pub connections: RefCell<Option<HashMap<String, FieldMonitorCLConnectionEntry>>>,
     }
 
     #[glib::object_subclass]
@@ -108,8 +102,6 @@ impl FieldMonitorConnectionList {
         let slf: Self = glib::Object::builder().property("application", app).build();
         let imp = slf.imp();
         imp.connections.replace(Some(HashMap::new()));
-        imp.cached_list_box_rows
-            .replace(Some(LruCache::new(NonZeroUsize::new(50).unwrap())));
         // Fill list, if empty and loading connections, show welcome page, otherwise show empty
         let connections = app.connections().into_iter().collect::<Vec<_>>();
         if connections.is_empty() {
@@ -161,52 +153,7 @@ impl FieldMonitorConnectionList {
             ),
         );
 
-        let property_expr = gtk::PropertyExpression::new(
-            ConnectionInstance::static_type(),
-            None::<&gtk::Expression>,
-            "title",
-        );
-        imp.connection_list_model_sorted
-            .set_sorter(Some(&gtk::StringSorter::new(Some(&property_expr))));
-        imp.model_string_filter.set_expression(Some(&property_expr));
-        imp.connection_list_model_sorted_filtered
-            .set_filter(Some(&*slf.imp().model_string_filter));
-        imp.connection_list_box.bind_model(
-            Some(&*slf.imp().connection_list_model_sorted_filtered),
-            clone!(
-                #[weak_allow_none]
-                slf,
-                move |obj| {
-                    match slf {
-                        Some(slf) => {
-                            let connection_instance: &ConnectionInstance =
-                                obj.downcast_ref().unwrap();
-                            let mut cache_borrow = slf.imp().cached_list_box_rows.borrow_mut();
-                            let cache_ref = cache_borrow.as_mut().unwrap();
-                            cache_ref
-                                .get_or_insert(connection_instance.clone(), || {
-                                    debug!("new row");
-                                    let wdg = FieldMonitorCLConnectionEntry::new(
-                                        slf.application().as_ref().unwrap(),
-                                        connection_instance,
-                                    );
-                                    gtk::ListBoxRow::builder()
-                                        .child(&wdg)
-                                        .activatable(false)
-                                        .selectable(true)
-                                        .build()
-                                })
-                                .clone()
-                        }
-                        .upcast(),
-                        None => {
-                            warn!("Tried to add a widget while list was unloaded");
-                            gtk::Box::default().upcast()
-                        }
-                    }
-                }
-            ),
-        );
+        slf.rebuild_listbox();
 
         if let Some(app_id) = app.application_id() {
             let icon_name = format!("{}-symbolic", app_id);
@@ -276,18 +223,77 @@ impl FieldMonitorConnectionList {
         let list = list_brw.as_mut().unwrap();
 
         let id = connection.connection_id();
+        let mut full_refresh_required = false;
 
         match list.entry(id) {
-            Entry::Occupied(mut entry) => {
-                Self::remove_from_connection_list(entry.get(), imp);
-                entry.insert(connection.clone());
+            Entry::Occupied(entry) => {
+                let old_title = entry.get().title();
+                let new_title = connection.metadata().title;
+                if old_title != new_title {
+                    // Too bad, the title changed, which means we have to reload the entire model sadly,
+                    // there doesn't seem to be a great way to re-sort and filter the model and box
+                    // reliably.
+                    full_refresh_required = true;
+                }
+                entry.get().set_connection(connection.clone());
             }
             Entry::Vacant(entry) => {
-                entry.insert(connection.clone());
+                let new_entry = FieldMonitorCLConnectionEntry::new(
+                    self.application().as_ref().unwrap(),
+                    &connection,
+                );
+                imp.connection_list_model.append(&new_entry);
+                entry.insert(new_entry);
             }
         };
+
+        // XXX: This is pretty hacky overall. We have to delay this a bit, otherwise the widget may
+        // fail to properly redraw. It's all pretty messy sadly.
+        if full_refresh_required {
+            debug!("doing full refresh");
+            glib::spawn_future_local(glib::clone!(
+                #[weak(rename_to = slf)]
+                self,
+                async move {
+                    slf.imp().connection_list_box.set_sensitive(false);
+                    async_std::task::sleep(Duration::from_millis(50)).await;
+                    slf.imp()
+                        .connection_list_box
+                        .bind_model(None::<&gio::ListModel>, |_| gtk::Box::default().upcast());
+                    async_std::task::sleep(Duration::from_millis(50)).await;
+                    slf.rebuild_listbox();
+                    slf.imp().connection_list_box.set_sensitive(true);
+                }
+            ));
+        }
+
         self.imp().stack.set_visible_child_name("list");
-        imp.connection_list_model.append(&connection);
+    }
+
+    fn rebuild_listbox(&self) {
+        let imp = self.imp();
+        let property_expr = gtk::PropertyExpression::new(
+            FieldMonitorCLConnectionEntry::static_type(),
+            None::<&gtk::Expression>,
+            "title",
+        );
+        imp.connection_list_model_sorted
+            .set_sorter(Some(&gtk::StringSorter::new(Some(&property_expr))));
+        imp.model_string_filter.set_expression(Some(&property_expr));
+        imp.connection_list_model_sorted_filtered
+            .set_filter(Some(&*imp.model_string_filter));
+        imp.connection_list_box.bind_model(
+            Some(&*imp.connection_list_model_sorted_filtered),
+            move |obj| {
+                let wdg: &FieldMonitorCLConnectionEntry = obj.downcast_ref().unwrap();
+                gtk::ListBoxRow::builder()
+                    .child(wdg)
+                    .activatable(false)
+                    .selectable(true)
+                    .build()
+                    .upcast()
+            },
+        );
     }
 
     fn on_connection_removed(&self, id: &str) {
@@ -295,20 +301,13 @@ impl FieldMonitorConnectionList {
         let mut list_brw = self.imp().connections.borrow_mut();
         let list = list_brw.as_mut().unwrap();
         if let Entry::Occupied(entry) = list.entry(id.to_string()) {
-            Self::remove_from_connection_list(entry.get(), imp);
+            if let Some(pos) = imp.connection_list_model.find(entry.get()) {
+                imp.connection_list_model.remove(pos);
+            }
             entry.remove();
         }
         if list.is_empty() {
             self.imp().stack.set_visible_child_name("empty_list");
-        }
-    }
-
-    fn remove_from_connection_list(
-        connection: &ConnectionInstance,
-        imp: &imp::FieldMonitorConnectionList,
-    ) {
-        if let Some(pos) = imp.connection_list_model.find(connection) {
-            imp.connection_list_model.remove(pos);
         }
     }
 }

@@ -33,7 +33,7 @@ use futures::StreamExt;
 use gettextrs::gettext;
 use glib::subclass::Signal;
 use gtk::{gio, glib};
-use log::{debug, error, warn};
+use log::{debug, error, info, warn};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
@@ -45,8 +45,10 @@ use libfieldmonitor::ManagesSecrets;
 
 use crate::config::{APP_ID, VERSION};
 use crate::connection::CONNECTION_PROVIDERS;
+use crate::i18n::gettext_f;
 use crate::secrets::SecretManager;
 use crate::widget::add_connection_dialog::FieldMonitorAddConnectionDialog;
+use crate::widget::update_connection_dialog::FieldMonitorUpdateConnectionDialog;
 use crate::widget::window::FieldMonitorWindow;
 
 mod imp {
@@ -260,12 +262,26 @@ impl FieldMonitorApplication {
         let add_connection_action = gio::ActionEntry::builder("add-connection")
             .activate(move |app: &Self, _, _| app.add_connection_via_dialog())
             .build();
+        let edit_connection_action = gio::ActionEntry::builder("edit-connection")
+            .parameter_type(Some(&String::static_variant_type()))
+            .activate(move |app: &Self, _, connection_id| {
+                app.edit_connection_via_dialog(connection_id)
+            })
+            .build();
+        let remove_connection_action = gio::ActionEntry::builder("remove-connection")
+            .parameter_type(Some(&String::static_variant_type()))
+            .activate(move |app: &Self, _, connection_id| {
+                app.remove_connection_via_dialog(connection_id)
+            })
+            .build();
 
         self.add_action_entries([
             quit_action,
             about_action,
             reload_connections_action,
             add_connection_action,
+            edit_connection_action,
+            remove_connection_action,
         ]);
     }
 
@@ -300,6 +316,91 @@ impl FieldMonitorApplication {
                 move |_: &FieldMonitorAddConnectionDialog| {
                     if let Some(window) = window.downcast_ref::<FieldMonitorWindow>() {
                         window.toast_connection_added();
+                    }
+                }
+            ),
+        );
+        dialog.present(Some(&window));
+    }
+
+    fn edit_connection_via_dialog(&self, target: Option<&glib::Variant>) {
+        debug!("app.edit-connection: {:?}", target);
+        let imp = self.imp();
+
+        let Some(connection_id) = target.and_then(glib::Variant::str) else {
+            warn!("Invalid connection ID target passed to app.edit-connection. Ignoring.");
+            return;
+        };
+        let Some(connection) = imp
+            .connections
+            .borrow()
+            .as_ref()
+            .and_then(|m| m.get(connection_id).cloned())
+        else {
+            warn!("Connection passed to app.edit-connection not found. Ignoring.");
+            return;
+        };
+
+        let window = self.active_window().unwrap();
+        let dialog = FieldMonitorUpdateConnectionDialog::new(self, connection);
+        dialog.connect_closure(
+            "finished-updating",
+            false,
+            glib::closure_local!(
+                #[watch]
+                window,
+                move |_: &FieldMonitorUpdateConnectionDialog| {
+                    if let Some(window) = window.downcast_ref::<FieldMonitorWindow>() {
+                        window.toast_connection_updated();
+                    }
+                }
+            ),
+        );
+        dialog.present(Some(&window));
+    }
+
+    fn remove_connection_via_dialog(&self, target: Option<&glib::Variant>) {
+        debug!("app.remove-connection: {:?}", target);
+        let imp = self.imp();
+
+        let Some(connection_id) = target.and_then(glib::Variant::str).map(ToString::to_string)
+        else {
+            warn!("Invalid connection ID target passed to app.remove-connection. Ignoring.");
+            return;
+        };
+        let Some(connection) = imp
+            .connections
+            .borrow()
+            .as_ref()
+            .and_then(|m| m.get(&*connection_id).cloned())
+        else {
+            warn!("Connection passed to app.remove-connection not found. Ignoring.");
+            return;
+        };
+
+        let title = connection.title().unwrap_or_default();
+
+        let window = self.active_window().unwrap();
+        let dialog = adw::AlertDialog::builder()
+            .heading(gettext_f("Remove {title}?", &[("title", &title)]))
+            .build();
+        dialog.add_response("No", &gettext("No"));
+        dialog.add_response("Yes", &gettext("Yes"));
+        dialog.set_response_appearance("Yes", adw::ResponseAppearance::Destructive);
+        dialog.connect_closure(
+            "response",
+            false,
+            glib::closure_local!(
+                #[watch]
+                window,
+                #[weak(rename_to = slf)]
+                self,
+                move |_: &adw::AlertDialog, response: &str| {
+                    if response == "Yes" {
+                        slf.remove_connection(&connection_id, true);
+                        if let Some(window) = window.downcast_ref::<FieldMonitorWindow>() {
+                            window.toast_connection_removed();
+                        }
                     }
                 }
             ),
@@ -419,11 +520,27 @@ impl FieldMonitorApplication {
     }
 
     /// Removes a connection (or does nothing if the connection was not added before).
-    pub fn remove_connection(&self, connection_id: &str) {
+    pub fn remove_connection(&self, connection_id: &str, from_disk: bool) {
         debug!("removing connection {connection_id}");
         let mut brw = self.imp().connections.borrow_mut();
         if let Some(map) = brw.as_mut() {
             if map.remove(connection_id).is_some() {
+                if from_disk {
+                    let connection_id = connection_id.to_string();
+                    glib::spawn_future_local(glib::clone!(
+                        #[strong(rename_to=slf)]
+                        self,
+                        async move {
+                            // TODO: We should probably give some visual feedback if deleting fails,
+                            // even if its going to be rare. This entire function should probably
+                            // be async then and propagate the error.
+                            info!("Removing connection {connection_id} from disk...");
+                            let mut filename = slf.connections_dir().await;
+                            filename.push(format!("{}.yaml", connection_id));
+                            remove_file(filename).await.ok();
+                        }
+                    ));
+                }
                 self.emit_by_name::<()>("connection-removed", &[&connection_id]);
             }
         }
@@ -447,7 +564,7 @@ impl FieldMonitorApplication {
             }
         };
         for connection_id in connections_to_remove.into_iter() {
-            self.remove_connection(&connection_id);
+            self.remove_connection(&connection_id, false);
         }
 
         match read_dir(self.connections_dir().await).await {
