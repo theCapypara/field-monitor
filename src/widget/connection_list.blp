@@ -60,6 +60,8 @@ template $FieldMonitorConnectionList : Adw.Bin {
                 vexpand: true;
 
                 Stack stack {
+                    transition-type: crossfade;
+
                     StackPage {
                         name: "welcome";
                         child: Adw.StatusPage welcome_status_page {

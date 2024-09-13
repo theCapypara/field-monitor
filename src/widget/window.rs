@@ -34,11 +34,13 @@ mod imp {
     #[template(resource = "/de/capypara/FieldMonitor/widget/window.ui")]
     pub struct FieldMonitorWindow {
         #[template_child]
+        pub main_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
         pub header_bar: TemplateChild<adw::HeaderBar>,
         #[template_child]
         pub tab_bar: TemplateChild<adw::TabBar>,
         #[template_child]
-        pub tab_view: TemplateChild<adw::TabView>,
+        pub tab_view: TemplateChild<adw::TabView>, // all children must be gtk::Box!
         #[template_child]
         pub overview: TemplateChild<adw::TabOverview>,
         #[template_child]
@@ -47,6 +49,8 @@ mod imp {
         pub button_search_in_list: TemplateChild<gtk::Button>,
         #[template_child]
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
+        pub borderless_box: TemplateChild<gtk::Box>,
         #[property(get, set)]
         pub connection_list_visible: AtomicBool,
     }
@@ -60,11 +64,6 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
             Self::Type::bind_template_callbacks(klass);
-            klass.install_action(
-                "win.show-connection-list",
-                None,
-                Self::Type::act_show_connection_list,
-            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -73,7 +72,12 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for FieldMonitorWindow {}
+    impl ObjectImpl for FieldMonitorWindow {
+        fn constructed(&self) {
+            self.parent_constructed();
+            self.obj().setup_actions();
+        }
+    }
     impl WidgetImpl for FieldMonitorWindow {}
     impl WindowImpl for FieldMonitorWindow {}
     impl ApplicationWindowImpl for FieldMonitorWindow {}
@@ -94,6 +98,28 @@ impl FieldMonitorWindow {
         #[cfg(feature = "devel")]
         slf.add_css_class("devel");
         slf
+    }
+
+    fn setup_actions(&self) {
+        let show_connection_action = gio::ActionEntry::builder("show-connection-list")
+            .activate(Self::act_show_connection_list)
+            .build();
+
+        let toggle_borderless_action = gio::ActionEntry::builder("toggle-borderless")
+            .state(false.to_variant())
+            .activate(Self::act_toggle_borderless)
+            .build();
+
+        let toggle_fullscreen_action = gio::ActionEntry::builder("toggle-fullscreen")
+            .state(false.to_variant())
+            .activate(Self::act_toggle_fullscreen)
+            .build();
+
+        self.add_action_entries([
+            show_connection_action,
+            toggle_borderless_action,
+            toggle_fullscreen_action,
+        ]);
     }
 
     pub fn toast_connection_added(&self) {
@@ -160,11 +186,7 @@ impl FieldMonitorWindow {
         }
         let selected = self.imp().tab_view.selected_page();
         match selected {
-            Some(p)
-                if p.child()
-                    .type_()
-                    .is_a(FieldMonitorConnectionList::static_type()) =>
-            {
+            Some(p) if is_tab_page_connection_list(&p) => {
                 self.set_connection_list_visible(true);
             }
             _ => {
@@ -188,11 +210,50 @@ impl FieldMonitorWindow {
 }
 
 impl FieldMonitorWindow {
-    fn act_show_connection_list(&self, _action_name: &str, _param: Option<&Variant>) {
+    fn act_show_connection_list(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
         let page = self
             .get_open_connection_list_page()
             .unwrap_or_else(|| self.open_new_connection_list());
         self.imp().tab_view.set_selected_page(&page);
+    }
+
+    fn act_toggle_borderless(&self, action: &gio::SimpleAction, _param: Option<&Variant>) {
+        let imp = self.imp();
+        let new_state = !action.state().unwrap().get::<bool>().unwrap();
+
+        // Switches the borderless_overlay Bin's child widget with the current tabview Bin's page
+        // child widget and then changes the main stack.
+        let wdg_a = &*imp.borderless_box;
+        let wdg_b = imp
+            .tab_view
+            .selected_page()
+            .and_then(|page| page.child().downcast::<gtk::Box>().ok());
+        let Some(wdg_b) = wdg_b else {
+            return;
+        };
+        let (Some(chld_a), Some(chld_b)) = (wdg_a.first_child(), wdg_b.first_child()) else {
+            return;
+        };
+        wdg_a.remove(&chld_a);
+        wdg_b.remove(&chld_b);
+        wdg_a.append(&chld_b);
+        wdg_b.append(&chld_a);
+
+        if new_state {
+            imp.main_stack.set_visible_child_name("borderless");
+        } else {
+            imp.main_stack.set_visible_child_name("normal");
+        }
+
+        action.set_state(&new_state.to_variant());
+    }
+
+    fn act_toggle_fullscreen(&self, action: &gio::SimpleAction, _param: Option<&Variant>) {
+        let new_state = !action.state().unwrap().get::<bool>().unwrap();
+
+        self.set_fullscreened(new_state);
+
+        action.set_state(&new_state.to_variant());
     }
 }
 
@@ -200,11 +261,7 @@ impl FieldMonitorWindow {
     fn get_open_connection_list_page(&self) -> Option<adw::TabPage> {
         for child in self.imp().tab_view.pages().iter::<adw::TabPage>() {
             let child = child.unwrap(); // TODO: maybe want to be more graceful? but this really should never happen.
-            if child
-                .child()
-                .type_()
-                .is_a(FieldMonitorConnectionList::static_type())
-            {
+            if is_tab_page_connection_list(&child) {
                 return Some(child);
             }
         }
@@ -222,12 +279,39 @@ impl FieldMonitorWindow {
 
     pub fn open_new_connection_list(&self) -> adw::TabPage {
         let title = gettext("Connection List");
+
         let page =
             FieldMonitorConnectionList::new(&self.application().unwrap().downcast().unwrap());
-        let tab_page = self.imp().tab_view.append(&page);
 
-        tab_page.set_title(&title);
+        let tab_page = self.add_new_page(&page, &title);
+
         tab_page.set_live_thumbnail(true);
         tab_page
     }
+
+    fn add_new_page(&self, page: &impl IsA<gtk::Widget>, title: &str) -> adw::TabPage {
+        let page = page.upcast_ref();
+        page.set_hexpand(true);
+        page.set_vexpand(true);
+
+        let boxx = gtk::Box::builder().vexpand(true).hexpand(true).build();
+        boxx.append(page);
+        let tab_page = self.imp().tab_view.append(&boxx);
+
+        tab_page.set_title(title);
+        tab_page
+    }
+}
+
+fn is_tab_page_connection_list(page: &adw::TabPage) -> bool {
+    page.child()
+        .downcast_ref::<gtk::Box>()
+        .unwrap()
+        .first_child()
+        .map(|child| {
+            child
+                .type_()
+                .is_a(FieldMonitorConnectionList::static_type())
+        })
+        .unwrap_or_default()
 }

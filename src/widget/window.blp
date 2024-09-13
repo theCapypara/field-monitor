@@ -6,56 +6,95 @@ template $FieldMonitorWindow : Adw.ApplicationWindow {
     default-height: 600;
     title: _("Field Monitor");
 
-    content: Adw.TabOverview overview {
-        enable-new-tab: false;
-        view: tab_view;
+    content: Stack main_stack {
+        transition-type: crossfade;
 
-        Box {
-            orientation: vertical;
+        StackPage {
+            name: "normal";
 
-            Adw.HeaderBar header_bar {
-                Button button_overview {
-                    icon-name: "view-grid-symbolic";
-                    tooltip-text: _("Tab Overview");
-                    action-name: "overview.open";
-                }
-
-                Button button_connection_list {
-                    icon-name: "go-home-symbolic";
-                    tooltip-text: _("Connection List");
-                    action-name: "win.show-connection-list";
-                    visible: bind template.connection-list-visible inverted;
-                }
-
-                [end]
-                MenuButton {
-                    primary: true;
-                    icon-name: 'open-menu-symbolic';
-                    tooltip-text: _('Menu');
-                    menu-model: primary_menu;
-                }
-
-                [end]
-                Button button_search_in_list {
-                    icon-name: "edit-find-symbolic";
-                    tooltip-text: _("Search Connections");
-                    clicked => $on_button_search_in_list_clicked() swapped;
-                    visible: bind template.connection-list-visible;
-                }
-            }
-
-            Adw.TabBar tab_bar {
+            child: Adw.TabOverview overview {
+                enable-new-tab: false;
                 view: tab_view;
-            }
 
-            Adw.ToastOverlay toast_overlay {
-                child: Adw.TabView tab_view {
-                    create-window => $on_tab_view_create_window() swapped;
-                    page-attached => $on_tab_view_page_attached() swapped;
-                    page-detached => $on_tab_view_page_detached() swapped;
-                    notify::selected-page => $on_tab_view_notify_selected_page() swapped;
-                };
-            }
+                Box {
+                    orientation: vertical;
+
+                    Adw.HeaderBar header_bar {
+                        Button button_overview {
+                            icon-name: "view-grid-symbolic";
+                            tooltip-text: _("Tab Overview");
+                            action-name: "overview.open";
+                        }
+
+                        Button button_connection_list {
+                            icon-name: "go-home-symbolic";
+                            tooltip-text: _("Connection List");
+                            action-name: "win.show-connection-list";
+                            visible: bind template.connection-list-visible inverted;
+                        }
+
+                        [end]
+                        MenuButton {
+                            primary: true;
+                            icon-name: 'open-menu-symbolic';
+                            tooltip-text: _('Menu');
+                            menu-model: primary_menu;
+                        }
+
+                        [end]
+                        Button button_search_in_list {
+                            icon-name: "edit-find-symbolic";
+                            tooltip-text: _("Search Connections");
+                            clicked => $on_button_search_in_list_clicked() swapped;
+                            visible: bind template.connection-list-visible;
+                        }
+                    }
+
+                    Adw.TabBar tab_bar {
+                        view: tab_view;
+                    }
+
+                    Adw.ToastOverlay toast_overlay {
+                        child: Adw.TabView tab_view {
+                            create-window => $on_tab_view_create_window() swapped;
+                            page-attached => $on_tab_view_page_attached() swapped;
+                            page-detached => $on_tab_view_page_detached() swapped;
+                            notify::selected-page => $on_tab_view_notify_selected_page() swapped;
+                        };
+                    }
+                }
+            };
+        }
+
+        StackPage {
+            name: "borderless";
+
+            child: Overlay {
+                [overlay]
+                Adw.HeaderBar header_bar_overlay {
+                    valign: start;
+
+                    [end]
+                    MenuButton {
+                        primary: true;
+                        icon-name: 'open-menu-symbolic';
+                        tooltip-text: _('Menu');
+                        menu-model: primary_menu;
+                    }
+
+                    styles ["fieldmonitor-osd"]
+                }
+
+                Box borderless_box {
+                    hexpand: true;
+                    vexpand: true;
+
+                    Adw.Bin {}
+
+                    styles ["is-in-borderless"]
+                }
+
+            };
         }
     };
 }
