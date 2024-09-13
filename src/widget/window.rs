@@ -26,6 +26,9 @@ use gtk::prelude::*;
 
 use crate::widget::connection_list::FieldMonitorConnectionList;
 
+#[cfg(feature = "devel")]
+const DEBUG_TAB: bool = true;
+
 mod imp {
     use super::*;
 
@@ -97,6 +100,12 @@ impl FieldMonitorWindow {
             .build();
         #[cfg(feature = "devel")]
         slf.add_css_class("devel");
+
+        #[cfg(feature = "devel")]
+        if DEBUG_TAB {
+            slf.add_debug_tab();
+        }
+
         slf
     }
 
@@ -287,6 +296,12 @@ impl FieldMonitorWindow {
 
         tab_page.set_live_thumbnail(true);
         tab_page
+    }
+
+    #[cfg(feature = "devel")]
+    fn add_debug_tab(&self) {
+        let debug_widget = gtk::Box::builder().css_classes(["solid-color"]).build();
+        self.add_new_page(&debug_widget, "Debug");
     }
 
     fn add_new_page(&self, page: &impl IsA<gtk::Widget>, title: &str) -> adw::TabPage {
