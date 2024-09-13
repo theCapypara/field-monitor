@@ -201,8 +201,7 @@ mod imp {
             let window = if let Some(window) = application.active_window() {
                 window
             } else {
-                let window = FieldMonitorWindow::new(&*application);
-                window.open_new_connection_list();
+                let window = FieldMonitorWindow::new(&application);
                 window.upcast()
             };
 

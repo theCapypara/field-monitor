@@ -37,6 +37,8 @@ mod connection_entry;
 mod server_entry;
 
 mod imp {
+    use std::sync::atomic::AtomicBool;
+
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -65,6 +67,8 @@ mod imp {
         pub search_bar: TemplateChild<gtk::SearchBar>,
         #[template_child]
         pub search_entry: TemplateChild<gtk::SearchEntry>,
+        #[property(get, set)]
+        pub search_is_visible: AtomicBool,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         pub connections: RefCell<Option<HashMap<String, FieldMonitorCLConnectionEntry>>>,
@@ -79,6 +83,8 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
             Self::Type::bind_template_callbacks(klass);
+
+            klass.install_property_action("connection-list.toggle-search", "search-is-visible");
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -94,7 +100,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorConnectionList(ObjectSubclass<imp::FieldMonitorConnectionList>)
-        @extends gtk::Widget, adw::Bin;
+        @extends gtk::Widget, adw::Bin,
+        @implements gio::ActionGroup, gio::ActionMap;
 }
 
 impl FieldMonitorConnectionList {

@@ -6,124 +6,95 @@ template $FieldMonitorWindow : Adw.ApplicationWindow {
     default-height: 600;
     title: _("Field Monitor");
 
-    content: Stack main_stack {
-        transition-type: crossfade;
+    notify::fullscreened => $on_self_fullscreened_changed() swapped;
+    notify::connection-list-visible => $on_self_connection_list_visible_changed() swapped;
 
-        StackPage {
-            name: "normal";
+    content: Adw.TabOverview overview {
+        enable-new-tab: false;
+        view: tab_view;
 
-            child: Adw.TabOverview overview {
-                enable-new-tab: false;
-                view: tab_view;
+        notify::open => $on_overview_open_changed() swapped;
 
-                Box {
-                    orientation: vertical;
+        Overlay {
+            [overlay]
+            Adw.HeaderBar header_bar {
+                valign: start;
 
-                    Adw.HeaderBar header_bar {
-                        Button button_overview {
-                            icon-name: "view-grid-symbolic";
-                            tooltip-text: _("Tab Overview");
-                            action-name: "overview.open";
-                        }
+                Button button_fullscreen {
+                    icon-name: "arrows-pointing-outward-symbolic";
+                    tooltip-text: _("Toggle Fullscreen");
+                    action-name: "win.fullscreen";
+                }
 
-                        Button button_connection_list {
-                            icon-name: "go-home-symbolic";
-                            tooltip-text: _("Connection List");
-                            action-name: "win.show-connection-list";
-                            visible: bind template.connection-list-visible inverted;
-                        }
+                Adw.TabButton {
+                    tooltip-text: _("Tab Overview");
+                    action-name: "overview.open";
+                    view: tab_view;
+                    visible: bind tab_view.n-pages;
+                }
 
-                        [end]
-                        MenuButton {
-                            primary: true;
-                            icon-name: 'open-menu-symbolic';
-                            tooltip-text: _('Menu');
-                            menu-model: primary_menu;
-                        }
+                [end]
+                MenuButton {
+                    primary: true;
+                    icon-name: 'open-menu-symbolic';
+                    tooltip-text: _('Menu');
+                    menu-model: primary_menu;
+                }
 
-                        [end]
-                        Button {
-                            icon-name: "list-add-symbolic";
-                            tooltip-text: _("Add New Connection");
-                            action-name: "app.add-connection";
-                            visible: bind template.connection-list-visible;
-                        }
+                [end]
+                Button {
+                    icon-name: "go-home-symbolic";
+                    tooltip-text: _("Connection List");
+                    action-name: "win.show-connection-list";
+                    visible: bind template.connection-list-visible inverted;
+                }
 
-                        [end]
-                        Button button_search_in_list {
-                            icon-name: "edit-find-symbolic";
-                            tooltip-text: _("Search Connections");
-                            clicked => $on_button_search_in_list_clicked() swapped;
-                            visible: bind template.connection-list-visible;
-                        }
+                [end]
+                Button {
+                    icon-name: "list-add-symbolic";
+                    tooltip-text: _("Add New Connection");
+                    action-name: "app.add-connection";
+                    visible: bind template.connection-list-visible;
+                }
+
+                [end]
+                ToggleButton button_search_in_list {
+                    icon-name: "edit-find-symbolic";
+                    tooltip-text: _("Search Connections");
+                    action-name: "win.connection-list-toggle-search";
+                    visible: bind template.connection-list-visible;
+                }
+
+                styles ["fieldmonitor-osd"]
+            }
+
+            Adw.ToastOverlay toast_overlay {
+                child: Stack main_stack {
+                    transition-type: crossfade;
+
+                    notify::visible-child-name => $on_main_stack_visible_child_name_changed() swapped;
+
+                    StackPage {
+                        name: "connection-list";
+
+                        child: Adw.Bin connection_list_bin {};
                     }
 
-                    Adw.TabBar tab_bar {
-                        view: tab_view;
-                    }
+                    StackPage {
+                        name: "tabs";
 
-                    Adw.ToastOverlay toast_overlay {
                         child: Adw.TabView tab_view {
-                            create-window => $on_tab_view_create_window() swapped;
-                            page-attached => $on_tab_view_page_attached() swapped;
-                            page-detached => $on_tab_view_page_detached() swapped;
-                            notify::selected-page => $on_tab_view_notify_selected_page() swapped;
-                        };
+                           create-window => $on_tab_view_create_window() swapped;
+                       };
                     }
-                }
-            };
-        }
-
-        StackPage {
-            name: "borderless";
-
-            child: Overlay {
-                [overlay]
-                Adw.HeaderBar header_bar_overlay {
-                    valign: start;
-
-                    [end]
-                    MenuButton {
-                        primary: true;
-                        icon-name: 'open-menu-symbolic';
-                        tooltip-text: _('Menu');
-                        menu-model: primary_menu;
-                    }
-
-                    styles ["fieldmonitor-osd"]
-                }
-
-                Box borderless_box {
-                    hexpand: true;
-                    vexpand: true;
-
-                    Adw.Bin {}
-
-                    styles ["is-in-borderless"]
-                }
-
-            };
+                };
+            }
         }
     };
 }
 
 menu primary_menu {
     section {
-        item {
-            label: _('_Borderless Mode');
-            action: 'win.toggle-borderless';
-        }
-
-        item {
-            label: _('_Fullscreen Mode');
-            action: 'win.toggle-fullscreen';
-        }
-    }
-    section {
-        item {
-            label: _('Add New _Connection');
-            action: 'app.add-connection';
-        }
         item {
             label: _('_Reload Connections');
             action: 'app.reload-connections';

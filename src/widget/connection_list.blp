@@ -20,6 +20,8 @@ StringFilter model_string_filter {
 }
 
 template $FieldMonitorConnectionList : Adw.Bin {
+    search-is-visible: bind search_bar.search-mode-enabled bidirectional;
+
     child: Overlay {
         vexpand: true;
 

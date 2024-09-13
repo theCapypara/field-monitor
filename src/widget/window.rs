@@ -18,16 +18,18 @@
 
 use std::sync::atomic::AtomicBool;
 
+use adw::prelude::BinExt;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::{gio, glib};
 use gtk::glib::Variant;
 use gtk::prelude::*;
 
+use crate::application::FieldMonitorApplication;
 use crate::widget::connection_list::FieldMonitorConnectionList;
 
 #[cfg(feature = "devel")]
-const DEBUG_TAB: bool = true;
+const DEBUG_TABS: bool = true;
 
 mod imp {
     use super::*;
@@ -39,21 +41,19 @@ mod imp {
         #[template_child]
         pub main_stack: TemplateChild<gtk::Stack>,
         #[template_child]
+        pub connection_list_bin: TemplateChild<adw::Bin>,
+        #[template_child]
+        pub button_fullscreen: TemplateChild<gtk::Button>,
+        #[template_child]
         pub header_bar: TemplateChild<adw::HeaderBar>,
         #[template_child]
-        pub tab_bar: TemplateChild<adw::TabBar>,
-        #[template_child]
-        pub tab_view: TemplateChild<adw::TabView>, // all children must be gtk::Box!
+        pub tab_view: TemplateChild<adw::TabView>,
         #[template_child]
         pub overview: TemplateChild<adw::TabOverview>,
-        #[template_child]
-        pub button_connection_list: TemplateChild<gtk::Button>,
         #[template_child]
         pub button_search_in_list: TemplateChild<gtk::Button>,
         #[template_child]
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
-        #[template_child]
-        pub borderless_box: TemplateChild<gtk::Box>,
         #[property(get, set)]
         pub connection_list_visible: AtomicBool,
     }
@@ -94,17 +94,34 @@ glib::wrapper! {
 }
 
 impl FieldMonitorWindow {
-    pub fn new<P: IsA<gtk::Application>>(application: &P) -> Self {
+    pub fn new(application: &FieldMonitorApplication) -> Self {
         let slf: Self = glib::Object::builder()
             .property("application", application)
             .build();
-        #[cfg(feature = "devel")]
-        slf.add_css_class("devel");
 
         #[cfg(feature = "devel")]
-        if DEBUG_TAB {
-            slf.add_debug_tab();
+        slf.add_css_class("devel");
+        #[cfg(feature = "devel")]
+        if DEBUG_TABS {
+            slf.add_debug_tabs();
         }
+
+        let conn_list = FieldMonitorConnectionList::new(application);
+        slf.imp().connection_list_bin.set_child(Some(&conn_list));
+
+        conn_list.connect_notify_local(
+            Some("search-is-visible"),
+            glib::clone!(
+                #[weak]
+                slf,
+                move |conn_list, _| {
+                    let value = conn_list.search_is_visible();
+                    slf.change_action_state("connection-list-toggle-search", &value.to_variant());
+                }
+            ),
+        );
+
+        slf.on_main_stack_visible_child_name_changed();
 
         slf
     }
@@ -114,21 +131,19 @@ impl FieldMonitorWindow {
             .activate(Self::act_show_connection_list)
             .build();
 
-        let toggle_borderless_action = gio::ActionEntry::builder("toggle-borderless")
-            .state(false.to_variant())
-            .activate(Self::act_toggle_borderless)
-            .build();
+        let connection_list_toggle_search_action =
+            gio::ActionEntry::builder("connection-list-toggle-search")
+                .state(false.to_variant())
+                .activate(Self::act_connection_list_toggle_search)
+                .build();
 
-        let toggle_fullscreen_action = gio::ActionEntry::builder("toggle-fullscreen")
-            .state(false.to_variant())
-            .activate(Self::act_toggle_fullscreen)
-            .build();
+        self.add_action(&gio::PropertyAction::new(
+            "fullscreen",
+            self,
+            "fullscreened",
+        ));
 
-        self.add_action_entries([
-            show_connection_action,
-            toggle_borderless_action,
-            toggle_fullscreen_action,
-        ]);
+        self.add_action_entries([show_connection_action, connection_list_toggle_search_action]);
     }
 
     pub fn toast_connection_added(&self) {
@@ -163,170 +178,94 @@ impl FieldMonitorWindow {
 impl FieldMonitorWindow {
     #[template_callback]
     fn on_tab_view_create_window(&self, _tab_view: &adw::TabView) -> adw::TabView {
-        let new_window = FieldMonitorWindow::new(&self.application().unwrap());
+        let new_window = FieldMonitorWindow::new(&self.application().unwrap().downcast().unwrap());
         new_window.present();
         new_window.imp().tab_view.clone()
     }
 
     #[template_callback]
-    fn on_tab_view_page_attached(&self, _page: &adw::TabPage, _position: i32) {
-        if !self.imp().tab_view.is_bound() {
-            return;
-        }
-        self.configure_tab_bar_autohide();
-    }
-
-    #[template_callback]
-    fn on_tab_view_page_detached(&self, _page: &adw::TabPage, _position: i32) {
-        if !self.imp().tab_view.is_bound() {
-            return;
-        }
-        self.configure_tab_bar_autohide();
-        if self.imp().tab_view.n_pages() == 0 {
-            self.open_new_connection_list();
-        }
-    }
-
-    /// Hide connection list button if already on connection list.
-    #[template_callback]
-    fn on_tab_view_notify_selected_page(&self) {
-        if !self.imp().tab_view.is_bound() {
-            return;
-        }
-        let selected = self.imp().tab_view.selected_page();
-        match selected {
-            Some(p) if is_tab_page_connection_list(&p) => {
-                self.set_connection_list_visible(true);
-            }
-            _ => {
-                self.set_connection_list_visible(false);
-            }
+    fn on_overview_open_changed(&self) {
+        if self.imp().overview.is_open() {
+            self.imp().main_stack.set_visible_child_name("tabs");
         }
     }
 
     #[template_callback]
-    fn on_button_search_in_list_clicked(&self) {
-        let selected = self.imp().tab_view.selected_page();
-        if let Some(selected) = selected {
-            if let Some(list) = selected
-                .child()
-                .downcast_ref::<FieldMonitorConnectionList>()
-            {
-                list.toggle_search();
-            }
+    fn on_self_fullscreened_changed(&self) {
+        if self.is_fullscreen() {
+            self.imp()
+                .button_fullscreen
+                .set_icon_name("arrows-pointing-inward-symbolic");
+        } else {
+            self.imp()
+                .button_fullscreen
+                .set_icon_name("arrows-pointing-outward-symbolic");
+        }
+    }
+
+    #[template_callback]
+    fn on_main_stack_visible_child_name_changed(&self) {
+        match self.imp().main_stack.visible_child_name().as_deref() {
+            Some("connection-list") => self.set_connection_list_visible(true),
+            _ => self.set_connection_list_visible(false),
+        }
+    }
+
+    #[template_callback]
+    fn on_self_connection_list_visible_changed(&self) {
+        if self.connection_list_visible() {
+            self.add_css_class("connection-list-visible");
+            self.remove_css_class("connection-list-not-visible");
+        } else {
+            self.remove_css_class("connection-list-visible");
+            self.add_css_class("connection-list-not-visible");
         }
     }
 }
 
 impl FieldMonitorWindow {
     fn act_show_connection_list(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
-        let page = self
-            .get_open_connection_list_page()
-            .unwrap_or_else(|| self.open_new_connection_list());
-        self.imp().tab_view.set_selected_page(&page);
+        self.imp()
+            .main_stack
+            .set_visible_child_name("connection-list");
     }
 
-    fn act_toggle_borderless(&self, action: &gio::SimpleAction, _param: Option<&Variant>) {
-        let imp = self.imp();
-        let new_state = !action.state().unwrap().get::<bool>().unwrap();
-
-        // Switches the borderless_overlay Bin's child widget with the current tabview Bin's page
-        // child widget and then changes the main stack.
-        let wdg_a = &*imp.borderless_box;
-        let wdg_b = imp
-            .tab_view
-            .selected_page()
-            .and_then(|page| page.child().downcast::<gtk::Box>().ok());
-        let Some(wdg_b) = wdg_b else {
-            return;
-        };
-        let (Some(chld_a), Some(chld_b)) = (wdg_a.first_child(), wdg_b.first_child()) else {
-            return;
-        };
-        wdg_a.remove(&chld_a);
-        wdg_b.remove(&chld_b);
-        wdg_a.append(&chld_b);
-        wdg_b.append(&chld_a);
-
-        if new_state {
-            imp.main_stack.set_visible_child_name("borderless");
-        } else {
-            imp.main_stack.set_visible_child_name("normal");
+    fn act_connection_list_toggle_search(
+        &self,
+        action: &gio::SimpleAction,
+        _param: Option<&Variant>,
+    ) {
+        if let Some(list) = self
+            .imp()
+            .connection_list_bin
+            .child()
+            .and_downcast_ref::<FieldMonitorConnectionList>()
+        {
+            let new_state = !list.search_is_visible();
+            list.set_search_is_visible(new_state);
+            // state change happens in notify.
         }
-
-        action.set_state(&new_state.to_variant());
-    }
-
-    fn act_toggle_fullscreen(&self, action: &gio::SimpleAction, _param: Option<&Variant>) {
-        let new_state = !action.state().unwrap().get::<bool>().unwrap();
-
-        self.set_fullscreened(new_state);
-
-        action.set_state(&new_state.to_variant());
     }
 }
 
 impl FieldMonitorWindow {
-    fn get_open_connection_list_page(&self) -> Option<adw::TabPage> {
-        for child in self.imp().tab_view.pages().iter::<adw::TabPage>() {
-            let child = child.unwrap(); // TODO: maybe want to be more graceful? but this really should never happen.
-            if is_tab_page_connection_list(&child) {
-                return Some(child);
-            }
-        }
-        None
-    }
-
-    fn configure_tab_bar_autohide(&self) {
-        if self.imp().tab_view.n_pages() == 1 {
-            // If we only have the connection list open: hide tab bar
-            self.imp()
-                .tab_bar
-                .set_autohide(self.get_open_connection_list_page().is_some());
-        }
-    }
-
-    pub fn open_new_connection_list(&self) -> adw::TabPage {
-        let title = gettext("Connection List");
-
-        let page =
-            FieldMonitorConnectionList::new(&self.application().unwrap().downcast().unwrap());
-
-        let tab_page = self.add_new_page(&page, &title);
-
-        tab_page.set_live_thumbnail(true);
-        tab_page
-    }
-
     #[cfg(feature = "devel")]
-    fn add_debug_tab(&self) {
-        let debug_widget = gtk::Box::builder().css_classes(["solid-color"]).build();
-        self.add_new_page(&debug_widget, "Debug");
+    fn add_debug_tabs(&self) {
+        let debug_widget = gtk::Box::builder()
+            .css_classes(["debug-solid-color"])
+            .build();
+        self.add_new_page(&debug_widget, "Debug 1");
+        let debug_widget = gtk::Box::builder()
+            .css_classes(["debug-solid-color2"])
+            .build();
+        self.add_new_page(&debug_widget, "Debug 2");
+        self.imp().main_stack.set_visible_child_name("tabs");
     }
 
     fn add_new_page(&self, page: &impl IsA<gtk::Widget>, title: &str) -> adw::TabPage {
-        let page = page.upcast_ref();
-        page.set_hexpand(true);
-        page.set_vexpand(true);
-
-        let boxx = gtk::Box::builder().vexpand(true).hexpand(true).build();
-        boxx.append(page);
-        let tab_page = self.imp().tab_view.append(&boxx);
+        let tab_page = self.imp().tab_view.append(page);
 
         tab_page.set_title(title);
         tab_page
     }
-}
-
-fn is_tab_page_connection_list(page: &adw::TabPage) -> bool {
-    page.child()
-        .downcast_ref::<gtk::Box>()
-        .unwrap()
-        .first_child()
-        .map(|child| {
-            child
-                .type_()
-                .is_a(FieldMonitorConnectionList::static_type())
-        })
-        .unwrap_or_default()
 }

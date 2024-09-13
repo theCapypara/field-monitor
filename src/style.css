@@ -1,3 +1,7 @@
+.connection-list {
+    margin-top: 45px;
+}
+
 .connection-list .list-inner-box {
     margin: 24px 12px;
     border-spacing: 24px;
@@ -8,15 +12,15 @@
     margin-bottom: 24px;
 }
 
-.is-in-borderless .connection-list .content-page {
-    margin-top: 48px;
-}
-
-.fieldmonitor-osd {
+.connection-list-not-visible .fieldmonitor-osd {
     background: rgba(0, 0, 0, 0.45);
     box-shadow: none;
 }
 
-.solid-color {
+.debug-solid-color {
     background: rgb(200, 200, 0);
+}
+
+.debug-solid-color2 {
+    background: rgb(200, 0, 200);
 }

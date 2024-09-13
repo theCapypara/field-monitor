@@ -15,6 +15,8 @@
     <gresource prefix=@APP_ID_SLASHED@>
         <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
         <file>style.css</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/arrows-pointing-inward-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/arrows-pointing-outward-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/dialog-error-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/display-with-window-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/edit-find-symbolic.svg</file>
