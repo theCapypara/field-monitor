@@ -171,6 +171,11 @@ impl VncPreferences {
                     if let Ok(Some(v)) = existing_configuration.password().await {
                         slf.credentials().set_password(v);
                     }
+
+                    slf.imp()
+                        .credentials
+                        .propagate_settings(&existing_configuration)
+                        .await;
                 }
             ));
         }

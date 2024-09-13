@@ -308,6 +308,11 @@ impl DebugPreferences {
                     slf.set_rdp_password(existing_configuration.rdp_password());
                     slf.set_spice_adapter_enable(existing_configuration.spice_adapter_enable());
                     slf.set_vte_adapter_enable(existing_configuration.vte_adapter_enable());
+
+                    slf.imp()
+                        .behaviour
+                        .propagate_settings(&existing_configuration)
+                        .await;
                 }
             ));
         }

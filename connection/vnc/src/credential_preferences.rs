@@ -108,16 +108,20 @@ impl VncCredentialPreferences {
                 #[weak]
                 slf,
                 async move {
-                    if let Some(v) = existing_configuration.user() {
-                        slf.set_user(v);
-                    }
-                    if let Ok(Some(v)) = existing_configuration.password().await {
-                        slf.set_password(v);
-                    }
+                    slf.propagate_settings(&existing_configuration).await;
                 }
             ));
         }
         slf
+    }
+
+    pub async fn propagate_settings(&self, existing_configuration: &ConnectionConfiguration) {
+        if let Some(v) = existing_configuration.user() {
+            self.set_user(v);
+        }
+        if let Ok(Some(v)) = existing_configuration.password().await {
+            self.set_password(v);
+        }
     }
 
     pub fn user_if_remembered(&self) -> Option<String> {

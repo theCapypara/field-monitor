@@ -93,13 +93,17 @@ impl DebugBehaviourPreferences {
                 #[weak]
                 slf,
                 async move {
-                    slf.set_load_servers_behaviour(existing_configuration.load_servers_behaviour());
-                    slf.set_connect_behaviour(existing_configuration.connect_behaviour());
+                    slf.propagate_settings(&existing_configuration).await;
                 }
             ));
         }
 
         slf
+    }
+
+    pub async fn propagate_settings(&self, existing_configuration: &ConnectionConfiguration) {
+        self.set_load_servers_behaviour(existing_configuration.load_servers_behaviour());
+        self.set_connect_behaviour(existing_configuration.connect_behaviour());
     }
 }
 
