@@ -16,7 +16,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use std::sync::atomic::AtomicBool;
+use std::cell::RefCell;
 
 use adw::prelude::BinExt;
 use adw::subclass::prelude::*;
@@ -35,8 +35,7 @@ const DEBUG_TABS: bool = true;
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[properties(wrapper_type = super::FieldMonitorWindow)]
+    #[derive(Debug, Default, gtk::CompositeTemplate)]
     #[template(resource = "/de/capypara/FieldMonitor/widget/window.ui")]
     pub struct FieldMonitorWindow {
         #[template_child]
@@ -51,8 +50,7 @@ mod imp {
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         pub mobile_breakpoint: TemplateChild<adw::Breakpoint>,
-        #[property(get, set)]
-        pub connection_list_visible: AtomicBool,
+        pub tab_title_notify_binding: RefCell<Option<(gtk::Widget, glib::SignalHandlerId)>>,
     }
 
     #[glib::object_subclass]
@@ -71,7 +69,6 @@ mod imp {
         }
     }
 
-    #[glib::derived_properties]
     impl ObjectImpl for FieldMonitorWindow {
         fn constructed(&self) {
             self.parent_constructed();
@@ -224,27 +221,77 @@ impl FieldMonitorWindow {
     #[template_callback]
     fn on_overview_open_changed(&self) {
         if self.imp().overview.is_open() {
+            self.change_window_title(WindowTitle::Overview);
             self.imp().main_stack.set_visible_child_name("tabs");
+        } else {
+            self.on_tab_view_selected_page_changed();
         }
     }
 
     #[template_callback]
     fn on_main_stack_visible_child_name_changed(&self) {
-        match self.imp().main_stack.visible_child_name().as_deref() {
-            Some("connection-list") => self.set_connection_list_visible(true),
-            _ => self.set_connection_list_visible(false),
+        if let Some("connection-list") = self.imp().main_stack.visible_child_name().as_deref() {
+            self.change_window_title(WindowTitle::ConnectionList);
         }
     }
 
     #[template_callback]
-    fn on_self_connection_list_visible_changed(&self) {
-        let cl_visible = self.connection_list_visible();
-        if cl_visible {
-            self.add_css_class("connection-list-visible");
-            self.remove_css_class("connection-list-not-visible");
-        } else {
-            self.remove_css_class("connection-list-visible");
-            self.add_css_class("connection-list-not-visible");
+    fn on_tab_view_selected_page_changed(&self) {
+        if let Some("tabs") = self.imp().main_stack.visible_child_name().as_deref() {
+            if let Some(selected_page) = self.imp().tab_view.selected_page() {
+                if let Ok(view) = selected_page
+                    .child()
+                    .downcast::<FieldMonitorConnectionView>()
+                {
+                    self.change_window_title(WindowTitle::ConnectionView(view));
+                }
+            }
         }
     }
+
+    fn change_window_title(&self, title: WindowTitle) {
+        let imp = self.imp();
+        let field_monitor_str = gettext("Field Monitor");
+        match title {
+            WindowTitle::Overview | WindowTitle::ConnectionList => {
+                if let Some((tab, signal)) = imp.tab_title_notify_binding.borrow_mut().take() {
+                    glib::signal_handler_disconnect(&tab, signal);
+                }
+                self.set_title(Some(&field_monitor_str));
+            }
+            WindowTitle::ConnectionView(tab) => {
+                fn change_title(
+                    slf: &FieldMonitorWindow,
+                    tab: &FieldMonitorConnectionView,
+                    suffix: &str,
+                ) {
+                    slf.set_title(Some(&format!("{} - {}", tab.title(), suffix)));
+                }
+
+                change_title(self, &tab, &field_monitor_str);
+
+                let signal_handler_id = tab.connect_notify_local(
+                    Some("title"),
+                    glib::clone!(
+                        #[weak(rename_to=slf)]
+                        self,
+                        move |tab, _| {
+                            change_title(&slf, tab, &field_monitor_str);
+                        }
+                    ),
+                );
+
+                imp.tab_title_notify_binding
+                    .borrow_mut()
+                    .replace((tab.upcast(), signal_handler_id));
+            }
+        }
+    }
+}
+
+#[derive(Debug, Clone)]
+enum WindowTitle {
+    Overview,
+    ConnectionList,
+    ConnectionView(FieldMonitorConnectionView),
 }

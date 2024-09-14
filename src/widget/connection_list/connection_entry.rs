@@ -31,7 +31,7 @@ use libfieldmonitor::connection::{
 };
 
 use crate::application::FieldMonitorApplication;
-use crate::widget::connection_list::server_entry::FieldMonitorCLServerEntry;
+use crate::widget::connection_list::server_entry::new_server_entry_row;
 
 const LOAD_STATE_LOADING: &str = "loading";
 const LOAD_STATE_SERVERS: &str = "servers";
@@ -120,14 +120,25 @@ impl FieldMonitorCLConnectionEntry {
         let mut load_subservers = Vec::with_capacity(servers.len());
 
         for (server_id, server) in servers {
-            let server = FieldMonitorCLServerEntry::new(
-                &self.application().unwrap(),
-                connection.connection_id(),
-                vec![server_id.into_owned()],
-                server,
-            );
-            self.imp().servers.append(&server);
-            load_subservers.push(async move { server.load().await });
+            let connection_id = connection.connection_id();
+
+            load_subservers.push(glib::clone!(
+                #[strong(rename_to=slf)]
+                self,
+                async move {
+                    let server = new_server_entry_row(
+                        &slf.application().unwrap(),
+                        connection_id,
+                        vec![server_id.into_owned()],
+                        server,
+                    )
+                    .await?;
+
+                    slf.imp().servers.append(&server);
+
+                    Ok(())
+                }
+            ));
         }
 
         try_join_all(load_subservers.into_iter()).await?;

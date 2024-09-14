@@ -7,8 +7,6 @@ template $FieldMonitorWindow : Adw.ApplicationWindow {
     width-request: 340;
     title: _("Field Monitor");
 
-    notify::connection-list-visible => $on_self_connection_list_visible_changed() swapped;
-
     Adw.Breakpoint mobile_breakpoint {
         condition('max-width: 540sp')
     }
@@ -38,6 +36,7 @@ template $FieldMonitorWindow : Adw.ApplicationWindow {
 
                     Adw.TabView tab_view {
                        create-window => $on_tab_view_create_window() swapped;
+                       notify::selected-page => $on_tab_view_selected_page_changed() swapped;
                     }
                 };
             }
