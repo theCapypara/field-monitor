@@ -8,13 +8,16 @@
         <file preprocess="xml-stripblanks">widget/window.ui</file>
         <file preprocess="xml-stripblanks">widget/connection_list.ui</file>
         <file preprocess="xml-stripblanks">widget/connection_list/connection_entry.ui</file>
-        <file preprocess="xml-stripblanks">widget/connection_list/server_entry.ui</file>
+        <file preprocess="xml-stripblanks">widget/connection_view.ui</file>
         <file preprocess="xml-stripblanks">widget/add_connection_dialog.ui</file>
         <file preprocess="xml-stripblanks">widget/update_connection_dialog.ui</file>
     </gresource>
     <gresource prefix=@APP_ID_SLASHED@>
         <file preprocess="xml-stripblanks">gtk/help-overlay.ui</file>
         <file>style.css</file>
+        <file>style-dark.css</file>
+        <file>style-hc.css</file>
+        <file>style-hc-dark.css</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/arrows-pointing-inward-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/arrows-pointing-outward-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/dialog-error-symbolic.svg</file>

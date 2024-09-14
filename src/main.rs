@@ -66,9 +66,6 @@ fn main() -> glib::ExitCode {
     // desktop features such as file opening and single-instance applications.
     let app = FieldMonitorApplication::new(APP_ID, &gio::ApplicationFlags::empty());
 
-    // Accelerators
-    app.set_accels_for_action("win.toggle-fullscreen", &["F11"]);
-
     // Run the application. This function will block until the application
     // exits. Upon return, we have our exit code to return to the shell. (This
     // is the code you see when you do `echo $?` after running a command in a

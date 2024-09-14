@@ -1,0 +1,171 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorConnectionView : Adw.Bin {
+    title: bind osd_title_label.label bidirectional;
+
+    child: Overlay {
+        // This great idea and base of implementation comes rom Showtime!
+        [overlay]
+        Revealer header_revealer_start {
+            transition-type: crossfade;
+            valign: start;
+            halign: start;
+            reveal-child: bind template.reveal-osd-controls inverted;
+
+            WindowHandle {
+                Box header_start {
+                    margin-top: 6;
+                    margin-bottom: 3;
+                    margin-start: 6;
+                    margin-end: 3;
+                    spacing: 6;
+
+                    WindowControls window_controls_start {
+                        halign: start;
+                        visible: bind window_controls_start.empty inverted;
+                        side: start;
+
+                        styles ["window-controls-osd"]
+                    }
+
+                    Button button_fullscreen {
+                        hexpand: true;
+                        valign: start;
+                        halign: start;
+                        icon-name: "arrows-pointing-outward-symbolic";
+                        tooltip-text: _("Toggle Fullscreen");
+                        action-name: "win.fullscreen";
+
+                        styles ["osd", "circular"]
+                    }
+
+                    Button {
+                        hexpand: true;
+                        valign: start;
+                        halign: start;
+                        icon-name: "view-grid-symbolic";
+                        tooltip-text: _("Tab Overview");
+                        action-name: "overview.open";
+
+                        styles ["osd", "circular"]
+                    }
+                }
+            }
+        }
+        [overlay]
+        Revealer header_revealer_middle {
+            transition-type: crossfade;
+            valign: start;
+            halign: center;
+            reveal-child: bind template.reveal-osd-controls inverted;
+
+            WindowHandle {
+                Box {
+                    margin-top: 6;
+                    margin-bottom: 3;
+                    margin-start: 6;
+                    margin-end: 3;
+                    spacing: 6;
+
+                    Revealer osd_title_revealer {
+                        transition-type: crossfade;
+                        valign: start;
+                        halign: center;
+                        reveal-child: true;
+
+                        Button {
+                            accessible-role: label;
+                            focusable: false;
+                            child: Label osd_title_label {
+                                margin-start: 12;
+                                margin-end: 12;
+                                ellipsize: middle;
+                            };
+
+                            styles ["osd", "circular"]
+                        }
+                    }
+                }
+            }
+        }
+
+        [overlay]
+        Revealer header_revealer_end {
+            transition-type: crossfade;
+            valign: start;
+            halign: end;
+            reveal-child: bind template.reveal-osd-controls inverted;
+
+            WindowHandle {
+                Box header_end {
+                    margin-top: 6;
+                    margin-bottom: 3;
+                    margin-end: 6;
+                    margin-start: 3;
+                    spacing: 6;
+
+                    Button {
+                        hexpand: true;
+                        valign: start;
+                        halign: end;
+
+                        icon-name: "go-home-symbolic";
+                        tooltip-text: _("Connection List");
+                        action-name: "win.show-connection-list";
+
+                        styles ["osd", "circular"]
+                    }
+
+                    MenuButton {
+                        hexpand: true;
+                        valign: start;
+                        halign: end;
+                        primary: true;
+
+                        icon-name: 'view-more-symbolic';
+                        tooltip-text: _('Menu');
+                        menu-model: on_connection_menu;
+
+                        styles ["osd", "circular"]
+                    }
+
+                    WindowControls window_controls_end {
+                        halign: end;
+                        visible: bind window_controls_end.empty inverted;
+                        side: end;
+
+                        styles ["window-controls-osd"]
+                    }
+                }
+            }
+        }
+
+        // TODO
+        Box connection {
+            vexpand: true;
+            hexpand: true;
+
+            styles ["debug-solid-color"]
+        }
+    };
+}
+
+menu on_connection_menu {
+    section {
+        item {
+            label: _('_Preferences');
+            action: 'app.preferences';
+        }
+
+        item {
+            label: _('_Keyboard Shortcuts');
+            action: 'win.show-help-overlay';
+        }
+
+        item {
+            label: _('_About Field Monitor');
+            action: 'app.about';
+        }
+    }
+}

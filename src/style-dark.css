@@ -1,0 +1,9 @@
+/* From libadwaita; we make osd white background with light style, so we need to set it here again */
+.osd popover contents,
+.osd popover arrow,
+button.osd,
+menubutton.osd button,
+.window-controls-osd > button > image {
+    color: alpha(white, 0.9);
+    background-color: alpha(black, 0.7);
+}

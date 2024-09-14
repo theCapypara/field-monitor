@@ -1,5 +1,27 @@
-.connection-list {
-    margin-top: 45px;
+/*
+ * Styles for header from Showtime, thanks for the great implementation of fullscreen overlay
+ * window controls!
+ */
+
+.osd popover contents,
+.osd popover arrow,
+button.osd,
+menubutton.osd button,
+.window-controls-osd > button > image {
+    color: alpha(black, 0.9);
+    background-color: alpha(white, 0.7);
+}
+
+.osd popover contents,
+.osd popover arrow {
+    background-color: alpha(white, 0.9);
+}
+
+/* https://gitlab.gnome.org/GNOME/libadwaita/-/blob/9e4d10af0308f6abf54769bd6b74941cb10bcdc7/src/stylesheet/widgets/_buttons.scss#L122 */
+
+.window-controls-osd > button > image:hover {
+    color: white;
+    background-color: alpha(mix(black, white, 0.15), 0.65);
 }
 
 .connection-list .list-inner-box {
@@ -12,15 +34,6 @@
     margin-bottom: 24px;
 }
 
-.connection-list-not-visible .fieldmonitor-osd {
-    background: rgba(0, 0, 0, 0.45);
-    box-shadow: none;
-}
-
 .debug-solid-color {
     background: rgb(200, 200, 0);
-}
-
-.debug-solid-color2 {
-    background: rgb(200, 0, 200);
 }

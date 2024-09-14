@@ -18,6 +18,7 @@
 use std::cell::RefCell;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
+use std::sync::atomic::AtomicBool;
 use std::time::Duration;
 
 use adw::prelude::*;
@@ -37,8 +38,6 @@ mod connection_entry;
 mod server_entry;
 
 mod imp {
-    use std::sync::atomic::AtomicBool;
-
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
@@ -67,6 +66,8 @@ mod imp {
         pub search_bar: TemplateChild<gtk::SearchBar>,
         #[template_child]
         pub search_entry: TemplateChild<gtk::SearchEntry>,
+        #[template_child]
+        pub button_fullscreen: TemplateChild<gtk::Button>,
         #[property(get, set)]
         pub search_is_visible: AtomicBool,
         #[property(get, construct_only)]
@@ -105,7 +106,7 @@ glib::wrapper! {
 }
 
 impl FieldMonitorConnectionList {
-    pub fn new(app: &FieldMonitorApplication) -> Self {
+    pub fn new(app: &FieldMonitorApplication, window: Option<&impl IsA<gtk::Window>>) -> Self {
         let slf: Self = glib::Object::builder().property("application", app).build();
         let imp = slf.imp();
         imp.connections.replace(Some(HashMap::new()));
@@ -166,6 +167,27 @@ impl FieldMonitorConnectionList {
             let icon_name = format!("{}-symbolic", app_id);
             imp.empty_list_status_page.set_icon_name(Some(&icon_name));
             imp.welcome_status_page.set_icon_name(Some(&icon_name));
+        }
+
+        if let Some(parent) = window {
+            parent.connect_notify_local(
+                Some("fullscreened"),
+                glib::clone!(
+                    #[weak]
+                    slf,
+                    move |window, _| {
+                        if window.is_fullscreen() {
+                            slf.imp()
+                                .button_fullscreen
+                                .set_icon_name("arrows-pointing-inward-symbolic");
+                        } else {
+                            slf.imp()
+                                .button_fullscreen
+                                .set_icon_name("arrows-pointing-outward-symbolic");
+                        }
+                    }
+                ),
+            );
         }
 
         slf

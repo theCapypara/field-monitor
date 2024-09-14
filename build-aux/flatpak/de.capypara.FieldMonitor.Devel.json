@@ -14,7 +14,7 @@
         "--socket=fallback-x11",
         "--device=dri",
         "--socket=wayland",
-        "--env=RUST_LOG=field_monitor=debug,libfieldmonitor=debug,oo7=debug",
+        "--env=RUST_LOG=field_monitor=debug,libfieldmonitor=debug,oo7=debug,GLib=info",
         "--env=RUST_BACKTRACE=1"
     ],
     "build-options": {

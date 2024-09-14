@@ -228,10 +228,19 @@ glib::wrapper! {
 
 impl FieldMonitorApplication {
     pub fn new(application_id: &str, flags: &gio::ApplicationFlags) -> Self {
-        glib::Object::builder()
+        let app: FieldMonitorApplication = glib::Object::builder()
             .property("application-id", application_id)
             .property("flags", flags)
-            .build()
+            .build();
+
+        // Accelerators
+        app.set_accels_for_action("win.toggle-fullscreen", &["F11"]);
+
+        // Prefer dark style by default
+        app.style_manager()
+            .set_color_scheme(adw::ColorScheme::PreferDark);
+
+        app
     }
 
     async fn connections_dir(&self) -> PathBuf {

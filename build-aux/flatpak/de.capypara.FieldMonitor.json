@@ -14,7 +14,7 @@
         "--socket=fallback-x11",
         "--device=dri",
         "--socket=wayland",
-        "--env=RUST_LOG=field_monitor=info,libfieldmonitor=info"
+        "--env=RUST_LOG=field_monitor=info,libfieldmonitor=info,GLib=info"
     ],
     "build-options": {
         "append-path": "/usr/lib/sdk/rust-stable/bin",

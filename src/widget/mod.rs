@@ -18,5 +18,6 @@
 
 pub mod add_connection_dialog;
 pub mod connection_list;
+mod connection_view;
 pub mod update_connection_dialog;
 pub mod window;

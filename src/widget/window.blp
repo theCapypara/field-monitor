@@ -4,100 +4,52 @@ using Adw 1;
 template $FieldMonitorWindow : Adw.ApplicationWindow {
     default-width: 600;
     default-height: 600;
+    width-request: 340;
     title: _("Field Monitor");
 
-    notify::fullscreened => $on_self_fullscreened_changed() swapped;
     notify::connection-list-visible => $on_self_connection_list_visible_changed() swapped;
+
+    Adw.Breakpoint mobile_breakpoint {
+        condition('max-width: 540sp')
+    }
 
     content: Adw.TabOverview overview {
         enable-new-tab: false;
         view: tab_view;
+        secondary-menu: overview_menu;
 
         notify::open => $on_overview_open_changed() swapped;
 
-        Overlay {
-            [overlay]
-            Adw.HeaderBar header_bar {
-                valign: start;
+        Adw.ToastOverlay toast_overlay {
+            child: Stack main_stack {
+                transition-type: slide_down;
+                transition-duration: 250;
 
-                Button button_fullscreen {
-                    icon-name: "arrows-pointing-outward-symbolic";
-                    tooltip-text: _("Toggle Fullscreen");
-                    action-name: "win.fullscreen";
+                notify::visible-child-name => $on_main_stack_visible_child_name_changed() swapped;
+
+                StackPage {
+                    name: "connection-list";
+
+                    child: Adw.Bin connection_list_bin {};
                 }
 
-                Adw.TabButton {
-                    tooltip-text: _("Tab Overview");
-                    action-name: "overview.open";
-                    view: tab_view;
-                    visible: bind tab_view.n-pages;
+                StackPage {
+                    name: "tabs";
+
+                    child: Adw.TabView tab_view {
+                       create-window => $on_tab_view_create_window() swapped;
+                    };
                 }
-
-                [end]
-                MenuButton {
-                    primary: true;
-                    icon-name: 'open-menu-symbolic';
-                    tooltip-text: _('Menu');
-                    menu-model: primary_menu;
-                }
-
-                [end]
-                Button {
-                    icon-name: "go-home-symbolic";
-                    tooltip-text: _("Connection List");
-                    action-name: "win.show-connection-list";
-                    visible: bind template.connection-list-visible inverted;
-                }
-
-                [end]
-                Button {
-                    icon-name: "list-add-symbolic";
-                    tooltip-text: _("Add New Connection");
-                    action-name: "app.add-connection";
-                    visible: bind template.connection-list-visible;
-                }
-
-                [end]
-                ToggleButton button_search_in_list {
-                    icon-name: "edit-find-symbolic";
-                    tooltip-text: _("Search Connections");
-                    action-name: "win.connection-list-toggle-search";
-                    visible: bind template.connection-list-visible;
-                }
-
-                styles ["fieldmonitor-osd"]
-            }
-
-            Adw.ToastOverlay toast_overlay {
-                child: Stack main_stack {
-                    transition-type: crossfade;
-
-                    notify::visible-child-name => $on_main_stack_visible_child_name_changed() swapped;
-
-                    StackPage {
-                        name: "connection-list";
-
-                        child: Adw.Bin connection_list_bin {};
-                    }
-
-                    StackPage {
-                        name: "tabs";
-
-                        child: Adw.TabView tab_view {
-                           create-window => $on_tab_view_create_window() swapped;
-                       };
-                    }
-                };
-            }
+            };
         }
     };
 }
 
-menu primary_menu {
+menu overview_menu {
     section {
         item {
-            label: _('_Reload Connections');
-            action: 'app.reload-connections';
+            label: _('Connection List');
+            action: "win.show-connection-list";
         }
     }
     section {
