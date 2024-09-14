@@ -70,6 +70,8 @@ mod imp {
         pub button_fullscreen: TemplateChild<gtk::Button>,
         #[property(get, set)]
         pub search_is_visible: AtomicBool,
+        #[property(get, set)]
+        pub show_overview_button: AtomicBool,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         pub connections: RefCell<Option<HashMap<String, FieldMonitorCLConnectionEntry>>>,

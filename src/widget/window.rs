@@ -105,6 +105,15 @@ impl FieldMonitorWindow {
 
         let conn_list = FieldMonitorConnectionList::new(application, Some(&slf));
         slf.imp().connection_list_bin.set_child(Some(&conn_list));
+        conn_list.set_show_overview_button(slf.imp().tab_view.n_pages() != 0);
+        slf.imp().tab_view.connect_notify_local(
+            Some("n-pages"),
+            glib::clone!(
+                #[weak]
+                conn_list,
+                move |view, _| conn_list.set_show_overview_button(view.n_pages() != 0)
+            ),
+        );
 
         slf.on_main_stack_visible_child_name_changed();
 
@@ -115,6 +124,9 @@ impl FieldMonitorWindow {
         let show_connection_action = gio::ActionEntry::builder("show-connection-list")
             .activate(Self::act_show_connection_list)
             .build();
+        let open_overview_action = gio::ActionEntry::builder("open-overview")
+            .activate(Self::act_open_overview)
+            .build();
 
         self.add_action(&gio::PropertyAction::new(
             "fullscreen",
@@ -122,7 +134,7 @@ impl FieldMonitorWindow {
             "fullscreened",
         ));
 
-        self.add_action_entries([show_connection_action]);
+        self.add_action_entries([open_overview_action, show_connection_action]);
     }
 
     pub fn toast_connection_added(&self) {
@@ -156,11 +168,19 @@ impl FieldMonitorWindow {
         &self.imp().mobile_breakpoint
     }
 
+    pub fn show_tabs(&self) {
+        self.imp().main_stack.set_visible_child_name("tabs");
+    }
+
     fn act_show_connection_list(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
-        self.imp().overview.set_open(false);
         self.imp()
             .main_stack
             .set_visible_child_name("connection-list");
+    }
+
+    fn act_open_overview(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
+        self.imp().overview.set_open(true);
+        self.imp().main_stack.set_visible_child_name("tabs");
     }
 
     #[cfg(feature = "devel")]
@@ -174,7 +194,6 @@ impl FieldMonitorWindow {
         self.add_new_page(&debug_widget, "Debug 1");
         let debug_widget = FieldMonitorConnectionView::new(&app, Some(self));
         self.add_new_page(&debug_widget, "Debug 2");
-        self.imp().main_stack.set_visible_child_name("tabs");
     }
 
     fn add_new_page(&self, page: &impl IsA<gtk::Widget>, title: &str) -> adw::TabPage {
@@ -198,6 +217,7 @@ impl FieldMonitorWindow {
     fn on_tab_view_create_window(&self, _tab_view: &adw::TabView) -> adw::TabView {
         let new_window = FieldMonitorWindow::new(&self.application().unwrap().downcast().unwrap());
         new_window.present();
+        new_window.show_tabs();
         new_window.imp().tab_view.clone()
     }
 

@@ -21,6 +21,7 @@ StringFilter model_string_filter {
 
 template $FieldMonitorConnectionList : Adw.Bin {
     search-is-visible: bind search_bar.search-mode-enabled bidirectional;
+    show-overview-button: bind overview_button.visible bidirectional;
 
     child: Box {
         orientation: vertical;
@@ -35,11 +36,10 @@ template $FieldMonitorConnectionList : Adw.Bin {
                 action-name: "win.fullscreen";
             }
 
-            Button {
-                // TODO: Hide when no tabs
+            Button overview_button {
                 icon-name: "view-grid-symbolic";
                 tooltip-text: _("Tab Overview");
-                action-name: "overview.open";
+                action-name: "win.open-overview";
             }
 
             [end]

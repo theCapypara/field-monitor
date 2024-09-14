@@ -13,35 +13,35 @@ template $FieldMonitorWindow : Adw.ApplicationWindow {
         condition('max-width: 540sp')
     }
 
-    content: Adw.TabOverview overview {
-        enable-new-tab: false;
-        view: tab_view;
-        secondary-menu: overview_menu;
+    content: Adw.ToastOverlay toast_overlay {
+        child: Stack main_stack {
+            transition-type: slide_down;
+            transition-duration: 250;
 
-        notify::open => $on_overview_open_changed() swapped;
+            notify::visible-child-name => $on_main_stack_visible_child_name_changed() swapped;
 
-        Adw.ToastOverlay toast_overlay {
-            child: Stack main_stack {
-                transition-type: slide_down;
-                transition-duration: 250;
+            StackPage {
+                name: "connection-list";
 
-                notify::visible-child-name => $on_main_stack_visible_child_name_changed() swapped;
+                child: Adw.Bin connection_list_bin {};
+            }
 
-                StackPage {
-                    name: "connection-list";
+            StackPage {
+                name: "tabs";
 
-                    child: Adw.Bin connection_list_bin {};
-                }
+                child: Adw.TabOverview overview {
+                    enable-new-tab: false;
+                    view: tab_view;
+                    secondary-menu: overview_menu;
 
-                StackPage {
-                    name: "tabs";
+                    notify::open => $on_overview_open_changed() swapped;
 
-                    child: Adw.TabView tab_view {
+                    Adw.TabView tab_view {
                        create-window => $on_tab_view_create_window() swapped;
-                    };
-                }
-            };
-        }
+                    }
+                };
+            }
+        };
     };
 }
 
