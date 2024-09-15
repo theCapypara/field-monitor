@@ -23,10 +23,8 @@ template $FieldMonitorConnectionList : Adw.Bin {
     search-is-visible: bind search_bar.search-mode-enabled bidirectional;
     show-overview-button: bind overview_button.visible bidirectional;
 
-    child: Box {
-        orientation: vertical;
-        vexpand: true;
-
+    child: Adw.ToolbarView {
+        [top]
         Adw.HeaderBar header_bar {
             valign: start;
 
@@ -58,7 +56,19 @@ template $FieldMonitorConnectionList : Adw.Bin {
             }
         }
 
-        Overlay {
+        [top]
+        SearchBar search_bar {
+            key-capture-widget: template;
+
+            SearchEntry search_entry {
+                search-delay: 100;
+                placeholder-text: _("Search");
+
+                search-changed => $on_search_entry_search_changed() swapped;
+            }
+        }
+
+        content: Overlay {
             vexpand: true;
 
             [overlay]
@@ -67,76 +77,61 @@ template $FieldMonitorConnectionList : Adw.Bin {
                 styles ["osd"]
             }
 
-            Box {
-                orientation: vertical;
+            ScrolledWindow {
+                hscrollbar-policy: never;
+                vexpand: true;
 
-                SearchBar search_bar {
-                    key-capture-widget: connection_list_box;
+                Stack stack {
+                    transition-type: crossfade;
 
-                    SearchEntry search_entry {
-                        search-delay: 100;
-                        placeholder-text: _("Search");
-
-                        search-changed => $on_search_entry_search_changed() swapped;
+                    StackPage {
+                        name: "welcome";
+                        child: Adw.StatusPage welcome_status_page {
+                            title: _("Field Monitor");
+                        };
                     }
-                }
+                    StackPage {
+                        name: "list";
+                        child: ScrolledWindow {
+                            hscrollbar-policy: never;
+                            propagate-natural-height: true;
 
-                ScrolledWindow {
-                    hscrollbar-policy: never;
-                    vexpand: true;
+                            child: Adw.Clamp {
+                                child: ListBox connection_list_box {
+                                    selection-mode: none;
 
-                    Stack stack {
-                        transition-type: crossfade;
+                                    [placeholder]
+                                    Adw.StatusPage {
+                                        icon-name: "edit-find-symbolic";
+                                        title: _("No Results");
+                                    }
 
-                        StackPage {
-                            name: "welcome";
-                            child: Adw.StatusPage welcome_status_page {
-                                title: _("Field Monitor");
-                            };
-                        }
-                        StackPage {
-                            name: "list";
-                            child: ScrolledWindow {
-                                hscrollbar-policy: never;
-                                propagate-natural-height: true;
-
-                                child: Adw.Clamp {
-                                    child: ListBox connection_list_box {
-                                        selection-mode: none;
-
-                                        [placeholder]
-                                        Adw.StatusPage {
-                                            icon-name: "edit-find-symbolic";
-                                            title: _("No Results");
-                                        }
-
-                                        styles ["list-inner-box", "navigation-sidebar"]
-                                    };
+                                    styles ["list-inner-box", "navigation-sidebar"]
                                 };
                             };
-                        }
-                        StackPage {
-                            name: "empty_list";
-                            child: Adw.StatusPage empty_list_status_page {
-                                title: _("Field Monitor");
-                                description: _("There are no connections configured yet.\nActivate the button below to get started.");
-
-                                child: Button {
-                                    halign: center;
-                                    action-name: "app.add-connection";
-                                    child: Adw.ButtonContent {
-                                        icon-name: "list-add-symbolic";
-                                        label: _("Add New Connection");
-                                    };
-                                    styles ["pill", "suggested-action", "add-connection-button"]
-                                };
-                            };
-                        }
-                        styles ["content-page"]
+                        };
                     }
+                    StackPage {
+                        name: "empty_list";
+                        child: Adw.StatusPage empty_list_status_page {
+                            title: _("Field Monitor");
+                            description: _("There are no connections configured yet.\nActivate the button below to get started.");
+
+                            child: Button {
+                                halign: center;
+                                action-name: "app.add-connection";
+                                child: Adw.ButtonContent {
+                                    icon-name: "list-add-symbolic";
+                                    label: _("Add New Connection");
+                                };
+                                styles ["pill", "suggested-action", "add-connection-button"]
+                            };
+                        };
+                    }
+                    styles ["content-page"]
                 }
             }
-        }
+        };
     };
 
     styles ["connection-list"]

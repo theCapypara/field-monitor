@@ -15,6 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use std::borrow::Cow;
 use std::iter;
 use std::ops::Deref;
 
@@ -29,6 +30,7 @@ pub use expander_row::FieldMonitorCLServerEntryExpanderRow;
 use libfieldmonitor::connection::{ConnectionResult, ServerConnection, ServerMap, ServerMetadata};
 
 use crate::application::FieldMonitorApplication;
+use crate::i18n::gettext_f;
 
 mod action_row;
 mod expander_row;
@@ -133,34 +135,63 @@ async fn load_multi_server_row(
 async fn finish_load(row: &impl ServerEntry) {
     row.with_server_if_exists(|server| {
         let adapters = server.supported_adapters();
-        if !adapters.is_empty() {
-            let menu = gio::Menu::new();
-            for (adapter_id, adapter_label) in adapters {
-                let action_target = (row.path().to_string(), adapter_id.to_string()).to_variant();
-                menu.append(
-                    Some(&*adapter_label),
-                    Some(
-                        gio::Action::print_detailed_name(
-                            "app.connect-to-server",
-                            Some(&action_target),
-                        )
-                        .as_str(),
-                    ),
-                );
-            }
-            let menu_button = gtk::MenuButton::builder()
-                .menu_model(&menu)
-                .icon_name("display-with-window-symbolic")
-                .tooltip_text(gettext("Connect"))
-                .valign(gtk::Align::Center)
-                .css_classes(["flat"])
-                .build();
 
-            row.set_activatable_widget(Some(&menu_button));
-            row.add_suffix(&menu_button);
+        let button = if adapters.len() == 1 {
+            let adapter = adapters.into_iter().next().unwrap();
+            Some(make_single_connect_button(&row.path(), adapter))
+        } else if !adapters.is_empty() {
+            Some(make_multi_connection_button(&row.path(), adapters))
+        } else {
+            None
+        };
+
+        if let Some(button) = button {
+            row.set_activatable_widget(Some(&button));
+            row.add_suffix(&button);
         }
     })
     .await;
+}
+
+fn make_multi_connection_button(path: &str, adapters: Vec<(Cow<str>, Cow<str>)>) -> gtk::Widget {
+    let menu = gio::Menu::new();
+    for (adapter_id, adapter_label) in adapters {
+        let action_target = (path, &*adapter_id).to_variant();
+        menu.append(
+            Some(&*adapter_label),
+            Some(
+                gio::Action::print_detailed_name("app.connect-to-server", Some(&action_target))
+                    .as_str(),
+            ),
+        );
+    }
+
+    gtk::MenuButton::builder()
+        .menu_model(&menu)
+        .icon_name("display-with-window-symbolic")
+        .tooltip_text(gettext("Connect"))
+        .valign(gtk::Align::Center)
+        .css_classes(["flat"])
+        .build()
+        .upcast()
+}
+
+fn make_single_connect_button(
+    path: &str,
+    (adapter_id, adapter_label): (Cow<str>, Cow<str>),
+) -> gtk::Widget {
+    gtk::Button::builder()
+        .action_name("app.connect-to-server")
+        .action_target(&(path, &*adapter_id).to_variant())
+        .icon_name("display-with-window-symbolic")
+        .tooltip_text(gettext_f(
+            "Connect via {adapter}",
+            &[("adapter", &adapter_label)],
+        ))
+        .valign(gtk::Align::Center)
+        .css_classes(["flat"])
+        .build()
+        .upcast()
 }
 
 trait ServerEntry {
