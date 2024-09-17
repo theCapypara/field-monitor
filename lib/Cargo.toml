@@ -21,6 +21,7 @@ vte = { workspace = true }
 thiserror = "1.0"
 num_enum = { workspace = true }
 indexmap = { workspace = true }
+derive_builder = "0.20"
 
 [lints]
 workspace = true

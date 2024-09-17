@@ -196,6 +196,7 @@ pub enum DebugMode {
     Single = 0,
     Multi = 1,
     Complex = 2,
+    NoServers = 255, // TODO
 }
 
 impl_simple_macro_param_spec!(DebugMode, u32);
@@ -215,6 +216,8 @@ mod imp {
         pub(super) radio_mode_multi: TemplateChild<gtk::CheckButton>,
         #[template_child]
         pub(super) radio_mode_complex: TemplateChild<gtk::CheckButton>,
+        #[template_child]
+        pub(super) radio_mode_no_servers: TemplateChild<gtk::CheckButton>,
 
         #[property(get, set)]
         pub title: RefCell<String>,
@@ -290,6 +293,10 @@ impl DebugPreferences {
             .set_action_name(Some("debug-preferences.mode-change"));
         imp.radio_mode_complex
             .set_action_target(Some(&2u32.to_variant()));
+        imp.radio_mode_no_servers
+            .set_action_name(Some("debug-preferences.mode-change"));
+        imp.radio_mode_no_servers
+            .set_action_target(Some(&255u32.to_variant()));
 
         if let Some(existing_configuration) = existing_configuration.cloned() {
             glib::spawn_future_local(clone!(

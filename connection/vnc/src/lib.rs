@@ -147,10 +147,10 @@ pub struct VncConnection {
 
 impl Connection for VncConnection {
     fn metadata(&self) -> ConnectionMetadata {
-        ConnectionMetadata {
-            title: self.title.clone(),
-            subtitle: None,
-        }
+        ConnectionMetadataBuilder::default()
+            .title(self.title.clone())
+            .build()
+            .unwrap()
     }
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
@@ -172,10 +172,10 @@ impl VncConnection {
 
 impl ServerConnection for VncConnection {
     fn metadata(&self) -> ServerMetadata {
-        ServerMetadata {
-            title: self.title.clone(),
-            subtitle: None,
-        }
+        ServerMetadataBuilder::default()
+            .title(self.title.clone())
+            .build()
+            .unwrap()
     }
 
     fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {

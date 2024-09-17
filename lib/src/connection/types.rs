@@ -17,7 +17,10 @@
  */
 
 use std::borrow::Cow;
+use std::fmt;
+use std::sync::Arc;
 
+use derive_builder::Builder;
 use futures::future::LocalBoxFuture;
 use indexmap::IndexMap;
 use thiserror::Error;
@@ -58,18 +61,64 @@ impl ConnectionError {
     }
 }
 
-/// Metadata about a connection.
-#[derive(Debug, Clone)]
-pub struct ConnectionMetadata {
-    pub title: String,
-    pub subtitle: Option<String>,
+pub type IconFactory<M> = Box<dyn Fn(&M) -> gtk::Widget>;
+
+/// Specifies how this entity should be represented with an icon, if at all.
+/// Any named or custom icon should have a width of 16px.
+#[derive(Clone)]
+pub enum IconSpec<M> {
+    /// Use the default icon.
+    Default,
+    /// Do not use an icon.
+    None,
+    /// Use a named GTK icon.
+    Named(Cow<'static, str>),
+    /// Generate a custom GTK widget to be used as the widget. Callers MUST only try to use the
+    /// returned widget if it doesn't already have a parent.
+    Custom(Arc<IconFactory<M>>),
 }
 
-/// Metadata about a server.
-#[derive(Debug, Clone)]
+impl<M> fmt::Debug for IconSpec<M> {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            IconSpec::Default => fmt::Formatter::write_str(fmt, "Default"),
+            IconSpec::None => fmt::Formatter::write_str(fmt, "None"),
+            IconSpec::Named(named) => fmt::Formatter::debug_tuple(fmt, "Named")
+                .field(named)
+                .finish(),
+            IconSpec::Custom(_) => fmt::Formatter::write_str(fmt, "Custom(...)"),
+        }
+    }
+}
+
+/// Metadata about a connection. Only the title is required.
+///
+/// On the builder type, build can be unwrapped as long as the title is set.
+#[derive(Builder, Debug, Clone)]
+#[builder(pattern = "owned")]
+#[non_exhaustive]
+pub struct ConnectionMetadata {
+    pub title: String,
+    #[builder(default = "None")]
+    pub subtitle: Option<String>,
+    #[builder(default = "IconSpec::Default")]
+    pub icon: IconSpec<ConnectionMetadata>,
+}
+
+/// Metadata about a server. Only the title is required.
+///
+/// On the builder type, build can be unwrapped as long as the title is set.
+#[derive(Builder, Debug, Clone)]
+#[builder(pattern = "owned")]
+#[non_exhaustive]
 pub struct ServerMetadata {
     pub title: String,
+    #[builder(default = "None")]
     pub subtitle: Option<String>,
+    #[builder(default = "None")]
+    pub is_online: Option<bool>,
+    #[builder(default = "IconSpec::Default")]
+    pub icon: IconSpec<ServerMetadata>,
 }
 
 pub trait FieldMonitorApplication {}
@@ -175,13 +224,15 @@ pub trait ServerConnection {
     /// List of supported adapters that can be used to connect to the server as tuples (tag, human-readable name)
     fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)>;
 
-    /// Create an adapter of the given type, if supported (see `supported_adapters`). If not supported, panics.
+    /// Create an adapter of the given type, if supported (see `supported_adapters`).
+    /// If not supported, may fail or panic (panic only if `supported_adapters` can never return
+    /// that adapter).
     fn create_adapter(
         &self,
         tag: &str,
     ) -> LocalBoxFuture<Result<Box<dyn Adapter>, ConnectionError>>;
 
-    /// Returns the sub-servers grouped under this server.
+    /// Returns the sub-servers grouped under this server (if any).
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move { Ok(IndexMap::new()) })
     }

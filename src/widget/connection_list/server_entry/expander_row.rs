@@ -22,6 +22,7 @@ use adw::prelude::*;
 use adw::subclass::prelude::*;
 use futures::lock::Mutex;
 use glib::object::IsA;
+use gtk::Widget;
 
 use libfieldmonitor::connection::ServerConnection;
 
@@ -67,8 +68,16 @@ impl super::ServerEntry for FieldMonitorCLServerEntryExpanderRow {
         self.imp().server.lock().await.replace(server);
     }
 
+    fn add_prefix(&self, widget: &impl IsA<Widget>) {
+        <Self as ExpanderRowExt>::add_prefix(self, widget)
+    }
+
     fn add_suffix(&self, widget: &impl IsA<gtk::Widget>) {
         <Self as ExpanderRowExt>::add_suffix(self, widget)
+    }
+
+    fn add_css_class(&self, class_name: &str) {
+        <Self as WidgetExt>::add_css_class(self, class_name)
     }
 
     fn set_activatable_widget(&self, _widget: Option<&impl IsA<gtk::Widget>>) {

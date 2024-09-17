@@ -27,7 +27,7 @@ use glib::prelude::*;
 use glib::subclass::prelude::*;
 use log::{debug, error};
 
-use crate::connection::{ConnectionError, ConnectionMetadata, ConnectionResult, ServerMap};
+use crate::connection::*;
 use crate::connection::configuration::ConnectionConfiguration;
 use crate::connection::types::{Connection, ConnectionProvider};
 
@@ -146,10 +146,10 @@ impl Connection for ConnectionInstance {
         let brw = self.imp().implementation.borrow();
         match brw.as_ref() {
             Some(implementation) => implementation.metadata(),
-            None => ConnectionMetadata {
-                title: gettext("Unknown Connection"),
-                subtitle: None,
-            },
+            None => ConnectionMetadataBuilder::default()
+                .title("Unknown Connection".to_string())
+                .build()
+                .unwrap(),
         }
     }
 

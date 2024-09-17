@@ -119,29 +119,33 @@ impl FieldMonitorCLConnectionEntry {
 
         let mut load_subservers = Vec::with_capacity(servers.len());
 
+        if servers.is_empty() {
+            self.imp().servers.append(
+                &adw::ActionRow::builder()
+                    .sensitive(false)
+                    .title(gettext("No servers available"))
+                    .build(),
+            );
+        }
+
         for (server_id, server) in servers {
             let connection_id = connection.connection_id();
 
-            load_subservers.push(glib::clone!(
-                #[strong(rename_to=slf)]
-                self,
-                async move {
-                    let server = new_server_entry_row(
-                        &slf.application().unwrap(),
-                        connection_id,
-                        vec![server_id.into_owned()],
-                        server,
-                    )
-                    .await?;
-
-                    slf.imp().servers.append(&server);
-
-                    Ok(())
-                }
-            ));
+            load_subservers.push(async move {
+                new_server_entry_row(
+                    &self.application().unwrap(),
+                    connection_id,
+                    vec![server_id.into_owned()],
+                    server,
+                )
+                .await
+            });
         }
 
-        try_join_all(load_subservers.into_iter()).await?;
+        let servers = try_join_all(load_subservers.into_iter()).await?;
+        for server in servers {
+            self.imp().servers.append(&server);
+        }
 
         self.set_load_state(LOAD_STATE_SERVERS);
         Ok(())

@@ -1,5 +1,6 @@
 use std::borrow::Cow;
 use std::collections::HashMap;
+use std::sync::Arc;
 use std::time::Duration;
 
 use anyhow::anyhow;
@@ -13,10 +14,7 @@ use libfieldmonitor::adapter::rdp::RdpAdapter;
 use libfieldmonitor::adapter::spice::SpiceAdapter;
 use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
-use libfieldmonitor::connection::{
-    Connection, ConnectionConfiguration, ConnectionError, ConnectionMetadata, ConnectionProvider,
-    ConnectionProviderConstructor, ConnectionResult, ServerConnection, ServerMap, ServerMetadata,
-};
+use libfieldmonitor::connection::*;
 
 use crate::behaviour_preferences::{DebugBehaviour, DebugBehaviourPreferences};
 use crate::preferences::{DebugConfiguration, DebugMode, DebugPreferences};
@@ -129,6 +127,7 @@ impl ConnectionProvider for DebugConnectionProvider {
                 DebugMode::Single => None,
                 DebugMode::Multi => Some("multi mode".to_string()),
                 DebugMode::Complex => Some("complex mode".to_string()),
+                DebugMode::NoServers => Some("no servers".to_string()),
             };
 
             let c: Box<dyn Connection> =
@@ -147,10 +146,11 @@ pub struct DebugConnection {
 
 impl Connection for DebugConnection {
     fn metadata(&self) -> ConnectionMetadata {
-        ConnectionMetadata {
-            title: self.title.clone(),
-            subtitle: self.subtitle.clone(),
-        }
+        ConnectionMetadataBuilder::default()
+            .title(self.title.clone())
+            .subtitle(self.subtitle.clone())
+            .build()
+            .unwrap()
     }
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
@@ -166,7 +166,10 @@ impl Connection for DebugConnection {
                             hm.insert(
                                 "server1".into(),
                                 Box::new(DebugConnectionServer::new(
-                                    "Debug Server",
+                                    ServerMetadataBuilder::default()
+                                        .title("Debug Server".to_string())
+                                        .build()
+                                        .unwrap(),
                                     self.config.clone(),
                                 )),
                             );
@@ -175,59 +178,132 @@ impl Connection for DebugConnection {
                             hm.insert(
                                 "server1".into(),
                                 Box::new(DebugConnectionServer::new(
-                                    "Server 1",
+                                    ServerMetadataBuilder::default()
+                                        .title("Debug Server".to_string())
+                                        .subtitle(Some("Is the first server".to_string()))
+                                        .build()
+                                        .unwrap(),
                                     self.config.clone(),
                                 )),
                             );
                             hm.insert(
                                 "server2".into(),
                                 Box::new(DebugConnectionServer::new(
-                                    "Server 2",
+                                    ServerMetadataBuilder::default()
+                                        .title("Server 2".to_string())
+                                        .subtitle(Some("Has no icon".to_string()))
+                                        .icon(IconSpec::None)
+                                        .build()
+                                        .unwrap(),
                                     self.config.clone(),
                                 )),
                             );
                             hm.insert(
                                 "server3".into(),
                                 Box::new(DebugConnectionServer::new(
-                                    "Server 3",
+                                    ServerMetadataBuilder::default()
+                                        .title("Server 3".to_string())
+                                        .subtitle(Some("This is marked as offline".to_string()))
+                                        .is_online(Some(false))
+                                        .build()
+                                        .unwrap(),
                                     self.config.clone(),
                                 )),
                             );
                         }
                         DebugMode::Complex => {
-                            let mut root1 =
-                                DebugConnectionServer::new("Root 1", self.config.clone());
-                            let mut r1_level1_1 =
-                                DebugConnectionServer::new("R1 L1_1", self.config.clone());
-                            let mut r1_level1_2 =
-                                DebugConnectionServer::new("R1 L1_2", self.config.clone());
-                            let r1_level2_1 =
-                                DebugConnectionServer::new("R1 L1_2 L2_1", self.config.clone());
+                            let mut root1 = DebugConnectionServer::new(
+                                ServerMetadataBuilder::default()
+                                    .title("Root 1".to_string())
+                                    .build()
+                                    .unwrap(),
+                                self.config.clone(),
+                            );
+                            let mut r1_level1_1 = DebugConnectionServer::new(
+                                ServerMetadataBuilder::default()
+                                    .title("R1 L1_1".to_string())
+                                    .subtitle(Some("Has no icon".to_string()))
+                                    .icon(IconSpec::None)
+                                    .build()
+                                    .unwrap(),
+                                self.config.clone(),
+                            );
+                            let mut r1_level1_2 = DebugConnectionServer::new(
+                                ServerMetadataBuilder::default()
+                                    .title("R1 L1_2".to_string())
+                                    .subtitle(Some("Is online".to_string()))
+                                    .is_online(Some(true))
+                                    .build()
+                                    .unwrap(),
+                                self.config.clone(),
+                            );
+                            let r1_level2_1 = DebugConnectionServer::new(
+                                ServerMetadataBuilder::default()
+                                    .title("R1 L1_2 L2_1".to_string())
+                                    .subtitle(Some("Is offline".to_string()))
+                                    .is_online(Some(false))
+                                    .build()
+                                    .unwrap(),
+                                self.config.clone(),
+                            );
                             r1_level1_2.add_server(r1_level2_1);
                             r1_level1_1.no_adapters();
-                            r1_level1_2.no_adapters();
                             root1.add_server(r1_level1_1);
                             root1.add_server(r1_level1_2);
 
-                            let mut root2 =
-                                DebugConnectionServer::new("Root 2", self.config.clone());
-                            let mut r2_level1 =
-                                DebugConnectionServer::new("R2 1", self.config.clone());
-                            let mut r2_level2 =
-                                DebugConnectionServer::new("R2 2", self.config.clone());
-                            let mut r2_level3 =
-                                DebugConnectionServer::new("R2 3", self.config.clone());
-                            let r2_level4 = DebugConnectionServer::new("R2 4", self.config.clone());
+                            let mut root2 = DebugConnectionServer::new(
+                                ServerMetadataBuilder::default()
+                                    .title("Root 2".to_string())
+                                    .subtitle(Some("Is online".to_string()))
+                                    .is_online(Some(true))
+                                    .build()
+                                    .unwrap(),
+                                self.config.clone(),
+                            );
+                            let mut r2_level1 = DebugConnectionServer::new(
+                                ServerMetadataBuilder::default()
+                                    .title("R2 1".to_string())
+                                    .build()
+                                    .unwrap(),
+                                self.config.clone(),
+                            );
+                            let mut r2_level2 = DebugConnectionServer::new(
+                                ServerMetadataBuilder::default()
+                                    .title("R2 2".to_string())
+                                    .subtitle(Some("has a named icon".to_string()))
+                                    .icon(IconSpec::Named(Cow::Borrowed("go-home-symbolic")))
+                                    .build()
+                                    .unwrap(),
+                                self.config.clone(),
+                            );
+                            let mut r2_level3 = DebugConnectionServer::new(
+                                ServerMetadataBuilder::default()
+                                    .title("R2 3".to_string())
+                                    .subtitle(Some("has a custom widget icon".to_string()))
+                                    .icon(IconSpec::Custom(Arc::new(Box::new(|_meta| {
+                                        gtk::Spinner::builder().spinning(true).build().upcast()
+                                    }))))
+                                    .build()
+                                    .unwrap(),
+                                self.config.clone(),
+                            );
+                            let r2_level4 = DebugConnectionServer::new(
+                                ServerMetadataBuilder::default()
+                                    .title("R2 4".to_string())
+                                    .build()
+                                    .unwrap(),
+                                self.config.clone(),
+                            );
                             r2_level3.add_server(r2_level4);
                             r2_level2.add_server(r2_level3);
                             r2_level1.add_server(r2_level2);
                             r2_level1.no_adapters();
                             root2.add_server(r2_level1);
-                            root2.set_subtitle(None);
 
                             hm.insert("server1".into(), Box::new(root1));
                             hm.insert("server2".into(), Box::new(root2));
                         }
+                        DebugMode::NoServers => {}
                     }
 
                     Ok(hm)
@@ -257,30 +333,25 @@ impl DebugConnection {
 
 #[derive(Clone)]
 pub struct DebugConnectionServer {
-    title: &'static str,
-    subtitle: Option<&'static str>,
+    metadata: ServerMetadata,
     config: ConnectionConfiguration,
     servers: HashMap<Cow<'static, str>, DebugConnectionServer>,
     has_adapters: bool,
 }
 
 impl DebugConnectionServer {
-    fn new(title: &'static str, config: ConnectionConfiguration) -> Self {
+    fn new(metadata: ServerMetadata, config: ConnectionConfiguration) -> Self {
         Self {
-            title,
-            subtitle: Some("Debug Subtitle"),
+            metadata,
             config,
             servers: HashMap::new(),
             has_adapters: true,
         }
     }
 
-    fn set_subtitle(&mut self, v: Option<&'static str>) {
-        self.subtitle = v;
-    }
-
     fn add_server(&mut self, server: DebugConnectionServer) {
-        self.servers.insert(Cow::Borrowed(server.title), server);
+        self.servers
+            .insert(Cow::Owned(server.metadata.title.clone()), server);
     }
 
     fn no_adapters(&mut self) {
@@ -290,10 +361,7 @@ impl DebugConnectionServer {
 
 impl ServerConnection for DebugConnectionServer {
     fn metadata(&self) -> ServerMetadata {
-        ServerMetadata {
-            title: self.title.to_string(),
-            subtitle: self.subtitle.map(ToString::to_string),
-        }
+        self.metadata.clone()
     }
 
     fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {

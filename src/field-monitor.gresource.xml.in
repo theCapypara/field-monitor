@@ -20,6 +20,7 @@
         <file>style-hc-dark.css</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/arrows-pointing-inward-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/arrows-pointing-outward-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/big-dot-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/dialog-error-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/display-with-window-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/edit-find-symbolic.svg</file>
@@ -27,6 +28,7 @@
         <file preprocess="xml-stripblanks">icons/scalable/actions/key-off-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/key-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/list-add-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/network-server-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/settings-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/user-trash-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/view-grid-symbolic.svg</file>

@@ -27,7 +27,9 @@ use itertools::Itertools;
 
 pub use action_row::FieldMonitorCLServerEntryActionRow;
 pub use expander_row::FieldMonitorCLServerEntryExpanderRow;
-use libfieldmonitor::connection::{ConnectionResult, ServerConnection, ServerMap, ServerMetadata};
+use libfieldmonitor::connection::{
+    ConnectionResult, IconSpec, ServerConnection, ServerMap, ServerMetadata,
+};
 
 use crate::application::FieldMonitorApplication;
 use crate::i18n::gettext_f;
@@ -75,7 +77,7 @@ async fn load_single_server_row(
         .build();
     row.set_server(server).await;
 
-    finish_load(&row).await;
+    finish_load(&row, metadata).await;
 
     Ok(row)
 }
@@ -107,7 +109,7 @@ async fn load_multi_server_row(
             #[strong]
             row,
             async move {
-                let server = new_server_entry_row(
+                new_server_entry_row(
                     &app,
                     connection_id,
                     path.split('/')
@@ -117,22 +119,24 @@ async fn load_multi_server_row(
                         .collect(),
                     server,
                 )
-                .await?;
-                row.add_row(&server);
-
-                Ok(())
+                .await
             }
         ));
     }
 
-    try_join_all(load_subservers.into_iter()).await?;
+    let all_servers = try_join_all(load_subservers.into_iter()).await?;
+    for server in all_servers {
+        row.add_row(&server)
+    }
 
-    finish_load(&row).await;
+    finish_load(&row, metadata).await;
 
     Ok(row)
 }
 
-async fn finish_load(row: &impl ServerEntry) {
+async fn finish_load(row: &impl ServerEntry, metadata: &ServerMetadata) {
+    row.add_css_class("serverrow");
+    add_icon(row, metadata);
     row.with_server_if_exists(|server| {
         let adapters = server.supported_adapters();
 
@@ -151,6 +155,58 @@ async fn finish_load(row: &impl ServerEntry) {
         }
     })
     .await;
+}
+
+const DEFAULT_GENERIC_ICON: &str = "network-server-symbolic";
+
+fn add_icon(row: &impl ServerEntry, metadata: &ServerMetadata) {
+    let wdg = match &metadata.icon {
+        IconSpec::Default => gtk::Image::builder()
+            .icon_name(DEFAULT_GENERIC_ICON)
+            .build()
+            .upcast(),
+        IconSpec::None => gtk::Box::builder().width_request(16).build().upcast(),
+        IconSpec::Named(name) => gtk::Image::builder()
+            .icon_name(name.deref())
+            .build()
+            .upcast(),
+        IconSpec::Custom(factory) => factory(metadata),
+    };
+
+    let wdg = add_status(wdg, metadata);
+    row.add_prefix(&wdg);
+}
+
+fn add_status(child_wdgt: gtk::Widget, metadata: &ServerMetadata) -> gtk::Widget {
+    match metadata.is_online {
+        Some(status) => {
+            let parent = gtk::Box::builder()
+                .orientation(gtk::Orientation::Vertical)
+                .valign(gtk::Align::Center)
+                .vexpand(true)
+                .spacing(4)
+                .build();
+
+            let (class, tooltip_text) = if status {
+                ("success", "Online")
+            } else {
+                ("error", "Offline")
+            };
+
+            let status_icon = gtk::Image::builder()
+                .pixel_size(12)
+                .icon_name("big-dot-symbolic")
+                .css_classes([class])
+                .tooltip_text(tooltip_text)
+                .halign(gtk::Align::Center)
+                .build();
+
+            parent.append(&status_icon);
+            parent.append(&child_wdgt);
+            parent.upcast()
+        }
+        None => child_wdgt,
+    }
 }
 
 fn make_multi_connection_button(path: &str, adapters: Vec<(Cow<str>, Cow<str>)>) -> gtk::Widget {
@@ -196,7 +252,9 @@ fn make_single_connect_button(
 
 trait ServerEntry {
     async fn set_server(&self, server: Box<dyn ServerConnection>);
+    fn add_prefix(&self, widget: &impl IsA<gtk::Widget>);
     fn add_suffix(&self, widget: &impl IsA<gtk::Widget>);
+    fn add_css_class(&self, class_name: &str);
     fn set_activatable_widget(&self, widget: Option<&impl IsA<gtk::Widget>>);
     fn path(&self) -> String;
     async fn with_server_if_exists<F>(&self, cb: F)

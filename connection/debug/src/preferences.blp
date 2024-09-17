@@ -56,6 +56,17 @@ template $DebugPreferences : Adw.PreferencesPage {
                 group: radio_mode_single;
             }
         }
+
+        Adw.ActionRow {
+            title: "No servers";
+            subtitle: "Connection has no servers";
+            activatable-widget: radio_mode_no_servers;
+
+            [prefix]
+            CheckButton radio_mode_no_servers {
+                group: radio_mode_single;
+            }
+        }
     }
 
     $DebugBehaviourPreferences behaviour {}

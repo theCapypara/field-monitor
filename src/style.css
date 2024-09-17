@@ -18,7 +18,6 @@ menubutton.osd button,
 }
 
 /* https://gitlab.gnome.org/GNOME/libadwaita/-/blob/9e4d10af0308f6abf54769bd6b74941cb10bcdc7/src/stylesheet/widgets/_buttons.scss#L122 */
-
 .window-controls-osd > button > image:hover {
     color: white;
     background-color: alpha(mix(black, white, 0.15), 0.65);
