@@ -207,7 +207,6 @@ impl FieldMonitorCLConnectionEntry {
 
 impl CanHaveSuffix for FieldMonitorCLConnectionEntry {
     fn add_suffix(&self, widget: &impl IsA<Widget>) {
-        dbg!(self, &widget);
         self.imp().header_suffix.prepend(widget);
     }
 }

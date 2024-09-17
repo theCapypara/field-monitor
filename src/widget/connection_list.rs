@@ -18,6 +18,7 @@
 use std::cell::RefCell;
 use std::collections::hash_map::Entry;
 use std::collections::HashMap;
+use std::num::NonZeroUsize;
 use std::sync::atomic::AtomicBool;
 use std::time::Duration;
 
@@ -28,6 +29,7 @@ use glib::object::ObjectExt;
 use gtk::gio;
 use gtk::glib;
 use log::debug;
+use lru::LruCache;
 
 use libfieldmonitor::connection::{Connection, ConnectionInstance};
 
@@ -76,6 +78,7 @@ mod imp {
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         pub connections: RefCell<Option<HashMap<String, FieldMonitorCLConnectionEntry>>>,
+        pub row_cache: RefCell<Option<LruCache<FieldMonitorCLConnectionEntry, gtk::ListBoxRow>>>,
     }
 
     #[glib::object_subclass]
@@ -113,6 +116,8 @@ impl FieldMonitorConnectionList {
         let slf: Self = glib::Object::builder().property("application", app).build();
         let imp = slf.imp();
         imp.connections.replace(Some(HashMap::new()));
+        imp.row_cache
+            .replace(Some(LruCache::new(NonZeroUsize::new(50).unwrap())));
         // Fill list, if empty and loading connections, show welcome page, otherwise show empty
         let connections = app.connections().into_iter().collect::<Vec<_>>();
         if connections.is_empty() {
@@ -316,15 +321,32 @@ impl FieldMonitorConnectionList {
             .set_filter(Some(&*imp.model_string_filter));
         imp.connection_list_box.bind_model(
             Some(&*imp.connection_list_model_sorted_filtered),
-            move |obj| {
-                let wdg: &FieldMonitorCLConnectionEntry = obj.downcast_ref().unwrap();
-                gtk::ListBoxRow::builder()
-                    .child(wdg)
-                    .activatable(false)
-                    .selectable(true)
-                    .build()
-                    .upcast()
-            },
+            glib::clone!(
+                #[weak_allow_none(rename_to = slf)]
+                self,
+                move |obj| {
+                    if let Some(slf) = slf {
+                        let mut cache_brw = slf.imp().row_cache.borrow_mut();
+                        let cache = cache_brw.as_mut().unwrap();
+                        let wdg: &FieldMonitorCLConnectionEntry = obj.downcast_ref().unwrap();
+                        // This cache is needed due to some issues with widget initialization and re-using widgets
+                        // when this factory is run again in some states.
+                        cache
+                            .get_or_insert_ref(wdg, || {
+                                gtk::ListBoxRow::builder()
+                                    .child(wdg)
+                                    .activatable(false)
+                                    .selectable(true)
+                                    .build()
+                                    .upcast()
+                            })
+                            .clone()
+                            .upcast()
+                    } else {
+                        adw::Bin::new().upcast()
+                    }
+                }
+            ),
         );
     }
 
@@ -333,9 +355,14 @@ impl FieldMonitorConnectionList {
         let mut list_brw = self.imp().connections.borrow_mut();
         let list = list_brw.as_mut().unwrap();
         if let Entry::Occupied(entry) = list.entry(id.to_string()) {
-            if let Some(pos) = imp.connection_list_model.find(entry.get()) {
+            let grp = entry.get();
+            if let Some(pos) = imp.connection_list_model.find(grp) {
                 imp.connection_list_model.remove(pos);
             }
+            imp.row_cache
+                .borrow_mut()
+                .as_mut()
+                .map(|cache| cache.pop(grp));
             entry.remove();
         }
         if list.is_empty() {
