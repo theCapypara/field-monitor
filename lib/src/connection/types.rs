@@ -201,7 +201,33 @@ pub trait ConnectionProvider {
     ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>>;
 }
 
+/// A future that executes whatever action was requested. These actions are defined by `actions`
+/// methods on `Connection` and `ServerConnection`. See also `ActionMap`, `ServerAction`.
+/// Parameters: parent window, toast overlay
+pub type ActionExecuteFut<'a> = dyn Fn(gtk::Window, adw::ToastOverlay) -> LocalBoxFuture<'a, ()>;
 pub type ServerMap = IndexMap<Cow<'static, str>, Box<dyn ServerConnection>>;
+pub type ActionMap<'a> = IndexMap<Cow<'static, str>, ServerAction<'a>>;
+
+pub struct ServerAction<'a> {
+    title: String,
+    action_fn: Box<ActionExecuteFut<'a>>,
+}
+
+impl<'a> ServerAction<'a> {
+    pub fn new(title: String, action_fn: Box<ActionExecuteFut<'a>>) -> Self {
+        Self { title, action_fn }
+    }
+
+    pub fn title(&self) -> &str {
+        &self.title
+    }
+}
+
+impl<'a> From<ServerAction<'a>> for Box<ActionExecuteFut<'a>> {
+    fn from(value: ServerAction<'a>) -> Self {
+        value.action_fn
+    }
+}
 
 /// A connection. Represents one or more servers which are logically
 /// grouped together.
@@ -213,6 +239,11 @@ pub trait Connection {
 
     /// Returns the servers managed by this connection.
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>>;
+
+    /// Returns a map of actions that can be executed for this connection.
+    fn actions<'a>(&self) -> ActionMap<'a> {
+        IndexMap::new()
+    }
 }
 
 /// A single instance of a server to connect to.
@@ -235,5 +266,10 @@ pub trait ServerConnection {
     /// Returns the sub-servers grouped under this server (if any).
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move { Ok(IndexMap::new()) })
+    }
+
+    /// Returns a map of actions that can be executed for this server.
+    fn actions<'a>(&self) -> ActionMap<'a> {
+        IndexMap::new()
     }
 }

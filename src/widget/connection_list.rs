@@ -34,6 +34,7 @@ use libfieldmonitor::connection::{Connection, ConnectionInstance};
 use crate::application::FieldMonitorApplication;
 use crate::widget::connection_list::connection_entry::FieldMonitorCLConnectionEntry;
 
+mod common;
 mod connection_entry;
 mod server_entry;
 

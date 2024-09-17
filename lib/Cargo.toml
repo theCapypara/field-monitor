@@ -13,6 +13,7 @@ log = { workspace = true }
 async-std = { workspace = true }
 glib = { workspace = true }
 gtk = { workspace = true }
+adw = { workspace = true }
 rdw = { workspace = true }
 rdw-spice = { workspace = true }
 rdw-rdp = { workspace = true }

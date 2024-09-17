@@ -8,13 +8,18 @@ template $FieldMonitorCLConnectionEntry : Adw.PreferencesGroup {
     notify::connection => $on_self_connection_changed() swapped;
 
     [header-suffix]
-    Button settings_button {
-        icon-name: "settings-symbolic";
-        tooltip-text: _("Settings");
-        action-name: "app.edit-connection";
-        valign: center;
+    Box header_suffix {
+        orientation: horizontal;
+        spacing: 8;
 
-        styles ["flat"]
+        Button settings_button {
+            icon-name: "settings-symbolic";
+            tooltip-text: _("Settings");
+            action-name: "app.edit-connection";
+            valign: center;
+
+            styles ["flat"]
+        }
     }
 
     Stack status_stack {

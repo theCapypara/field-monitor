@@ -21,16 +21,15 @@ use adw::prelude::PreferencesGroupExt;
 use adw::subclass::prelude::*;
 use futures::future::try_join_all;
 use gettextrs::gettext;
-use glib::object::ObjectExt;
-use gtk::glib;
-use gtk::prelude::ActionableExtManual;
+use glib::object::{IsA, ObjectExt};
+use gtk::{glib, Widget};
+use gtk::prelude::{ActionableExtManual, BoxExt};
 use log::{error, info};
 
-use libfieldmonitor::connection::{
-    Connection, ConnectionError, ConnectionInstance, ConnectionResult,
-};
+use libfieldmonitor::connection::*;
 
 use crate::application::FieldMonitorApplication;
+use crate::widget::connection_list::common::{add_actions_to_entry, CanHaveSuffix};
 use crate::widget::connection_list::server_entry::new_server_entry_row;
 
 const LOAD_STATE_LOADING: &str = "loading";
@@ -51,6 +50,8 @@ mod imp {
         pub settings_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub auth_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub header_suffix: TemplateChild<gtk::Box>,
         #[property(get, set)]
         pub connection: RefCell<Option<ConnectionInstance>>,
         #[property(get, set)]
@@ -114,6 +115,13 @@ impl FieldMonitorCLConnectionEntry {
         if let Some(subtitle) = metadata.subtitle.as_deref() {
             self.set_description(Some(subtitle));
         }
+
+        add_actions_to_entry(
+            self,
+            false,
+            &connection.connection_id(),
+            connection.actions(),
+        );
 
         let servers = connection.servers().await?;
 
@@ -194,5 +202,12 @@ impl FieldMonitorCLConnectionEntry {
         if let Err(err) = self.try_update_connection().await {
             self.connection_load_error(err);
         }
+    }
+}
+
+impl CanHaveSuffix for FieldMonitorCLConnectionEntry {
+    fn add_suffix(&self, widget: &impl IsA<Widget>) {
+        dbg!(self, &widget);
+        self.imp().header_suffix.prepend(widget);
     }
 }

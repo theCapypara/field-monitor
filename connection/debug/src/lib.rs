@@ -3,6 +3,7 @@ use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 
+use adw::prelude::AdwDialogExt;
 use anyhow::anyhow;
 use async_std::task::sleep;
 use futures::future::LocalBoxFuture;
@@ -248,8 +249,10 @@ impl Connection for DebugConnection {
                             );
                             r1_level1_2.add_server(r1_level2_1);
                             r1_level1_1.no_adapters();
+                            r1_level1_2.expose_dummy_actions();
                             root1.add_server(r1_level1_1);
                             root1.add_server(r1_level1_2);
+                            root1.expose_dummy_actions();
 
                             let mut root2 = DebugConnectionServer::new(
                                 ServerMetadataBuilder::default()
@@ -319,6 +322,47 @@ impl Connection for DebugConnection {
             }
         })
     }
+
+    fn actions<'a>(&self) -> ActionMap<'a> {
+        match self.config.mode() {
+            DebugMode::Complex => {
+                let mut map: ActionMap = IndexMap::new();
+
+                map.insert(
+                    Cow::Borrowed("foobar"),
+                    ServerAction::new(
+                        "Show dialog".to_string(),
+                        Box::new(|window, _toasts| {
+                            Box::pin(async move {
+                                adw::AlertDialog::builder()
+                                    .title("Foobar")
+                                    .build()
+                                    .present(Some(&window))
+                            })
+                        }),
+                    ),
+                );
+
+                map.insert(
+                    Cow::Borrowed("bazbaz"),
+                    ServerAction::new(
+                        "Show toast".to_string(),
+                        Box::new(|_window, toasts| {
+                            Box::pin(async move {
+                                sleep(Duration::from_secs(2)).await;
+                                let toast =
+                                    adw::Toast::builder().title("Foobar").timeout(10).build();
+                                toasts.add_toast(toast);
+                            })
+                        }),
+                    ),
+                );
+
+                map
+            }
+            _ => IndexMap::new(),
+        }
+    }
 }
 
 impl DebugConnection {
@@ -337,6 +381,7 @@ pub struct DebugConnectionServer {
     config: ConnectionConfiguration,
     servers: HashMap<Cow<'static, str>, DebugConnectionServer>,
     has_adapters: bool,
+    has_actions: bool,
 }
 
 impl DebugConnectionServer {
@@ -346,6 +391,7 @@ impl DebugConnectionServer {
             config,
             servers: HashMap::new(),
             has_adapters: true,
+            has_actions: false,
         }
     }
 
@@ -356,6 +402,10 @@ impl DebugConnectionServer {
 
     fn no_adapters(&mut self) {
         self.has_adapters = false;
+    }
+
+    fn expose_dummy_actions(&mut self) {
+        self.has_actions = true;
     }
 }
 
@@ -403,5 +453,43 @@ impl ServerConnection for DebugConnectionServer {
 
             Ok(hm)
         })
+    }
+
+    fn actions<'a>(&self) -> ActionMap<'a> {
+        if self.has_actions {
+            let mut map: ActionMap = IndexMap::new();
+            map.insert(
+                Cow::Borrowed("foobar"),
+                ServerAction::new(
+                    "Show dialog".to_string(),
+                    Box::new(|window, _toasts| {
+                        Box::pin(async move {
+                            adw::AlertDialog::builder()
+                                .title("Foobar")
+                                .build()
+                                .present(Some(&window))
+                        })
+                    }),
+                ),
+            );
+
+            map.insert(
+                Cow::Borrowed("bazbaz"),
+                ServerAction::new(
+                    "Show toast".to_string(),
+                    Box::new(|_window, toasts| {
+                        Box::pin(async move {
+                            sleep(Duration::from_secs(2)).await;
+                            let toast = adw::Toast::builder().title("Foobar").timeout(10).build();
+                            toasts.add_toast(toast);
+                        })
+                    }),
+                ),
+            );
+
+            map
+        } else {
+            IndexMap::new()
+        }
     }
 }

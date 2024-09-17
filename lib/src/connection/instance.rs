@@ -172,4 +172,11 @@ impl Connection for ConnectionInstance {
             }
         })
     }
+    fn actions<'a>(&self) -> ActionMap<'a> {
+        let brw = self.imp().implementation.borrow();
+        match brw.as_ref() {
+            None => ActionMap::new(),
+            Some(brw) => brw.actions(),
+        }
+    }
 }

@@ -22,7 +22,6 @@ use adw::prelude::*;
 use adw::subclass::prelude::*;
 use futures::lock::Mutex;
 use glib::object::IsA;
-use gtk::Widget;
 
 use libfieldmonitor::connection::ServerConnection;
 
@@ -63,17 +62,19 @@ glib::wrapper! {
         @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow;
 }
 
+impl super::CanHaveSuffix for FieldMonitorCLServerEntryActionRow {
+    fn add_suffix(&self, widget: &impl IsA<gtk::Widget>) {
+        <Self as ActionRowExt>::add_suffix(self, widget)
+    }
+}
+
 impl super::ServerEntry for FieldMonitorCLServerEntryActionRow {
     async fn set_server(&self, server: Box<dyn ServerConnection>) {
         self.imp().server.lock().await.replace(server);
     }
 
-    fn add_prefix(&self, widget: &impl IsA<Widget>) {
+    fn add_prefix(&self, widget: &impl IsA<gtk::Widget>) {
         <Self as ActionRowExt>::add_prefix(self, widget)
-    }
-
-    fn add_suffix(&self, widget: &impl IsA<gtk::Widget>) {
-        <Self as ActionRowExt>::add_suffix(self, widget)
     }
 
     fn add_css_class(&self, class_name: &str) {

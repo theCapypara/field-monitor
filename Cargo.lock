@@ -1737,6 +1737,7 @@ dependencies = [
  "glib",
  "gtk4",
  "indexmap 2.5.0",
+ "libadwaita",
  "log",
  "num_enum",
  "rdw4",

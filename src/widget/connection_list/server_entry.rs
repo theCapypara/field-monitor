@@ -33,6 +33,7 @@ use libfieldmonitor::connection::{
 
 use crate::application::FieldMonitorApplication;
 use crate::i18n::gettext_f;
+use crate::widget::connection_list::common::{add_actions_to_entry, CanHaveSuffix};
 
 mod action_row;
 mod expander_row;
@@ -105,23 +106,19 @@ async fn load_multi_server_row(
         let app = app.clone();
         let connection_id = connection_id.to_string();
         let path = path.to_string();
-        load_subservers.push(glib::clone!(
-            #[strong]
-            row,
-            async move {
-                new_server_entry_row(
-                    &app,
-                    connection_id,
-                    path.split('/')
-                        .skip(1)
-                        .chain(iter::once(server_id.as_ref()))
-                        .map(ToString::to_string)
-                        .collect(),
-                    server,
-                )
-                .await
-            }
-        ));
+        load_subservers.push(async move {
+            new_server_entry_row(
+                &app,
+                connection_id,
+                path.split('/')
+                    .skip(1)
+                    .chain(iter::once(server_id.as_ref()))
+                    .map(ToString::to_string)
+                    .collect(),
+                server,
+            )
+            .await
+        });
     }
 
     let all_servers = try_join_all(load_subservers.into_iter()).await?;
@@ -139,8 +136,9 @@ async fn finish_load(row: &impl ServerEntry, metadata: &ServerMetadata) {
     add_icon(row, metadata);
     row.with_server_if_exists(|server| {
         let adapters = server.supported_adapters();
+        let actions = server.actions();
 
-        let button = if adapters.len() == 1 {
+        let connect_button = if adapters.len() == 1 {
             let adapter = adapters.into_iter().next().unwrap();
             Some(make_single_connect_button(&row.path(), adapter))
         } else if !adapters.is_empty() {
@@ -149,10 +147,12 @@ async fn finish_load(row: &impl ServerEntry, metadata: &ServerMetadata) {
             None
         };
 
-        if let Some(button) = button {
+        if let Some(button) = connect_button {
             row.set_activatable_widget(Some(&button));
             row.add_suffix(&button);
         }
+
+        add_actions_to_entry(row, true, &row.path(), actions);
     })
     .await;
 }
@@ -250,10 +250,9 @@ fn make_single_connect_button(
         .upcast()
 }
 
-trait ServerEntry {
+trait ServerEntry: CanHaveSuffix {
     async fn set_server(&self, server: Box<dyn ServerConnection>);
     fn add_prefix(&self, widget: &impl IsA<gtk::Widget>);
-    fn add_suffix(&self, widget: &impl IsA<gtk::Widget>);
     fn add_css_class(&self, class_name: &str);
     fn set_activatable_widget(&self, widget: Option<&impl IsA<gtk::Widget>>);
     fn path(&self) -> String;
