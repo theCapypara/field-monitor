@@ -1,7 +1,7 @@
 {
     "id": "de.capypara.FieldMonitor",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "46",
+    "runtime-version": "47",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
         "org.freedesktop.Sdk.Extension.rust-stable"
@@ -176,6 +176,9 @@
             "name": "freerdp",
             "buildsystem": "cmake-ninja",
             "builddir": true,
+            "build-options": {
+                "cflags": "-Wno-incompatible-pointer-types -Wno-int-conversion"
+            },
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
                 "-DWITH_OPENH264=ON",
@@ -190,8 +193,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://pub.freerdp.com/releases/freerdp-2.10.0.tar.gz",
-                    "sha256": "a673d3fc21911dd9f196834f2f3a23c3ebc7e5e4deab2f7686fcec879279e2c1"
+                    "url": "https://pub.freerdp.com/releases/freerdp-2.11.7.tar.gz",
+                    "sha256": "5a2d54e1ca0f1facd1632bcc94c73b9f071a80c5fdbbb3f26e79f02aaa586ca3"
                 }
             ]
         },
