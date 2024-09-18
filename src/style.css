@@ -3,24 +3,27 @@
  * window controls!
  */
 
-.osd popover contents,
-.osd popover arrow,
-button.osd,
-menubutton.osd button,
+button.header-osd,
+menubutton.header-osd button,
 .window-controls-osd > button > image {
-    color: alpha(black, 0.9);
-    background-color: alpha(white, 0.7);
+    color: var(--window-fg-color);
+    background-color: var(--window-bg-color);
 }
 
-.osd popover contents,
-.osd popover arrow {
-    background-color: alpha(white, 0.9);
+.window-controls-osd > button > image {
+    background-color: mix(var(--window-bg-color), var(--window-fg-color), 0.1);
 }
 
-/* https://gitlab.gnome.org/GNOME/libadwaita/-/blob/9e4d10af0308f6abf54769bd6b74941cb10bcdc7/src/stylesheet/widgets/_buttons.scss#L122 */
-.window-controls-osd > button > image:hover {
-    color: white;
-    background-color: alpha(mix(black, white, 0.15), 0.65);
+button.header-osd:not(.nohover):hover,
+menubutton.header-osd button:not(.nohover):hover,
+.window-controls-osd > button > image:not(.nohover):hover {
+    background-color: mix(var(--window-bg-color), var(--window-fg-color), 0.15);
+}
+
+button.header-osd:not(.nohover):active,
+menubutton.header-osd button:not(.nohover):active,
+.window-controls-osd > button > image:not(.nohover):active {
+    background-color: mix(var(--window-bg-color), var(--window-fg-color), 0.3);
 }
 
 .connection-list .list-inner-box {

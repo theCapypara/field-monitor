@@ -37,7 +37,7 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         tooltip-text: _("Toggle Fullscreen");
                         action-name: "win.fullscreen";
 
-                        styles ["osd", "circular"]
+                        styles ["header-osd", "circular"]
                     }
 
                     Button {
@@ -48,7 +48,7 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         tooltip-text: _("Tab Overview");
                         action-name: "overview.open";
 
-                        styles ["osd", "circular"]
+                        styles ["header-osd", "circular"]
                     }
                 }
             }
@@ -64,8 +64,6 @@ template $FieldMonitorConnectionView : Adw.Bin {
                 Box {
                     margin-top: 6;
                     margin-bottom: 3;
-                    margin-start: 6;
-                    margin-end: 3;
                     spacing: 6;
 
                     Revealer osd_title_revealer {
@@ -83,7 +81,7 @@ template $FieldMonitorConnectionView : Adw.Bin {
                                 ellipsize: middle;
                             };
 
-                            styles ["osd", "circular"]
+                            styles ["header-osd", "nohover", "circular"]
                         }
                     }
                 }
@@ -114,7 +112,7 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         tooltip-text: _("Connection List");
                         action-name: "win.show-connection-list";
 
-                        styles ["osd", "circular"]
+                        styles ["header-osd", "circular"]
                     }
 
                     MenuButton {
@@ -127,7 +125,7 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         tooltip-text: _('Menu');
                         menu-model: on_connection_menu;
 
-                        styles ["osd", "circular"]
+                        styles ["header-osd", "circular"]
                     }
 
                     WindowControls window_controls_end {
