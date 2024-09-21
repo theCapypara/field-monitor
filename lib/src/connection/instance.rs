@@ -15,6 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use std::borrow::Cow;
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
@@ -140,6 +141,21 @@ impl ConnectionInstance {
     }
 }
 
+impl Actionable for ConnectionInstance {
+    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
+        let brw = self.imp().implementation.borrow();
+        match brw.as_ref() {
+            None => vec![],
+            Some(brw) => brw.actions(),
+        }
+    }
+
+    fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
+        let brw = self.imp().implementation.borrow();
+        brw.as_ref().and_then(|rf| rf.action(action_id))
+    }
+}
+
 impl Connection for ConnectionInstance {
     fn metadata(&self) -> ConnectionMetadata {
         let brw = self.imp().implementation.borrow();
@@ -170,12 +186,5 @@ impl Connection for ConnectionInstance {
                 )),
             }
         })
-    }
-    fn actions<'a>(&self) -> ActionMap<'a> {
-        let brw = self.imp().implementation.borrow();
-        match brw.as_ref() {
-            None => ActionMap::new(),
-            Some(brw) => brw.actions(),
-        }
     }
 }

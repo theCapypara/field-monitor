@@ -169,8 +169,8 @@ impl ConnectionLoader {
 
     pub fn action(&self, action_id: &str) -> Option<ServerAction> {
         match &self.entity {
-            Entity::Connection(e) => e.actions().swap_remove(action_id),
-            Entity::Server(e) => e.actions().swap_remove(action_id),
+            Entity::Connection(e) => e.action(action_id),
+            Entity::Server(e) => e.action(action_id),
         }
     }
 

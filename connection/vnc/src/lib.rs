@@ -163,6 +163,8 @@ pub struct VncConnection {
     config: ConnectionConfiguration,
 }
 
+impl Actionable for VncConnection {}
+
 impl Connection for VncConnection {
     fn metadata(&self) -> ConnectionMetadata {
         ConnectionMetadataBuilder::default()

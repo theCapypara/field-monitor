@@ -212,29 +212,18 @@ pub type Parameters = HashMap<String, serde_yaml::Value>;
 pub type ActionExecuteFut<'a> =
     dyn Fn(Parameters, Option<gtk::Window>, Option<adw::ToastOverlay>) -> LocalBoxFuture<'a, ()>;
 pub type ServerMap = IndexMap<Cow<'static, str>, Box<dyn ServerConnection>>;
-pub type ActionMap<'a> = IndexMap<Cow<'static, str>, ServerAction<'a>>;
 
 pub struct ServerAction<'a> {
     static_parameters: Parameters,
-    title: String,
     action_fn: Box<ActionExecuteFut<'a>>,
 }
 
 impl<'a> ServerAction<'a> {
-    pub fn new(
-        title: String,
-        static_parameters: Parameters,
-        action_fn: Box<ActionExecuteFut<'a>>,
-    ) -> Self {
+    pub fn new(static_parameters: Parameters, action_fn: Box<ActionExecuteFut<'a>>) -> Self {
         Self {
-            title,
             static_parameters,
             action_fn,
         }
-    }
-
-    pub fn title(&self) -> &str {
-        &self.title
     }
 
     /// Execute the action.
@@ -264,26 +253,35 @@ impl<'a> ServerAction<'a> {
     }
 }
 
+/// Something that various actions can be performed on.
+/// Not to be confused with GTK's Actionable, although the concepts and purpose are similar.
+pub trait Actionable {
+    /// Get the list of supported action IDs and titles.
+    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
+        vec![]
+    }
+
+    /// Get an action, if supported; see `actions`.
+    fn action<'a>(&self, _action_id: &str) -> Option<ServerAction<'a>> {
+        None
+    }
+}
+
 /// A connection. Represents one or more servers which are logically
 /// grouped together.
 ///
 /// It manages zero, one or multiple servers.
-pub trait Connection {
+pub trait Connection: Actionable {
     /// Metadata about the connection.
     fn metadata(&self) -> ConnectionMetadata;
 
     /// Returns the servers managed by this connection.
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>>;
-
-    /// Returns a map of actions that can be executed for this connection.
-    fn actions<'a>(&self) -> ActionMap<'a> {
-        IndexMap::new()
-    }
 }
 
 /// A single instance of a server to connect to.
 /// It may contain sub-servers.
-pub trait ServerConnection {
+pub trait ServerConnection: Actionable {
     /// Metadata about the server.
     fn metadata(&self) -> ServerMetadata;
 
@@ -301,10 +299,5 @@ pub trait ServerConnection {
     /// Returns the sub-servers grouped under this server (if any).
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move { Ok(IndexMap::new()) })
-    }
-
-    /// Returns a map of actions that can be executed for this server.
-    fn actions<'a>(&self) -> ActionMap<'a> {
-        IndexMap::new()
     }
 }

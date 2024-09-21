@@ -15,11 +15,11 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use std::borrow::Cow;
+
 use adw::gio;
 use glib::object::IsA;
 use glib::prelude::ToVariant;
-
-use libfieldmonitor::connection::ActionMap;
 
 pub(super) trait CanHaveSuffix {
     fn add_suffix(&self, widget: &impl IsA<gtk::Widget>);
@@ -29,16 +29,16 @@ pub(super) fn add_actions_to_entry(
     row: &impl CanHaveSuffix,
     is_server: bool,
     entity_path: &str,
-    actions: ActionMap,
+    actions: Vec<(Cow<str>, Cow<str>)>,
 ) {
     if actions.is_empty() {
         return;
     }
     let menu = gio::Menu::new();
-    for (action_id, action_spec) in actions {
+    for (action_id, action_title) in actions {
         let action_target = (is_server, entity_path, &*action_id).to_variant();
         menu.append(
-            Some(action_spec.title()),
+            Some(&*action_title),
             Some(
                 gio::Action::print_detailed_name(
                     "app.perform-connection-action",

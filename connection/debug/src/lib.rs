@@ -165,6 +165,85 @@ pub struct DebugConnection {
     config: ConnectionConfiguration,
 }
 
+impl Actionable for DebugConnection {
+    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
+        match self.config.mode() {
+            DebugMode::Complex => {
+                vec![
+                    (
+                        Cow::Borrowed("dialog_persisted"),
+                        Cow::Borrowed("Show dialog: Persisted value"),
+                    ),
+                    (
+                        Cow::Borrowed("dialog_session"),
+                        Cow::Borrowed("Show dialog: Session value"),
+                    ),
+                    (Cow::Borrowed("bazbaz"), Cow::Borrowed("Show toast")),
+                ]
+            }
+            _ => vec![],
+        }
+    }
+
+    fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
+        match action_id {
+            "dialog_persisted" => {
+                let mut params_dialog_persisted = HashMap::new();
+                params_dialog_persisted.insert(
+                    "v".into(),
+                    self.config.store_persistent().to_string().into(),
+                );
+                Some(ServerAction::new(
+                    params_dialog_persisted,
+                    Box::new(|params, window, _toasts| {
+                        Box::pin(async move {
+                            let persisted_v =
+                                params.get("v").and_then(serde_yaml::Value::as_str).unwrap();
+                            adw::AlertDialog::builder()
+                                .body(persisted_v)
+                                .build()
+                                .present(window.as_ref())
+                        })
+                    }),
+                ))
+            }
+
+            "dialog_session" => {
+                let mut params_dialog_session = HashMap::new();
+                params_dialog_session
+                    .insert("v".into(), self.config.store_session().to_string().into());
+                Some(ServerAction::new(
+                    params_dialog_session,
+                    Box::new(|params, window, _toasts| {
+                        Box::pin(async move {
+                            let session_v =
+                                params.get("v").and_then(serde_yaml::Value::as_str).unwrap();
+                            adw::AlertDialog::builder()
+                                .body(session_v)
+                                .build()
+                                .present(window.as_ref())
+                        })
+                    }),
+                ))
+            }
+
+            "bazbaz" => Some(ServerAction::new(
+                HashMap::new(),
+                Box::new(|_params, _window, toasts| {
+                    Box::pin(async move {
+                        sleep(Duration::from_secs(2)).await;
+                        let toast = adw::Toast::builder().title("Foobar").timeout(10).build();
+                        if let Some(toasts) = toasts {
+                            toasts.add_toast(toast);
+                        }
+                    })
+                }),
+            )),
+            _ => None,
+        }
+    }
+}
+
 impl Connection for DebugConnection {
     fn metadata(&self) -> ConnectionMetadata {
         ConnectionMetadataBuilder::default()
@@ -342,79 +421,6 @@ impl Connection for DebugConnection {
             }
         })
     }
-
-    fn actions<'a>(&self) -> ActionMap<'a> {
-        match self.config.mode() {
-            DebugMode::Complex => {
-                let mut map: ActionMap = IndexMap::new();
-
-                let mut params_dialog_persisted = HashMap::new();
-                params_dialog_persisted.insert(
-                    "v".into(),
-                    self.config.store_persistent().to_string().into(),
-                );
-                map.insert(
-                    Cow::Borrowed("dialog_persisted"),
-                    ServerAction::new(
-                        "Show dialog: Persisted value".to_string(),
-                        params_dialog_persisted,
-                        Box::new(|params, window, _toasts| {
-                            Box::pin(async move {
-                                let persisted_v =
-                                    params.get("v").and_then(serde_yaml::Value::as_str).unwrap();
-                                adw::AlertDialog::builder()
-                                    .body(persisted_v)
-                                    .build()
-                                    .present(window.as_ref())
-                            })
-                        }),
-                    ),
-                );
-
-                let mut params_dialog_session = HashMap::new();
-                params_dialog_session
-                    .insert("v".into(), self.config.store_session().to_string().into());
-                map.insert(
-                    Cow::Borrowed("dialog_session"),
-                    ServerAction::new(
-                        "Show dialog: Session value".to_string(),
-                        params_dialog_session,
-                        Box::new(|params, window, _toasts| {
-                            Box::pin(async move {
-                                let session_v =
-                                    params.get("v").and_then(serde_yaml::Value::as_str).unwrap();
-                                adw::AlertDialog::builder()
-                                    .body(session_v)
-                                    .build()
-                                    .present(window.as_ref())
-                            })
-                        }),
-                    ),
-                );
-
-                map.insert(
-                    Cow::Borrowed("bazbaz"),
-                    ServerAction::new(
-                        "Show toast".to_string(),
-                        HashMap::new(),
-                        Box::new(|_params, _window, toasts| {
-                            Box::pin(async move {
-                                sleep(Duration::from_secs(2)).await;
-                                let toast =
-                                    adw::Toast::builder().title("Foobar").timeout(10).build();
-                                if let Some(toasts) = toasts {
-                                    toasts.add_toast(toast);
-                                }
-                            })
-                        }),
-                    ),
-                );
-
-                map
-            }
-            _ => IndexMap::new(),
-        }
-    }
 }
 
 impl DebugConnection {
@@ -458,6 +464,47 @@ impl DebugConnectionServer {
 
     fn expose_dummy_actions(&mut self) {
         self.has_actions = true;
+    }
+}
+
+impl Actionable for DebugConnectionServer {
+    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
+        vec![
+            (Cow::Borrowed("foobar"), Cow::Borrowed("Show dialog")),
+            (Cow::Borrowed("bazbaz"), Cow::Borrowed("Show toast")),
+        ]
+    }
+
+    fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
+        match action_id {
+            "foobar" => Some(ServerAction::new(
+                HashMap::new(),
+                Box::new(|_params, window, _toasts| {
+                    Box::pin(async move {
+                        adw::AlertDialog::builder()
+                            .body("Testing! This is from a server.")
+                            .build()
+                            .present(window.as_ref())
+                    })
+                }),
+            )),
+            "bazbaz" => Some(ServerAction::new(
+                HashMap::new(),
+                Box::new(|_params, _window, toasts| {
+                    Box::pin(async move {
+                        sleep(Duration::from_secs(2)).await;
+                        let toast = adw::Toast::builder()
+                            .title("Server bazbaz")
+                            .timeout(10)
+                            .build();
+                        if let Some(toasts) = toasts {
+                            toasts.add_toast(toast);
+                        }
+                    })
+                }),
+            )),
+            _ => None,
+        }
     }
 }
 
@@ -505,50 +552,5 @@ impl ServerConnection for DebugConnectionServer {
 
             Ok(hm)
         })
-    }
-
-    fn actions<'a>(&self) -> ActionMap<'a> {
-        if self.has_actions {
-            let mut map: ActionMap = IndexMap::new();
-            map.insert(
-                Cow::Borrowed("foobar"),
-                ServerAction::new(
-                    "Show dialog".to_string(),
-                    HashMap::new(),
-                    Box::new(|_params, window, _toasts| {
-                        Box::pin(async move {
-                            adw::AlertDialog::builder()
-                                .body("Testing! This is from a server.")
-                                .build()
-                                .present(window.as_ref())
-                        })
-                    }),
-                ),
-            );
-
-            map.insert(
-                Cow::Borrowed("bazbaz"),
-                ServerAction::new(
-                    "Show toast".to_string(),
-                    HashMap::new(),
-                    Box::new(|_params, _window, toasts| {
-                        Box::pin(async move {
-                            sleep(Duration::from_secs(2)).await;
-                            let toast = adw::Toast::builder()
-                                .title("Server bazbaz")
-                                .timeout(10)
-                                .build();
-                            if let Some(toasts) = toasts {
-                                toasts.add_toast(toast);
-                            }
-                        })
-                    }),
-                ),
-            );
-
-            map
-        } else {
-            IndexMap::new()
-        }
     }
 }
