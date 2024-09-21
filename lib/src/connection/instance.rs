@@ -28,7 +28,6 @@ use glib::subclass::prelude::*;
 use log::{debug, error};
 
 use crate::connection::*;
-use crate::connection::configuration::ConnectionConfiguration;
 use crate::connection::types::{Connection, ConnectionProvider};
 
 mod imp {
@@ -41,7 +40,7 @@ mod imp {
         pub title: RefCell<Option<String>>,
         #[property(get, construct_only)]
         pub connection_id: RefCell<String>,
-        pub configuration: RefCell<Option<ConnectionConfiguration>>,
+        pub configuration: RefCell<Option<DualScopedConnectionConfiguration>>,
         pub provider: RefCell<Option<Rc<Box<dyn ConnectionProvider>>>>,
         pub implementation: RefCell<Option<Box<dyn Connection>>>,
         pub load_error: RefCell<Option<Arc<ConnectionError>>>,
@@ -66,10 +65,10 @@ static NOT_INIT: &str = "ConnectionInstance was not properly initialized";
 
 impl ConnectionInstance {
     pub async fn new(
-        configuration: ConnectionConfiguration,
+        configuration: DualScopedConnectionConfiguration,
         provider: Rc<Box<dyn ConnectionProvider>>,
     ) -> Self {
-        let slf_id = Arc::new(configuration.id().to_string());
+        let slf_id = Arc::new(configuration.session().id().to_string());
         let slf: Self = glib::Object::builder()
             .property("connection-id", &*slf_id)
             .build();
@@ -83,7 +82,7 @@ impl ConnectionInstance {
                 move |slf, _| {
                     let brw = slf.imp().configuration.borrow();
                     let (id, tag) = match brw.as_ref() {
-                        Some(c) => (Some(c.id()), Some(c.tag())),
+                        Some(c) => (Some(c.session().id()), Some(c.session().tag())),
                         None => (None, None),
                     };
                     debug!(
@@ -101,12 +100,12 @@ impl ConnectionInstance {
     }
 
     /// Changes the configuration and recreates the implementation.
-    pub async fn set_configuration(&self, value: ConnectionConfiguration) {
-        assert_eq!(value.id(), self.connection_id().as_str());
+    pub async fn set_configuration(&self, value: DualScopedConnectionConfiguration) {
+        assert_eq!(value.session().id(), self.connection_id().as_str());
 
         let slf_imp = self.imp();
         let provider = slf_imp.provider.borrow().as_ref().expect(NOT_INIT).clone();
-        match provider.load_connection(value.clone()).await {
+        match provider.load_connection(value.session().clone()).await {
             Ok(implementation) => {
                 self.set_title(implementation.metadata().title.as_str());
                 slf_imp.implementation.replace(Some(implementation));
@@ -124,8 +123,8 @@ impl ConnectionInstance {
         slf_imp.configuration.replace(Some(value));
     }
 
-    pub fn configuration(&self) -> ConnectionConfiguration {
-        self.imp().configuration.borrow().as_ref().unwrap().clone()
+    pub fn with_configuration<T>(&self, cb: impl Fn(&DualScopedConnectionConfiguration) -> T) -> T {
+        cb(self.imp().configuration.borrow().as_ref().unwrap())
     }
 
     pub fn provider(&self) -> Rc<Box<dyn ConnectionProvider>> {
@@ -137,7 +136,7 @@ impl ConnectionInstance {
             .configuration
             .borrow()
             .as_ref()
-            .map(|c| c.tag().to_string())
+            .map(|c| c.session().tag().to_string())
     }
 }
 

@@ -16,6 +16,7 @@ glib = { workspace = true }
 gtk = { workspace = true }
 adw = { workspace = true }
 indexmap = { workspace = true }
+secure-string = { workspace = true }
 
 [lints]
 workspace = true

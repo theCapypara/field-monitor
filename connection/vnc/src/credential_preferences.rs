@@ -100,8 +100,13 @@ glib::wrapper! {
 }
 
 impl VncCredentialPreferences {
-    pub fn new(existing_configuration: Option<&ConnectionConfiguration>) -> Self {
-        let slf: Self = glib::Object::builder().build();
+    pub fn new(
+        existing_configuration: Option<&ConnectionConfiguration>,
+        use_temporary_credentials: bool,
+    ) -> Self {
+        let slf: Self = glib::Object::builder()
+            .property("use-temporary-credentials", use_temporary_credentials)
+            .build();
 
         if let Some(existing_configuration) = existing_configuration.cloned() {
             glib::spawn_future_local(clone!(
@@ -120,7 +125,7 @@ impl VncCredentialPreferences {
             self.set_user(v);
         }
         if let Ok(Some(v)) = existing_configuration.password().await {
-            self.set_password(v);
+            self.set_password(v.unsecure());
         }
     }
 

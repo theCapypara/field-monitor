@@ -766,6 +766,7 @@ dependencies = [
  "lru",
  "oo7",
  "pretty_env_logger",
+ "secure-string",
  "serde",
  "serde_yaml",
  "uuid",
@@ -810,6 +811,7 @@ dependencies = [
  "libadwaita",
  "libfieldmonitor",
  "log",
+ "secure-string",
  "serde",
  "serde_yaml",
 ]
@@ -1767,6 +1769,7 @@ dependencies = [
  "rdw4-rdp",
  "rdw4-spice",
  "rdw4-vnc",
+ "secure-string",
  "serde",
  "serde_yaml",
  "thiserror",
@@ -2450,6 +2453,16 @@ name = "scoped-tls"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e1cf6437eb19a8f4a6cc0f7dca544973b0b78843adbfeb3683d1a94a0024a294"
+
+[[package]]
+name = "secure-string"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "548ba8c9ff631f7bb3a64de1e8ad73fe20f6d04090724f2b496ed45314ad7488"
+dependencies = [
+ "libc",
+ "zeroize",
+]
 
 [[package]]
 name = "semver"

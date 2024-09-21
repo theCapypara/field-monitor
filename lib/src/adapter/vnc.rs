@@ -23,6 +23,7 @@ use glib::prelude::*;
 use glib::translate::IntoGlib;
 use log::{debug, warn};
 use rdw_vnc::gvnc::ConnectionCredential;
+use secure_string::SecureString;
 
 use crate::adapter::types::{Adapter, AdapterDisplay};
 use crate::connection::ConnectionError;
@@ -31,13 +32,13 @@ pub struct VncAdapter {
     host: String,
     port: u32,
     user: String,
-    password: String,
+    password: SecureString,
 }
 
 impl VncAdapter {
     pub const TAG: Cow<'static, str> = Cow::Borrowed("vnc");
 
-    pub fn new(host: String, port: u32, user: String, password: String) -> Self {
+    pub fn new(host: String, port: u32, user: String, password: SecureString) -> Self {
         Self {
             host,
             port,
@@ -111,8 +112,11 @@ impl Adapter for VncAdapter {
                     .unwrap();
                 }
                 if creds.contains(&ConnectionCredential::Password) {
-                    conn.set_credential(ConnectionCredential::Password.into_glib(), &self.password)
-                        .unwrap();
+                    conn.set_credential(
+                        ConnectionCredential::Password.into_glib(),
+                        self.password.unsecure(),
+                    )
+                    .unwrap();
                 }
             });
 

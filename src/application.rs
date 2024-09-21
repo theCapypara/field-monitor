@@ -37,7 +37,7 @@ use log::{debug, error, info, warn};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use libfieldmonitor::connection::Connection;
+use libfieldmonitor::connection::{Connection, DualScopedConnectionConfiguration};
 use libfieldmonitor::connection::ConnectionConfiguration;
 use libfieldmonitor::connection::ConnectionInstance;
 use libfieldmonitor::connection::ConnectionProvider;
@@ -45,6 +45,7 @@ use libfieldmonitor::ManagesSecrets;
 
 use crate::config::{APP_ID, VERSION};
 use crate::connection::CONNECTION_PROVIDERS;
+use crate::connection_loader::ConnectionLoader;
 use crate::i18n::gettext_f;
 use crate::secrets::SecretManager;
 use crate::widget::add_connection_dialog::FieldMonitorAddConnectionDialog;
@@ -282,6 +283,52 @@ impl FieldMonitorApplication {
                 app.remove_connection_via_dialog(connection_id)
             })
             .build();
+        let auth_connection_action = gio::ActionEntry::builder("auth-connection")
+            .parameter_type(Some(&String::static_variant_type()))
+            .activate(move |app: &Self, _, connection_id| {
+                app.auth_connection_via_dialog(connection_id)
+            })
+            .build();
+        let connect_to_server_action = gio::ActionEntry::builder("connect-to-server")
+            .parameter_type(Some(&*<(String, String)>::static_variant_type()))
+            .activate(move |app: &Self, _, connection_id| {
+                let Some((path, adapter_id)) =
+                    connection_id.and_then(<(String, String)>::from_variant)
+                else {
+                    warn!("Invalid parameters passed to app.connect-to-server. Ignoring.");
+                    return;
+                };
+                glib::spawn_future_local(glib::clone!(
+                    #[weak]
+                    app,
+                    async move {
+                        app.connect_to_server(&path, &adapter_id).await;
+                    }
+                ));
+            })
+            .build();
+        let perform_connection_action_action =
+            gio::ActionEntry::builder("perform-connection-action")
+                .parameter_type(Some(&*<(bool, String, String)>::static_variant_type()))
+                .activate(move |app: &Self, _, connection_id| {
+                    let Some((is_server, entity_path, action_id)) =
+                        connection_id.and_then(<(bool, String, String)>::from_variant)
+                    else {
+                        warn!(
+                            "Invalid parameters passed to app.perform-connection-action. Ignoring."
+                        );
+                        return;
+                    };
+                    glib::spawn_future_local(glib::clone!(
+                        #[weak]
+                        app,
+                        async move {
+                            app.perform_connection_action(is_server, &entity_path, &action_id)
+                                .await;
+                        }
+                    ));
+                })
+                .build();
 
         self.add_action_entries([
             quit_action,
@@ -290,10 +337,14 @@ impl FieldMonitorApplication {
             add_connection_action,
             edit_connection_action,
             remove_connection_action,
+            auth_connection_action,
+            connect_to_server_action,
+            perform_connection_action_action,
         ]);
     }
 
     fn show_about(&self) {
+        // TODO: Unwrap or None
         let window = self.active_window().unwrap();
         let about = adw::AboutDialog::builder()
             .application_name(gettext("Field Monitor"))
@@ -312,23 +363,60 @@ impl FieldMonitorApplication {
         about.present(Some(&window));
     }
 
-    fn add_connection_via_dialog(&self) {
-        let window = self.active_window().unwrap();
-        let dialog = FieldMonitorAddConnectionDialog::new(self);
-        dialog.connect_closure(
-            "finished-adding",
-            false,
-            glib::closure_local!(
-                #[watch]
-                window,
-                move |_: &FieldMonitorAddConnectionDialog| {
-                    if let Some(window) = window.downcast_ref::<FieldMonitorWindow>() {
-                        window.toast_connection_added();
+    fn show_parentless_ok_dialog(&self, msg: &str) {
+        let alert = adw::AlertDialog::builder().body(msg).build();
+        alert.add_response("ok", &gettext("OK"));
+        alert.present(None::<&gtk::Widget>);
+    }
+
+    fn show_toast_or_parentless_dialog_on_signal(
+        &self,
+        obj: &impl IsA<gtk::Widget>,
+        signal: &str,
+        window: Option<gtk::Window>,
+        msg: String,
+    ) {
+        match window {
+            Some(window) => obj.connect_closure(
+                signal,
+                false,
+                glib::closure_local!(
+                    #[watch]
+                    window,
+                    move |_: &gtk::Widget| {
+                        if let Some(window) = window.downcast_ref::<FieldMonitorWindow>() {
+                            window.toast(&msg);
+                        }
                     }
-                }
+                ),
             ),
+            None => obj.connect_closure(
+                signal,
+                false,
+                glib::closure_local!(
+                    #[watch(rename_to=slf)]
+                    self,
+                    move |_: &gtk::Widget| {
+                        slf.show_parentless_ok_dialog(&msg);
+                    }
+                ),
+            ),
+        };
+    }
+
+    fn add_connection_via_dialog(&self) {
+        let window = self.active_window();
+        let dialog = FieldMonitorAddConnectionDialog::new(self);
+        let msg = gettext("Connection successfully added.");
+
+        self.show_toast_or_parentless_dialog_on_signal(
+            &dialog,
+            "finished-adding",
+            window.clone(),
+            msg,
         );
-        dialog.present(Some(&window));
+
+        dialog.present(window.as_ref());
     }
 
     fn edit_connection_via_dialog(&self, target: Option<&glib::Variant>) {
@@ -349,22 +437,18 @@ impl FieldMonitorApplication {
             return;
         };
 
-        let window = self.active_window().unwrap();
+        let window = self.active_window();
         let dialog = FieldMonitorUpdateConnectionDialog::new(self, connection);
-        dialog.connect_closure(
+        let msg = gettext("Connection successfully updated.");
+
+        self.show_toast_or_parentless_dialog_on_signal(
+            &dialog,
             "finished-updating",
-            false,
-            glib::closure_local!(
-                #[watch]
-                window,
-                move |_: &FieldMonitorUpdateConnectionDialog| {
-                    if let Some(window) = window.downcast_ref::<FieldMonitorWindow>() {
-                        window.toast_connection_updated();
-                    }
-                }
-            ),
+            window.clone(),
+            msg,
         );
-        dialog.present(Some(&window));
+
+        dialog.present(window.as_ref());
     }
 
     fn remove_connection_via_dialog(&self, target: Option<&glib::Variant>) {
@@ -388,32 +472,119 @@ impl FieldMonitorApplication {
 
         let title = connection.title().unwrap_or_default();
 
-        let window = self.active_window().unwrap();
+        let window = self.active_window();
         let dialog = adw::AlertDialog::builder()
             .heading(gettext_f("Remove {title}?", &[("title", &title)]))
             .build();
         dialog.add_response("No", &gettext("No"));
         dialog.add_response("Yes", &gettext("Yes"));
         dialog.set_response_appearance("Yes", adw::ResponseAppearance::Destructive);
-        dialog.connect_closure(
-            "response",
-            false,
-            glib::closure_local!(
-                #[watch]
-                window,
-                #[weak(rename_to = slf)]
-                self,
-                move |_: &adw::AlertDialog, response: &str| {
-                    if response == "Yes" {
-                        slf.remove_connection(&connection_id, true);
-                        if let Some(window) = window.downcast_ref::<FieldMonitorWindow>() {
-                            window.toast_connection_removed();
+
+        let msg = gettext("Connection successfully removed.");
+
+        if let Some(window) = window.clone() {
+            dialog.connect_closure(
+                "response",
+                false,
+                glib::closure_local!(
+                    #[watch]
+                    window,
+                    #[weak(rename_to = slf)]
+                    self,
+                    move |_: &adw::AlertDialog, response: &str| {
+                        if response == "Yes" {
+                            slf.remove_connection(&connection_id, true);
+                            if let Some(window) = window.downcast_ref::<FieldMonitorWindow>() {
+                                window.toast(&msg);
+                            }
                         }
                     }
-                }
-            ),
-        );
-        dialog.present(Some(&window));
+                ),
+            );
+        } else {
+            dialog.connect_closure(
+                "response",
+                false,
+                glib::closure_local!(
+                    #[watch(rename_to = slf)]
+                    self,
+                    move |_: &adw::AlertDialog, response: &str| {
+                        if response == "Yes" {
+                            slf.remove_connection(&connection_id, true);
+                            slf.show_parentless_ok_dialog(&msg);
+                        }
+                    }
+                ),
+            );
+        }
+        dialog.present(window.as_ref());
+    }
+
+    fn auth_connection_via_dialog(&self, target: Option<&glib::Variant>) {
+        debug!("app.auth-connection: {:?}", target);
+        let imp = self.imp();
+
+        let Some(connection_id) = target.and_then(glib::Variant::str).map(ToString::to_string)
+        else {
+            warn!("Invalid connection ID target passed to app.auth-connection. Ignoring.");
+            return;
+        };
+        let Some(connection) = imp
+            .connections
+            .borrow()
+            .as_ref()
+            .and_then(|m| m.get(&*connection_id).cloned())
+        else {
+            warn!("Connection passed to app.auth-connection not found. Ignoring.");
+            return;
+        };
+
+        let window = self.active_window();
+        // TODO
+        let diag = adw::AlertDialog::builder().body(connection_id).build();
+        diag.present(window.as_ref());
+    }
+
+    pub async fn connect_to_server(&self, path: &str, adapter_id: &str) -> Option<()> {
+        let imp = self.imp();
+        let window = self.active_window();
+
+        // TODO
+        let loader =
+            ConnectionLoader::load_server(imp.connections.borrow(), window.as_ref(), path).await?;
+
+        let diag = adw::AlertDialog::builder()
+            .body(format!("{path}, {adapter_id}"))
+            .build();
+        diag.present(window.as_ref());
+
+        Some(())
+    }
+
+    pub async fn perform_connection_action(
+        &self,
+        is_server: bool,
+        path: &str,
+        action_id: &str,
+    ) -> Option<()> {
+        let imp = self.imp();
+        let window = self.active_window();
+
+        let loader =
+            ConnectionLoader::load(is_server, imp.connections.borrow(), window.as_ref(), path)
+                .await?;
+
+        let action = loader.action(action_id)?;
+        action
+            .execute(
+                window.clone().as_ref(),
+                window
+                    .and_then(|w| w.downcast::<FieldMonitorWindow>().ok())
+                    .map(|w| w.toast_overlay().clone())
+                    .as_ref(),
+            )
+            .await;
+        Some(())
     }
 
     pub(crate) fn connection_providers(
@@ -456,7 +627,7 @@ impl FieldMonitorApplication {
     /// Updates or adds a new configuration, does not block, will run asynchronously in background.
     /// When done, the signal connection-updated is emitted.
     /// If the connection provider was not found, the connection is ignored.
-    pub fn update_connection_eventually(&self, connection: ConnectionConfiguration) {
+    pub fn update_connection_eventually(&self, connection: DualScopedConnectionConfiguration) {
         let slf = self;
         glib::spawn_future_local(glib::clone!(
             #[weak]
@@ -474,17 +645,20 @@ impl FieldMonitorApplication {
     //    clippy::await_holding_refcell_ref,
     //    reason = "OK because we explicitly drop. See known problems of lint."
     //)]
-    pub async fn update_connection(&self, connection: ConnectionConfiguration) {
-        debug!("adding connection {}", connection.id());
+    pub async fn update_connection(&self, connection: DualScopedConnectionConfiguration) {
+        debug!("adding connection {}", connection.session().id());
 
         let imp = self.imp();
         let brw = imp.connections.borrow();
         let connections = brw.as_ref().unwrap();
-        let connection_id = connection.id().to_string();
+        let connection_id = connection.session().id().to_string();
         let entry = connections.get(&connection_id);
 
-        let Some(provider) = imp.get_provider(connection.tag()) else {
-            warn!("unknown connection provider tag {}", connection.tag());
+        let Some(provider) = imp.get_provider(connection.session().tag()) else {
+            warn!(
+                "unknown connection provider tag {}",
+                connection.session().tag()
+            );
             return;
         };
 
@@ -517,11 +691,13 @@ impl FieldMonitorApplication {
         let content = read_to_string(path).await?;
         let saved_config: SavedConnectionConfiguration = serde_yaml::from_str(&content)?;
         let secret_manager = self.imp().secret_manager.borrow().as_ref().unwrap().clone();
-        self.update_connection(ConnectionConfiguration::new_existing(
-            connection_id.into_owned(),
-            saved_config.tag,
-            saved_config.config,
-            secret_manager,
+        self.update_connection(DualScopedConnectionConfiguration::new_unified(
+            ConnectionConfiguration::new_existing(
+                connection_id.into_owned(),
+                saved_config.tag,
+                saved_config.config,
+                secret_manager,
+            ),
         ))
         .await;
         Ok(())
@@ -610,11 +786,14 @@ impl FieldMonitorApplication {
     /// Save a connection. May fail for I/O, serialization or secret service communication reasons.
     pub async fn save_connection(
         &self,
-        connection: &mut ConnectionConfiguration,
+        mut connection: DualScopedConnectionConfiguration,
     ) -> anyhow::Result<()> {
         let mut filename = self.connections_dir().await;
-        filename.push(format!("{}.yaml", connection.id()));
-        let config = connection.save().await?;
+
+        let c_persistent = connection.persistent_mut();
+
+        filename.push(format!("{}.yaml", c_persistent.id()));
+        let config = c_persistent.save().await?;
 
         let file_existed_before = filename.exists();
         let mut file = OpenOptions::new()
@@ -625,12 +804,12 @@ impl FieldMonitorApplication {
             .await?;
 
         match serde_yaml::to_string(&SavedConnectionConfiguration {
-            tag: connection.tag().to_string(),
+            tag: c_persistent.tag().to_string(),
             config,
         }) {
             Ok(value) => match file.write_all(value.as_bytes()).await {
                 Ok(()) => {
-                    self.update_connection_eventually(connection.clone());
+                    self.update_connection_eventually(connection);
                     Ok(())
                 }
                 Err(err) => {

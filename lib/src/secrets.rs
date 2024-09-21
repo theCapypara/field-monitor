@@ -16,9 +16,19 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use futures::future::LocalBoxFuture;
+use secure_string::SecureString;
 
 pub trait ManagesSecrets {
-    fn lookup(&self, connection_id: &str, field: &str) -> LocalBoxFuture<anyhow::Result<Option<String>>>;
-    fn store(&self, connection_id: &str, field: &str, password: &str) -> LocalBoxFuture<anyhow::Result<()>>;
+    fn lookup(
+        &self,
+        connection_id: &str,
+        field: &str,
+    ) -> LocalBoxFuture<anyhow::Result<Option<SecureString>>>;
+    fn store(
+        &self,
+        connection_id: &str,
+        field: &str,
+        password: SecureString,
+    ) -> LocalBoxFuture<anyhow::Result<()>>;
     fn clear(&self, connection_id: &str, field: &str) -> LocalBoxFuture<anyhow::Result<()>>;
 }

@@ -17,13 +17,13 @@
  */
 use std::cell::RefCell;
 
-use adw::prelude::PreferencesGroupExt;
+use adw::prelude::*;
+use adw::prelude::{BinExt, PreferencesGroupExt};
 use adw::subclass::prelude::*;
 use futures::future::try_join_all;
 use gettextrs::gettext;
 use glib::object::{IsA, ObjectExt};
 use gtk::{glib, Widget};
-use gtk::prelude::{ActionableExtManual, BoxExt};
 use log::{error, info};
 
 use libfieldmonitor::connection::*;
@@ -52,6 +52,8 @@ mod imp {
         pub auth_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub header_suffix: TemplateChild<gtk::Box>,
+        #[template_child]
+        pub connections_bin: TemplateChild<adw::Bin>,
         #[property(get, set)]
         pub connection: RefCell<Option<ConnectionInstance>>,
         #[property(get, set)]
@@ -116,6 +118,13 @@ impl FieldMonitorCLConnectionEntry {
             self.set_description(Some(subtitle));
         }
 
+        // Remove and re-add action buttons
+        self.imp().connections_bin.set_child(Some(
+            &gtk::Box::builder()
+                .orientation(gtk::Orientation::Horizontal)
+                .spacing(8)
+                .build(),
+        ));
         add_actions_to_entry(
             self,
             false,
@@ -207,6 +216,12 @@ impl FieldMonitorCLConnectionEntry {
 
 impl CanHaveSuffix for FieldMonitorCLConnectionEntry {
     fn add_suffix(&self, widget: &impl IsA<Widget>) {
-        self.imp().header_suffix.prepend(widget);
+        self.imp()
+            .connections_bin
+            .child()
+            .unwrap()
+            .downcast::<gtk::Box>()
+            .unwrap()
+            .prepend(widget);
     }
 }

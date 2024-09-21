@@ -17,6 +17,7 @@
  */
 
 use std::borrow::Cow;
+use std::collections::HashMap;
 use std::fmt;
 use std::sync::Arc;
 
@@ -27,6 +28,7 @@ use thiserror::Error;
 
 use crate::adapter::types::Adapter;
 use crate::connection::configuration::ConnectionConfiguration;
+use crate::connection::DualScopedConnectionConfiguration;
 
 pub type ConnectionResult<T> = Result<T, ConnectionError>;
 
@@ -165,8 +167,8 @@ pub trait ConnectionProvider {
     fn update_connection(
         &self,
         preferences: gtk::Widget,
-        configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>>;
+        configuration: DualScopedConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>>;
 
     /// Creates a preference group (or another applicable widgets, such as a box to group multiple)
     /// for configuring credentials.
@@ -187,8 +189,8 @@ pub trait ConnectionProvider {
     fn store_credentials(
         &self,
         preferences: gtk::Widget,
-        configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>>;
+        configuration: DualScopedConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>>;
 
     /// Try to load a connection configuration into a connection.
     /// The tag inside the configuration must match [`Self::tag`], otherwise the method
@@ -201,31 +203,64 @@ pub trait ConnectionProvider {
     ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>>;
 }
 
+/// A map of values as parameters for an action.
+pub type Parameters = HashMap<String, serde_yaml::Value>;
+
 /// A future that executes whatever action was requested. These actions are defined by `actions`
 /// methods on `Connection` and `ServerConnection`. See also `ActionMap`, `ServerAction`.
-/// Parameters: parent window, toast overlay
-pub type ActionExecuteFut<'a> = dyn Fn(gtk::Window, adw::ToastOverlay) -> LocalBoxFuture<'a, ()>;
+/// Parameters: static parameters, parent window, toast overlay
+pub type ActionExecuteFut<'a> =
+    dyn Fn(Parameters, Option<gtk::Window>, Option<adw::ToastOverlay>) -> LocalBoxFuture<'a, ()>;
 pub type ServerMap = IndexMap<Cow<'static, str>, Box<dyn ServerConnection>>;
 pub type ActionMap<'a> = IndexMap<Cow<'static, str>, ServerAction<'a>>;
 
 pub struct ServerAction<'a> {
+    static_parameters: Parameters,
     title: String,
     action_fn: Box<ActionExecuteFut<'a>>,
 }
 
 impl<'a> ServerAction<'a> {
-    pub fn new(title: String, action_fn: Box<ActionExecuteFut<'a>>) -> Self {
-        Self { title, action_fn }
+    pub fn new(
+        title: String,
+        static_parameters: Parameters,
+        action_fn: Box<ActionExecuteFut<'a>>,
+    ) -> Self {
+        Self {
+            title,
+            static_parameters,
+            action_fn,
+        }
     }
 
     pub fn title(&self) -> &str {
         &self.title
     }
-}
 
-impl<'a> From<ServerAction<'a>> for Box<ActionExecuteFut<'a>> {
-    fn from(value: ServerAction<'a>) -> Self {
-        value.action_fn
+    /// Execute the action.
+    pub fn execute(
+        self,
+        window: Option<&gtk::Window>,
+        toast_overlay: Option<&adw::ToastOverlay>,
+    ) -> LocalBoxFuture<'a, ()> {
+        (self.action_fn)(
+            self.static_parameters,
+            window.cloned(),
+            toast_overlay.cloned(),
+        )
+    }
+
+    /// Execute the action, but don't consume Self. Clones the static parameters.
+    pub fn execute_ref(
+        &self,
+        window: Option<&gtk::Window>,
+        toast_overlay: Option<&adw::ToastOverlay>,
+    ) -> LocalBoxFuture<'a, ()> {
+        (self.action_fn)(
+            self.static_parameters.clone(),
+            window.cloned(),
+            toast_overlay.cloned(),
+        )
     }
 }
 

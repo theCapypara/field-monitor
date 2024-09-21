@@ -5,6 +5,8 @@ template $DebugBehaviourPreferences : Adw.PreferencesGroup {
     title: "Behaviour";
     load_servers_behaviour: bind behaviour_load_servers_combo.selected bidirectional;
     connect_behaviour: bind behaviour_connect_combo.selected bidirectional;
+    store_session: bind store_session_entry_row.text bidirectional;
+    store_persistent: bind store_persistent_entry_row.text bidirectional;
 
     Adw.ComboRow behaviour_load_servers_combo {
         title: "Behaviour on load servers";
@@ -18,5 +20,13 @@ template $DebugBehaviourPreferences : Adw.PreferencesGroup {
         model: StringList {
             strings ["No error", "Auth error", "General error"]
         };
+    }
+
+    Adw.EntryRow store_session_entry_row {
+        title: "Value stored in session";
+    }
+
+    Adw.EntryRow store_persistent_entry_row {
+        title: "Value stored on disk";
     }
 }

@@ -32,6 +32,7 @@ use self::application::FieldMonitorApplication;
 mod application;
 mod config;
 mod connection;
+mod connection_loader;
 mod i18n;
 mod secrets;
 mod widget;

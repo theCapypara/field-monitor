@@ -27,7 +27,7 @@ use gtk::glib::clone;
 use gtk::prelude::{ButtonExt, WidgetExt};
 use itertools::Itertools;
 
-use libfieldmonitor::connection::ConnectionProvider;
+use libfieldmonitor::connection::{ConnectionProvider, DualScopedConnectionConfiguration};
 
 use crate::application::FieldMonitorApplication;
 
@@ -167,7 +167,8 @@ impl FieldMonitorAddConnectionDialog {
             .borrow()
             .clone()
             .expect("add dialog had no application");
-        let config = app.reserve_new_connection(provider);
+        let config =
+            DualScopedConnectionConfiguration::new_unified(app.reserve_new_connection(provider));
 
         self.set_can_close(false);
         self.set_sensitive(false);
@@ -175,7 +176,7 @@ impl FieldMonitorAddConnectionDialog {
             .update_connection(configured_preferences, config)
             .await
         {
-            Ok(mut config) => match app.save_connection(&mut config).await {
+            Ok(config) => match app.save_connection(config).await {
                 Ok(()) => {
                     self.emit_by_name::<()>("finished-adding", &[]);
                     self.force_close();

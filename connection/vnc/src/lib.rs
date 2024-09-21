@@ -17,6 +17,7 @@
  */
 
 use std::borrow::Cow;
+use std::convert::Infallible;
 use std::num::NonZeroU32;
 
 use adw::prelude::*;
@@ -24,6 +25,7 @@ use anyhow::anyhow;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use indexmap::IndexMap;
+use secure_string::SecureString;
 
 use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
@@ -75,26 +77,29 @@ impl ConnectionProvider for VncConnectionProvider {
     fn update_connection(
         &self,
         preferences: gtk::Widget,
-        mut configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>> {
+        mut configuration: DualScopedConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async {
             let preferences = preferences
                 .downcast::<VncPreferences>()
                 .expect("update_connection got invalid widget type");
 
-            // Update general config
-            configuration.set_title(&preferences.title());
-            configuration.set_host(&preferences.host());
-            let port_str = preferences.port();
-            let Ok(port_int) = port_str.parse::<u32>() else {
-                preferences.port_entry_error(true);
-                return Err(anyhow!(gettext("Please enter a valid port")));
-            };
-            let Some(port_nzint) = NonZeroU32::new(port_int) else {
-                preferences.port_entry_error(true);
-                return Err(anyhow!(gettext("Please enter a valid port")));
-            };
-            configuration.set_port(port_nzint);
+            configuration = configuration.transform_update_unified(|configuration| {
+                // Update general config
+                configuration.set_title(&preferences.title());
+                configuration.set_host(&preferences.host());
+                let port_str = preferences.port();
+                let Ok(port_int) = port_str.parse::<u32>() else {
+                    preferences.port_entry_error(true);
+                    return Err(anyhow!(gettext("Please enter a valid port")));
+                };
+                let Some(port_nzint) = NonZeroU32::new(port_int) else {
+                    preferences.port_entry_error(true);
+                    return Err(anyhow!(gettext("Please enter a valid port")));
+                };
+                configuration.set_port(port_nzint);
+                Ok(())
+            })?;
 
             // Update credentials
             let credentials = preferences.credentials();
@@ -104,21 +109,34 @@ impl ConnectionProvider for VncConnectionProvider {
     }
 
     fn configure_credentials(&self, configuration: &ConnectionConfiguration) -> gtk::Widget {
-        VncCredentialPreferences::new(Some(configuration)).upcast()
+        VncCredentialPreferences::new(Some(configuration), true).upcast()
     }
 
     fn store_credentials(
         &self,
         preferences: gtk::Widget,
-        mut configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>> {
+        mut configuration: DualScopedConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async move {
             let preferences = preferences
                 .downcast::<VncCredentialPreferences>()
                 .expect("store_credentials got invalid widget type");
 
-            configuration.set_user(preferences.user_if_remembered().as_deref());
-            configuration.set_password(preferences.password_if_remembered().as_deref());
+            configuration = configuration.transform_update_separate(
+                |c_session| {
+                    c_session.set_user(Some(&preferences.user()));
+                    c_session
+                        .set_password_session(Some(&SecureString::from(preferences.password())));
+                    Result::<(), Infallible>::Ok(())
+                },
+                |c_persistent| {
+                    c_persistent.set_user(preferences.user_if_remembered().as_deref());
+                    c_persistent
+                        .set_password(preferences.password_if_remembered().map(SecureString::from));
+                    Result::<(), Infallible>::Ok(())
+                },
+            )?;
+
             Ok(configuration)
         })
     }
@@ -189,7 +207,7 @@ impl ServerConnection for VncConnection {
         assert_eq!(tag, VncAdapter::TAG, "unsupported adapter type");
         Box::pin(async move {
             let password = match self.config.password().await {
-                Ok(pass) => pass.unwrap_or_default(),
+                Ok(pass) => pass.unwrap_or_else(|| SecureString::from("")),
                 Err(err) => {
                     return Err(ConnectionError::AuthFailed(
                         Some(gettext("Failed to load password.")),

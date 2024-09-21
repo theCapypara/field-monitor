@@ -40,6 +40,10 @@ pub(super) trait DebugConfiguration {
     fn set_load_servers_behaviour(&mut self, value: DebugBehaviour);
     fn connect_behaviour(&self) -> DebugBehaviour;
     fn set_connect_behaviour(&mut self, value: DebugBehaviour);
+    fn store_session(&self) -> &str;
+    fn set_store_session(&mut self, value: &str);
+    fn store_persistent(&self) -> &str;
+    fn set_store_persistent(&mut self, value: &str);
     fn vnc_adapter_enable(&self) -> bool;
     fn set_vnc_adapter_enable(&mut self, value: bool);
     fn vnc_host(&self) -> &str;
@@ -68,7 +72,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_title(&mut self, value: &str) {
-        self.set("title", value);
+        self.set_value("title", value);
     }
 
     fn mode(&self) -> DebugMode {
@@ -79,7 +83,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_mode(&mut self, value: DebugMode) {
-        self.set("mode", value as u64);
+        self.set_value("mode", value as u64);
     }
 
     fn load_servers_behaviour(&self) -> DebugBehaviour {
@@ -90,7 +94,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_load_servers_behaviour(&mut self, value: DebugBehaviour) {
-        self.set("load-servers-behaviour", value as u64);
+        self.set_value("load-servers-behaviour", value as u64);
     }
 
     fn connect_behaviour(&self) -> DebugBehaviour {
@@ -101,7 +105,23 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_connect_behaviour(&mut self, value: DebugBehaviour) {
-        self.set("connect-behaviour", value as u64);
+        self.set_value("connect-behaviour", value as u64);
+    }
+
+    fn store_session(&self) -> &str {
+        self.get_try_as_str("store-session").unwrap_or_default()
+    }
+
+    fn set_store_session(&mut self, value: &str) {
+        self.set_value("store-session", value);
+    }
+
+    fn store_persistent(&self) -> &str {
+        self.get_try_as_str("store-persistent").unwrap_or_default()
+    }
+
+    fn set_store_persistent(&mut self, value: &str) {
+        self.set_value("store-persistent", value);
     }
 
     fn vnc_adapter_enable(&self) -> bool {
@@ -110,7 +130,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_vnc_adapter_enable(&mut self, value: bool) {
-        self.set("vnc-adapter-enable", value);
+        self.set_value("vnc-adapter-enable", value);
     }
 
     fn vnc_host(&self) -> &str {
@@ -118,7 +138,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_vnc_host(&mut self, value: &str) {
-        self.set("vnc-host", value);
+        self.set_value("vnc-host", value);
     }
 
     fn vnc_user(&self) -> &str {
@@ -126,7 +146,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_vnc_user(&mut self, value: &str) {
-        self.set("vnc-user", value);
+        self.set_value("vnc-user", value);
     }
 
     fn vnc_password(&self) -> &str {
@@ -134,7 +154,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_vnc_password(&mut self, value: &str) {
-        self.set("vnc-password", value);
+        self.set_value("vnc-password", value);
     }
 
     fn rdp_adapter_enable(&self) -> bool {
@@ -143,7 +163,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_rdp_adapter_enable(&mut self, value: bool) {
-        self.set("rdp-adapter-enable", value);
+        self.set_value("rdp-adapter-enable", value);
     }
 
     fn rdp_host(&self) -> &str {
@@ -151,7 +171,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_rdp_host(&mut self, value: &str) {
-        self.set("rdp-host", value);
+        self.set_value("rdp-host", value);
     }
 
     fn rdp_user(&self) -> &str {
@@ -159,7 +179,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_rdp_user(&mut self, value: &str) {
-        self.set("rdp-user", value);
+        self.set_value("rdp-user", value);
     }
 
     fn rdp_password(&self) -> &str {
@@ -167,7 +187,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_rdp_password(&mut self, value: &str) {
-        self.set("rdp-password", value);
+        self.set_value("rdp-password", value);
     }
 
     fn spice_adapter_enable(&self) -> bool {
@@ -176,7 +196,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_spice_adapter_enable(&mut self, value: bool) {
-        self.set("spice-adapter-enable", value);
+        self.set_value("spice-adapter-enable", value);
     }
 
     fn vte_adapter_enable(&self) -> bool {
@@ -185,7 +205,7 @@ impl DebugConfiguration for ConnectionConfiguration {
     }
 
     fn set_vte_adapter_enable(&mut self, value: bool) {
-        self.set("vte-adapter-enable", value);
+        self.set_value("vte-adapter-enable", value);
     }
 }
 

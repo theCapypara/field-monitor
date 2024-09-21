@@ -1,5 +1,6 @@
 use std::borrow::Cow;
 use std::collections::HashMap;
+use std::convert::Infallible;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -63,8 +64,8 @@ impl ConnectionProvider for DebugConnectionProvider {
     fn update_connection(
         &self,
         preferences: gtk::Widget,
-        mut configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>> {
+        mut configuration: DualScopedConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async {
             sleep(Duration::from_millis(thread_rng().gen_range(100..1200))).await;
 
@@ -72,19 +73,24 @@ impl ConnectionProvider for DebugConnectionProvider {
                 .downcast::<DebugPreferences>()
                 .expect("update_connection got invalid widget type");
 
-            // Update general config
-            configuration.set_title(&preferences.title());
-            configuration.set_mode(preferences.mode());
-            configuration.set_vnc_adapter_enable(preferences.vnc_adapter_enable());
-            configuration.set_vnc_host(&preferences.vnc_host());
-            configuration.set_vnc_user(&preferences.vnc_user());
-            configuration.set_vnc_password(&preferences.vnc_password());
-            configuration.set_rdp_adapter_enable(preferences.rdp_adapter_enable());
-            configuration.set_rdp_host(&preferences.rdp_host());
-            configuration.set_rdp_user(&preferences.rdp_user());
-            configuration.set_rdp_password(&preferences.rdp_password());
-            configuration.set_spice_adapter_enable(preferences.spice_adapter_enable());
-            configuration.set_vte_adapter_enable(preferences.vte_adapter_enable());
+            configuration = configuration
+                .transform_update_unified(|configuration| {
+                    // Update general config
+                    configuration.set_title(&preferences.title());
+                    configuration.set_mode(preferences.mode());
+                    configuration.set_vnc_adapter_enable(preferences.vnc_adapter_enable());
+                    configuration.set_vnc_host(&preferences.vnc_host());
+                    configuration.set_vnc_user(&preferences.vnc_user());
+                    configuration.set_vnc_password(&preferences.vnc_password());
+                    configuration.set_rdp_adapter_enable(preferences.rdp_adapter_enable());
+                    configuration.set_rdp_host(&preferences.rdp_host());
+                    configuration.set_rdp_user(&preferences.rdp_user());
+                    configuration.set_rdp_password(&preferences.rdp_password());
+                    configuration.set_spice_adapter_enable(preferences.spice_adapter_enable());
+                    configuration.set_vte_adapter_enable(preferences.vte_adapter_enable());
+                    Result::<(), Infallible>::Ok(())
+                })
+                .unwrap();
 
             // Update credentials
             let credentials = preferences.behaviour();
@@ -100,8 +106,8 @@ impl ConnectionProvider for DebugConnectionProvider {
     fn store_credentials(
         &self,
         preferences: gtk::Widget,
-        mut configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<ConnectionConfiguration>> {
+        mut configuration: DualScopedConnectionConfiguration,
+    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async move {
             sleep(Duration::from_millis(thread_rng().gen_range(100..400))).await;
 
@@ -109,8 +115,22 @@ impl ConnectionProvider for DebugConnectionProvider {
                 .downcast::<DebugBehaviourPreferences>()
                 .expect("store_credentials got invalid widget type");
 
-            configuration.set_load_servers_behaviour(preferences.load_servers_behaviour());
-            configuration.set_connect_behaviour(preferences.connect_behaviour());
+            configuration = configuration.transform_update_separate(
+                |c_session| {
+                    c_session.set_load_servers_behaviour(preferences.load_servers_behaviour());
+                    c_session.set_connect_behaviour(preferences.connect_behaviour());
+
+                    c_session.set_store_session(&preferences.store_session());
+                    Result::<(), Infallible>::Ok(())
+                },
+                |c_persistent| {
+                    c_persistent.set_load_servers_behaviour(preferences.load_servers_behaviour());
+                    c_persistent.set_connect_behaviour(preferences.connect_behaviour());
+
+                    c_persistent.set_store_persistent(&preferences.store_persistent());
+                    Result::<(), Infallible>::Ok(())
+                },
+            )?;
             Ok(configuration)
         })
     }
@@ -328,16 +348,45 @@ impl Connection for DebugConnection {
             DebugMode::Complex => {
                 let mut map: ActionMap = IndexMap::new();
 
+                let mut params_dialog_persisted = HashMap::new();
+                params_dialog_persisted.insert(
+                    "v".into(),
+                    self.config.store_persistent().to_string().into(),
+                );
                 map.insert(
-                    Cow::Borrowed("foobar"),
+                    Cow::Borrowed("dialog_persisted"),
                     ServerAction::new(
-                        "Show dialog".to_string(),
-                        Box::new(|window, _toasts| {
+                        "Show dialog: Persisted value".to_string(),
+                        params_dialog_persisted,
+                        Box::new(|params, window, _toasts| {
                             Box::pin(async move {
+                                let persisted_v =
+                                    params.get("v").and_then(serde_yaml::Value::as_str).unwrap();
                                 adw::AlertDialog::builder()
-                                    .title("Foobar")
+                                    .body(persisted_v)
                                     .build()
-                                    .present(Some(&window))
+                                    .present(window.as_ref())
+                            })
+                        }),
+                    ),
+                );
+
+                let mut params_dialog_session = HashMap::new();
+                params_dialog_session
+                    .insert("v".into(), self.config.store_session().to_string().into());
+                map.insert(
+                    Cow::Borrowed("dialog_session"),
+                    ServerAction::new(
+                        "Show dialog: Session value".to_string(),
+                        params_dialog_session,
+                        Box::new(|params, window, _toasts| {
+                            Box::pin(async move {
+                                let session_v =
+                                    params.get("v").and_then(serde_yaml::Value::as_str).unwrap();
+                                adw::AlertDialog::builder()
+                                    .body(session_v)
+                                    .build()
+                                    .present(window.as_ref())
                             })
                         }),
                     ),
@@ -347,12 +396,15 @@ impl Connection for DebugConnection {
                     Cow::Borrowed("bazbaz"),
                     ServerAction::new(
                         "Show toast".to_string(),
-                        Box::new(|_window, toasts| {
+                        HashMap::new(),
+                        Box::new(|_params, _window, toasts| {
                             Box::pin(async move {
                                 sleep(Duration::from_secs(2)).await;
                                 let toast =
                                     adw::Toast::builder().title("Foobar").timeout(10).build();
-                                toasts.add_toast(toast);
+                                if let Some(toasts) = toasts {
+                                    toasts.add_toast(toast);
+                                }
                             })
                         }),
                     ),
@@ -462,12 +514,13 @@ impl ServerConnection for DebugConnectionServer {
                 Cow::Borrowed("foobar"),
                 ServerAction::new(
                     "Show dialog".to_string(),
-                    Box::new(|window, _toasts| {
+                    HashMap::new(),
+                    Box::new(|_params, window, _toasts| {
                         Box::pin(async move {
                             adw::AlertDialog::builder()
-                                .title("Foobar")
+                                .body("Testing! This is from a server.")
                                 .build()
-                                .present(Some(&window))
+                                .present(window.as_ref())
                         })
                     }),
                 ),
@@ -477,11 +530,17 @@ impl ServerConnection for DebugConnectionServer {
                 Cow::Borrowed("bazbaz"),
                 ServerAction::new(
                     "Show toast".to_string(),
-                    Box::new(|_window, toasts| {
+                    HashMap::new(),
+                    Box::new(|_params, _window, toasts| {
                         Box::pin(async move {
                             sleep(Duration::from_secs(2)).await;
-                            let toast = adw::Toast::builder().title("Foobar").timeout(10).build();
-                            toasts.add_toast(toast);
+                            let toast = adw::Toast::builder()
+                                .title("Server bazbaz")
+                                .timeout(10)
+                                .build();
+                            if let Some(toasts) = toasts {
+                                toasts.add_toast(toast);
+                            }
                         })
                     }),
                 ),

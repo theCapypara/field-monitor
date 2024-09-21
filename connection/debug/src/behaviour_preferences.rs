@@ -55,6 +55,12 @@ mod imp {
 
         #[property(get, set)]
         pub connect_behaviour: RefCell<DebugBehaviour>,
+
+        #[property(get, set)]
+        pub store_session: RefCell<String>,
+
+        #[property(get, set)]
+        pub store_persistent: RefCell<String>,
     }
 
     #[glib::object_subclass]
@@ -104,6 +110,8 @@ impl DebugBehaviourPreferences {
     pub async fn propagate_settings(&self, existing_configuration: &ConnectionConfiguration) {
         self.set_load_servers_behaviour(existing_configuration.load_servers_behaviour());
         self.set_connect_behaviour(existing_configuration.connect_behaviour());
+        self.set_store_session(existing_configuration.store_session());
+        self.set_store_persistent(existing_configuration.store_persistent());
     }
 }
 

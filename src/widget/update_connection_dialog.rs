@@ -95,10 +95,13 @@ impl FieldMonitorUpdateConnectionDialog {
 
         let provider = connection.provider();
 
-        let preferences = provider.preferences(Some(&connection.configuration()));
+        connection.with_configuration(|configuration| {
+            let preferences = provider.preferences(Some(configuration.persistent()));
 
-        imp.toast_overlay.set_child(Some(&preferences));
-        imp.preferences.replace(Some(preferences));
+            imp.toast_overlay.set_child(Some(&preferences));
+            imp.preferences.replace(Some(preferences));
+        });
+
         slf
     }
 }
@@ -114,14 +117,17 @@ impl FieldMonitorUpdateConnectionDialog {
         let connection = connection_brw.clone().unwrap();
         let provider = connection.provider();
         let preferences = imp.preferences.borrow().as_ref().cloned().unwrap();
-        let old_config = connection_brw.as_ref().unwrap().configuration();
+        let old_config = connection_brw
+            .as_ref()
+            .unwrap()
+            .with_configuration(|config| config.explicit_clone());
         drop(connection_brw);
 
         self.set_can_close(false);
         self.set_sensitive(false);
 
         match provider.update_connection(preferences, old_config).await {
-            Ok(mut config) => match app.save_connection(&mut config).await {
+            Ok(config) => match app.save_connection(config).await {
                 Ok(()) => {
                     self.emit_by_name::<()>("finished-updating", &[]);
                     self.force_close();

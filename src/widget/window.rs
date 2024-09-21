@@ -134,31 +134,14 @@ impl FieldMonitorWindow {
         self.add_action_entries([open_overview_action, show_connection_action]);
     }
 
-    pub fn toast_connection_added(&self) {
-        self.imp().toast_overlay.add_toast(
-            adw::Toast::builder()
-                .title(gettext("Connection successfully added."))
-                .timeout(5)
-                .build(),
-        )
+    pub fn toast(&self, msg: &str) {
+        self.imp()
+            .toast_overlay
+            .add_toast(adw::Toast::builder().title(msg).timeout(5).build())
     }
 
-    pub fn toast_connection_updated(&self) {
-        self.imp().toast_overlay.add_toast(
-            adw::Toast::builder()
-                .title(gettext("Connection successfully updated."))
-                .timeout(5)
-                .build(),
-        )
-    }
-
-    pub fn toast_connection_removed(&self) {
-        self.imp().toast_overlay.add_toast(
-            adw::Toast::builder()
-                .title(gettext("Connection successfully removed."))
-                .timeout(5)
-                .build(),
-        )
+    pub fn toast_overlay(&self) -> &adw::ToastOverlay {
+        &self.imp().toast_overlay
     }
 
     pub fn mobile_breakpoint(&self) -> &adw::Breakpoint {

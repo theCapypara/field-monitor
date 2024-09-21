@@ -16,11 +16,12 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+pub use config_value::*;
 pub use configuration::*;
 pub use instance::*;
 pub use types::*;
 
+mod config_value;
 mod configuration;
 mod instance;
 mod types;
-

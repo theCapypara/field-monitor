@@ -21,6 +21,7 @@ use std::ops::Deref;
 use gettextrs::gettext;
 use log::warn;
 use oo7::zbus::export::futures_core::future::LocalBoxFuture;
+use secure_string::{SecureString, SecureVec};
 
 use libfieldmonitor::ManagesSecrets;
 
@@ -43,7 +44,7 @@ impl ManagesSecrets for SecretManager {
         &self,
         connection_id: &str,
         field: &str,
-    ) -> LocalBoxFuture<anyhow::Result<Option<String>>> {
+    ) -> LocalBoxFuture<anyhow::Result<Option<SecureString>>> {
         let connection_id = connection_id.to_string();
         let field = field.to_string();
         Box::pin(async move {
@@ -64,7 +65,7 @@ impl ManagesSecrets for SecretManager {
                 None => Ok(None),
                 Some(item) => {
                     let secret_raw = item.secret();
-                    let secret = String::from_utf8(secret_raw.deref().clone())?;
+                    let secret = String::from_utf8(secret_raw.deref().clone())?.into();
                     Ok(Some(secret))
                 }
             }
@@ -75,11 +76,11 @@ impl ManagesSecrets for SecretManager {
         &self,
         connection_id: &str,
         field: &str,
-        password: &str,
+        password: SecureString,
     ) -> LocalBoxFuture<anyhow::Result<()>> {
         let connection_id = connection_id.to_string();
         let field = field.to_string();
-        let password = password.to_string();
+        let password = SecureVec::from(password.unsecure().as_bytes());
         Box::pin(async move {
             let mut attributes = std::collections::HashMap::new();
             attributes.insert("app", APP_ID);
@@ -90,7 +91,7 @@ impl ManagesSecrets for SecretManager {
                 .create_item(
                     &gettext("A secret value used by Field Monitor"),
                     &attributes,
-                    &password,
+                    password.unsecure(),
                     true,
                 )
                 .await

@@ -23,6 +23,7 @@ use adw::glib::clone;
 use adw::subclass::prelude::*;
 use gtk::glib;
 use gtk::prelude::*;
+use secure_string::SecureString;
 
 use libfieldmonitor::connection::ConnectionConfiguration;
 
@@ -33,12 +34,13 @@ pub(super) trait VncConfiguration {
     fn host(&self) -> Option<&str>;
     fn port(&self) -> Option<NonZeroU32>;
     fn user(&self) -> Option<&str>;
-    async fn password(&self) -> anyhow::Result<Option<String>>;
+    async fn password(&self) -> anyhow::Result<Option<SecureString>>;
     fn set_title(&mut self, value: &str);
     fn set_host(&mut self, value: &str);
     fn set_port(&mut self, value: NonZeroU32);
     fn set_user(&mut self, value: Option<&str>);
-    fn set_password(&mut self, value: Option<&str>);
+    fn set_password(&mut self, value: Option<SecureString>);
+    fn set_password_session(&mut self, value: Option<&SecureString>);
 }
 
 impl VncConfiguration for ConnectionConfiguration {
@@ -64,20 +66,23 @@ impl VncConfiguration for ConnectionConfiguration {
         self.get_try_as_str("user")
     }
 
-    async fn password(&self) -> anyhow::Result<Option<String>> {
+    async fn password(&self) -> anyhow::Result<Option<SecureString>> {
+        if let Some(pw) = self.get_try_as_sec_str("__session__password") {
+            return Ok(Some(pw));
+        }
         self.get_secret("password").await
     }
 
     fn set_title(&mut self, value: &str) {
-        self.set("title", value);
+        self.set_value("title", value);
     }
 
     fn set_host(&mut self, value: &str) {
-        self.set("host", value);
+        self.set_value("host", value);
     }
 
     fn set_port(&mut self, value: NonZeroU32) {
-        self.set("port", value.get());
+        self.set_value("port", value.get());
     }
 
     fn set_user(&mut self, value: Option<&str>) {
@@ -85,13 +90,25 @@ impl VncConfiguration for ConnectionConfiguration {
             None => serde_yaml::Value::Null,
             Some(value) => value.into(),
         };
-        self.set("user", value);
+        self.set_value("user", value);
     }
 
-    fn set_password(&mut self, value: Option<&str>) {
+    fn set_password(&mut self, value: Option<SecureString>) {
+        self.set_password_session(value.as_ref());
         match value {
             None => self.clear_secret("password"),
             Some(value) => self.set_secret("password", value),
+        }
+    }
+
+    fn set_password_session(&mut self, value: Option<&SecureString>) {
+        match value {
+            None => {
+                self.clear("__session__password");
+            }
+            Some(value) => {
+                self.set_secure_string("__session__password", value.clone());
+            }
         }
     }
 }
@@ -169,7 +186,7 @@ impl VncPreferences {
                         slf.credentials().set_user(v);
                     }
                     if let Ok(Some(v)) = existing_configuration.password().await {
-                        slf.credentials().set_password(v);
+                        slf.credentials().set_password(v.unsecure());
                     }
 
                     slf.imp()
