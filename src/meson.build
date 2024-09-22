@@ -18,9 +18,9 @@ blueprints = custom_target('blueprints',
 
 conf = configuration_data()
 conf.set_quoted('VERSION', meson.project_version())
-conf.set_quoted('APP_ID', get_option('appid'))
-conf.set_quoted('APP_ID_SLASHED', get_option('appid').replace('.', '/'))
-conf.set_quoted('GETTEXT_PACKAGE', get_option('appid'))
+conf.set_quoted('APP_ID', get_option('app-id'))
+conf.set_quoted('APP_ID_SLASHED', get_option('app-id').replace('.', '/'))
+conf.set_quoted('GETTEXT_PACKAGE', get_option('app-id'))
 conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
 conf.set_quoted('PKGDATADIR', pkgdatadir)
 
@@ -77,7 +77,7 @@ cargo_build = custom_target(
   'cargo-build',
   build_by_default: true,
   build_always_stale: true,
-  output: get_option('appid'),
+  output: get_option('app-id'),
   console: true,
   install: true,
   install_dir: get_option('bindir'),

@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-	<id>@app-id@</id>
+	<id>@APP_ID@</id>
 	<project_license>GPL-3.0-or-later</project_license>
 	<metadata_license>FSFAP</metadata_license>
 	<!-- Translators: The name of the application. -->
 	<name>Field Monitor</name>
 	<!-- Translators: The summary of the application in the metainfo. -->
 	<summary>XXXXXXXXXX</summary>
-	<launchable type="desktop-id">@app-id@.desktop</launchable>
+	<launchable type="desktop-id">@APP_ID@.desktop</launchable>
 	<content_rating type="oars-1.1"/>
 	<developer_name translate="no">Marco Köpcke</developer_name>
 	<developer id="de.capypara">

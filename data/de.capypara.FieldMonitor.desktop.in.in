@@ -1,11 +1,11 @@
 [Desktop Entry]
 Name=Field Monitor
-Exec=de.capypara.FieldMonitor
-Icon=de.capypara.FieldMonitor
+Exec=@APP_ID@
+Icon=@APP_ID@
 Terminal=false
 Type=Application
 X-Purism-FormFactor=Workstation;Mobile;
-Categories=GTK;Utility;Network;
+Categories=GTK;Network;
 StartupNotify=true
 # Translators: The keywords from the desktop file.
 Keywords=proxmox;vnc;spice;

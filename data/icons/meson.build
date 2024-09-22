@@ -1,4 +1,4 @@
-application_id = get_option('appid')
+application_id = get_option('app-id')
 
 scalable_dir = 'hicolor' / 'scalable' / 'apps'
 install_data(

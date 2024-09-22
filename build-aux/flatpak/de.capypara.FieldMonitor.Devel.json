@@ -218,7 +218,7 @@
             "buildsystem": "meson",
             "config-opts": [
                 "--buildtype=debug",
-                "-Dappid=de.capypara.FieldMonitor.Devel"
+                "-Dapp-id=de.capypara.FieldMonitor.Devel"
             ],
             "sources": [
                 {
