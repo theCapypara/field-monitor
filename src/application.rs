@@ -37,6 +37,7 @@ use log::{debug, error, info, warn};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use libfieldmonitor::busy::{BusyGuard, BusyStack};
 use libfieldmonitor::connection::{Connection, DualScopedConnectionConfiguration};
 use libfieldmonitor::connection::ConnectionConfiguration;
 use libfieldmonitor::connection::ConnectionInstance;
@@ -62,10 +63,14 @@ mod imp {
         pub secret_manager: RefCell<Option<Arc<Box<dyn ManagesSecrets>>>>,
         pub connections: RefCell<Option<HashMap<String, ConnectionInstance>>>,
         pub providers: RefCell<HashMap<String, Rc<Box<dyn ConnectionProvider>>>>,
-        pub pending_server_action: Cell<bool>,
+        /// Manages a stack for `pending_server_action`. If stack size is zero, sets to false.
+        pub busy_stack: RefCell<Option<BusyStack>>,
         /// Whether Field Monitor is currently (re-)loading all connections.
         #[property(get)]
         pub loading_connections: Cell<bool>,
+        /// Currently busy with processing an action or connection request to a server or connection.
+        #[property(get)]
+        pub busy: Rc<Cell<bool>>,
     }
 
     #[glib::object_subclass]
@@ -235,6 +240,14 @@ impl FieldMonitorApplication {
             .property("application-id", application_id)
             .property("flags", flags)
             .build();
+        app.imp().busy_stack.borrow_mut().replace(BusyStack::new(
+            app.imp().busy.clone(),
+            Box::new(glib::clone!(
+                #[weak]
+                app,
+                move || app.notify("busy")
+            )),
+        ));
 
         // Accelerators
         app.set_accels_for_action("win.toggle-fullscreen", &["F11"]);
@@ -294,24 +307,23 @@ impl FieldMonitorApplication {
         let connect_to_server_action = gio::ActionEntry::builder("connect-to-server")
             .parameter_type(Some(&*<(String, String)>::static_variant_type()))
             .activate(move |app: &Self, _, connection_id| {
-                let imp = app.imp();
                 let Some((path, adapter_id)) =
                     connection_id.and_then(<(String, String)>::from_variant)
                 else {
                     warn!("Invalid parameters passed to app.connect-to-server. Ignoring.");
                     return;
                 };
-                if imp.pending_server_action.get() {
+                if app.busy() {
                     warn!("Server action still pending. Action ignored.");
                     return;
                 }
-                imp.pending_server_action.replace(true);
+                let pending_guard = app.be_busy();
                 glib::spawn_future_local(glib::clone!(
                     #[weak]
                     app,
                     async move {
                         app.connect_to_server(&path, &adapter_id).await;
-                        app.imp().pending_server_action.replace(false);
+                        drop(pending_guard);
                     }
                 ));
             })
@@ -320,7 +332,6 @@ impl FieldMonitorApplication {
             gio::ActionEntry::builder("perform-connection-action")
                 .parameter_type(Some(&*<(bool, String, String)>::static_variant_type()))
                 .activate(move |app: &Self, _, connection_id| {
-                    let imp = app.imp();
                     let Some((is_server, entity_path, action_id)) =
                         connection_id.and_then(<(bool, String, String)>::from_variant)
                     else {
@@ -329,18 +340,18 @@ impl FieldMonitorApplication {
                         );
                         return;
                     };
-                    if imp.pending_server_action.get() {
+                    if app.busy() {
                         warn!("Connection action still pending. Action ignored.");
                         return;
                     }
-                    imp.pending_server_action.replace(true);
+                    let pending_guard = app.be_busy();
                     glib::spawn_future_local(glib::clone!(
                         #[weak]
                         app,
                         async move {
                             app.perform_connection_action(is_server, &entity_path, &action_id)
                                 .await;
-                            app.imp().pending_server_action.replace(false);
+                            drop(pending_guard);
                         }
                     ));
                 })
@@ -357,6 +368,14 @@ impl FieldMonitorApplication {
             connect_to_server_action,
             perform_connection_action_action,
         ]);
+    }
+
+    /// Mark app as being busy with an action or task. This inhibits some actions and may disable
+    /// some UI elements and/or show a loading indicator. Dropping the returned guard
+    /// may remove the busy status (if no other source makes the app busy).
+    pub fn be_busy(&self) -> BusyGuard {
+        let brw = self.imp().busy_stack.borrow();
+        brw.as_ref().unwrap().busy()
     }
 
     fn show_about(&self) {

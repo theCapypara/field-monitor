@@ -22,6 +22,7 @@ use std::num::NonZeroUsize;
 use std::sync::atomic::AtomicBool;
 use std::time::Duration;
 
+use adw::gdk;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use futures::StreamExt;
@@ -141,7 +142,24 @@ impl FieldMonitorConnectionList {
                 slf,
                 move |app, _| {
                     if app.loading_connections() {
-                        slf.show_loading_connections()
+                        slf.show_loading_connections();
+                        slf.set_cursor(gdk::Cursor::from_name("wait", None).as_ref());
+                    } else if !app.busy() {
+                        slf.set_cursor(None);
+                    }
+                }
+            ),
+        );
+        app.connect_notify_local(
+            Some("busy"),
+            glib::clone!(
+                #[weak]
+                slf,
+                move |app, _| {
+                    if app.busy() {
+                        slf.set_cursor(gdk::Cursor::from_name("wait", None).as_ref());
+                    } else if !app.loading_connections() {
+                        slf.set_cursor(None);
                     }
                 }
             ),
@@ -168,6 +186,9 @@ impl FieldMonitorConnectionList {
                 }
             ),
         );
+        app.bind_property("busy", &*slf.imp().stack, "sensitive")
+            .invert_boolean()
+            .build();
 
         slf.rebuild_listbox();
 

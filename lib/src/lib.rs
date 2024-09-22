@@ -25,9 +25,9 @@ use crate::connection::ConnectionError;
 #[macro_use]
 mod macros;
 pub mod adapter;
+pub mod busy;
 pub mod connection;
 pub mod gtk;
-
 mod secrets;
 
 pub fn config_error(connection_title: Option<String>) -> ConnectionError {
