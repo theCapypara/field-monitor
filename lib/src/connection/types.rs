@@ -177,7 +177,10 @@ pub trait ConnectionProvider {
     /// could not be made, or when no credentials were stored.
     ///
     /// The passed parameter contains the current configuration before.
-    fn configure_credentials(&self, configuration: &ConnectionConfiguration) -> gtk::Widget;
+    fn configure_credentials(
+        &self,
+        configuration: &ConnectionConfiguration,
+    ) -> adw::PreferencesGroup;
 
     /// Update the credentials of a connection.
     /// It may be asserted that the  passed `preferences` are a widget returned from
@@ -188,7 +191,7 @@ pub trait ConnectionProvider {
     /// the error message of the returned result, this is presented by the caller.
     fn store_credentials(
         &self,
-        preferences: gtk::Widget,
+        preferences: adw::PreferencesGroup,
         configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>>;
 
@@ -291,10 +294,7 @@ pub trait ServerConnection: Actionable {
     /// Create an adapter of the given type, if supported (see `supported_adapters`).
     /// If not supported, may fail or panic (panic only if `supported_adapters` can never return
     /// that adapter).
-    fn create_adapter(
-        &self,
-        tag: &str,
-    ) -> LocalBoxFuture<Result<Box<dyn Adapter>, ConnectionError>>;
+    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>>;
 
     /// Returns the sub-servers grouped under this server (if any).
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {

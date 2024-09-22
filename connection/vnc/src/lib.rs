@@ -108,13 +108,16 @@ impl ConnectionProvider for VncConnectionProvider {
         })
     }
 
-    fn configure_credentials(&self, configuration: &ConnectionConfiguration) -> gtk::Widget {
+    fn configure_credentials(
+        &self,
+        configuration: &ConnectionConfiguration,
+    ) -> adw::PreferencesGroup {
         VncCredentialPreferences::new(Some(configuration), true).upcast()
     }
 
     fn store_credentials(
         &self,
-        preferences: gtk::Widget,
+        preferences: adw::PreferencesGroup,
         mut configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async move {

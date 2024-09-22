@@ -22,36 +22,41 @@ use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::glib;
+use log::warn;
 
 use libfieldmonitor::connection::ConnectionInstance;
 
 use crate::application::FieldMonitorApplication;
-use crate::i18n::gettext_f;
 
 mod imp {
     use std::sync::OnceLock;
 
     use glib::subclass::Signal;
 
+    use libfieldmonitor::connection::ConnectionInstance;
+
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[properties(wrapper_type = super::FieldMonitorUpdateConnectionDialog)]
-    #[template(resource = "/de/capypara/FieldMonitor/widget/update_connection_dialog.ui")]
-    pub struct FieldMonitorUpdateConnectionDialog {
+    #[properties(wrapper_type = super::FieldMonitorAuthenticateConnectionDialog)]
+    #[template(resource = "/de/capypara/FieldMonitor/widget/authenticate_connection_dialog.ui")]
+    pub struct FieldMonitorAuthenticateConnectionDialog {
         #[template_child]
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
+        pub preferences_page: TemplateChild<adw::PreferencesPage>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
         pub connection: RefCell<Option<ConnectionInstance>>,
-        pub preferences: RefCell<Option<gtk::Widget>>,
+        pub saved_connection: RefCell<Option<ConnectionInstance>>,
+        pub preferences: RefCell<Option<adw::PreferencesGroup>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for FieldMonitorUpdateConnectionDialog {
-        const NAME: &'static str = "FieldMonitorUpdateConnectionDialog";
-        type Type = super::FieldMonitorUpdateConnectionDialog;
+    impl ObjectSubclass for FieldMonitorAuthenticateConnectionDialog {
+        const NAME: &'static str = "FieldMonitorAuthenticateConnectionDialog";
+        type Type = super::FieldMonitorAuthenticateConnectionDialog;
         type ParentType = adw::Dialog;
 
         fn class_init(klass: &mut Self::Class) {
@@ -65,49 +70,49 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for FieldMonitorUpdateConnectionDialog {
+    impl ObjectImpl for FieldMonitorAuthenticateConnectionDialog {
         fn signals() -> &'static [Signal] {
             static SIGNALS: OnceLock<Vec<Signal>> = OnceLock::new();
-            SIGNALS.get_or_init(|| vec![Signal::builder("finished-updating").build()])
+            SIGNALS.get_or_init(|| vec![Signal::builder("auth-finished").build()])
         }
     }
-    impl WidgetImpl for FieldMonitorUpdateConnectionDialog {}
-    impl AdwDialogImpl for FieldMonitorUpdateConnectionDialog {}
+    impl WidgetImpl for FieldMonitorAuthenticateConnectionDialog {}
+    impl AdwDialogImpl for FieldMonitorAuthenticateConnectionDialog {}
 }
 
 glib::wrapper! {
-    pub struct FieldMonitorUpdateConnectionDialog(ObjectSubclass<imp::FieldMonitorUpdateConnectionDialog>)
+    pub struct FieldMonitorAuthenticateConnectionDialog(ObjectSubclass<imp::FieldMonitorAuthenticateConnectionDialog>)
         @extends gtk::Widget, adw::Dialog;
 }
 
-impl FieldMonitorUpdateConnectionDialog {
+impl FieldMonitorAuthenticateConnectionDialog {
     pub fn new(app: &FieldMonitorApplication, connection: ConnectionInstance) -> Self {
-        let title = connection
-            .title()
-            .unwrap_or_else(|| gettext("Unknown Connection"));
-
         let slf: Self = glib::Object::builder()
             .property("application", app)
             .property("connection", &connection)
-            .property("title", gettext_f("Edit {title}", &[("title", &title)]))
             .build();
         let imp = slf.imp();
 
         let provider = connection.provider();
 
         connection.with_configuration(|configuration| {
-            let preferences = provider.preferences(Some(configuration.persistent()));
+            let preferences = provider.configure_credentials(configuration.persistent());
 
-            imp.toast_overlay.set_child(Some(&preferences));
+            imp.preferences_page.add(&preferences);
             imp.preferences.replace(Some(preferences));
         });
 
         slf
     }
 }
+impl FieldMonitorAuthenticateConnectionDialog {
+    pub fn saved_connection(&self) -> Option<ConnectionInstance> {
+        self.imp().saved_connection.borrow().clone()
+    }
+}
 
 #[gtk::template_callbacks]
-impl FieldMonitorUpdateConnectionDialog {
+impl FieldMonitorAuthenticateConnectionDialog {
     #[template_callback]
     #[allow(clippy::await_holding_refcell_ref)] // is dropped before
     async fn on_connection_update(&self) {
@@ -126,26 +131,43 @@ impl FieldMonitorUpdateConnectionDialog {
         self.set_can_close(false);
         self.set_sensitive(false);
 
-        match provider.update_connection(preferences, old_config).await {
-            Ok(config) => match app.save_connection(config, false).await {
-                Ok(_) => {
-                    self.emit_by_name::<()>("finished-updating", &[]);
-                    self.force_close();
-                    return;
+        fn error(err: anyhow::Error, window: Option<&impl IsA<gtk::Widget>>) {
+            let alert = adw::AlertDialog::builder()
+                .title(gettext("Failed to save connection"))
+                .body(format!(
+                    "{}:\n{}",
+                    gettext("An error occurred, while trying to save the connection"),
+                    err
+                ))
+                .build();
+            alert.add_response("ok", &gettext("OK"));
+            alert.present(window)
+        }
+
+        match provider.store_credentials(preferences, old_config).await {
+            Ok(config) => {
+                match app.save_connection(config, true).await {
+                    Ok(Some(new_instance)) => {
+                        self.imp()
+                            .saved_connection
+                            .borrow_mut()
+                            .replace(new_instance);
+                        self.emit_by_name::<()>("auth-finished", &[]);
+                        self.force_close();
+                        return;
+                    }
+                    Ok(None) => {
+                        // Not ideal, it seems that the connection could not be reloaded.
+                        warn!("connection was not provided after re-auth. not updating saved connection.");
+                        self.emit_by_name::<()>("auth-finished", &[]);
+                        self.force_close();
+                        return;
+                    }
+                    Err(err) => {
+                        error(err, self.parent().as_ref());
+                    }
                 }
-                Err(err) => {
-                    let alert = adw::AlertDialog::builder()
-                        .title(gettext("Failed to save connection"))
-                        .body(format!(
-                            "{}:\n{}",
-                            gettext("An error occurred, while trying to save the connection"),
-                            err
-                        ))
-                        .build();
-                    alert.add_response("ok", &gettext("OK"));
-                    alert.present(self.parent().as_ref())
-                }
-            },
+            }
             Err(err) => imp.toast_overlay.add_toast(
                 adw::Toast::builder()
                     .title(err.to_string())
@@ -155,21 +177,5 @@ impl FieldMonitorUpdateConnectionDialog {
         }
         self.set_sensitive(true);
         self.set_can_close(true);
-    }
-
-    #[template_callback]
-    fn on_connection_delete(&self) {
-        self.force_close();
-        self.application().as_ref().unwrap().activate_action(
-            "remove-connection",
-            Some(
-                &self
-                    .connection()
-                    .as_ref()
-                    .unwrap()
-                    .connection_id()
-                    .to_variant(),
-            ),
-        );
     }
 }

@@ -49,6 +49,7 @@ use crate::connection_loader::ConnectionLoader;
 use crate::i18n::gettext_f;
 use crate::secrets::SecretManager;
 use crate::widget::add_connection_dialog::FieldMonitorAddConnectionDialog;
+use crate::widget::authenticate_connection_dialog::FieldMonitorAuthenticateConnectionDialog;
 use crate::widget::update_connection_dialog::FieldMonitorUpdateConnectionDialog;
 use crate::widget::window::FieldMonitorWindow;
 
@@ -61,6 +62,7 @@ mod imp {
         pub secret_manager: RefCell<Option<Arc<Box<dyn ManagesSecrets>>>>,
         pub connections: RefCell<Option<HashMap<String, ConnectionInstance>>>,
         pub providers: RefCell<HashMap<String, Rc<Box<dyn ConnectionProvider>>>>,
+        pub pending_server_action: Cell<bool>,
         /// Whether Field Monitor is currently (re-)loading all connections.
         #[property(get)]
         pub loading_connections: Cell<bool>,
@@ -292,17 +294,24 @@ impl FieldMonitorApplication {
         let connect_to_server_action = gio::ActionEntry::builder("connect-to-server")
             .parameter_type(Some(&*<(String, String)>::static_variant_type()))
             .activate(move |app: &Self, _, connection_id| {
+                let imp = app.imp();
                 let Some((path, adapter_id)) =
                     connection_id.and_then(<(String, String)>::from_variant)
                 else {
                     warn!("Invalid parameters passed to app.connect-to-server. Ignoring.");
                     return;
                 };
+                if imp.pending_server_action.get() {
+                    warn!("Server action still pending. Action ignored.");
+                    return;
+                }
+                imp.pending_server_action.replace(true);
                 glib::spawn_future_local(glib::clone!(
                     #[weak]
                     app,
                     async move {
                         app.connect_to_server(&path, &adapter_id).await;
+                        app.imp().pending_server_action.replace(false);
                     }
                 ));
             })
@@ -311,6 +320,7 @@ impl FieldMonitorApplication {
             gio::ActionEntry::builder("perform-connection-action")
                 .parameter_type(Some(&*<(bool, String, String)>::static_variant_type()))
                 .activate(move |app: &Self, _, connection_id| {
+                    let imp = app.imp();
                     let Some((is_server, entity_path, action_id)) =
                         connection_id.and_then(<(bool, String, String)>::from_variant)
                     else {
@@ -319,12 +329,18 @@ impl FieldMonitorApplication {
                         );
                         return;
                     };
+                    if imp.pending_server_action.get() {
+                        warn!("Connection action still pending. Action ignored.");
+                        return;
+                    }
+                    imp.pending_server_action.replace(true);
                     glib::spawn_future_local(glib::clone!(
                         #[weak]
                         app,
                         async move {
                             app.perform_connection_action(is_server, &entity_path, &action_id)
                                 .await;
+                            app.imp().pending_server_action.replace(false);
                         }
                     ));
                 })
@@ -540,9 +556,17 @@ impl FieldMonitorApplication {
         };
 
         let window = self.active_window();
-        // TODO
-        let diag = adw::AlertDialog::builder().body(connection_id).build();
-        diag.present(window.as_ref());
+        let dialog = FieldMonitorAuthenticateConnectionDialog::new(self, connection);
+        let msg = gettext("Authentication successfully updated");
+
+        self.show_toast_or_parentless_dialog_on_signal(
+            &dialog,
+            "auth-finished",
+            window.clone(),
+            msg,
+        );
+
+        dialog.present(window.as_ref());
     }
 
     pub async fn connect_to_server(&self, path: &str, adapter_id: &str) -> Option<()> {
@@ -550,8 +574,14 @@ impl FieldMonitorApplication {
         let window = self.active_window();
 
         // TODO
-        let loader =
-            ConnectionLoader::load_server(imp.connections.borrow(), window.as_ref(), path).await?;
+        let mut loader = ConnectionLoader::load_server(
+            imp.connections.borrow(),
+            window.as_ref(),
+            path,
+            Some(self.clone()),
+        )
+        .await?;
+        let adapter = loader.create_adapter(adapter_id).await?;
 
         let diag = adw::AlertDialog::builder()
             .body(format!("{path}, {adapter_id}"))
@@ -570,9 +600,14 @@ impl FieldMonitorApplication {
         let imp = self.imp();
         let window = self.active_window();
 
-        let loader =
-            ConnectionLoader::load(is_server, imp.connections.borrow(), window.as_ref(), path)
-                .await?;
+        let loader = ConnectionLoader::load(
+            is_server,
+            imp.connections.borrow(),
+            window.as_ref(),
+            path,
+            Some(self.clone()),
+        )
+        .await?;
 
         let action = loader.action(action_id)?;
         action
@@ -784,10 +819,14 @@ impl FieldMonitorApplication {
     }
 
     /// Save a connection. May fail for I/O, serialization or secret service communication reasons.
+    /// If `save_now` is `false`, the update in-app may happen delayed after the method has finished.
+    /// If `true`, the new connection instance is returned, unless it could not be reloaded, in which
+    /// case `None` is still returned.
     pub async fn save_connection(
         &self,
         mut connection: DualScopedConnectionConfiguration,
-    ) -> anyhow::Result<()> {
+        save_now: bool,
+    ) -> anyhow::Result<Option<ConnectionInstance>> {
         let mut filename = self.connections_dir().await;
 
         let c_persistent = connection.persistent_mut();
@@ -809,8 +848,20 @@ impl FieldMonitorApplication {
         }) {
             Ok(value) => match file.write_all(value.as_bytes()).await {
                 Ok(()) => {
-                    self.update_connection_eventually(connection);
-                    Ok(())
+                    if save_now {
+                        let connection_id = connection.session().id().to_string();
+                        self.update_connection(connection).await;
+                        match self.connection(&connection_id) {
+                            None => {
+                                warn!("connection was not updated properly after save.");
+                                Ok(None)
+                            }
+                            Some(connection_instance) => Ok(Some(connection_instance)),
+                        }
+                    } else {
+                        self.update_connection_eventually(connection);
+                        Ok(None)
+                    }
                 }
                 Err(err) => {
                     if !file_existed_before {

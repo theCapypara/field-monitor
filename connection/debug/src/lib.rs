@@ -99,13 +99,16 @@ impl ConnectionProvider for DebugConnectionProvider {
         })
     }
 
-    fn configure_credentials(&self, configuration: &ConnectionConfiguration) -> gtk::Widget {
+    fn configure_credentials(
+        &self,
+        configuration: &ConnectionConfiguration,
+    ) -> adw::PreferencesGroup {
         DebugBehaviourPreferences::new(Some(configuration)).upcast()
     }
 
     fn store_credentials(
         &self,
-        preferences: gtk::Widget,
+        preferences: adw::PreferencesGroup,
         mut configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async move {
@@ -537,7 +540,21 @@ impl ServerConnection for DebugConnectionServer {
         &self,
         tag: &str,
     ) -> LocalBoxFuture<Result<Box<dyn Adapter>, ConnectionError>> {
-        Box::pin(async move { todo!() })
+        Box::pin(async move {
+            match self.config.connect_behaviour() {
+                DebugBehaviour::Ok => {
+                    todo!()
+                }
+                DebugBehaviour::AuthError => Err(ConnectionError::AuthFailed(
+                    Some("debug auth failure (servers)".to_string()),
+                    anyhow!("debug auth failure (servers)"),
+                )),
+                DebugBehaviour::GeneralError => Err(ConnectionError::General(
+                    Some("debug general failure (servers)".to_string()),
+                    anyhow!("debug general failure (servers)"),
+                )),
+            }
+        })
     }
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {

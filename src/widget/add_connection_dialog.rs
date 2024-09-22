@@ -176,8 +176,8 @@ impl FieldMonitorAddConnectionDialog {
             .update_connection(configured_preferences, config)
             .await
         {
-            Ok(config) => match app.save_connection(config).await {
-                Ok(()) => {
+            Ok(config) => match app.save_connection(config, false).await {
+                Ok(_) => {
                     self.emit_by_name::<()>("finished-adding", &[]);
                     self.force_close();
                     return;
