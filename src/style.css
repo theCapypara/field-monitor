@@ -39,3 +39,16 @@ menubutton.header-osd button:not(.nohover):active,
 .debug-solid-color {
     background: rgb(200, 200, 0);
 }
+
+.window-title {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.window-title button {
+    margin-top: -3px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    padding-left: 12px;
+    padding-right: 12px;
+}

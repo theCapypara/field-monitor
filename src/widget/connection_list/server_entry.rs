@@ -178,35 +178,40 @@ fn add_icon(row: &impl ServerEntry, metadata: &ServerMetadata) {
 }
 
 fn add_status(child_wdgt: gtk::Widget, metadata: &ServerMetadata) -> gtk::Widget {
+    let parent = gtk::Box::builder()
+        .orientation(gtk::Orientation::Horizontal)
+        .valign(gtk::Align::Center)
+        .spacing(6)
+        .build();
+
+    parent.append(&child_wdgt);
+
     match metadata.is_online {
         Some(status) => {
-            let parent = gtk::Box::builder()
-                .orientation(gtk::Orientation::Vertical)
-                .valign(gtk::Align::Center)
-                .vexpand(true)
-                .spacing(4)
-                .build();
-
-            let (class, tooltip_text) = if status {
-                ("success", "Online")
+            let (class, tooltip_text, icon_name) = if status {
+                ("success", "Online", "circle-filled-symbolic")
             } else {
-                ("error", "Offline")
+                ("dim-label", "Offline", "circle-outline-thick-symbolic")
             };
 
             let status_icon = gtk::Image::builder()
-                .pixel_size(12)
-                .icon_name("big-dot-symbolic")
+                .pixel_size(8)
+                .icon_name(icon_name)
                 .css_classes([class])
                 .tooltip_text(tooltip_text)
-                .halign(gtk::Align::Center)
+                .valign(gtk::Align::Center)
                 .build();
 
             parent.append(&status_icon);
-            parent.append(&child_wdgt);
-            parent.upcast()
         }
-        None => child_wdgt,
+        None => {
+            let placeholder = gtk::Box::builder().width_request(8).build();
+
+            parent.append(&placeholder);
+        }
     }
+
+    parent.upcast()
 }
 
 fn make_multi_connection_button(path: &str, adapters: Vec<(Cow<str>, Cow<str>)>) -> gtk::Widget {

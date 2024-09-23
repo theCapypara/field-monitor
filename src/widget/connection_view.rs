@@ -42,6 +42,8 @@ mod imp {
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, set)]
         pub title: RefCell<String>,
+        #[property(get, set)]
+        pub subtitle: RefCell<String>,
         #[property(get, set, default = true)]
         pub reveal_osd_controls: AtomicBool,
     }

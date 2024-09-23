@@ -171,12 +171,27 @@ impl FieldMonitorWindow {
             .downcast::<FieldMonitorApplication>()
             .unwrap();
         let debug_widget = FieldMonitorConnectionView::new(&app, Some(self));
-        self.add_new_page(&debug_widget, "Debug 1");
+        self.add_new_page(
+            &debug_widget,
+            "Debug Long Title Foobar bazbaz",
+            Some("Short ST"),
+        );
         let debug_widget = FieldMonitorConnectionView::new(&app, Some(self));
-        self.add_new_page(&debug_widget, "Debug 2");
+        self.add_new_page(
+            &debug_widget,
+            "Debug LST",
+            Some("Debug Long Subtitle Foobar bazbaz"),
+        );
+        let debug_widget = FieldMonitorConnectionView::new(&app, Some(self));
+        self.add_new_page(&debug_widget, "Debug 3", None);
     }
 
-    fn add_new_page(&self, page: &impl IsA<gtk::Widget>, title: &str) -> adw::TabPage {
+    fn add_new_page(
+        &self,
+        page: &impl IsA<gtk::Widget>,
+        title: &str,
+        subtitle: Option<&str>,
+    ) -> adw::TabPage {
         let page = page.upcast_ref();
         let tab_page = self.imp().tab_view.append(page);
 
@@ -184,6 +199,9 @@ impl FieldMonitorWindow {
             view.bind_property("title", &tab_page, "title")
                 .bidirectional()
                 .build();
+            if let Some(subtitle) = subtitle {
+                view.set_subtitle(subtitle);
+            }
         }
 
         tab_page.set_title(title);

@@ -2,7 +2,8 @@ using Gtk 4.0;
 using Adw 1;
 
 template $FieldMonitorConnectionView : Adw.Bin {
-    title: bind osd_title_label.label bidirectional;
+    title: bind window_title.title bidirectional;
+    subtitle: bind window_title.subtitle bidirectional;
 
     child: Overlay {
         // This great idea and base of implementation comes rom Showtime!
@@ -62,8 +63,6 @@ template $FieldMonitorConnectionView : Adw.Bin {
 
             WindowHandle {
                 Box {
-                    margin-top: 6;
-                    margin-bottom: 3;
                     spacing: 6;
 
                     Revealer osd_title_revealer {
@@ -75,14 +74,13 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         Button {
                             accessible-role: label;
                             focusable: false;
-                            child: Label osd_title_label {
-                                margin-start: 12;
-                                margin-end: 12;
-                                ellipsize: middle;
-                            };
+                            child: Adw.WindowTitle window_title {};
+                            halign: center;
 
                             styles ["header-osd", "nohover", "circular"]
                         }
+
+                        styles ["window-title"]
                     }
                 }
             }
