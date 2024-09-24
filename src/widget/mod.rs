@@ -18,6 +18,7 @@
 
 pub mod add_connection_dialog;
 pub mod authenticate_connection_dialog;
+mod close_warning_dialog;
 pub mod connection_list;
 pub mod connection_view;
 pub mod update_connection_dialog;

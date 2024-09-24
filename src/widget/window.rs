@@ -16,16 +16,18 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+use std::cell::Cell;
 use std::cell::RefCell;
 
-use adw::prelude::BinExt;
+use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::{gio, glib};
 use gtk::glib::Variant;
-use gtk::prelude::*;
+use itertools::Itertools;
 
 use crate::application::FieldMonitorApplication;
+use crate::widget::close_warning_dialog::FieldMonitorCloseWarningDialog;
 use crate::widget::connection_list::FieldMonitorConnectionList;
 use crate::widget::connection_view::FieldMonitorConnectionView;
 
@@ -51,6 +53,7 @@ mod imp {
         #[template_child]
         pub mobile_breakpoint: TemplateChild<adw::Breakpoint>,
         pub tab_title_notify_binding: RefCell<Option<(gtk::Widget, glib::SignalHandlerId)>>,
+        pub force_close: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -211,6 +214,52 @@ impl FieldMonitorWindow {
 
 #[gtk::template_callbacks]
 impl FieldMonitorWindow {
+    #[template_callback]
+    fn on_self_close_request(&self) -> bool {
+        let imp = self.imp();
+        if imp.force_close.get() {
+            // User has forced the window to close.
+
+            false
+        } else if imp.tab_view.n_pages() > 0 {
+            // Handle still open connections and ask user to confirm.
+
+            let open_connection_descs: Vec<_> = imp
+                .tab_view
+                .pages()
+                .iter::<adw::TabPage>()
+                .filter_map_ok(|tab| tab.child().downcast::<FieldMonitorConnectionView>().ok())
+                .map_ok(|view| (view.title(), view.subtitle()))
+                .collect::<Result<_, _>>()
+                .unwrap_or_default();
+
+            let dialog = FieldMonitorCloseWarningDialog::new(open_connection_descs);
+
+            dialog.connect_closure(
+                "response",
+                false,
+                glib::closure_local!(
+                    #[weak(rename_to = slf)]
+                    self,
+                    move |_: &FieldMonitorCloseWarningDialog, response: &str| {
+                        if response == FieldMonitorCloseWarningDialog::RESPONSE_CLOSE {
+                            slf.imp().force_close.set(true);
+                            slf.close();
+                        }
+                    }
+                ),
+            );
+
+            dialog.present(Some(self));
+
+            true
+        } else {
+            // No open connections, close.
+
+            false
+        }
+    }
+
     #[template_callback]
     fn on_tab_view_create_window(&self, _tab_view: &adw::TabView) -> adw::TabView {
         let new_window = FieldMonitorWindow::new(&self.application().unwrap().downcast().unwrap());

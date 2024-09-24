@@ -8,6 +8,8 @@ template $FieldMonitorWindow : Adw.ApplicationWindow {
     height-request: 480;
     title: _("Field Monitor");
 
+    close-request => $on_self_close_request() swapped;
+
     Adw.Breakpoint mobile_breakpoint {
         condition('max-width: 540sp')
     }
