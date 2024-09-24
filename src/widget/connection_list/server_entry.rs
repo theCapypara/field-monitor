@@ -147,12 +147,22 @@ async fn finish_load(row: &impl ServerEntry, metadata: &ServerMetadata) {
             None
         };
 
+        // we use a custom suffix box since ExpanderRow and ActionRow currently have differen
+        // ordering behaviour (https://gitlab.gnome.org/GNOME/libadwaita/-/issues/937) and worse:
+        // different spacing!!
+        let suffix_box = gtk::Box::builder()
+            .spacing(6)
+            .orientation(gtk::Orientation::Horizontal)
+            .build();
+
+        add_actions_to_entry(&suffix_box, true, &row.path(), actions);
+
         if let Some(button) = connect_button {
             row.set_activatable_widget(Some(&button));
-            row.add_suffix(&button);
+            suffix_box.add_suffix(&button);
         }
 
-        add_actions_to_entry(row, true, &row.path(), actions);
+        row.add_suffix(&suffix_box);
     })
     .await;
 }

@@ -18,11 +18,18 @@
 use std::borrow::Cow;
 
 use adw::gio;
+use adw::prelude::*;
 use glib::object::IsA;
-use glib::prelude::ToVariant;
+use gtk::Widget;
 
 pub(super) trait CanHaveSuffix {
     fn add_suffix(&self, widget: &impl IsA<gtk::Widget>);
+}
+
+impl CanHaveSuffix for gtk::Box {
+    fn add_suffix(&self, widget: &impl IsA<Widget>) {
+        self.append(widget);
+    }
 }
 
 pub(super) fn add_actions_to_entry(
