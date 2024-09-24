@@ -259,6 +259,10 @@ impl FieldMonitorApplication {
         app
     }
 
+    pub fn open_new_window(&self) {
+        FieldMonitorWindow::new(self).present();
+    }
+
     async fn connections_dir(&self) -> PathBuf {
         let dir = user_config_dir().join("field-monitor").join("connections");
         create_dir_all(&dir).await.ok();
@@ -356,6 +360,9 @@ impl FieldMonitorApplication {
                     ));
                 })
                 .build();
+        let new_window_action = gio::ActionEntry::builder("new-window")
+            .activate(move |app: &Self, _, _| app.open_new_window())
+            .build();
 
         self.add_action_entries([
             quit_action,
@@ -367,6 +374,7 @@ impl FieldMonitorApplication {
             auth_connection_action,
             connect_to_server_action,
             perform_connection_action_action,
+            new_window_action,
         ]);
     }
 
