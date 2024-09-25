@@ -77,6 +77,8 @@ impl FieldMonitorCloseWarningDialog {
         slf.add_response("cancel", &gettext("Cancel"));
         slf.add_response(Self::RESPONSE_CLOSE, &gettext("Close"));
         slf.set_response_appearance(Self::RESPONSE_CLOSE, adw::ResponseAppearance::Destructive);
+        slf.set_default_response(Some("cancel"));
+        slf.set_close_response("cancel");
 
         slf
     }

@@ -522,6 +522,8 @@ impl FieldMonitorApplication {
         dialog.add_response("No", &gettext("No"));
         dialog.add_response("Yes", &gettext("Yes"));
         dialog.set_response_appearance("Yes", adw::ResponseAppearance::Destructive);
+        dialog.set_default_response(Some("No"));
+        dialog.set_close_response("No");
 
         let msg = gettext("Connection successfully removed.");
 
