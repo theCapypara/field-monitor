@@ -1,0 +1,29 @@
+<Project
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:foaf="http://xmlns.com/foaf/0.1/"
+        xmlns="http://usefulinc.com/ns/doap#">
+    <name>Field Monitor</name>
+    <shortdesc>XXXXXX</shortdesc>
+    <description>XXXXXX</description>
+
+    <homepage rdf:resource="https://github.com/theCapypara/FieldMonitor"/>
+    <bug-database rdf:resource="https://github.com/theCapypara/FieldMonitor/issues"/>
+
+    <programming-language>Rust</programming-language>
+
+    <platform>GTK 4</platform>
+    <platform>Libadwaita</platform>
+
+    <maintainer>
+        <foaf:Person>
+            <foaf:name>Marco Köpcke</foaf:name>
+            <foaf:mbox rdf:resource="mailto:hello@capypara.de"/>
+            <foaf:account>
+                <foaf:OnlineAccount>
+                    <foaf:accountServiceHomepage rdf:resource="https://github.com/"/>
+                    <foaf:accountName>theCapypara</foaf:accountName>
+                </foaf:OnlineAccount>
+            </foaf:account>
+        </foaf:Person>
+    </maintainer>
+</Project>
