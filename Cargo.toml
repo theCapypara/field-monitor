@@ -96,10 +96,17 @@ async-std = { workspace = true }
 glib = { workspace = true }
 gtk = { workspace = true }
 adw = { workspace = true }
+rdw = { workspace = true }
 oo7 = { workspace = true }
 libfieldmonitor = { path = "./lib" }
 field-monitor-vnc = { path = "./connection/vnc" }
 field-monitor-debug = { path = "./connection/debug", optional = true }
+
+[dev-dependencies]
+rdw-spice = { workspace = true }
+rdw-vnc = { workspace = true }
+rdw-rdp = { workspace = true }
+env_logger = "0.11"
 
 [lints]
 workspace = true

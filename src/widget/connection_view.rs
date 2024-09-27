@@ -28,6 +28,7 @@ use glib::object::ObjectExt;
 use gtk::gio;
 use gtk::glib;
 use log::{info, warn};
+use rdw::DisplayExt;
 
 use libfieldmonitor::adapter::types::AdapterDisplay;
 use libfieldmonitor::connection::{ConnectionError, ConnectionResult};
@@ -55,6 +56,8 @@ mod imp {
         pub osd_title_revealer: TemplateChild<gtk::Revealer>,
         #[template_child]
         pub display_bin: TemplateChild<adw::Bin>,
+        #[template_child]
+        pub header_gradient: TemplateChild<adw::Bin>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
@@ -214,19 +217,58 @@ impl FieldMonitorConnectionView {
         let imp = self.imp();
         let widget: gtk::Widget = match display {
             AdapterDisplay::Rdw(display) => {
+                imp.header_gradient.set_visible(true);
                 display.set_vexpand(true);
                 display.set_hexpand(true);
                 display.upcast()
             }
             AdapterDisplay::Vte(terminal) => {
-                // TODO: Add a visual black bar to the top, see status stack
-                todo!()
+                imp.header_gradient.set_visible(false);
+                terminal.set_vexpand(true);
+                terminal.set_hexpand(true);
+
+                // Add a visual black bar to the top, see status stack
+                let bx = gtk::Box::builder()
+                    .orientation(gtk::Orientation::Vertical)
+                    .css_classes(["vte-box"])
+                    .spacing(12)
+                    .build();
+
+                bx.append(
+                    &gtk::WindowHandle::builder()
+                        .hexpand(true)
+                        .vexpand(false)
+                        .height_request(46)
+                        .css_classes(["faux-header", "vte"])
+                        .build(),
+                );
+
+                bx.append(&terminal);
+
+                bx.upcast()
             }
             AdapterDisplay::Arbitrary { widget, overlayed } => {
-                if overlayed {
-                    // TODO: Add a visual header color bar to the top, see status stack
+                let bx = gtk::Box::builder()
+                    .orientation(gtk::Orientation::Vertical)
+                    .build();
+
+                if !overlayed {
+                    imp.header_gradient.set_visible(false);
+                    bx.append(
+                        &gtk::WindowHandle::builder()
+                            .hexpand(true)
+                            .vexpand(false)
+                            .height_request(46)
+                            .css_classes(["faux-header"])
+                            .build(),
+                    )
+                } else {
+                    imp.header_gradient.set_visible(true);
                 }
-                todo!()
+
+                bx.append(&widget);
+
+                bx.upcast()
             }
         };
 

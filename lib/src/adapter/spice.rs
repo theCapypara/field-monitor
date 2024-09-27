@@ -20,17 +20,27 @@ use std::rc::Rc;
 
 use gettextrs::gettext;
 use glib::prelude::*;
+use rdw_spice::spice;
+use rdw_spice::spice::prelude::ChannelExt;
 
 use crate::adapter::types::{Adapter, AdapterDisplay};
 use crate::connection::ConnectionError;
 
-pub struct SpiceAdapter {}
+pub struct SpiceAdapter {
+    host: String,
+    port: u32,
+    password: String,
+}
 
 impl SpiceAdapter {
     pub const TAG: &'static str = "spice";
 
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(host: String, port: u32, password: String) -> Self {
+        Self {
+            host,
+            port,
+            password,
+        }
     }
 
     pub fn label() -> Cow<'static, str> {
@@ -46,7 +56,37 @@ impl Adapter for SpiceAdapter {
     ) -> AdapterDisplay {
         let spice = rdw_spice::Display::new();
 
-        todo!();
+        let session = spice.session();
+
+        session.set_uri(Some(&format!("spice://{}:{}", self.host, self.port)));
+
+        let on_disconnected_cln = on_disconnected.clone();
+        session.connect_channel_new(move |_, channel| {
+            if let Ok(main) = channel.clone().downcast::<spice::MainChannel>() {
+                let on_disconnected_cln_cln = on_disconnected_cln.clone();
+                main.connect_channel_event(move |channel, event| {
+                    use spice::ChannelEvent::*;
+                    if event == ErrorConnect {
+                        if let Some(err) = channel.error() {
+                            on_disconnected_cln_cln(Err(ConnectionError::General(
+                                Some(err.to_string()),
+                                err.into(),
+                            )))
+                        }
+                    }
+                });
+            }
+        });
+
+        session.connect_disconnected(move |_| {
+            // TODO: Error handling
+            on_disconnected(Ok(()))
+        });
+
+        glib::spawn_future_local(async move {
+            session.connect();
+            on_connected();
+        });
 
         AdapterDisplay::Rdw(spice.upcast())
     }

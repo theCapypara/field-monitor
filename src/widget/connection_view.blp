@@ -240,9 +240,29 @@ template $FieldMonitorConnectionView: Adw.Bin {
             StackPage {
                 name: "connection";
 
-                child: Adw.Bin display_bin {
-                    vexpand: true;
-                    hexpand: true;
+                child: Overlay {
+                    [overlay]
+                    Revealer header_backdrop {
+                        transition-type: crossfade;
+                        reveal-child: bind template.reveal-osd-controls inverted;
+                        halign: fill;
+                        valign: start;
+
+                        Adw.Bin header_gradient {
+                            height-request: 96;
+                            halign: fill;
+                            valign: start;
+
+                            styles [
+                                "header-bg-gradient"
+                            ]
+                        }
+                    }
+
+                    Adw.Bin display_bin {
+                        vexpand: true;
+                        hexpand: true;
+                    }
                 };
             }
         }

@@ -564,17 +564,29 @@ impl ServerConnection for DebugConnectionServer {
                             ))
                         }
                         RdpAdapter::TAG => {
-                            todo!()
+                            let (host, port) = parse_host_port(self.config.rdp_host())?;
+                            Box::new(RdpAdapter::new(
+                                host.to_string(),
+                                port,
+                                self.config.rdp_user().to_string(),
+                                self.config.rdp_password().into(),
+                            ))
                         }
                         SpiceAdapter::TAG => {
-                            todo!()
+                            let (host, port) = parse_host_port(self.config.spice_host())?;
+                            Box::new(SpiceAdapter::new(
+                                host.to_string(),
+                                port,
+                                self.config.spice_password().into(),
+                            ))
                         }
-                        DebugVteAdapter::TAG => {
-                            todo!()
-                        }
-                        DebugArbitraryAdapter::TAG => {
-                            todo!()
-                        }
+                        DebugVteAdapter::TAG => Box::new(DebugVteAdapter {
+                            mode: self.config.connect_behaviour(),
+                        }),
+                        DebugArbitraryAdapter::TAG => Box::new(DebugArbitraryAdapter {
+                            mode: self.config.connect_behaviour(),
+                            overlayed: self.config.custom_overlayed(),
+                        }),
                         _ => unimplemented!("invalid tag"),
                     };
 

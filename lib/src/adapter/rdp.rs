@@ -20,6 +20,7 @@ use std::rc::Rc;
 
 use anyhow::anyhow;
 use gettextrs::gettext;
+use glib::clone;
 use glib::prelude::*;
 use log::{debug, warn};
 use rdw_rdp::freerdp::{RdpCode, RdpErr, RdpErrConnect};
@@ -65,6 +66,7 @@ impl Adapter for RdpAdapter {
             s.set_username(Some(self.user.as_str()))?;
             s.set_password(Some(self.password.as_str()))?;
             s.set_remote_fx_codec(true);
+            s.parse_command_line(&["field-monitor", "/rfx"], true)?;
             Ok(())
         });
 
@@ -75,43 +77,61 @@ impl Adapter for RdpAdapter {
             )));
         };
 
+        let on_disconnected_cln = on_disconnected.clone();
         rdp.connect_notify_local(Some("rdp-connected"), move |rdp, _| {
             let connected = rdp.property::<bool>("rdp-connected");
             if !connected {
-                let err = rdp.last_error();
-                debug!("RDP connection disconnected (raw): {:?}", &err);
-                match err {
-                    None => {
-                        debug!("RDP connection disconnected");
-                        on_disconnected(Ok(()))
-                    }
-                    Some(RdpErr::RdpErrConnect(RdpErrConnect::AuthenticationFailed)) => {
-                        warn!("RDP connection auth error");
-                        on_disconnected(Err(ConnectionError::AuthFailed(
-                            None,
-                            anyhow!("RDP connection auth error"),
-                        )))
-                    }
-                    Some(err) => {
-                        warn!("RDP connection error: {:?}", err);
-                        let dbg_err = format!("{:?}", err);
-                        let err_code = match err {
-                            RdpErr::RdpErrBase(err) => err as u32,
-                            RdpErr::RdpErrInfo(err) => err as u32,
-                            RdpErr::RdpErrConnect(err) => err as u32,
-                        };
-                        on_disconnected(Err(ConnectionError::General(
-                            Some(format!("{}", RdpCode(err_code))),
-                            anyhow!("{:?}: {}", dbg_err, RdpCode(err_code)),
-                        )))
-                    }
-                }
+                handle_rdp_error(&rdp, &on_disconnected_cln);
             } else {
-                debug!("RDP connection connected");
+                debug!("RDP connection connected!");
                 on_connected();
             }
         });
 
+        glib::spawn_future_local(clone!(
+            #[weak]
+            rdp,
+            async move {
+                if rdp.rdp_connect().await.is_err() {
+                    handle_rdp_error(&rdp, &on_disconnected);
+                }
+            }
+        ));
+
         AdapterDisplay::Rdw(rdp.upcast())
+    }
+}
+
+fn handle_rdp_error(
+    rdp: &rdw_rdp::Display,
+    on_disconnected: &Rc<dyn Fn(Result<(), ConnectionError>)>,
+) {
+    let err = rdp.last_error();
+    debug!("RDP connection disconnected (raw): {:?}", &err);
+    match err {
+        None => {
+            debug!("RDP connection disconnected");
+            on_disconnected(Ok(()))
+        }
+        Some(RdpErr::RdpErrConnect(RdpErrConnect::AuthenticationFailed)) => {
+            warn!("RDP connection auth error");
+            on_disconnected(Err(ConnectionError::AuthFailed(
+                None,
+                anyhow!("RDP connection auth error"),
+            )))
+        }
+        Some(err) => {
+            warn!("RDP connection error: {:?}", err);
+            let dbg_err = format!("{:?}", err);
+            let err_code = match err {
+                RdpErr::RdpErrBase(err) => err as u32,
+                RdpErr::RdpErrInfo(err) => err as u32,
+                RdpErr::RdpErrConnect(err) => err as u32,
+            };
+            on_disconnected(Err(ConnectionError::General(
+                Some(format!("{}", RdpCode(err_code))),
+                anyhow!("{:?}: {}", dbg_err, RdpCode(err_code)),
+            )))
+        }
     }
 }
