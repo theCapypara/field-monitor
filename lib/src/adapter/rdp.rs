@@ -16,6 +16,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::borrow::Cow;
+use std::rc::Rc;
 
 use anyhow::anyhow;
 use gettextrs::gettext;
@@ -34,7 +35,7 @@ pub struct RdpAdapter {
 }
 
 impl RdpAdapter {
-    pub const TAG: Cow<'static, str> = Cow::Borrowed("rdp");
+    pub const TAG: &'static str = "rdp";
 
     pub fn new(host: String, port: u32, user: String, password: String) -> Self {
         Self {
@@ -52,9 +53,9 @@ impl RdpAdapter {
 
 impl Adapter for RdpAdapter {
     fn create_and_connect_display(
-        self,
-        on_connected: &'static dyn Fn(),
-        on_disconnected: &'static dyn Fn(Result<(), ConnectionError>),
+        self: Box<Self>,
+        on_connected: Rc<dyn Fn()>,
+        on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
     ) -> AdapterDisplay {
         let rdp = rdw_rdp::Display::new();
 
@@ -107,6 +108,7 @@ impl Adapter for RdpAdapter {
                 }
             } else {
                 debug!("RDP connection connected");
+                on_connected();
             }
         });
 

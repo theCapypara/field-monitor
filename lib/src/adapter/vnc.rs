@@ -16,6 +16,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::borrow::Cow;
+use std::rc::Rc;
 
 use anyhow::anyhow;
 use gettextrs::gettext;
@@ -36,7 +37,7 @@ pub struct VncAdapter {
 }
 
 impl VncAdapter {
-    pub const TAG: Cow<'static, str> = Cow::Borrowed("vnc");
+    pub const TAG: &'static str = "vnc";
 
     pub fn new(host: String, port: u32, user: String, password: SecureString) -> Self {
         Self {
@@ -54,9 +55,9 @@ impl VncAdapter {
 
 impl Adapter for VncAdapter {
     fn create_and_connect_display(
-        self,
-        on_connected: &'static dyn Fn(),
-        on_disconnected: &'static dyn Fn(Result<(), ConnectionError>),
+        self: Box<Self>,
+        on_connected: Rc<dyn Fn()>,
+        on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
     ) -> AdapterDisplay {
         let user = self.user.clone();
 
@@ -65,33 +66,49 @@ impl Adapter for VncAdapter {
             .open_host(&self.host, &format!("{}", self.port))
             .unwrap();
 
-        vnc.connection().connect_vnc_error(|_conn, err| {
-            warn!("VNC connect error: {:?}", &err);
-            let err_msg = err.to_string();
-            on_disconnected(Err(ConnectionError::General(
-                Some(err_msg),
-                anyhow!("{}", &err),
-            )));
-        });
+        vnc.connection().connect_vnc_error(glib::clone!(
+            #[strong]
+            on_disconnected,
+            move |_conn, err| {
+                warn!("VNC connect error: {:?}", &err);
+                let err_msg = err.to_string();
+                on_disconnected(Err(ConnectionError::General(
+                    Some(err_msg),
+                    anyhow!("{}", &err),
+                )));
+            }
+        ));
 
-        vnc.connection().connect_vnc_auth_failure(|_conn, err| {
-            warn!("VNC auth failure: {:?}", &err);
-            let err_msg = err.to_string();
-            on_disconnected(Err(ConnectionError::AuthFailed(
-                Some(err_msg),
-                anyhow!("{}", &err),
-            )));
-        });
+        vnc.connection().connect_vnc_auth_failure(glib::clone!(
+            #[strong]
+            on_disconnected,
+            move |_conn, err| {
+                warn!("VNC auth failure: {:?}", &err);
+                let err_msg = err.to_string();
+                on_disconnected(Err(ConnectionError::AuthFailed(
+                    Some(err_msg),
+                    anyhow!("{}", &err),
+                )));
+            }
+        ));
 
-        vnc.connection().connect_vnc_disconnected(|_conn| {
-            debug!("VNC connection disconnected");
-            on_disconnected(Ok(()));
-        });
+        vnc.connection().connect_vnc_disconnected(glib::clone!(
+            #[strong]
+            on_disconnected,
+            move |_conn| {
+                debug!("VNC connection disconnected");
+                on_disconnected(Ok(()));
+            }
+        ));
 
-        vnc.connection().connect_vnc_connected(|_conn| {
-            debug!("VNC connection established");
-            on_connected();
-        });
+        vnc.connection().connect_vnc_connected(glib::clone!(
+            #[strong]
+            on_connected,
+            move |_conn| {
+                debug!("VNC connection established");
+                on_connected();
+            }
+        ));
 
         vnc.connection()
             .connect_vnc_auth_credential(move |conn, va| {

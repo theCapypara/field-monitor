@@ -1,12 +1,13 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $FieldMonitorConnectionView : Adw.Bin {
+template $FieldMonitorConnectionView: Adw.Bin {
     title: bind window_title.title bidirectional;
     subtitle: bind window_title.subtitle bidirectional;
 
     child: Overlay {
         // This great idea and base of implementation comes rom Showtime!
+
         [overlay]
         Revealer header_revealer_start {
             transition-type: crossfade;
@@ -27,7 +28,9 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         visible: bind window_controls_start.empty inverted;
                         side: start;
 
-                        styles ["window-controls-osd"]
+                        styles [
+                            "window-controls-osd"
+                        ]
                     }
 
                     Button button_fullscreen {
@@ -38,7 +41,10 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         tooltip-text: _("Toggle Fullscreen");
                         action-name: "win.fullscreen";
 
-                        styles ["header-osd", "circular"]
+                        styles [
+                            "header-osd",
+                            "circular"
+                        ]
                     }
 
                     Button {
@@ -49,11 +55,15 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         tooltip-text: _("Tab Overview");
                         action-name: "overview.open";
 
-                        styles ["header-osd", "circular"]
+                        styles [
+                            "header-osd",
+                            "circular"
+                        ]
                     }
                 }
             }
         }
+
         [overlay]
         Revealer header_revealer_middle {
             transition-type: crossfade;
@@ -74,13 +84,21 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         Button {
                             accessible-role: label;
                             focusable: false;
+
                             child: Adw.WindowTitle window_title {};
+
                             halign: center;
 
-                            styles ["header-osd", "nohover", "circular"]
+                            styles [
+                                "header-osd",
+                                "nohover",
+                                "circular"
+                            ]
                         }
 
-                        styles ["window-title"]
+                        styles [
+                            "window-title"
+                        ]
                     }
                 }
             }
@@ -105,12 +123,14 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         hexpand: true;
                         valign: start;
                         halign: end;
-
                         icon-name: "go-home-symbolic";
                         tooltip-text: _("Connection List");
                         action-name: "win.show-connection-list";
 
-                        styles ["header-osd", "circular"]
+                        styles [
+                            "header-osd",
+                            "circular"
+                        ]
                     }
 
                     MenuButton {
@@ -118,12 +138,14 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         valign: start;
                         halign: end;
                         primary: true;
-
                         icon-name: 'view-more-symbolic';
                         tooltip-text: _('Menu');
                         menu-model: on_connection_menu;
 
-                        styles ["header-osd", "circular"]
+                        styles [
+                            "header-osd",
+                            "circular"
+                        ]
                     }
 
                     WindowControls window_controls_end {
@@ -131,23 +153,110 @@ template $FieldMonitorConnectionView : Adw.Bin {
                         visible: bind window_controls_end.empty inverted;
                         side: end;
 
-                        styles ["window-controls-osd"]
+                        styles [
+                            "window-controls-osd"
+                        ]
                     }
                 }
             }
         }
 
-        // TODO
-        Box connection {
+        Stack outer_stack {
             vexpand: true;
             hexpand: true;
+            transition-type: crossfade;
 
-            styles ["debug-solid-color"]
+            StackPage {
+                name: "status";
+
+                child: Adw.Bin {
+                    vexpand: true;
+                    hexpand: true;
+
+                    child: Box {
+                        orientation: vertical;
+
+                        WindowHandle {
+                            height-request: 46;
+                            hexpand: true;
+                            vexpand: false;
+                        }
+
+                        Stack status_stack {
+                            vexpand: true;
+                            hexpand: true;
+                            transition-type: crossfade;
+
+                            StackPage {
+                                name: "loading";
+
+                                child: Adw.StatusPage loading_status_page {
+                                    paintable: Adw.SpinnerPaintable {
+                                        widget: loading_status_page;
+                                    };
+
+                                    title: _("Connecting...");
+                                };
+                            }
+
+                            StackPage {
+                                name: "disconnected";
+
+                                child: Adw.StatusPage error_status_page {
+                                    icon-name: "external-display-nointernal-symbolic";
+
+                                    child: Box {
+                                        halign: center;
+                                        orientation: horizontal;
+                                        spacing: 6;
+
+                                        Gtk.Button {
+                                            label: _("Close");
+                                            halign: center;
+                                            action-name: "view.close";
+
+                                            /*styles [
+                                                "destructive-action"
+                                            ]*/
+                                        }
+
+                                        /*Gtk.Button {
+                                            label: _("Reconnect");
+                                            halign: center;
+                                            action-name: "view.reconnect";
+                                        }*/
+                                    };
+                                };
+                            }
+                        }
+                    };
+
+                    styles [
+                        "connection-view-status"
+                    ]
+                };
+            }
+
+            StackPage {
+                name: "connection";
+
+                child: Adw.Bin display_bin {
+                    vexpand: true;
+                    hexpand: true;
+                };
+            }
         }
     };
 }
 
 menu on_connection_menu {
+    section {
+        item {
+            label: _('_Close Connection');
+            action: 'view.close';
+        }
+    }
+
     section {
         item {
             label: _('_New Window');

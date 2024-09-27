@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $DebugPreferences : Adw.PreferencesPage {
+template $DebugPreferences: Adw.PreferencesPage {
     title: bind title_entry.text bidirectional;
     vnc_adapter_enable: bind adapter_vnc_switch.enable-expansion bidirectional;
     vnc_host: bind vnc_host_entry.text bidirectional;
@@ -11,8 +11,12 @@ template $DebugPreferences : Adw.PreferencesPage {
     rdp_host: bind rdp_host_entry.text bidirectional;
     rdp_user: bind rdp_user_entry.text bidirectional;
     rdp_password: bind rdp_password_entry.text bidirectional;
-    spice_adapter_enable: bind adapter_spice_switch.active bidirectional;
+    spice_adapter_enable: bind adapter_spice_switch.enable-expansion bidirectional;
+    spice_host: bind spice_host_entry.text bidirectional;
+    spice_password: bind spice_password_entry.text bidirectional;
     vte_adapter_enable: bind adapter_vte_switch.active bidirectional;
+    custom_adapter_enable: bind adapter_custom_switch.enable-expansion bidirectional;
+    custom_overlayed: bind custom_overlayed_switch.active bidirectional;
 
     Adw.PreferencesGroup {
         Adw.EntryRow title_entry {
@@ -110,14 +114,34 @@ template $DebugPreferences : Adw.PreferencesPage {
             }
         }
 
-        Adw.SwitchRow adapter_spice_switch {
+        Adw.ExpanderRow adapter_spice_switch {
             title: "SPICE";
-            active: false;
+            show-enable-switch: true;
+            enable-expansion: false;
+
+            Adw.EntryRow spice_host_entry {
+                title: "Host:Port";
+            }
+
+            Adw.EntryRow spice_password_entry {
+                title: "Password";
+            }
         }
 
         Adw.SwitchRow adapter_vte_switch {
             title: "VTE";
             active: false;
+        }
+
+        Adw.ExpanderRow adapter_custom_switch {
+            title: "Arbitrary Widget";
+            show-enable-switch: true;
+            enable-expansion: false;
+
+            Adw.SwitchRow custom_overlayed_switch {
+                title: "Overlayed";
+                active: false;
+            }
         }
     }
 }

@@ -1,0 +1,1 @@
+FROM alsadi/containerized-xorg-spice:latest@sha256:0f4896d560c1dbce17e8b96038d3ea6987ba44b7fb7d1a488568bd8963b129c0

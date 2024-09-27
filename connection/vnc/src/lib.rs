@@ -202,7 +202,7 @@ impl ServerConnection for VncConnection {
     }
 
     fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
-        vec![(VncAdapter::TAG, VncAdapter::label())]
+        vec![(VncAdapter::TAG.into(), VncAdapter::label())]
     }
 
     fn create_adapter(

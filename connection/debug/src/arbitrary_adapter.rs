@@ -19,32 +19,29 @@ use std::rc::Rc;
 use std::time::Duration;
 
 use anyhow::anyhow;
-use vte::TerminalExt;
+use gtk::prelude::*;
 
 use libfieldmonitor::adapter::types::{Adapter, AdapterDisplay};
 use libfieldmonitor::connection::ConnectionError;
 
 use crate::behaviour_preferences::DebugBehaviour;
 
-pub struct DebugVteAdapter {
+pub struct DebugArbitraryAdapter {
     pub mode: DebugBehaviour,
+    pub overlayed: bool,
 }
 
-impl DebugVteAdapter {
-    pub const TAG: &'static str = "debugvte";
+impl DebugArbitraryAdapter {
+    pub const TAG: &'static str = "debugarbitrary";
 }
 
-impl Adapter for DebugVteAdapter {
+impl Adapter for DebugArbitraryAdapter {
     fn create_and_connect_display(
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
     ) -> AdapterDisplay {
-        let vte = vte::Terminal::builder()
-            .cursor_blink_mode(vte::CursorBlinkMode::On)
-            .build();
-
-        vte.feed(b"Hello Debug!");
+        let overlayed = self.overlayed;
 
         glib::timeout_add_local(Duration::from_secs(1), move || {
             match self.mode {
@@ -63,6 +60,9 @@ impl Adapter for DebugVteAdapter {
             glib::ControlFlow::Break
         });
 
-        AdapterDisplay::Vte(vte)
+        AdapterDisplay::Arbitrary {
+            widget: gtk::Label::new(Some("Debug Arbitrary Display")).upcast(),
+            overlayed,
+        }
     }
 }

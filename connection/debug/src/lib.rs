@@ -18,10 +18,12 @@ use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::connection::*;
 
+use crate::arbitrary_adapter::DebugArbitraryAdapter;
 use crate::behaviour_preferences::{DebugBehaviour, DebugBehaviourPreferences};
 use crate::preferences::{DebugConfiguration, DebugMode, DebugPreferences};
 use crate::vte_adapter::DebugVteAdapter;
 
+mod arbitrary_adapter;
 mod behaviour_preferences;
 mod preferences;
 mod vte_adapter;
@@ -87,7 +89,11 @@ impl ConnectionProvider for DebugConnectionProvider {
                     configuration.set_rdp_user(&preferences.rdp_user());
                     configuration.set_rdp_password(&preferences.rdp_password());
                     configuration.set_spice_adapter_enable(preferences.spice_adapter_enable());
+                    configuration.set_spice_host(&preferences.spice_host());
+                    configuration.set_spice_password(&preferences.spice_password());
                     configuration.set_vte_adapter_enable(preferences.vte_adapter_enable());
+                    configuration.set_custom_adapter_enable(preferences.custom_adapter_enable());
+                    configuration.set_custom_overlayed(preferences.custom_overlayed());
                     Result::<(), Infallible>::Ok(())
                 })
                 .unwrap();
@@ -522,16 +528,19 @@ impl ServerConnection for DebugConnectionServer {
         }
         let mut adapters = Vec::with_capacity(4);
         if self.config.vnc_adapter_enable() {
-            adapters.push((VncAdapter::TAG, VncAdapter::label()));
+            adapters.push((VncAdapter::TAG.into(), VncAdapter::label()));
         }
         if self.config.rdp_adapter_enable() {
-            adapters.push((RdpAdapter::TAG, RdpAdapter::label()));
+            adapters.push((RdpAdapter::TAG.into(), RdpAdapter::label()));
         }
         if self.config.spice_adapter_enable() {
-            adapters.push((SpiceAdapter::TAG, SpiceAdapter::label()));
+            adapters.push((SpiceAdapter::TAG.into(), SpiceAdapter::label()));
         }
         if self.config.vte_adapter_enable() {
-            adapters.push((DebugVteAdapter::TAG, "VTE".into()));
+            adapters.push((DebugVteAdapter::TAG.into(), "VTE".into()));
+        }
+        if self.config.custom_adapter_enable() {
+            adapters.push((DebugArbitraryAdapter::TAG.into(), "Arbitrary Widget".into()));
         }
         adapters
     }
@@ -540,10 +549,36 @@ impl ServerConnection for DebugConnectionServer {
         &self,
         tag: &str,
     ) -> LocalBoxFuture<Result<Box<dyn Adapter>, ConnectionError>> {
+        let tag = tag.to_string();
         Box::pin(async move {
             match self.config.connect_behaviour() {
                 DebugBehaviour::Ok => {
-                    todo!()
+                    let adapter: Box<dyn Adapter> = match &*tag {
+                        VncAdapter::TAG => {
+                            let (host, port) = parse_host_port(self.config.vnc_host())?;
+                            Box::new(VncAdapter::new(
+                                host.to_string(),
+                                port,
+                                self.config.vnc_user().to_string(),
+                                self.config.vnc_password().into(),
+                            ))
+                        }
+                        RdpAdapter::TAG => {
+                            todo!()
+                        }
+                        SpiceAdapter::TAG => {
+                            todo!()
+                        }
+                        DebugVteAdapter::TAG => {
+                            todo!()
+                        }
+                        DebugArbitraryAdapter::TAG => {
+                            todo!()
+                        }
+                        _ => unimplemented!("invalid tag"),
+                    };
+
+                    Ok(adapter)
                 }
                 DebugBehaviour::AuthError => Err(ConnectionError::AuthFailed(
                     Some("debug auth failure (servers)".to_string()),
@@ -570,4 +605,30 @@ impl ServerConnection for DebugConnectionServer {
             Ok(hm)
         })
     }
+}
+
+fn parse_host_port(host: &str) -> ConnectionResult<(&str, u32)> {
+    let mut host_parts = host.split(":");
+    let Some(host) = host_parts.next() else {
+        return Err(ConnectionError::General(
+            Some("invalid host".to_string()),
+            anyhow!("invalid host"),
+        ));
+    };
+    let Some(port) = host_parts.next() else {
+        return Err(ConnectionError::General(
+            Some("invalid host".to_string()),
+            anyhow!("invalid host"),
+        ));
+    };
+    let port: u32 = match port.parse() {
+        Ok(v) => v,
+        Err(e) => {
+            return Err(ConnectionError::General(
+                Some("invalid port".to_string()),
+                e.into(),
+            ));
+        }
+    };
+    Ok((host, port))
 }

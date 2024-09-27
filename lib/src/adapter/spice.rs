@@ -16,6 +16,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::borrow::Cow;
+use std::rc::Rc;
 
 use gettextrs::gettext;
 use glib::prelude::*;
@@ -26,7 +27,7 @@ use crate::connection::ConnectionError;
 pub struct SpiceAdapter {}
 
 impl SpiceAdapter {
-    pub const TAG: Cow<'static, str> = Cow::Borrowed("spice");
+    pub const TAG: &'static str = "spice";
 
     pub fn new() -> Self {
         Self {}
@@ -39,9 +40,9 @@ impl SpiceAdapter {
 
 impl Adapter for SpiceAdapter {
     fn create_and_connect_display(
-        self,
-        on_connected: &'static dyn Fn(),
-        on_disconnected: &'static dyn Fn(Result<(), ConnectionError>),
+        self: Box<Self>,
+        on_connected: Rc<dyn Fn()>,
+        on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
     ) -> AdapterDisplay {
         let spice = rdw_spice::Display::new();
 

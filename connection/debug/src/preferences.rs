@@ -62,8 +62,16 @@ pub(super) trait DebugConfiguration {
     fn set_rdp_password(&mut self, value: &str);
     fn spice_adapter_enable(&self) -> bool;
     fn set_spice_adapter_enable(&mut self, value: bool);
+    fn spice_host(&self) -> &str;
+    fn set_spice_host(&mut self, value: &str);
+    fn spice_password(&self) -> &str;
+    fn set_spice_password(&mut self, value: &str);
     fn vte_adapter_enable(&self) -> bool;
     fn set_vte_adapter_enable(&mut self, value: bool);
+    fn custom_adapter_enable(&self) -> bool;
+    fn set_custom_adapter_enable(&mut self, value: bool);
+    fn custom_overlayed(&self) -> bool;
+    fn set_custom_overlayed(&mut self, value: bool);
 }
 
 impl DebugConfiguration for ConnectionConfiguration {
@@ -199,6 +207,22 @@ impl DebugConfiguration for ConnectionConfiguration {
         self.set_value("spice-adapter-enable", value);
     }
 
+    fn spice_host(&self) -> &str {
+        self.get_try_as_str("spice-host").unwrap_or_default()
+    }
+
+    fn set_spice_host(&mut self, value: &str) {
+        self.set_value("spice-host", value);
+    }
+
+    fn spice_password(&self) -> &str {
+        self.get_try_as_str("spice-password").unwrap_or_default()
+    }
+
+    fn set_spice_password(&mut self, value: &str) {
+        self.set_value("spice-password", value);
+    }
+
     fn vte_adapter_enable(&self) -> bool {
         self.get_try_as_bool("vte-adapter-enable")
             .unwrap_or_default()
@@ -206,6 +230,23 @@ impl DebugConfiguration for ConnectionConfiguration {
 
     fn set_vte_adapter_enable(&mut self, value: bool) {
         self.set_value("vte-adapter-enable", value);
+    }
+
+    fn custom_adapter_enable(&self) -> bool {
+        self.get_try_as_bool("custom-adapter-enable")
+            .unwrap_or_default()
+    }
+
+    fn set_custom_adapter_enable(&mut self, value: bool) {
+        self.set_value("custom-adapter-enable", value);
+    }
+
+    fn custom_overlayed(&self) -> bool {
+        self.get_try_as_bool("custom-overlayed").unwrap_or_default()
+    }
+
+    fn set_custom_overlayed(&mut self, value: bool) {
+        self.set_value("custom-overlayed", value);
     }
 }
 
@@ -262,7 +303,15 @@ mod imp {
         #[property(get, set)]
         pub spice_adapter_enable: AtomicBool,
         #[property(get, set)]
+        pub spice_host: RefCell<String>,
+        #[property(get, set)]
+        pub spice_password: RefCell<String>,
+        #[property(get, set)]
         pub vte_adapter_enable: AtomicBool,
+        #[property(get, set)]
+        pub custom_adapter_enable: AtomicBool,
+        #[property(get, set)]
+        pub custom_overlayed: AtomicBool,
     }
 
     #[glib::object_subclass]
@@ -334,7 +383,11 @@ impl DebugPreferences {
                     slf.set_rdp_user(existing_configuration.rdp_user());
                     slf.set_rdp_password(existing_configuration.rdp_password());
                     slf.set_spice_adapter_enable(existing_configuration.spice_adapter_enable());
+                    slf.set_spice_host(existing_configuration.spice_host());
+                    slf.set_spice_password(existing_configuration.spice_password());
                     slf.set_vte_adapter_enable(existing_configuration.vte_adapter_enable());
+                    slf.set_custom_adapter_enable(existing_configuration.custom_adapter_enable());
+                    slf.set_custom_overlayed(existing_configuration.custom_overlayed());
 
                     slf.imp()
                         .behaviour

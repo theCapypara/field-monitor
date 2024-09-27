@@ -41,7 +41,7 @@ enum Entity {
 
 /// Loads connections and gets resources from them. Interactively shows error messages to the user
 /// and short-circuits any failures or not found resources by returning None.
-pub(super) struct ConnectionLoader {
+pub struct ConnectionLoader {
     entity: Entity,
     connection: ConnectionInstance,
     window: Option<gtk::Window>,
@@ -241,13 +241,26 @@ impl ConnectionLoader {
             | Err(ConnectionError::AuthFailed(msg, details)) => {
                 warn!("failed to load servers: {msg:?} - {details}");
                 Self::do_show_error(
-                    &gettext("Failed to load or connect to server."),
+                    &gettext("Failed to load or connect to server"),
                     msg.as_deref(),
                     active_window.as_ref(),
                 );
                 Err(None)
             }
         }
+    }
+
+    /// Gets the name of the server. Panics if this is not for a server.
+    pub fn server_title(&self) -> String {
+        match &self.entity {
+            Entity::Server(server) => server.metadata().title,
+            _ => panic!("ConnectionLoader is not for server - but server named asked"),
+        }
+    }
+
+    /// Gets the name of the connection.
+    pub fn connection_title(&self) -> String {
+        self.connection.metadata().title
     }
 
     pub fn action(&self, action_id: &str) -> Option<ServerAction> {
@@ -280,6 +293,30 @@ impl ConnectionLoader {
         }
     }
 
+    pub async fn reauth(&mut self) -> Option<()> {
+        debug!("forcing re-auth");
+
+        let connection = Self::handle_auth_needed(
+            self.connection.clone(),
+            self.app.clone(),
+            self.window.clone(),
+        )
+        .await
+        .unwrap();
+
+        *self = Self::do_load_connection(
+            true,
+            connection,
+            self.window.as_ref(),
+            self.server_path.clone(),
+            self.app.clone(),
+            false,
+        )
+        .await?;
+
+        Some(())
+    }
+
     async fn create_adapter_internal(
         &self,
         tag: &str,
@@ -305,7 +342,7 @@ impl ConnectionLoader {
                 | Err(ConnectionError::AuthFailed(msg, details)) => {
                     warn!("failed to load servers: {msg:?} - {details}");
                     Self::do_show_error(
-                        &gettext("Failed to load or connect to server."),
+                        &gettext("Failed to load or connect to server"),
                         msg.as_deref(),
                         self.window.as_ref(),
                     );

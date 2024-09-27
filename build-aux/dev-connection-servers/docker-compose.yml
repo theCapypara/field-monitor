@@ -1,0 +1,31 @@
+services:
+  rdp:
+    build:
+      context: .
+      dockerfile: rdp.dockerfile
+    tmpfs:
+      - /tmp
+      - /var/run
+      - /run
+    ports:
+      - 15902:3389
+  spice:
+    build:
+      context: .
+      dockerfile: spice.dockerfile
+    tmpfs:
+      - /tmp
+      - /var/run
+      - /run
+    ports:
+      - 15900:5900
+  vnc:
+    build:
+      context: .
+      dockerfile: vnc.dockerfile
+    tmpfs:
+      - /tmp
+      - /var/run
+      - /run
+    ports:
+      - 15901:5901

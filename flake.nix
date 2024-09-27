@@ -2,7 +2,7 @@
   description = "Development Environment for Field Monitor";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/gnome";
   };
 
   outputs =

@@ -26,6 +26,7 @@
         <file preprocess="xml-stripblanks">icons/scalable/actions/dialog-error-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/display-with-window-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/edit-find-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/external-display-nointernal-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/go-home-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/key-off-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/key-symbolic.svg</file>

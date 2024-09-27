@@ -27,12 +27,10 @@ use gtk::glib::Variant;
 use itertools::Itertools;
 
 use crate::application::FieldMonitorApplication;
+use crate::connection_loader::ConnectionLoader;
 use crate::widget::close_warning_dialog::FieldMonitorCloseWarningDialog;
 use crate::widget::connection_list::FieldMonitorConnectionList;
 use crate::widget::connection_view::FieldMonitorConnectionView;
-
-#[cfg(feature = "devel")]
-const DEBUG_TABS: bool = true;
 
 mod imp {
     use super::*;
@@ -98,10 +96,6 @@ impl FieldMonitorWindow {
 
         #[cfg(feature = "devel")]
         slf.add_css_class("devel");
-        #[cfg(feature = "devel")]
-        if DEBUG_TABS {
-            slf.add_debug_tabs();
-        }
 
         let conn_list = FieldMonitorConnectionList::new(application, Some(&slf));
         slf.imp().connection_list_bin.set_child(Some(&conn_list));
@@ -155,6 +149,72 @@ impl FieldMonitorWindow {
         self.imp().main_stack.set_visible_child_name("tabs");
     }
 
+    /// Try to focus an already open connection view, if a connection view for the given
+    /// server is open
+    pub fn focus_connection_view(&self, server_path: &str, adapter_id: &str) -> bool {
+        let tab_view = &self.imp().tab_view;
+        for page in tab_view.pages().iter::<adw::TabPage>() {
+            let Ok(page) = page else {
+                return false;
+            };
+            let Ok(view) = page.child().downcast::<FieldMonitorConnectionView>() else {
+                continue;
+            };
+            if view.server_path() == server_path && view.adapter_id() == adapter_id {
+                self.imp().overview.set_open(false);
+                tab_view.set_selected_page(&page);
+                self.imp().main_stack.set_visible_child_name("tabs");
+                return true;
+            }
+        }
+        false
+    }
+
+    pub fn open_connection_view(
+        &self,
+        server_path: &str,
+        adapter_id: &str,
+        server_title: &str,
+        connection_title: &str,
+        loader: ConnectionLoader,
+    ) {
+        let app = self
+            .application()
+            .unwrap()
+            .downcast::<FieldMonitorApplication>()
+            .unwrap();
+        let tab_view = &self.imp().tab_view;
+        let main_stack = &self.imp().main_stack;
+
+        let view = FieldMonitorConnectionView::new(
+            &app,
+            Some(self),
+            None,
+            server_path,
+            adapter_id,
+            loader,
+        );
+        let tab_page = self.add_new_page(&view, server_title, Some(connection_title));
+
+        view.set_close_fn(Some(Box::new(glib::clone!(
+            #[weak]
+            tab_view,
+            #[weak]
+            tab_page,
+            #[weak]
+            main_stack,
+            #[upgrade_or]
+            true,
+            move || {
+                tab_view.close_page(&tab_page);
+                main_stack.set_visible_child_name("connection-list");
+                true
+            }
+        ))));
+
+        self.imp().main_stack.set_visible_child_name("tabs");
+    }
+
     fn act_show_connection_list(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
         self.imp()
             .main_stack
@@ -166,37 +226,16 @@ impl FieldMonitorWindow {
         self.imp().main_stack.set_visible_child_name("tabs");
     }
 
-    #[cfg(feature = "devel")]
-    fn add_debug_tabs(&self) {
-        let app = self
-            .application()
-            .unwrap()
-            .downcast::<FieldMonitorApplication>()
-            .unwrap();
-        let debug_widget = FieldMonitorConnectionView::new(&app, Some(self));
-        self.add_new_page(
-            &debug_widget,
-            "Debug Long Title Foobar bazbaz",
-            Some("Short ST"),
-        );
-        let debug_widget = FieldMonitorConnectionView::new(&app, Some(self));
-        self.add_new_page(
-            &debug_widget,
-            "Debug LST",
-            Some("Debug Long Subtitle Foobar bazbaz"),
-        );
-        let debug_widget = FieldMonitorConnectionView::new(&app, Some(self));
-        self.add_new_page(&debug_widget, "Debug 3", None);
-    }
-
     fn add_new_page(
         &self,
         page: &impl IsA<gtk::Widget>,
         title: &str,
         subtitle: Option<&str>,
     ) -> adw::TabPage {
+        let tab_view = &self.imp().tab_view;
+
         let page = page.upcast_ref();
-        let tab_page = self.imp().tab_view.append(page);
+        let tab_page = tab_view.append(page);
 
         if let Some(view) = page.downcast_ref::<FieldMonitorConnectionView>() {
             view.bind_property("title", &tab_page, "title")
@@ -208,6 +247,10 @@ impl FieldMonitorWindow {
         }
 
         tab_page.set_title(title);
+
+        self.imp().overview.set_open(false);
+        tab_view.set_selected_page(&tab_page);
+
         tab_page
     }
 }

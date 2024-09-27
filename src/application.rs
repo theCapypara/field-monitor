@@ -259,8 +259,10 @@ impl FieldMonitorApplication {
         app
     }
 
-    pub fn open_new_window(&self) {
-        FieldMonitorWindow::new(self).present();
+    pub fn open_new_window(&self) -> FieldMonitorWindow {
+        let win = FieldMonitorWindow::new(self);
+        win.present();
+        win
     }
 
     async fn connections_dir(&self) -> PathBuf {
@@ -361,7 +363,9 @@ impl FieldMonitorApplication {
                 })
                 .build();
         let new_window_action = gio::ActionEntry::builder("new-window")
-            .activate(move |app: &Self, _, _| app.open_new_window())
+            .activate(move |app: &Self, _, _| {
+                app.open_new_window();
+            })
             .build();
 
         self.add_action_entries([
@@ -387,8 +391,8 @@ impl FieldMonitorApplication {
     }
 
     fn show_about(&self) {
-        // TODO: Unwrap or None
-        let window = self.active_window().unwrap();
+        let window = self.active_window();
+
         let about = adw::AboutDialog::builder()
             .application_name(gettext("Field Monitor"))
             .application_icon(APP_ID)
@@ -403,7 +407,7 @@ impl FieldMonitorApplication {
             .translator_credits(gettext("translator-credits"))
             .build();
 
-        about.present(Some(&window));
+        about.present(window.as_ref());
     }
 
     fn show_parentless_ok_dialog(&self, msg: &str) {
@@ -600,22 +604,35 @@ impl FieldMonitorApplication {
 
     pub async fn connect_to_server(&self, path: &str, adapter_id: &str) -> Option<()> {
         let imp = self.imp();
-        let window = self.active_window();
+        let window = self
+            .active_window()
+            .map(Cast::downcast)
+            .map(Result::unwrap)
+            .unwrap_or_else(|| self.open_new_window());
 
-        // TODO
-        let mut loader = ConnectionLoader::load_server(
+        // TODO: We could also check all windows for the connection, not just the open one, but
+        //       this is probably better? That way the user CAN still connect twice to a server
+        //       if they really want to.
+        // If already open in current window: Focus and select instead.
+        if window.focus_connection_view(path, adapter_id) {
+            return Some(());
+        }
+
+        let loader = ConnectionLoader::load_server(
             imp.connections.borrow(),
-            window.as_ref(),
+            Some(window.upcast_ref()),
             path,
             Some(self.clone()),
         )
         .await?;
-        let adapter = loader.create_adapter(adapter_id).await?;
 
-        let diag = adw::AlertDialog::builder()
-            .body(format!("{path}, {adapter_id}"))
-            .build();
-        diag.present(window.as_ref());
+        window.open_connection_view(
+            path,
+            adapter_id,
+            &loader.server_title(),
+            &loader.connection_title(),
+            loader,
+        );
 
         Some(())
     }

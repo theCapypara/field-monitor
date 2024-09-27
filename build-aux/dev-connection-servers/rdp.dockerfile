@@ -1,0 +1,1 @@
+FROM scottyhardy/docker-remote-desktop:latest@sha256:97046432e96b433a212c02d32dc61a55500bc31ae65103c6d8d91f8f1e871d74

@@ -36,10 +36,6 @@ menubutton.header-osd button:not(.nohover):active,
     margin-bottom: 24px;
 }
 
-.debug-solid-color {
-    background: rgb(200, 200, 0);
-}
-
 .window-title {
     padding-top: 6px;
     padding-bottom: 6px;
@@ -48,7 +44,17 @@ menubutton.header-osd button:not(.nohover):active,
 .window-title button {
     margin-top: -3px;
     padding-top: 6px;
-    padding-bottom: 6px;
+    padding-bottom: 3px;
     padding-left: 12px;
     padding-right: 12px;
+}
+
+.connection-view-status {
+    background: var(--window-bg-color);
+}
+
+/* * * * */
+
+.debug-solid-color {
+    background: rgb(200, 200, 0);
 }

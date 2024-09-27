@@ -147,7 +147,7 @@ async fn finish_load(row: &impl ServerEntry, metadata: &ServerMetadata) {
             None
         };
 
-        // we use a custom suffix box since ExpanderRow and ActionRow currently have differen
+        // we use a custom suffix box since ExpanderRow and ActionRow currently have different
         // ordering behaviour (https://gitlab.gnome.org/GNOME/libadwaita/-/issues/937) and worse:
         // different spacing!!
         let suffix_box = gtk::Box::builder()

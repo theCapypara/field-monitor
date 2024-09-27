@@ -16,8 +16,8 @@ template $FieldMonitorWindow : Adw.ApplicationWindow {
 
     content: Adw.ToastOverlay toast_overlay {
         child: Stack main_stack {
-            transition-type: slide_down;
-            transition-duration: 250;
+            transition-type: crossfade;
+            transition-duration: 100;
 
             notify::visible-child-name => $on_main_stack_visible_child_name_changed() swapped;
 
