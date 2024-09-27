@@ -35,7 +35,8 @@ use crate::widget::connection_view::FieldMonitorConnectionView;
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, gtk::CompositeTemplate)]
+    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
+    #[properties(wrapper_type = super::FieldMonitorWindow)]
     #[template(resource = "/de/capypara/FieldMonitor/widget/window.ui")]
     pub struct FieldMonitorWindow {
         #[template_child]
@@ -50,6 +51,8 @@ mod imp {
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         pub mobile_breakpoint: TemplateChild<adw::Breakpoint>,
+        #[property(get, set)]
+        pub sharp_window_corners: Cell<bool>,
         pub tab_title_notify_binding: RefCell<Option<(gtk::Widget, glib::SignalHandlerId)>>,
         pub force_close: Cell<bool>,
     }
@@ -70,6 +73,7 @@ mod imp {
         }
     }
 
+    #[glib::derived_properties]
     impl ObjectImpl for FieldMonitorWindow {
         fn constructed(&self) {
             self.parent_constructed();
@@ -110,6 +114,12 @@ impl FieldMonitorWindow {
         );
 
         slf.on_main_stack_visible_child_name_changed();
+
+        application
+            .settings()
+            .unwrap()
+            .bind("sharp-window-corners", &slf, "sharp-window-corners")
+            .build();
 
         slf
     }
@@ -300,6 +310,15 @@ impl FieldMonitorWindow {
             // No open connections, close.
 
             false
+        }
+    }
+
+    #[template_callback]
+    fn on_self_sharp_window_corners_changed(&self) {
+        if self.sharp_window_corners() {
+            self.add_css_class("sharp-corners")
+        } else {
+            self.remove_css_class("sharp-corners")
         }
     }
 

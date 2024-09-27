@@ -1,3 +1,11 @@
+.sharp-corners {
+    border-radius: 0;
+}
+
+window {
+    transition: border-radius 0.25s ease;
+}
+
 /*
  * Styles for header from Showtime, thanks for the great implementation of fullscreen overlay
  * window controls!

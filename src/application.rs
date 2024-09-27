@@ -71,6 +71,8 @@ mod imp {
         /// Currently busy with processing an action or connection request to a server or connection.
         #[property(get)]
         pub busy: Rc<Cell<bool>>,
+        #[property(get, construct_only)]
+        pub settings: RefCell<Option<gio::Settings>>,
     }
 
     #[glib::object_subclass]
@@ -239,6 +241,7 @@ impl FieldMonitorApplication {
         let app: FieldMonitorApplication = glib::Object::builder()
             .property("application-id", application_id)
             .property("flags", flags)
+            .property("settings", gio::Settings::new(APP_ID))
             .build();
         app.imp().busy_stack.borrow_mut().replace(BusyStack::new(
             app.imp().busy.clone(),

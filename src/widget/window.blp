@@ -1,24 +1,23 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $FieldMonitorWindow : Adw.ApplicationWindow {
+template $FieldMonitorWindow: Adw.ApplicationWindow {
     default-width: 600;
     default-height: 600;
     width-request: 360;
     height-request: 480;
     title: _("Field Monitor");
-
+    notify::sharp-window-corners => $on_self_sharp_window_corners_changed() swapped;
     close-request => $on_self_close_request() swapped;
 
     Adw.Breakpoint mobile_breakpoint {
-        condition('max-width: 540sp')
+        condition ('max-width: 540sp')
     }
 
     content: Adw.ToastOverlay toast_overlay {
         child: Stack main_stack {
             transition-type: crossfade;
             transition-duration: 100;
-
             notify::visible-child-name => $on_main_stack_visible_child_name_changed() swapped;
 
             StackPage {
@@ -34,12 +33,11 @@ template $FieldMonitorWindow : Adw.ApplicationWindow {
                     enable-new-tab: false;
                     view: tab_view;
                     secondary-menu: overview_menu;
-
                     notify::open => $on_overview_open_changed() swapped;
 
                     Adw.TabView tab_view {
-                       create-window => $on_tab_view_create_window() swapped;
-                       notify::selected-page => $on_tab_view_selected_page_changed() swapped;
+                        create-window => $on_tab_view_create_window() swapped;
+                        notify::selected-page => $on_tab_view_selected_page_changed() swapped;
                     }
                 };
             }
@@ -54,6 +52,7 @@ menu overview_menu {
             action: "win.show-connection-list";
         }
     }
+
     section {
         item {
             label: _('_New Window');

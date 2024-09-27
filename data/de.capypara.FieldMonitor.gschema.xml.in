@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain=@APP_ID@>
+	<schema id=@APP_ID@ path=@APP_ID_SLASHED@>
+	    <key name="sharp-window-corners" type="b">
+          <default>false</default>
+          <summary>If enabled, the Field Monitor's windows will have sharp corners instead of round corners. This removes the cut-off pixels at corners when connected to remote servers.</summary>
+        </key>
+	</schema>
+</schemalist>

@@ -1,6 +1,7 @@
 .idea/
 src/config.rs
 src/field-monitor.gresource.xml
+data/de.capypara.FieldMonitor.gschema.xml
 target/
 /subprojects/blueprint-compiler
 *.ui

@@ -1,5 +1,6 @@
 conf = configuration_data()
 conf.set_quoted('APP_ID', get_option('app-id'))
+conf.set_quoted('APP_ID_SLASHED', '/' + get_option('app-id').replace('.', '/') + '/')
 
 desktop_file = i18n.merge_file(
         input: configure_file(
@@ -35,7 +36,12 @@ appstreamcli = find_program('appstreamcli', required: false, disabler: true)
 test('Validate appstream file', appstreamcli,
      args: ['validate', '--no-net', '--explain', appstream_file])
 
-install_data('de.capypara.FieldMonitor.gschema.xml',
+install_data(
+  configure_file(
+      input: 'de.capypara.FieldMonitor.gschema.xml.in',
+      output: 'de.capypara.FieldMonitor.gschema.xml',
+      configuration: conf,
+  ),
   install_dir: get_option('datadir') / 'glib-2.0' / 'schemas',
   rename: get_option('app-id') + '.gschema.xml'
 )
