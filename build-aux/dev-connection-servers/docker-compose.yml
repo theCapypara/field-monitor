@@ -27,5 +27,7 @@ services:
       - /tmp
       - /var/run
       - /run
+    environment:
+      VNC_PW: password123
     ports:
       - 15901:5901

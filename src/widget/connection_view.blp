@@ -4,6 +4,8 @@ using Adw 1;
 template $FieldMonitorConnectionView: Adw.Bin {
     title: bind window_title.title bidirectional;
     subtitle: bind window_title.subtitle bidirectional;
+    notify::dynamic-resize => $on_self_dynamic_resize_changed() swapped;
+    notify::scale-to-window => $on_self_scale_to_window_changed() swapped;
 
     child: Overlay {
         // This great idea and base of implementation comes rom Showtime!
@@ -13,7 +15,8 @@ template $FieldMonitorConnectionView: Adw.Bin {
             transition-type: crossfade;
             valign: start;
             halign: start;
-            reveal-child: bind template.reveal-osd-controls inverted;
+            reveal-child: bind template.reveal-osd-controls bidirectional;
+            can-target: bind template.reveal-osd-controls bidirectional;
 
             WindowHandle {
                 Box header_start {
@@ -52,7 +55,7 @@ template $FieldMonitorConnectionView: Adw.Bin {
                         valign: start;
                         halign: start;
                         icon-name: "view-grid-symbolic";
-                        tooltip-text: _("Tab Overview");
+                        tooltip-text: _("Open Connections");
                         action-name: "overview.open";
 
                         styles [
@@ -69,7 +72,8 @@ template $FieldMonitorConnectionView: Adw.Bin {
             transition-type: crossfade;
             valign: start;
             halign: center;
-            reveal-child: bind template.reveal-osd-controls inverted;
+            reveal-child: bind template.reveal-osd-controls bidirectional;
+            can-target: bind template.reveal-osd-controls bidirectional;
 
             WindowHandle {
                 Box {
@@ -109,7 +113,8 @@ template $FieldMonitorConnectionView: Adw.Bin {
             transition-type: crossfade;
             valign: start;
             halign: end;
-            reveal-child: bind template.reveal-osd-controls inverted;
+            reveal-child: bind template.reveal-osd-controls bidirectional;
+            can-target: bind template.reveal-osd-controls bidirectional;
 
             WindowHandle {
                 Box header_end {
@@ -213,7 +218,7 @@ template $FieldMonitorConnectionView: Adw.Bin {
                                         Gtk.Button {
                                             label: _("Close");
                                             halign: center;
-                                            action-name: "view.close";
+                                            action-name: "tab.close";
 
                                             /*styles [
                                                 "destructive-action"
@@ -244,19 +249,30 @@ template $FieldMonitorConnectionView: Adw.Bin {
                     [overlay]
                     Revealer header_backdrop {
                         transition-type: crossfade;
-                        reveal-child: bind template.reveal-osd-controls inverted;
+                        reveal-child: bind template.reveal-osd-controls bidirectional;
                         halign: fill;
                         valign: start;
+                        can-focus: false;
+                        can-target: false;
 
                         Adw.Bin header_gradient {
                             height-request: 96;
                             halign: fill;
                             valign: start;
+                            can-focus: false;
+                            can-target: false;
 
                             styles [
                                 "header-bg-gradient"
                             ]
                         }
+                    }
+
+                    [overlay]
+                    $FieldMonitorFocusGrabber focus_grabber {
+                        notify::grabbed => $on_focus_grabber_grabbed_changed() swapped;
+                        vexpand: true;
+                        hexpand: true;
                     }
 
                     Adw.Bin display_bin {
@@ -272,8 +288,35 @@ template $FieldMonitorConnectionView: Adw.Bin {
 menu on_connection_menu {
     section {
         item {
+            label: _('_Dynamic Resize');
+            action: 'view.dynamic-resize';
+            hidden-when: "action-disabled";
+        }
+
+        item {
+            label: _('_Scale to Window');
+            action: 'view.scale-to-window';
+            hidden-when: "action-disabled";
+        }
+    }
+
+    section {
+        item {
+            label: _('_Resize Window to Screen');
+            action: 'view.fit-to-screen';
+            hidden-when: "action-disabled";
+        }
+    }
+
+    section {
+        item {
+            label: _('_Move to New Window');
+            action: 'tab.move-to-new-window';
+        }
+
+        item {
             label: _('_Close Connection');
-            action: 'view.close';
+            action: 'tab.close';
         }
     }
 

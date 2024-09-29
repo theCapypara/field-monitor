@@ -97,6 +97,7 @@ glib = { workspace = true }
 gtk = { workspace = true }
 adw = { workspace = true }
 rdw = { workspace = true }
+vte = { workspace = true }
 oo7 = { workspace = true }
 libfieldmonitor = { path = "./lib" }
 field-monitor-vnc = { path = "./connection/vnc" }

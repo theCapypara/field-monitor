@@ -24,6 +24,7 @@ use glib::clone;
 use glib::prelude::*;
 use log::{debug, warn};
 use rdw_rdp::freerdp::{RdpCode, RdpErr, RdpErrConnect};
+use secure_string::SecureString;
 
 use crate::adapter::types::{Adapter, AdapterDisplay};
 use crate::connection::ConnectionError;
@@ -32,13 +33,13 @@ pub struct RdpAdapter {
     host: String,
     port: u32,
     user: String,
-    password: String,
+    password: SecureString,
 }
 
 impl RdpAdapter {
     pub const TAG: &'static str = "rdp";
 
-    pub fn new(host: String, port: u32, user: String, password: String) -> Self {
+    pub fn new(host: String, port: u32, user: String, password: SecureString) -> Self {
         Self {
             host,
             port,
@@ -64,7 +65,7 @@ impl Adapter for RdpAdapter {
             s.set_server_port(self.port);
             s.set_server_hostname(Some(self.host.as_str()))?;
             s.set_username(Some(self.user.as_str()))?;
-            s.set_password(Some(self.password.as_str()))?;
+            s.set_password(Some(self.password.unsecure()))?;
             s.set_remote_fx_codec(true);
             s.parse_command_line(&["field-monitor", "/rfx"], true)?;
             Ok(())
@@ -78,10 +79,10 @@ impl Adapter for RdpAdapter {
         };
 
         let on_disconnected_cln = on_disconnected.clone();
-        rdp.connect_notify_local(Some("rdp-connected"), move |rdp, _| {
-            let connected = rdp.property::<bool>("rdp-connected");
+        rdp.connect_rdp_connected_notify(move |rdp| {
+            let connected = rdp.rdp_connected();
             if !connected {
-                handle_rdp_error(&rdp, &on_disconnected_cln);
+                handle_rdp_error(rdp, &on_disconnected_cln);
             } else {
                 debug!("RDP connection connected!");
                 on_connected();

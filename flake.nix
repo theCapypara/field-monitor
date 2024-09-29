@@ -2,18 +2,30 @@
   description = "Development Environment for Field Monitor";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/gnome";
+    #nixpkgs.url = "github:NixOS/nixpkgs";
+    nixpkgs-gnome.url = "github:NixOS/nixpkgs/gnome";
   };
 
   outputs =
-    { self, nixpkgs }:
+    {
+      self,
+      nixpkgs,
+      nixpkgs-gnome,
+    }:
     let
       supportedSystems = [
         "x86_64-linux"
         "aarch64-linux"
       ];
       forEachSupportedSystem =
-        f: nixpkgs.lib.genAttrs supportedSystems (system: f { pkgs = import nixpkgs { inherit system; }; });
+        f:
+        nixpkgs.lib.genAttrs supportedSystems (
+          system:
+          f {
+            #pkgs = import nixpkgs { inherit system; };
+            pkgs = import nixpkgs-gnome { inherit system; };
+          }
+        );
     in
     {
       devShells = forEachSupportedSystem (
@@ -76,6 +88,7 @@
                 gtk4
                 vte-gtk4
                 libadwaita
+                libadwaita.devdoc
                 meson
                 ninja
                 cmake

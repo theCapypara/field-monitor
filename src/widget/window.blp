@@ -36,6 +36,8 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                     notify::open => $on_overview_open_changed() swapped;
 
                     Adw.TabView tab_view {
+                        menu-model: tab_menu;
+                        setup-menu => $on_tab_view_setup_menu() swapped;
                         create-window => $on_tab_view_create_window() swapped;
                         notify::selected-page => $on_tab_view_selected_page_changed() swapped;
                     }
@@ -72,6 +74,20 @@ menu overview_menu {
         item {
             label: _('_About Field Monitor');
             action: 'app.about';
+        }
+    }
+}
+
+menu tab_menu {
+    section {
+        item {
+            label: _('_Move to New Window');
+            action: 'tab.move-to-new-window';
+        }
+
+        item {
+            label: _('_Close Connection');
+            action: 'tab.close';
         }
     }
 }

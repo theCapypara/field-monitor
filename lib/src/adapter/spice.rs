@@ -18,10 +18,14 @@
 use std::borrow::Cow;
 use std::rc::Rc;
 
+use anyhow::anyhow;
 use gettextrs::gettext;
 use glib::prelude::*;
+use log::debug;
 use rdw_spice::spice;
+use rdw_spice::spice::ChannelEvent;
 use rdw_spice::spice::prelude::ChannelExt;
+use secure_string::SecureString;
 
 use crate::adapter::types::{Adapter, AdapterDisplay};
 use crate::connection::ConnectionError;
@@ -29,13 +33,13 @@ use crate::connection::ConnectionError;
 pub struct SpiceAdapter {
     host: String,
     port: u32,
-    password: String,
+    password: SecureString,
 }
 
 impl SpiceAdapter {
     pub const TAG: &'static str = "spice";
 
-    pub fn new(host: String, port: u32, password: String) -> Self {
+    pub fn new(host: String, port: u32, password: SecureString) -> Self {
         Self {
             host,
             port,
@@ -59,20 +63,39 @@ impl Adapter for SpiceAdapter {
         let session = spice.session();
 
         session.set_uri(Some(&format!("spice://{}:{}", self.host, self.port)));
+        session.set_password(Some(self.password.unsecure()));
 
         let on_disconnected_cln = on_disconnected.clone();
         session.connect_channel_new(move |_, channel| {
             if let Ok(main) = channel.clone().downcast::<spice::MainChannel>() {
                 let on_disconnected_cln_cln = on_disconnected_cln.clone();
                 main.connect_channel_event(move |channel, event| {
-                    use spice::ChannelEvent::*;
-                    if event == ErrorConnect {
-                        if let Some(err) = channel.error() {
+                    let error = channel.error();
+                    match event {
+                        ChannelEvent::ErrorConnect
+                        | ChannelEvent::ErrorTls
+                        | ChannelEvent::ErrorLink
+                        | ChannelEvent::ErrorIo => {
                             on_disconnected_cln_cln(Err(ConnectionError::General(
-                                Some(err.to_string()),
-                                err.into(),
+                                error.as_ref().map(ToString::to_string),
+                                if let Some(e) = error {
+                                    e.into()
+                                } else {
+                                    anyhow!("unknown error")
+                                },
                             )))
                         }
+                        ChannelEvent::ErrorAuth => {
+                            on_disconnected_cln_cln(Err(ConnectionError::AuthFailed(
+                                error.as_ref().map(ToString::to_string),
+                                if let Some(e) = error {
+                                    e.into()
+                                } else {
+                                    anyhow!("unknown error")
+                                },
+                            )))
+                        }
+                        _ => debug!("spice channel event: {event:?}"),
                     }
                 });
             }

@@ -270,9 +270,13 @@ impl ConnectionLoader {
         }
     }
 
-    pub async fn create_adapter(&mut self, tag: &str) -> Option<Box<dyn Adapter>> {
+    pub async fn create_adapter(
+        &mut self,
+        tag: &str,
+        try_reauth: bool,
+    ) -> Option<Box<dyn Adapter>> {
         debug!("creating adapter");
-        match self.create_adapter_internal(tag, true).await {
+        match self.create_adapter_internal(tag, try_reauth).await {
             Ok(servers_new) => Some(servers_new),
             Err(None) => None,
             Err(Some(connection)) => {

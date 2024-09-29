@@ -15,9 +15,9 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use std::cell::Cell;
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::sync::atomic::AtomicBool;
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
@@ -27,7 +27,7 @@ use gettextrs::gettext;
 use glib::object::ObjectExt;
 use gtk::gio;
 use gtk::glib;
-use log::{info, warn};
+use log::{error, info, warn};
 use rdw::DisplayExt;
 
 use libfieldmonitor::adapter::types::AdapterDisplay;
@@ -35,6 +35,8 @@ use libfieldmonitor::connection::{ConnectionError, ConnectionResult};
 
 use crate::application::FieldMonitorApplication;
 use crate::connection_loader::ConnectionLoader;
+use crate::util::configure_vte_styling;
+use crate::widget::foucs_grabber::FieldMonitorFocusGrabber;
 use crate::widget::window::FieldMonitorWindow;
 
 mod imp {
@@ -58,6 +60,8 @@ mod imp {
         pub display_bin: TemplateChild<adw::Bin>,
         #[template_child]
         pub header_gradient: TemplateChild<adw::Bin>,
+        #[template_child]
+        pub focus_grabber: TemplateChild<FieldMonitorFocusGrabber>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
@@ -69,9 +73,13 @@ mod imp {
         #[property(get, set)]
         pub subtitle: RefCell<String>,
         #[property(get, set, default = true)]
-        pub reveal_osd_controls: AtomicBool,
-        // true: Close, false: keep open
-        pub close_fn: RefCell<Option<Box<dyn Fn() -> bool>>>,
+        pub reveal_osd_controls: Cell<bool>,
+        #[property(get, set)]
+        pub dynamic_resize: Cell<bool>,
+        #[property(get, set)]
+        pub scale_to_window: Cell<bool>,
+        #[property(get, set)]
+        pub allow_reauths: Cell<bool>,
         // None: Status not initialized yet
         // true: Connected
         // false: Disconnected
@@ -89,11 +97,15 @@ mod imp {
             Self::bind_template(klass);
             Self::Type::bind_template_callbacks(klass);
 
+            klass.install_property_action("view.dynamic-resize", "dynamic-resize");
+
+            klass.install_property_action("view.scale-to-window", "scale-to-window");
+
             klass.install_action(
-                "view.close",
+                "view.fit-to-screen",
                 None,
                 |slf: &super::FieldMonitorConnectionView, _, _| {
-                    slf.close();
+                    slf.fit_to_screen();
                 },
             );
         }
@@ -119,18 +131,19 @@ impl FieldMonitorConnectionView {
     pub fn new(
         app: &FieldMonitorApplication,
         window: Option<&FieldMonitorWindow>,
-        close_fn: Option<Box<dyn Fn() -> bool>>,
         server_path: &str,
         adapter_id: &str,
         loader: ConnectionLoader,
     ) -> Self {
         let slf: Self = glib::Object::builder()
             .property("application", app)
-            .property("server_path", server_path)
-            .property("adapter_id", adapter_id)
+            .property("server-path", server_path)
+            .property("adapter-id", adapter_id)
+            .property("scale-to-window", true)
+            .property("reveal-osd-controls", true)
+            .property("allow-reauths", true)
             .build();
         let imp = slf.imp();
-        imp.close_fn.replace(close_fn);
 
         if let Some(window) = window {
             window.connect_notify_local(
@@ -179,8 +192,10 @@ impl FieldMonitorConnectionView {
         imp.connection_state.replace(None);
 
         let adapter_id = { imp.adapter_id.borrow().clone() };
-
-        let Some(adapter) = loader.create_adapter(&adapter_id).await else {
+        let Some(adapter) = loader
+            .create_adapter(&adapter_id, self.allow_reauths())
+            .await
+        else {
             // we disallow reauth because the adapter creator already tries that. it also already
             // shows a detailed error message, so we don't need to.
             self.handle_error(
@@ -209,17 +224,16 @@ impl FieldMonitorConnectionView {
         self.add_display(display);
     }
 
-    pub fn set_close_fn(&self, value: Option<Box<dyn Fn() -> bool>>) {
-        self.imp().close_fn.replace(value);
-    }
-
     pub fn add_display(&self, display: AdapterDisplay) {
         let imp = self.imp();
         let widget: gtk::Widget = match display {
             AdapterDisplay::Rdw(display) => {
                 imp.header_gradient.set_visible(true);
+                display.set_visible(true);
                 display.set_vexpand(true);
                 display.set_hexpand(true);
+                self.configure_rdw_action_support(Some(&display));
+                imp.focus_grabber.set_display(Some(&display));
                 display.upcast()
             }
             AdapterDisplay::Vte(terminal) => {
@@ -243,8 +257,19 @@ impl FieldMonitorConnectionView {
                         .build(),
                 );
 
+                // make vte react to theme
+                let style_manager = self.application().unwrap().style_manager();
+                style_manager.connect_dark_notify(glib::clone!(
+                    #[weak]
+                    terminal,
+                    move |style_manager| configure_vte_styling(&terminal, style_manager)
+                ));
+                configure_vte_styling(&terminal, &style_manager);
+
                 bx.append(&terminal);
 
+                self.configure_rdw_action_support(None);
+                imp.focus_grabber.set_display(None::<rdw::Display>);
                 bx.upcast()
             }
             AdapterDisplay::Arbitrary { widget, overlayed } => {
@@ -268,6 +293,8 @@ impl FieldMonitorConnectionView {
 
                 bx.append(&widget);
 
+                self.configure_rdw_action_support(None);
+                imp.focus_grabber.set_display(None::<rdw::Display>);
                 bx.upcast()
             }
         };
@@ -293,6 +320,7 @@ impl FieldMonitorConnectionView {
             }
         }
         imp.outer_stack.set_visible_child_name("connection");
+        self.fit_to_screen();
     }
 
     pub fn on_disconnected(&self, result: ConnectionResult<()>) {
@@ -318,16 +346,18 @@ impl FieldMonitorConnectionView {
 
     fn handle_error(&self, result: ConnectionResult<()>, allow_reauth: bool) {
         let imp = self.imp();
-        imp.status_stack.set_visible_child_name("disconnected");
-        imp.outer_stack.set_visible_child_name("status");
 
         match result {
             Ok(()) => {
+                imp.status_stack.set_visible_child_name("disconnected");
+                imp.outer_stack.set_visible_child_name("status");
+                self.remove_css_class("connection-view-grabbed");
+
                 imp.error_status_page.set_title(&gettext("Disconnected"));
                 imp.error_status_page
                     .set_description(Some(&gettext("The connection to the server was closed.")));
             }
-            Err(ConnectionError::AuthFailed(_msg, err)) if allow_reauth => {
+            Err(ConnectionError::AuthFailed(_msg, err)) if allow_reauth && self.allow_reauths() => {
                 warn!("Connection failed with auth error: {err}");
                 glib::spawn_future_local(glib::clone!(
                     #[strong(rename_to = slf)]
@@ -335,7 +365,11 @@ impl FieldMonitorConnectionView {
                     async move {
                         let mut loader_brw = slf.imp().connection_loader.lock().await;
                         match loader_brw.as_mut().unwrap().reauth().await {
-                            Some(()) => slf.reset().await,
+                            Some(()) => {
+                                drop(loader_brw);
+                                slf.set_allow_reauths(false);
+                                slf.reset().await
+                            }
                             None => slf.handle_error(
                                 Err(ConnectionError::General(
                                     None,
@@ -349,6 +383,10 @@ impl FieldMonitorConnectionView {
             }
             Err(ConnectionError::General(msg, err))
             | Err(ConnectionError::AuthFailed(msg, err)) => {
+                imp.status_stack.set_visible_child_name("disconnected");
+                imp.outer_stack.set_visible_child_name("status");
+                self.remove_css_class("connection-view-grabbed");
+
                 warn!("Connection failed: {err}");
                 imp.error_status_page
                     .set_title(&gettext("Connection Failed"));
@@ -362,12 +400,93 @@ impl FieldMonitorConnectionView {
         }
     }
 
-    pub fn close(&self) {
-        if let Some(close_fn) = self.imp().close_fn.borrow().as_ref() {
-            close_fn();
+    fn configure_rdw_action_support(&self, display: Option<&rdw::Display>) {
+        match display {
+            None => {
+                self.action_set_enabled("view.dynamic-resize", false);
+                self.action_set_enabled("view.scale-to-window", false);
+                self.action_set_enabled("view.fit-to-screen", false);
+            }
+            Some(_) => {
+                self.action_set_enabled("view.dynamic-resize", false); // TODO: Not implemented in rdw yet?
+                self.action_set_enabled("view.scale-to-window", true);
+                self.action_set_enabled("view.fit-to-screen", true);
+            }
+        }
+        self.notify_dynamic_resize();
+        self.notify_scale_to_window();
+    }
+
+    fn fit_to_screen(&self) {
+        let display = self
+            .imp()
+            .display_bin
+            .child()
+            .map(Cast::downcast::<rdw::Display>)
+            .and_then(Result::ok);
+        let window = self
+            .root()
+            .map(Cast::downcast::<FieldMonitorWindow>)
+            .and_then(Result::ok);
+
+        if let (Some(display), Some(window)) = (display, window) {
+            if let Some((w, h)) = display.display_size() {
+                if w != 0 && h != 0 {
+                    window.resize(w, h);
+                }
+            }
         }
     }
 }
 
 #[gtk::template_callbacks]
-impl FieldMonitorConnectionView {}
+impl FieldMonitorConnectionView {
+    #[template_callback]
+    fn on_self_dynamic_resize_changed(&self) {
+        error!("Dynamic resize not implemented");
+    }
+
+    #[template_callback]
+    fn on_self_scale_to_window_changed(&self) {
+        let display = self
+            .imp()
+            .display_bin
+            .child()
+            .map(Cast::downcast::<rdw::Display>)
+            .and_then(Result::ok);
+        if let Some(display) = display {
+            if self.scale_to_window() {
+                display.set_hexpand(true);
+                display.set_vexpand(true);
+                display.set_halign(gtk::Align::Fill);
+                display.set_valign(gtk::Align::Fill);
+            } else {
+                display.set_hexpand(false);
+                display.set_vexpand(false);
+                display.set_halign(gtk::Align::Center);
+                display.set_valign(gtk::Align::Center);
+            }
+        }
+    }
+
+    #[template_callback]
+    fn on_focus_grabber_grabbed_changed(&self) {
+        let grabber = &*self.imp().focus_grabber;
+        let grabbed = grabber.grabbed();
+
+        let window = self
+            .root()
+            .map(Cast::downcast::<FieldMonitorWindow>)
+            .and_then(Result::ok);
+
+        self.set_reveal_osd_controls(!grabbed);
+
+        if let Some(window) = window {
+            if grabbed {
+                window.add_css_class("connection-view-grabbed");
+            } else {
+                window.remove_css_class("connection-view-grabbed");
+            }
+        }
+    }
+}

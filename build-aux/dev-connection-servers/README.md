@@ -13,7 +13,7 @@ VNC, RDP or SPICE servers for testing.
 ### VNC
 
 - Port: 15901
-- Password: vncpassword
+- Password: password123
 
 ### RDP
 

@@ -19,7 +19,7 @@ StringFilter model_string_filter {
     match-mode: substring;
 }
 
-template $FieldMonitorConnectionList : Adw.Bin {
+template $FieldMonitorConnectionList: Adw.Bin {
     search-is-visible: bind search_bar.search-mode-enabled bidirectional;
     show-overview-button: bind overview_button.visible bidirectional;
 
@@ -36,7 +36,7 @@ template $FieldMonitorConnectionList : Adw.Bin {
 
             Button overview_button {
                 icon-name: "view-grid-symbolic";
-                tooltip-text: _("Tab Overview");
+                tooltip-text: _("Open Connections");
                 action-name: "win.open-overview";
             }
 
@@ -63,7 +63,6 @@ template $FieldMonitorConnectionList : Adw.Bin {
             SearchEntry search_entry {
                 search-delay: 100;
                 placeholder-text: _("Search");
-
                 search-changed => $on_search_entry_search_changed() swapped;
             }
         }
@@ -74,7 +73,10 @@ template $FieldMonitorConnectionList : Adw.Bin {
             [overlay]
             Gtk.ProgressBar progress_bar {
                 visible: false;
-                styles ["osd"]
+
+                styles [
+                    "osd"
+                ]
             }
 
             ScrolledWindow {
@@ -86,12 +88,15 @@ template $FieldMonitorConnectionList : Adw.Bin {
 
                     StackPage {
                         name: "welcome";
+
                         child: Adw.StatusPage welcome_status_page {
                             title: _("Field Monitor");
                         };
                     }
+
                     StackPage {
                         name: "list";
+
                         child: ScrolledWindow {
                             hscrollbar-policy: never;
                             propagate-natural-height: true;
@@ -106,13 +111,18 @@ template $FieldMonitorConnectionList : Adw.Bin {
                                         title: _("No Results");
                                     }
 
-                                    styles ["list-inner-box", "navigation-sidebar"]
+                                    styles [
+                                        "list-inner-box",
+                                        "navigation-sidebar"
+                                    ]
                                 };
                             };
                         };
                     }
+
                     StackPage {
                         name: "empty_list";
+
                         child: Adw.StatusPage empty_list_status_page {
                             title: _("Field Monitor");
                             description: _("There are no connections configured yet.\nActivate the button below to get started.");
@@ -120,21 +130,32 @@ template $FieldMonitorConnectionList : Adw.Bin {
                             child: Button {
                                 halign: center;
                                 action-name: "app.add-connection";
+
                                 child: Adw.ButtonContent {
                                     icon-name: "list-add-symbolic";
                                     label: _("Add New Connection");
                                 };
-                                styles ["pill", "suggested-action", "add-connection-button"]
+
+                                styles [
+                                    "pill",
+                                    "suggested-action",
+                                    "add-connection-button"
+                                ]
                             };
                         };
                     }
-                    styles ["content-page"]
+
+                    styles [
+                        "content-page"
+                    ]
                 }
             }
         };
     };
 
-    styles ["connection-list"]
+    styles [
+        "connection-list"
+    ]
 }
 
 menu primary_menu {
@@ -143,11 +164,13 @@ menu primary_menu {
             label: _("Add New Connection");
             action: "app.add-connection";
         }
+
         item {
             label: _('_Reload Connections');
             action: 'app.reload-connections';
         }
     }
+
     section {
         item {
             label: _('_New Window');

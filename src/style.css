@@ -3,7 +3,7 @@
 }
 
 window {
-    transition: border-radius 0.25s ease;
+    transition: border-radius 0.5s ease, outline 0.5s ease;
 }
 
 /*
@@ -62,18 +62,23 @@ menubutton.header-osd button:not(.nohover):active,
 }
 
 .vte-box {
-    background: #000;
+    background: #fff;
     padding-left: 12px;
     padding-right: 12px;
     padding-bottom: 12px;
 }
 
 .faux-header.vte {
-    background: #000;
+    background: #fff;
+    color: #000;
 }
 
 .header-bg-gradient {
     background-image: linear-gradient(color-mix(in srgb, var(--window-bg-color) 60%, transparent), transparent);
+}
+
+.connection-view-grabbed:not(.fullscreen) {
+    outline: 2px solid var(--accent-bg-color);
 }
 
 /* * * * */

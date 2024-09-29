@@ -253,7 +253,7 @@ impl FieldMonitorApplication {
         ));
 
         // Accelerators
-        app.set_accels_for_action("win.toggle-fullscreen", &["F11"]);
+        app.set_accels_for_action("win.fullscreen", &["F11"]);
 
         // Prefer dark style by default
         app.style_manager()

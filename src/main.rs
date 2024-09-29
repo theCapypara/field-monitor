@@ -35,6 +35,7 @@ mod connection;
 mod connection_loader;
 mod i18n;
 mod secrets;
+mod util;
 mod widget;
 
 fn main() -> glib::ExitCode {

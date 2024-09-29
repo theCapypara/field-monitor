@@ -15,12 +15,18 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use adw::gdk;
+use vte::prelude::*;
 
-pub mod add_connection_dialog;
-pub mod authenticate_connection_dialog;
-mod close_warning_dialog;
-pub mod connection_list;
-pub mod connection_view;
-mod foucs_grabber;
-pub mod update_connection_dialog;
-pub mod window;
+const BLACK: gdk::RGBA = gdk::RGBA::new(0.0, 0.0, 0.0, 1.0);
+const WHITE: gdk::RGBA = gdk::RGBA::new(1.0, 1.0, 1.0, 1.0);
+
+pub fn configure_vte_styling(terminal: &vte::Terminal, style_manager: &adw::StyleManager) {
+    if style_manager.is_dark() {
+        terminal.set_color_foreground(&WHITE);
+        terminal.set_color_background(&BLACK);
+    } else {
+        terminal.set_color_foreground(&BLACK);
+        terminal.set_color_background(&WHITE);
+    }
+}

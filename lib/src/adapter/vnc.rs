@@ -16,14 +16,15 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::borrow::Cow;
+use std::cell::RefCell;
 use std::rc::Rc;
 
 use anyhow::anyhow;
 use gettextrs::gettext;
 use glib::prelude::*;
-use glib::translate::IntoGlib;
+use glib::translate::{FromGlib, IntoGlib};
 use log::{debug, warn};
-use rdw_vnc::gvnc::ConnectionCredential;
+use rdw_vnc::gvnc;
 use secure_string::SecureString;
 
 use crate::adapter::types::{Adapter, AdapterDisplay};
@@ -59,83 +60,124 @@ impl Adapter for VncAdapter {
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
     ) -> AdapterDisplay {
+        let error_container: Rc<RefCell<Option<ConnectionError>>> = Rc::new(RefCell::new(None));
+        let host = self.host.clone();
         let user = self.user.clone();
+        let port = self.port;
 
         let vnc = rdw_vnc::Display::new();
-        vnc.connection()
-            .open_host(&self.host, &format!("{}", self.port))
-            .unwrap();
 
-        vnc.connection().connect_vnc_error(glib::clone!(
-            #[strong]
-            on_disconnected,
-            move |_conn, err| {
-                warn!("VNC connect error: {:?}", &err);
-                let err_msg = err.to_string();
-                on_disconnected(Err(ConnectionError::General(
+        let error_container2 = error_container.clone();
+        vnc.connection().connect_vnc_error(move |_conn, err| {
+            warn!("VNC connect error: {:?}", &err);
+            let err_msg = err.to_string();
+
+            if error_container2.borrow().is_none() {
+                error_container2.replace(Some(ConnectionError::General(
                     Some(err_msg),
                     anyhow!("{}", &err),
                 )));
             }
-        ));
+        });
 
-        vnc.connection().connect_vnc_auth_failure(glib::clone!(
-            #[strong]
-            on_disconnected,
-            move |_conn, err| {
+        let error_container3 = error_container.clone();
+        vnc.connection()
+            .connect_vnc_auth_failure(move |_conn, err| {
                 warn!("VNC auth failure: {:?}", &err);
                 let err_msg = err.to_string();
-                on_disconnected(Err(ConnectionError::AuthFailed(
+                error_container3.replace(Some(ConnectionError::AuthFailed(
                     Some(err_msg),
                     anyhow!("{}", &err),
                 )));
-            }
-        ));
+            });
 
-        vnc.connection().connect_vnc_disconnected(glib::clone!(
-            #[strong]
-            on_disconnected,
-            move |_conn| {
-                debug!("VNC connection disconnected");
-                on_disconnected(Ok(()));
+        vnc.connection().connect_vnc_disconnected(move |_conn| {
+            debug!("VNC connection disconnected");
+            match error_container.borrow_mut().take() {
+                None => on_disconnected(Ok(())),
+                Some(err) => on_disconnected(Err(err)),
             }
-        ));
+        });
 
-        vnc.connection().connect_vnc_connected(glib::clone!(
-            #[strong]
-            on_connected,
-            move |_conn| {
-                debug!("VNC connection established");
-                on_connected();
-            }
-        ));
+        vnc.connection().connect_vnc_connected(move |_conn| {
+            debug!("VNC connection established");
+            on_connected();
+        });
 
         vnc.connection()
             .connect_vnc_auth_credential(move |conn, va| {
                 debug!("VNC connection authenticating");
                 let creds: Vec<_> = va
                     .iter()
-                    .map(|v| v.get::<ConnectionCredential>().unwrap())
+                    .map(|v| v.get::<gvnc::ConnectionCredential>().unwrap())
                     .collect();
-                if creds.contains(&ConnectionCredential::Username) {
-                    conn.set_credential(ConnectionCredential::Username.into_glib(), &user)
+                dbg!(&creds);
+                if creds.contains(&gvnc::ConnectionCredential::Username) {
+                    dbg!("username", &user);
+                    conn.set_credential(gvnc::ConnectionCredential::Username.into_glib(), &user)
                         .unwrap();
                 }
-                if creds.contains(&ConnectionCredential::Clientname) {
+                if creds.contains(&gvnc::ConnectionCredential::Clientname) {
+                    dbg!("clientname", "field-monitor");
                     conn.set_credential(
-                        ConnectionCredential::Clientname.into_glib(),
+                        gvnc::ConnectionCredential::Clientname.into_glib(),
                         "field-monitor",
                     )
                     .unwrap();
                 }
-                if creds.contains(&ConnectionCredential::Password) {
+                if creds.contains(&gvnc::ConnectionCredential::Password) {
+                    dbg!("password", self.password.unsecure());
                     conn.set_credential(
-                        ConnectionCredential::Password.into_glib(),
+                        gvnc::ConnectionCredential::Password.into_glib(),
                         self.password.unsecure(),
                     )
                     .unwrap();
                 }
             });
+
+        vnc.connection()
+            .connect_vnc_auth_choose_subtype(|conn, typ, va| {
+                // SAFETY: We trust that gvnc gives us a valid type.
+                match unsafe { gvnc::ConnectionAuth::from_glib(typ as i32) } {
+                    gvnc::ConnectionAuth::Vencrypt => {
+                        let prefer_subauth = [
+                            gvnc::ConnectionAuthVencrypt::Tlsvnc,
+                            gvnc::ConnectionAuthVencrypt::Tlssasl,
+                            gvnc::ConnectionAuthVencrypt::Tlsplain,
+                            gvnc::ConnectionAuthVencrypt::Tlsnone,
+                            gvnc::ConnectionAuthVencrypt::X509sasl,
+                            gvnc::ConnectionAuthVencrypt::X509vnc,
+                            gvnc::ConnectionAuthVencrypt::X509plain,
+                            gvnc::ConnectionAuthVencrypt::X509none,
+                            gvnc::ConnectionAuthVencrypt::Plain,
+                        ];
+                        for &auth in &prefer_subauth {
+                            for a in va.iter() {
+                                if a.get::<gvnc::ConnectionAuthVencrypt>().unwrap() == auth {
+                                    if let Err(e) =
+                                        conn.set_auth_subtype(auth.into_glib().try_into().unwrap())
+                                    {
+                                        warn!("Failed to set auth subtype: {}", e);
+                                        conn.shutdown();
+                                    }
+                                    return;
+                                }
+                            }
+                        }
+
+                        warn!("No preferred auth subtype found");
+                        conn.shutdown();
+                    }
+                    typ => {
+                        warn!("unknown how to set vnc subtype for type {typ:?}");
+                        conn.shutdown();
+                    }
+                }
+            });
+
+        vnc.connection()
+            .open_host(&host, &format!("{}", port))
+            .unwrap();
 
         AdapterDisplay::Rdw(vnc.upcast())
     }

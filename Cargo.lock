@@ -853,6 +853,7 @@ dependencies = [
  "serde",
  "serde_yaml",
  "uuid",
+ "vte4",
 ]
 
 [[package]]

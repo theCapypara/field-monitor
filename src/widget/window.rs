@@ -25,6 +25,7 @@ use gettextrs::gettext;
 use gtk::{gio, glib};
 use gtk::glib::Variant;
 use itertools::Itertools;
+use log::debug;
 
 use crate::application::FieldMonitorApplication;
 use crate::connection_loader::ConnectionLoader;
@@ -55,6 +56,8 @@ mod imp {
         pub sharp_window_corners: Cell<bool>,
         pub tab_title_notify_binding: RefCell<Option<(gtk::Widget, glib::SignalHandlerId)>>,
         pub force_close: Cell<bool>,
+        // Currently active page for TabView menus.
+        pub menu_page: RefCell<Option<adw::TabPage>>,
     }
 
     #[glib::object_subclass]
@@ -89,7 +92,7 @@ mod imp {
 glib::wrapper! {
     pub struct FieldMonitorWindow(ObjectSubclass<imp::FieldMonitorWindow>)
         @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow,
-        @implements gio::ActionGroup, gio::ActionMap;
+        @implements gtk::Root, gtk::Native, gio::ActionGroup, gio::ActionMap;
 }
 
 impl FieldMonitorWindow {
@@ -139,6 +142,26 @@ impl FieldMonitorWindow {
         ));
 
         self.add_action_entries([open_overview_action, show_connection_action]);
+
+        let tab_move_to_new_window_action = gio::ActionEntry::builder("move-to-new-window")
+            .activate(glib::clone!(
+                #[weak(rename_to = slf)]
+                self,
+                move |_, a, b| slf.act_tab_move_to_new_window(a, b)
+            ))
+            .build();
+
+        let tab_close_action = gio::ActionEntry::builder("close")
+            .activate(glib::clone!(
+                #[weak(rename_to = slf)]
+                self,
+                move |_, a, b| slf.act_tab_close(a, b)
+            ))
+            .build();
+
+        let tab_action_group = gio::SimpleActionGroup::new();
+        tab_action_group.add_action_entries([tab_move_to_new_window_action, tab_close_action]);
+        self.insert_action_group("tab", Some(&tab_action_group));
     }
 
     pub fn toast(&self, msg: &str) {
@@ -193,36 +216,38 @@ impl FieldMonitorWindow {
             .unwrap()
             .downcast::<FieldMonitorApplication>()
             .unwrap();
-        let tab_view = &self.imp().tab_view;
-        let main_stack = &self.imp().main_stack;
 
-        let view = FieldMonitorConnectionView::new(
-            &app,
-            Some(self),
-            None,
-            server_path,
-            adapter_id,
-            loader,
-        );
-        let tab_page = self.add_new_page(&view, server_title, Some(connection_title));
+        let view =
+            FieldMonitorConnectionView::new(&app, Some(self), server_path, adapter_id, loader);
 
-        view.set_close_fn(Some(Box::new(glib::clone!(
-            #[weak]
-            tab_view,
-            #[weak]
-            tab_page,
-            #[weak]
-            main_stack,
-            #[upgrade_or]
-            true,
-            move || {
-                tab_view.close_page(&tab_page);
-                main_stack.set_visible_child_name("connection-list");
-                true
-            }
-        ))));
+        self.add_new_page(&view, server_title, Some(connection_title));
 
         self.imp().main_stack.set_visible_child_name("tabs");
+    }
+
+    // Taken in parts from Showtime:
+    // https://gitlab.gnome.org/GNOME/Incubator/showtime/-/blob/238f6d37a09fd264b887642f03521d974c369794/showtime/window.py#L836
+    pub fn resize(&self, new_width: usize, new_height: usize) {
+        debug!("Resizing window");
+
+        let (init_width, init_height) = self.default_size();
+        let (init_width, init_height) = (init_width as usize, init_height as usize);
+
+        for (prop, init, target) in [
+            ("default-width", init_width, new_width),
+            ("default-height", init_height, new_height),
+        ] {
+            let anim = adw::TimedAnimation::new(
+                self,
+                init as f64,
+                target as f64,
+                500,
+                adw::PropertyAnimationTarget::new(self, prop),
+            );
+            anim.set_easing(adw::Easing::EaseOutExpo);
+            anim.play();
+            debug!("Resized window to {new_width}x{new_height}.")
+        }
     }
 
     fn act_show_connection_list(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
@@ -234,6 +259,44 @@ impl FieldMonitorWindow {
     fn act_open_overview(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
         self.imp().overview.set_open(true);
         self.imp().main_stack.set_visible_child_name("tabs");
+    }
+
+    fn act_tab_move_to_new_window(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
+        let imp = self.imp();
+        if let Some(menu_page) = self.tab_view_current_page() {
+            let new_window =
+                FieldMonitorWindow::new(&self.application().unwrap().downcast().unwrap());
+
+            let child = menu_page.child();
+            new_window.set_default_size(child.width(), child.height());
+
+            imp.tab_view
+                .transfer_page(&menu_page, &new_window.imp().tab_view, 0);
+            new_window.present();
+            new_window.show_tabs();
+            if !imp.overview.is_open() {
+                imp.main_stack.set_visible_child_name("connection-list");
+            }
+        }
+    }
+
+    fn act_tab_close(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
+        let imp = self.imp();
+        if let Some(menu_page) = self.tab_view_current_page() {
+            imp.tab_view.close_page(&menu_page);
+            if !imp.overview.is_open() {
+                imp.main_stack.set_visible_child_name("connection-list");
+            }
+        }
+    }
+
+    fn tab_view_current_page(&self) -> Option<adw::TabPage> {
+        self.imp()
+            .menu_page
+            .borrow()
+            .as_ref()
+            .cloned()
+            .or_else(|| self.imp().tab_view.selected_page())
     }
 
     fn add_new_page(
@@ -320,6 +383,11 @@ impl FieldMonitorWindow {
         } else {
             self.remove_css_class("sharp-corners")
         }
+    }
+
+    #[template_callback]
+    fn on_tab_view_setup_menu(&self, tab_page: Option<adw::TabPage>, _tab_view: &adw::TabView) {
+        self.imp().menu_page.replace(tab_page);
     }
 
     #[template_callback]

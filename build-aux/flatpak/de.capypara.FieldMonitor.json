@@ -14,7 +14,7 @@
         "--socket=fallback-x11",
         "--device=dri",
         "--socket=wayland",
-        "--env=RUST_LOG=field_monitor=info,libfieldmonitor=info,GLib=info"
+        "--env=RUST_LOG=field_monitor=info,libfieldmonitor=info,GLib=info,warning"
     ],
     "build-options": {
         "append-path": "/usr/lib/sdk/rust-stable/bin",
@@ -22,8 +22,7 @@
             "--share=network"
         ],
         "env": {
-            "RUST_BACKTRACE": "1",
-            "RUST_LOG": "field-monitor=debug"
+            "RUST_BACKTRACE": "1"
         }
     },
     "cleanup": [
