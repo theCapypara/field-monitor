@@ -66,7 +66,7 @@ cargo_opt += [ '--target-dir', meson.project_build_root()  / 'src' ]
 cargo_env  = [ 'CARGO_HOME=' + meson.project_build_root()  / 'cargo-home' ]
 
 if get_option('buildtype') == 'release'
-  cargo_opt += [ '--release' ]
+  cargo_opt += [ '--release', '--features', 'prod' ]
   rust_target = 'release'
 else
   cargo_opt += [ '--features', 'devel' ]

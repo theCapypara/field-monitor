@@ -62,6 +62,14 @@ mod imp {
         pub header_gradient: TemplateChild<adw::Bin>,
         #[template_child]
         pub focus_grabber: TemplateChild<FieldMonitorFocusGrabber>,
+        #[template_child]
+        pub menu_button: TemplateChild<gtk::MenuButton>,
+        #[template_child]
+        pub on_connection_menu_rdw: TemplateChild<gio::MenuModel>,
+        #[template_child]
+        pub on_connection_menu_vte: TemplateChild<gio::MenuModel>,
+        #[template_child]
+        pub on_connection_menu_other: TemplateChild<gio::MenuModel>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
@@ -139,6 +147,7 @@ impl FieldMonitorConnectionView {
             .property("application", app)
             .property("server-path", server_path)
             .property("adapter-id", adapter_id)
+            .property("dynamic-resize", true)
             .property("scale-to-window", true)
             .property("reveal-osd-controls", true)
             .property("allow-reauths", true)
@@ -228,6 +237,8 @@ impl FieldMonitorConnectionView {
         let imp = self.imp();
         let widget: gtk::Widget = match display {
             AdapterDisplay::Rdw(display) => {
+                imp.menu_button
+                    .set_menu_model(Some(&*imp.on_connection_menu_rdw));
                 imp.header_gradient.set_visible(true);
                 display.set_visible(true);
                 display.set_vexpand(true);
@@ -237,6 +248,8 @@ impl FieldMonitorConnectionView {
                 display.upcast()
             }
             AdapterDisplay::Vte(terminal) => {
+                imp.menu_button
+                    .set_menu_model(Some(&*imp.on_connection_menu_vte));
                 imp.header_gradient.set_visible(false);
                 terminal.set_vexpand(true);
                 terminal.set_hexpand(true);
@@ -273,6 +286,8 @@ impl FieldMonitorConnectionView {
                 bx.upcast()
             }
             AdapterDisplay::Arbitrary { widget, overlayed } => {
+                imp.menu_button
+                    .set_menu_model(Some(&*imp.on_connection_menu_other));
                 let bx = gtk::Box::builder()
                     .orientation(gtk::Orientation::Vertical)
                     .build();
@@ -351,7 +366,7 @@ impl FieldMonitorConnectionView {
             Ok(()) => {
                 imp.status_stack.set_visible_child_name("disconnected");
                 imp.outer_stack.set_visible_child_name("status");
-                self.remove_css_class("connection-view-grabbed");
+                self.mark_as_ungrabbed();
 
                 imp.error_status_page.set_title(&gettext("Disconnected"));
                 imp.error_status_page
@@ -385,7 +400,7 @@ impl FieldMonitorConnectionView {
             | Err(ConnectionError::AuthFailed(msg, err)) => {
                 imp.status_stack.set_visible_child_name("disconnected");
                 imp.outer_stack.set_visible_child_name("status");
-                self.remove_css_class("connection-view-grabbed");
+                self.mark_as_ungrabbed();
 
                 warn!("Connection failed: {err}");
                 imp.error_status_page
@@ -406,9 +421,10 @@ impl FieldMonitorConnectionView {
                 self.action_set_enabled("view.dynamic-resize", false);
                 self.action_set_enabled("view.scale-to-window", false);
                 self.action_set_enabled("view.fit-to-screen", false);
+                self.imp().dynamic_resize.set(false);
             }
-            Some(_) => {
-                self.action_set_enabled("view.dynamic-resize", false); // TODO: Not implemented in rdw yet?
+            Some(display) => {
+                self.action_set_enabled("view.dynamic-resize", true);
                 self.action_set_enabled("view.scale-to-window", true);
                 self.action_set_enabled("view.fit-to-screen", true);
             }
@@ -437,13 +453,43 @@ impl FieldMonitorConnectionView {
             }
         }
     }
+
+    fn mark_as_ungrabbed(&self) {
+        let window = self
+            .root()
+            .map(Cast::downcast::<FieldMonitorWindow>)
+            .and_then(Result::ok);
+
+        if let Some(window) = window {
+            window.remove_css_class("connection-view-grabbed");
+        }
+    }
 }
 
 #[gtk::template_callbacks]
 impl FieldMonitorConnectionView {
     #[template_callback]
     fn on_self_dynamic_resize_changed(&self) {
-        error!("Dynamic resize not implemented");
+        let display = self
+            .imp()
+            .display_bin
+            .child()
+            .map(Cast::downcast::<rdw::Display>)
+            .and_then(Result::ok);
+
+        if let Some(display) = display.as_ref() {
+            display.set_remote_resize(self.dynamic_resize());
+        }
+
+        // Enable or disable scale to window / fit to screen switches based on if dynamic resize is on.
+        if self.dynamic_resize() {
+            self.set_scale_to_window(true); // needs also to be on.
+            self.action_set_enabled("view.scale-to-window", false);
+            self.action_set_enabled("view.fit-to-screen", false);
+        } else if display.is_some() {
+            self.action_set_enabled("view.scale-to-window", true);
+            self.action_set_enabled("view.fit-to-screen", true);
+        }
     }
 
     #[template_callback]
@@ -488,5 +534,10 @@ impl FieldMonitorConnectionView {
                 window.remove_css_class("connection-view-grabbed");
             }
         }
+    }
+
+    #[template_callback]
+    fn on_self_unrealize(&self) {
+        self.mark_as_ungrabbed();
     }
 }

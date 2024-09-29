@@ -22,7 +22,7 @@ use std::rc::Rc;
 use anyhow::anyhow;
 use gettextrs::gettext;
 use glib::prelude::*;
-use glib::translate::{FromGlib, IntoGlib};
+use glib::translate::IntoGlib;
 use log::{debug, warn};
 use rdw_vnc::gvnc;
 use secure_string::SecureString;
@@ -132,46 +132,6 @@ impl Adapter for VncAdapter {
                         self.password.unsecure(),
                     )
                     .unwrap();
-                }
-            });
-
-        vnc.connection()
-            .connect_vnc_auth_choose_subtype(|conn, typ, va| {
-                // SAFETY: We trust that gvnc gives us a valid type.
-                match unsafe { gvnc::ConnectionAuth::from_glib(typ as i32) } {
-                    gvnc::ConnectionAuth::Vencrypt => {
-                        let prefer_subauth = [
-                            gvnc::ConnectionAuthVencrypt::Tlsvnc,
-                            gvnc::ConnectionAuthVencrypt::Tlssasl,
-                            gvnc::ConnectionAuthVencrypt::Tlsplain,
-                            gvnc::ConnectionAuthVencrypt::Tlsnone,
-                            gvnc::ConnectionAuthVencrypt::X509sasl,
-                            gvnc::ConnectionAuthVencrypt::X509vnc,
-                            gvnc::ConnectionAuthVencrypt::X509plain,
-                            gvnc::ConnectionAuthVencrypt::X509none,
-                            gvnc::ConnectionAuthVencrypt::Plain,
-                        ];
-                        for &auth in &prefer_subauth {
-                            for a in va.iter() {
-                                if a.get::<gvnc::ConnectionAuthVencrypt>().unwrap() == auth {
-                                    if let Err(e) =
-                                        conn.set_auth_subtype(auth.into_glib().try_into().unwrap())
-                                    {
-                                        warn!("Failed to set auth subtype: {}", e);
-                                        conn.shutdown();
-                                    }
-                                    return;
-                                }
-                            }
-                        }
-
-                        warn!("No preferred auth subtype found");
-                        conn.shutdown();
-                    }
-                    typ => {
-                        warn!("unknown how to set vnc subtype for type {typ:?}");
-                        conn.shutdown();
-                    }
                 }
             });
 

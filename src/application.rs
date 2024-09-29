@@ -730,6 +730,7 @@ impl FieldMonitorApplication {
     //    reason = "OK because we explicitly drop. See known problems of lint."
     //)]
     pub async fn update_connection(&self, connection: DualScopedConnectionConfiguration) {
+        let _busy = self.be_busy();
         debug!("adding connection {}", connection.session().id());
 
         let imp = self.imp();
@@ -768,6 +769,7 @@ impl FieldMonitorApplication {
     }
 
     async fn update_connection_by_file(&self, path: &PathBuf) -> anyhow::Result<()> {
+        let _busy = self.be_busy();
         let connection_id = path
             .file_stem()
             .ok_or_else(|| anyhow!("Connection file had no filename."))?
@@ -789,6 +791,7 @@ impl FieldMonitorApplication {
 
     /// Removes a connection (or does nothing if the connection was not added before).
     pub fn remove_connection(&self, connection_id: &str, from_disk: bool) {
+        let _busy = self.be_busy();
         debug!("removing connection {connection_id}");
         let mut brw = self.imp().connections.borrow_mut();
         if let Some(map) = brw.as_mut() {
@@ -816,6 +819,7 @@ impl FieldMonitorApplication {
 
     /// Reloads all connections. I/O errors and config deserialization errors are logged but ignored.
     pub async fn reload_connections(&self) {
+        let _busy = self.be_busy();
         debug!("reloading connections");
         self.imp().set_loading_connection(true);
 
@@ -876,6 +880,7 @@ impl FieldMonitorApplication {
         mut connection: DualScopedConnectionConfiguration,
         save_now: bool,
     ) -> anyhow::Result<Option<ConnectionInstance>> {
+        let _busy = self.be_busy();
         let mut filename = self.connections_dir().await;
 
         let c_persistent = connection.persistent_mut();

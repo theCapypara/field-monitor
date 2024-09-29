@@ -78,6 +78,7 @@ rust-version = { workspace = true }
 
 [features]
 devel = ["dep:field-monitor-debug"]
+prod = ["log/release_max_level_info"]
 
 [dependencies]
 gettext-rs = { workspace = true }

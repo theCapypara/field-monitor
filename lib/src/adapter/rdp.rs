@@ -67,7 +67,7 @@ impl Adapter for RdpAdapter {
             s.set_username(Some(self.user.as_str()))?;
             s.set_password(Some(self.password.unsecure()))?;
             s.set_remote_fx_codec(true);
-            s.parse_command_line(&["field-monitor", "/rfx"], true)?;
+            s.parse_command_line(&["field-monitor", "/rfx", "/dynamic-resolution"], true)?;
             Ok(())
         });
 

@@ -6,6 +6,7 @@ template $FieldMonitorConnectionView: Adw.Bin {
     subtitle: bind window_title.subtitle bidirectional;
     notify::dynamic-resize => $on_self_dynamic_resize_changed() swapped;
     notify::scale-to-window => $on_self_scale_to_window_changed() swapped;
+    unrealize => $on_self_unrealize() swapped;
 
     child: Overlay {
         // This great idea and base of implementation comes rom Showtime!
@@ -138,14 +139,13 @@ template $FieldMonitorConnectionView: Adw.Bin {
                         ]
                     }
 
-                    MenuButton {
+                    MenuButton menu_button {
                         hexpand: true;
                         valign: start;
                         halign: end;
                         primary: true;
                         icon-name: 'view-more-symbolic';
                         tooltip-text: _('Menu');
-                        menu-model: on_connection_menu;
 
                         styles [
                             "header-osd",
@@ -285,18 +285,16 @@ template $FieldMonitorConnectionView: Adw.Bin {
     };
 }
 
-menu on_connection_menu {
+menu on_connection_menu_rdw {
     section {
         item {
             label: _('_Dynamic Resize');
             action: 'view.dynamic-resize';
-            hidden-when: "action-disabled";
         }
 
         item {
             label: _('_Scale to Window');
             action: 'view.scale-to-window';
-            hidden-when: "action-disabled";
         }
     }
 
@@ -304,10 +302,82 @@ menu on_connection_menu {
         item {
             label: _('_Resize Window to Screen');
             action: 'view.fit-to-screen';
-            hidden-when: "action-disabled";
         }
     }
 
+    section {
+        item {
+            label: _('_Move to New Window');
+            action: 'tab.move-to-new-window';
+        }
+
+        item {
+            label: _('_Close Connection');
+            action: 'tab.close';
+        }
+    }
+
+    section {
+        item {
+            label: _('_New Window');
+            action: 'app.new-window';
+        }
+
+        item {
+            label: _('_Preferences');
+            action: 'app.preferences';
+        }
+
+        item {
+            label: _('_Keyboard Shortcuts');
+            action: 'win.show-help-overlay';
+        }
+
+        item {
+            label: _('_About Field Monitor');
+            action: 'app.about';
+        }
+    }
+}
+
+menu on_connection_menu_vte {
+    // TODO
+    section {
+        item {
+            label: _('_Move to New Window');
+            action: 'tab.move-to-new-window';
+        }
+
+        item {
+            label: _('_Close Connection');
+            action: 'tab.close';
+        }
+    }
+
+    section {
+        item {
+            label: _('_New Window');
+            action: 'app.new-window';
+        }
+
+        item {
+            label: _('_Preferences');
+            action: 'app.preferences';
+        }
+
+        item {
+            label: _('_Keyboard Shortcuts');
+            action: 'win.show-help-overlay';
+        }
+
+        item {
+            label: _('_About Field Monitor');
+            action: 'app.about';
+        }
+    }
+}
+
+menu on_connection_menu_other {
     section {
         item {
             label: _('_Move to New Window');
