@@ -49,6 +49,8 @@ mod imp {
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
         pub connection: RefCell<Option<ConnectionInstance>>,
+        #[property(get, construct_only)]
+        pub server_path: RefCell<Vec<String>>,
         pub saved_connection: RefCell<Option<ConnectionInstance>>,
         pub preferences: RefCell<Option<adw::PreferencesGroup>>,
     }
@@ -86,17 +88,23 @@ glib::wrapper! {
 }
 
 impl FieldMonitorAuthenticateConnectionDialog {
-    pub fn new(app: &FieldMonitorApplication, connection: ConnectionInstance) -> Self {
+    pub fn new(
+        app: &FieldMonitorApplication,
+        connection: ConnectionInstance,
+        server_path: &[String],
+    ) -> Self {
         let slf: Self = glib::Object::builder()
             .property("application", app)
             .property("connection", &connection)
+            .property("server-path", server_path.to_vec())
             .build();
         let imp = slf.imp();
 
         let provider = connection.provider();
 
         connection.with_configuration(|configuration| {
-            let preferences = provider.configure_credentials(configuration.persistent());
+            let preferences =
+                provider.configure_credentials(server_path, configuration.persistent());
 
             imp.preferences_page.add(&preferences);
             imp.preferences.replace(Some(preferences));
@@ -144,7 +152,10 @@ impl FieldMonitorAuthenticateConnectionDialog {
             alert.present(window)
         }
 
-        match provider.store_credentials(preferences, old_config).await {
+        match provider
+            .store_credentials(&self.server_path(), preferences, old_config)
+            .await
+        {
             Ok(config) => {
                 match app.save_connection(config, true).await {
                     Ok(Some(new_instance)) => {

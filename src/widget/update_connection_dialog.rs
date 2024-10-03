@@ -24,9 +24,9 @@ use gettextrs::gettext;
 use gtk::glib;
 
 use libfieldmonitor::connection::ConnectionInstance;
+use libfieldmonitor::i18n::gettext_f;
 
 use crate::application::FieldMonitorApplication;
-use crate::i18n::gettext_f;
 
 mod imp {
     use std::sync::OnceLock;

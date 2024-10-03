@@ -838,7 +838,7 @@ dependencies = [
  "async-std",
  "env_logger 0.11.5",
  "field-monitor-debug",
- "field-monitor-vnc",
+ "field-monitor-generic-group",
  "futures",
  "gettext-rs",
  "glib",
@@ -888,7 +888,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "field-monitor-vnc"
+name = "field-monitor-generic-group"
 version = "0.0.0"
 dependencies = [
  "anyhow",
@@ -904,6 +904,7 @@ dependencies = [
  "secure-string",
  "serde",
  "serde_yaml",
+ "uuid",
 ]
 
 [[package]]

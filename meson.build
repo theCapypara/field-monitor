@@ -11,7 +11,7 @@ gnome = import('gnome')
 
 subdir('data')
 subdir('lib/src')
-subdir('connection/vnc/src')
+subdir('connection/generic-group/src')
 subdir('src')
 subdir('po')
 

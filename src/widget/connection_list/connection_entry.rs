@@ -16,6 +16,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::cell::RefCell;
+use std::ops::Deref;
 
 use adw::prelude::*;
 use adw::prelude::{BinExt, PreferencesGroupExt};
@@ -23,8 +24,8 @@ use adw::subclass::prelude::*;
 use futures::future::try_join_all;
 use gettextrs::gettext;
 use glib::object::{IsA, ObjectExt};
-use gtk::{glib, Widget};
-use log::{error, info};
+use gtk::glib;
+use log::{error, info, warn};
 
 use libfieldmonitor::connection::*;
 
@@ -196,6 +197,21 @@ impl FieldMonitorCLConnectionEntry {
             }
         }
     }
+
+    pub fn server_titles(&self) -> impl IntoIterator<Item = impl Deref<Target = str>> {
+        let mut result = vec![];
+        for server in self.imp().servers.observe_children().iter::<glib::Object>() {
+            let Ok(server) = server else {
+                return result;
+            };
+            if let Some(server) = server.downcast_ref::<adw::PreferencesRow>() {
+                result.push(server.title())
+            } else {
+                warn!("Invalid server row type: {}", server.type_())
+            }
+        }
+        result
+    }
 }
 
 #[gtk::template_callbacks]
@@ -215,7 +231,7 @@ impl FieldMonitorCLConnectionEntry {
 }
 
 impl CanHaveSuffix for FieldMonitorCLConnectionEntry {
-    fn add_suffix(&self, widget: &impl IsA<Widget>) {
+    fn add_suffix(&self, widget: &impl IsA<gtk::Widget>) {
         self.imp()
             .connections_bin
             .child()

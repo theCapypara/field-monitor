@@ -10,6 +10,7 @@ use async_std::task::sleep;
 use futures::future::LocalBoxFuture;
 use gtk::prelude::*;
 use indexmap::IndexMap;
+use log::debug;
 use rand::{Rng, thread_rng};
 
 use libfieldmonitor::adapter::rdp::RdpAdapter;
@@ -100,23 +101,27 @@ impl ConnectionProvider for DebugConnectionProvider {
 
             // Update credentials
             let credentials = preferences.behaviour();
-            self.store_credentials(credentials.clone().upcast(), configuration)
+            self.store_credentials(&[], credentials.clone().upcast(), configuration)
                 .await
         })
     }
 
     fn configure_credentials(
         &self,
+        server_path: &[String],
         configuration: &ConnectionConfiguration,
     ) -> adw::PreferencesGroup {
+        debug!("configure_credentials server_path : {server_path:?}");
         DebugBehaviourPreferences::new(Some(configuration)).upcast()
     }
 
     fn store_credentials(
         &self,
+        server_path: &[String],
         preferences: adw::PreferencesGroup,
         mut configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
+        debug!("store_credentials server_path : {server_path:?}");
         Box::pin(async move {
             sleep(Duration::from_millis(thread_rng().gen_range(100..400))).await;
 
@@ -577,6 +582,7 @@ impl ServerConnection for DebugConnectionServer {
                             Box::new(SpiceAdapter::new(
                                 host.to_string(),
                                 port,
+                                "".to_string(),
                                 self.config.spice_password().into(),
                             ))
                         }

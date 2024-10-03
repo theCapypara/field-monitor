@@ -1,0 +1,51 @@
+using Gtk 4.0;
+using Adw 1;
+using Gio 2.0;
+
+Gio.ListStore server_store {
+    // TODO: not possible at the moment with blp
+    // item-type: $ServerConfigForRow;
+}
+
+SortListModel server_store_sorted {
+    model: server_store;
+    incremental: true;
+}
+
+template $GenericGroupPreferences: Adw.PreferencesPage {
+    title: bind title_entry.text bidirectional;
+
+    Adw.PreferencesGroup {
+        Adw.EntryRow title_entry {
+            title: _("Group Name");
+        }
+    }
+
+    Adw.PreferencesGroup {
+        title: _("Servers");
+
+        [header-suffix]
+        Button {
+            child: Adw.ButtonContent {
+                icon-name: "list-add-symbolic";
+                label: _("Add Server");
+            };
+
+            clicked => $on_add_server_clicked() swapped;
+
+            styles [
+                "flat",
+            ]
+        }
+
+        ListBox servers_box {
+            valign: start;
+            hexpand: true;
+            selection-mode: none;
+
+            styles [
+                "boxed-list",
+            ]
+        }
+    }
+}

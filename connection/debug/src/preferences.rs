@@ -26,7 +26,7 @@ use gtk::glib;
 use gtk::prelude::*;
 use num_enum::TryFromPrimitive;
 
-use libfieldmonitor::connection::ConnectionConfiguration;
+use libfieldmonitor::connection::{ConfigAccess, ConfigAccessMut, ConnectionConfiguration};
 use libfieldmonitor::impl_simple_macro_param_spec;
 
 use crate::behaviour_preferences::{DebugBehaviour, DebugBehaviourPreferences};

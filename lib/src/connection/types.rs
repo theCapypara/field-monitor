@@ -176,9 +176,13 @@ pub trait ConnectionProvider {
     /// This is shown to the user when a connection with the stored credentials
     /// could not be made, or when no credentials were stored.
     ///
+    /// `server_path` may be set if the authentification failed while connecting to
+    /// a specific server.
+    ///
     /// The passed parameter contains the current configuration before.
     fn configure_credentials(
         &self,
+        server_path: &[String],
         configuration: &ConnectionConfiguration,
     ) -> adw::PreferencesGroup;
 
@@ -186,11 +190,14 @@ pub trait ConnectionProvider {
     /// It may be asserted that the  passed `preferences` are a widget returned from
     /// `configure_credentials`.
     ///
+    /// `server_path` may be set if the configuration was made for a specific server.
+    ///
     /// If an error is returned, the preferences will still be shown to the user. This means
     /// the implementation may modify the preferences to hint at input errors. It should not show
     /// the error message of the returned result, this is presented by the caller.
     fn store_credentials(
         &self,
+        server_path: &[String],
         preferences: adw::PreferencesGroup,
         configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>>;

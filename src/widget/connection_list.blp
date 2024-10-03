@@ -14,10 +14,7 @@ FilterListModel connection_list_model_sorted_filtered {
     incremental: true;
 }
 
-StringFilter model_string_filter {
-    ignore-case: true;
-    match-mode: substring;
-}
+CustomFilter connection_list_filter {}
 
 template $FieldMonitorConnectionList: Adw.Bin {
     search-is-visible: bind search_bar.search-mode-enabled bidirectional;

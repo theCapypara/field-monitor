@@ -1,14 +1,14 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $VncPreferences : Adw.PreferencesPage {
+template $GenericGroupServerPreferences: Adw.PreferencesPage {
     title: bind title_entry.text bidirectional;
     host: bind host_entry.text bidirectional;
     port: bind port_entry.text bidirectional;
 
     Adw.PreferencesGroup {
         Adw.EntryRow title_entry {
-            title: _("Connection Name");
+            title: _("Server Name");
         }
     }
 
@@ -16,6 +16,7 @@ template $VncPreferences : Adw.PreferencesPage {
         Adw.EntryRow host_entry {
             title: _("Hostname");
         }
+
         Adw.EntryRow port_entry {
             title: _("Port");
             text: "5900";
@@ -23,7 +24,7 @@ template $VncPreferences : Adw.PreferencesPage {
         }
     }
 
-    $VncCredentialPreferences credentials {
+    $GenericGroupCredentialPreferences credentials {
         use_temporary_credentials: false;
     }
 }

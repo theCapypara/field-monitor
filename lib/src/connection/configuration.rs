@@ -17,19 +17,67 @@
  */
 #![allow(clippy::arc_with_non_send_sync)] // future proofing
 
+use std::collections::hash_map::Entry;
 use std::collections::HashMap;
 use std::mem::take;
 use std::sync::Arc;
 
 use futures::future::{LocalBoxFuture, try_join_all};
 use secure_string::SecureString;
+use serde_yaml::{Mapping, Value};
 
 use crate::connection::config_value::{ConfigValue, ConfigValueRef};
 use crate::ManagesSecrets;
 
+#[allow(async_fn_in_trait)]
+pub trait ConfigAccess {
+    fn get(&self, key: &str) -> Option<ConfigValueRef>;
+    fn get_try_as_str(&self, key: &str) -> Option<&str> {
+        self.get(key)
+            .and_then(|v| v.as_serde_value().and_then(Value::as_str))
+    }
+    fn get_try_as_string(&self, key: &str) -> Option<String> {
+        self.get_try_as_str(key).map(ToString::to_string)
+    }
+    fn get_try_as_sec_string(&self, key: &str) -> Option<SecureString> {
+        self.get(key).and_then(|v| match v {
+            ConfigValueRef::SecureString(v) => Some(v.clone()),
+            _ => None,
+        })
+    }
+    fn get_try_as_u32(&self, key: &str) -> Option<u32> {
+        self.get_try_as_u64(key).and_then(|v| v.try_into().ok())
+    }
+    fn get_try_as_u64(&self, key: &str) -> Option<u64> {
+        self.get(key)
+            .and_then(|v| v.as_serde_value().and_then(Value::as_u64))
+    }
+    fn get_try_as_i64(&self, key: &str) -> Option<i64> {
+        self.get(key)
+            .and_then(|v| v.as_serde_value().and_then(Value::as_i64))
+    }
+    fn get_try_as_bool(&self, key: &str) -> Option<bool> {
+        self.get(key)
+            .and_then(|v| v.as_serde_value().and_then(Value::as_bool))
+    }
+    async fn get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<SecureString>>;
+}
+
+pub trait ConfigAccessMut {
+    fn clear(&mut self, key: impl AsRef<str>);
+    /// Sets a value in the config. Keys starting with __ are not persisted in `save`.
+    fn set_value(&mut self, key: impl ToString, value: impl Into<Value>);
+    /// Sets a secure string in the config. These are never persisted in `save`.
+    fn set_secure_string(&mut self, key: impl ToString, value: impl Into<SecureString>);
+    fn clear_secret(&mut self, key: impl ToString);
+    /// Set a secret in the config. These are never serialized, however they are saved and restored
+    /// from the secret service when calling `save`.
+    fn set_secret(&mut self, key: impl ToString, value: SecureString);
+}
+
 #[derive(Clone)]
 pub struct ConnectionConfiguration {
-    config: HashMap<String, serde_yaml::Value>,
+    config: HashMap<String, Value>,
     config_not_persisted: HashMap<String, ConfigValue>,
     provider_tag: String,
     connection_id: String,
@@ -56,7 +104,7 @@ impl ConnectionConfiguration {
     pub fn new_existing(
         connection_id: String,
         provider_tag: String,
-        config: HashMap<String, serde_yaml::Value>,
+        config: HashMap<String, Value>,
         secret_manager: Arc<Box<dyn ManagesSecrets>>,
     ) -> Self {
         Self {
@@ -78,7 +126,7 @@ impl ConnectionConfiguration {
     }
 
     /// Saves pending secret changes to the keychain, returns persistent configuration.
-    pub async fn save(&mut self) -> anyhow::Result<HashMap<String, serde_yaml::Value>> {
+    pub async fn save(&mut self) -> anyhow::Result<HashMap<String, Value>> {
         let pending_secret_changes = take(&mut self.pending_secret_changes);
         let mut futs: Vec<LocalBoxFuture<anyhow::Result<()>>> =
             Vec::with_capacity(pending_secret_changes.len());
@@ -103,71 +151,6 @@ impl ConnectionConfiguration {
         Ok(self.config.clone())
     }
 
-    pub fn get(&self, key: &str) -> Option<ConfigValueRef> {
-        if key.starts_with("__") {
-            self.config_not_persisted.get(key).map(Into::into)
-        } else {
-            self.config.get(key).map(ConfigValueRef::SerdeValue)
-        }
-    }
-    pub fn get_try_as_str(&self, key: &str) -> Option<&str> {
-        self.get(key)
-            .and_then(|v| v.as_serde_value().and_then(serde_yaml::Value::as_str))
-    }
-    pub fn get_try_as_sec_str(&self, key: &str) -> Option<SecureString> {
-        self.get(key).and_then(|v| match v {
-            ConfigValueRef::SecureString(v) => Some(v.clone()),
-            _ => None,
-        })
-    }
-    pub fn get_try_as_u32(&self, key: &str) -> Option<u32> {
-        self.get_try_as_u64(key).and_then(|v| v.try_into().ok())
-    }
-    pub fn get_try_as_u64(&self, key: &str) -> Option<u64> {
-        self.get(key)
-            .and_then(|v| v.as_serde_value().and_then(serde_yaml::Value::as_u64))
-    }
-    pub fn get_try_as_i64(&self, key: &str) -> Option<i64> {
-        self.get(key)
-            .and_then(|v| v.as_serde_value().and_then(serde_yaml::Value::as_i64))
-    }
-    pub fn get_try_as_bool(&self, key: &str) -> Option<bool> {
-        self.get(key)
-            .and_then(|v| v.as_serde_value().and_then(serde_yaml::Value::as_bool))
-    }
-    pub fn clear(&mut self, key: impl AsRef<str>) {
-        self.config.remove(key.as_ref());
-    }
-    /// Sets a value in the config. Keys starting with __ are not persisted in `save`.
-    pub fn set_value(&mut self, key: impl ToString, value: impl Into<serde_yaml::Value>) {
-        let key = key.to_string();
-        if key.starts_with("__") {
-            self.config_not_persisted.insert(key, value.into().into());
-        } else {
-            self.config.insert(key, value.into());
-        }
-    }
-    /// Sets a secure string in the config. These are never persisted in `save`.
-    pub fn set_secure_string(&mut self, key: impl ToString, value: impl Into<SecureString>) {
-        self.config_not_persisted
-            .insert(key.to_string(), value.into().into());
-    }
-    pub async fn get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<SecureString>> {
-        match self.pending_secret_changes.get(key.as_ref()) {
-            None => self.do_get_secret(key).await,
-            Some(v) => Ok(v.clone()),
-        }
-    }
-    pub fn clear_secret(&mut self, key: impl ToString) {
-        self.pending_secret_changes.insert(key.to_string(), None);
-    }
-    /// Set a secret in the config. These are never serialized, however they are saved and restored
-    /// from the secret service when calling `save`.
-    pub fn set_secret(&mut self, key: impl ToString, value: SecureString) {
-        self.pending_secret_changes
-            .insert(key.to_string(), Some(value));
-    }
-
     async fn do_get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<SecureString>> {
         self.secret_manager
             .lookup(&self.connection_id, key.as_ref())
@@ -175,6 +158,7 @@ impl ConnectionConfiguration {
             .map(|gstr| gstr.map(Into::into))
             .map_err(Into::into)
     }
+
     async fn do_clear_secret(
         secret_manager: Arc<Box<dyn ManagesSecrets>>,
         connection_id: String,
@@ -195,6 +179,291 @@ impl ConnectionConfiguration {
             .store(&connection_id, key.as_ref(), value)
             .await
             .map_err(Into::into)
+    }
+
+    pub fn with_section<'a, 'b, F, T>(&'a self, section_key: &'b str, cb: F) -> T
+    where
+        F: FnOnce(ConfigSectionRef<'b>) -> T,
+        T: 'a,
+        'a: 'b,
+    {
+        match self.config.get(section_key) {
+            Some(Value::Mapping(section_map)) => cb(ConfigSectionRef {
+                connection_id: &self.connection_id,
+                section_key,
+                section_map: Some(section_map),
+                config_not_persisted: &self.config_not_persisted,
+                secret_manager: self.secret_manager.as_ref().as_ref(),
+                pending_secret_changes: &self.pending_secret_changes,
+            }),
+            _ => cb(ConfigSectionRef {
+                connection_id: &self.connection_id,
+                section_key,
+                section_map: None,
+                config_not_persisted: &self.config_not_persisted,
+                secret_manager: self.secret_manager.as_ref().as_ref(),
+                pending_secret_changes: &self.pending_secret_changes,
+            }),
+        }
+    }
+
+    pub fn with_section_mut<F, T>(&mut self, section_key: &str, cb: F) -> T
+    where
+        F: FnOnce(ConfigSectionMut) -> T,
+        T: 'static,
+    {
+        match self.config.entry(section_key.to_string()) {
+            Entry::Occupied(mut entry) => match entry.get_mut() {
+                Value::Mapping(section_map) => cb(ConfigSectionMut {
+                    connection_id: &self.connection_id,
+                    section_key,
+                    section_map,
+                    config_not_persisted: &mut self.config_not_persisted,
+                    secret_manager: self.secret_manager.as_ref().as_ref(),
+                    pending_secret_changes: &mut self.pending_secret_changes,
+                }),
+                v => {
+                    *v = Value::Mapping(Mapping::new());
+                    match v {
+                        Value::Mapping(section_map) => cb(ConfigSectionMut {
+                            connection_id: &self.connection_id,
+                            section_key,
+                            section_map,
+                            config_not_persisted: &mut self.config_not_persisted,
+                            secret_manager: self.secret_manager.as_ref().as_ref(),
+                            pending_secret_changes: &mut self.pending_secret_changes,
+                        }),
+                        _ => unreachable!(),
+                    }
+                }
+            },
+            Entry::Vacant(entry) => match entry.insert(Value::Mapping(Mapping::new())) {
+                Value::Mapping(section_map) => cb(ConfigSectionMut {
+                    connection_id: &self.connection_id,
+                    section_key,
+                    section_map,
+                    config_not_persisted: &mut self.config_not_persisted,
+                    secret_manager: self.secret_manager.as_ref().as_ref(),
+                    pending_secret_changes: &mut self.pending_secret_changes,
+                }),
+                _ => unreachable!(),
+            },
+        }
+    }
+
+    pub async fn with_section_async<'a, 'b, F, T>(&'a self, section_key: &'b str, cb: F) -> T
+    where
+        F: FnOnce(ConfigSectionRef<'b>) -> LocalBoxFuture<'b, T>,
+        T: 'static,
+        'a: 'b,
+    {
+        async move {
+            match self.config.get(section_key) {
+                Some(Value::Mapping(section_map)) => {
+                    cb(ConfigSectionRef {
+                        connection_id: &self.connection_id,
+                        section_key,
+                        section_map: Some(section_map),
+                        config_not_persisted: &self.config_not_persisted,
+                        secret_manager: self.secret_manager.as_ref().as_ref(),
+                        pending_secret_changes: &self.pending_secret_changes,
+                    })
+                    .await
+                }
+                _ => {
+                    cb(ConfigSectionRef {
+                        connection_id: &self.connection_id,
+                        section_key,
+                        section_map: None,
+                        config_not_persisted: &self.config_not_persisted,
+                        secret_manager: self.secret_manager.as_ref().as_ref(),
+                        pending_secret_changes: &self.pending_secret_changes,
+                    })
+                    .await
+                }
+            }
+        }
+        .await
+    }
+
+    pub fn for_each_section<F>(&self, mut cb: F)
+    where
+        F: FnMut(&str, ConfigSectionRef),
+    {
+        for (k, v) in &self.config {
+            if let Value::Mapping(map) = v {
+                cb(
+                    k,
+                    ConfigSectionRef {
+                        connection_id: &self.connection_id,
+                        section_key: k,
+                        section_map: Some(map),
+                        config_not_persisted: &self.config_not_persisted,
+                        secret_manager: self.secret_manager.as_ref().as_ref(),
+                        pending_secret_changes: &self.pending_secret_changes,
+                    },
+                )
+            }
+        }
+    }
+
+    pub fn section_keys(&self) -> impl Iterator<Item = &str> + '_ {
+        self.config.iter().filter_map(|(k, v)| {
+            if let Value::Mapping(_) = v {
+                Some(k.as_str())
+            } else {
+                None
+            }
+        })
+    }
+}
+
+impl ConfigAccess for ConnectionConfiguration {
+    fn get(&self, key: &str) -> Option<ConfigValueRef> {
+        if key.starts_with("__") {
+            self.config_not_persisted.get(key).map(Into::into)
+        } else {
+            self.config.get(key).map(ConfigValueRef::SerdeValue)
+        }
+    }
+
+    async fn get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<SecureString>> {
+        match self.pending_secret_changes.get(key.as_ref()) {
+            None => self.do_get_secret(key).await,
+            Some(v) => Ok(v.clone()),
+        }
+    }
+}
+
+impl ConfigAccessMut for ConnectionConfiguration {
+    fn clear(&mut self, key: impl AsRef<str>) {
+        self.config.remove(key.as_ref());
+    }
+    fn set_value(&mut self, key: impl ToString, value: impl Into<Value>) {
+        let key = key.to_string();
+        if key.starts_with("__") {
+            self.config_not_persisted.insert(key, value.into().into());
+        } else {
+            self.config.insert(key, value.into());
+        }
+    }
+    fn set_secure_string(&mut self, key: impl ToString, value: impl Into<SecureString>) {
+        self.config_not_persisted
+            .insert(key.to_string(), value.into().into());
+    }
+    fn clear_secret(&mut self, key: impl ToString) {
+        self.pending_secret_changes.insert(key.to_string(), None);
+    }
+    fn set_secret(&mut self, key: impl ToString, value: SecureString) {
+        self.pending_secret_changes
+            .insert(key.to_string(), Some(value));
+    }
+}
+
+pub struct ConfigSectionRef<'a> {
+    connection_id: &'a str,
+    section_key: &'a str,
+    section_map: Option<&'a Mapping>,
+    config_not_persisted: &'a HashMap<String, ConfigValue>,
+    secret_manager: &'a dyn ManagesSecrets,
+    pending_secret_changes: &'a HashMap<String, Option<SecureString>>,
+}
+
+pub struct ConfigSectionMut<'a> {
+    connection_id: &'a str,
+    section_key: &'a str,
+    section_map: &'a mut Mapping,
+    config_not_persisted: &'a mut HashMap<String, ConfigValue>,
+    secret_manager: &'a dyn ManagesSecrets,
+    pending_secret_changes: &'a mut HashMap<String, Option<SecureString>>,
+}
+
+impl<'a> ConfigAccess for ConfigSectionRef<'a> {
+    fn get(&self, key: &str) -> Option<ConfigValueRef> {
+        if key.starts_with("__") {
+            self.config_not_persisted
+                .get(&format!("{}///{}", self.section_key, key))
+                .map(Into::into)
+        } else {
+            self.section_map
+                .and_then(|section_map| section_map.get(key).map(ConfigValueRef::SerdeValue))
+        }
+    }
+
+    async fn get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<SecureString>> {
+        let key = format!("{}///{}", self.section_key, key.as_ref());
+        match self.pending_secret_changes.get(&key) {
+            None => self
+                .secret_manager
+                .lookup(self.connection_id, &key)
+                .await
+                .map(|gstr| gstr.map(Into::into))
+                .map_err(Into::into),
+            Some(v) => Ok(v.clone()),
+        }
+    }
+}
+
+impl<'a> ConfigAccess for ConfigSectionMut<'a> {
+    fn get(&self, key: &str) -> Option<ConfigValueRef> {
+        if key.starts_with("__") {
+            self.config_not_persisted
+                .get(&format!("{}///{}", self.section_key, key))
+                .map(Into::into)
+        } else {
+            self.section_map.get(key).map(ConfigValueRef::SerdeValue)
+        }
+    }
+
+    async fn get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<SecureString>> {
+        let key = format!("{}///{}", self.section_key, key.as_ref());
+        match self.pending_secret_changes.get(&key) {
+            None => self
+                .secret_manager
+                .lookup(self.connection_id, &key)
+                .await
+                .map(|gstr| gstr.map(Into::into))
+                .map_err(Into::into),
+            Some(v) => Ok(v.clone()),
+        }
+    }
+}
+
+impl<'a> ConfigAccessMut for ConfigSectionMut<'a> {
+    fn clear(&mut self, key: impl AsRef<str>) {
+        self.section_map.remove(key.as_ref());
+    }
+
+    fn set_value(&mut self, key: impl ToString, value: impl Into<Value>) {
+        let key = key.to_string();
+        if key.starts_with("__") {
+            self.config_not_persisted.insert(
+                format!("{}///{}", self.section_key, key),
+                value.into().into(),
+            );
+        } else {
+            self.section_map
+                .insert(Value::String(key.to_string()), value.into());
+        }
+    }
+
+    fn set_secure_string(&mut self, key: impl ToString, value: impl Into<SecureString>) {
+        self.config_not_persisted.insert(
+            format!("{}///{}", self.section_key, key.to_string()),
+            value.into().into(),
+        );
+    }
+
+    fn clear_secret(&mut self, key: impl ToString) {
+        self.pending_secret_changes
+            .insert(format!("{}///{}", self.section_key, key.to_string()), None);
+    }
+
+    fn set_secret(&mut self, key: impl ToString, value: SecureString) {
+        self.pending_secret_changes.insert(
+            format!("{}///{}", self.section_key, key.to_string()),
+            Some(value),
+        );
     }
 }
 
@@ -244,6 +513,13 @@ impl DualScopedConnectionConfiguration {
     }
 
     pub fn persistent_mut(&mut self) -> &mut ConnectionConfiguration {
+        if Arc::ptr_eq(&self.persistent, &self.session) && Arc::strong_count(&self.persistent) == 2
+        {
+            // TODO: Arc::get_mut_unchecked would also be possible here and of course be much
+            //       better performing, but it's unstable.
+            self.session = Arc::new((*self.persistent).clone());
+        }
+
         // This SHOULD be okay, since the only other places we call get_mut are in methods that
         // consume self.
         Arc::get_mut(&mut self.persistent).expect(DUAL_ERR)

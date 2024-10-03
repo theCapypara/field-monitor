@@ -30,9 +30,9 @@ pub use expander_row::FieldMonitorCLServerEntryExpanderRow;
 use libfieldmonitor::connection::{
     ConnectionResult, IconSpec, ServerConnection, ServerMap, ServerMetadata,
 };
+use libfieldmonitor::i18n::gettext_f;
 
 use crate::application::FieldMonitorApplication;
-use crate::i18n::gettext_f;
 use crate::widget::connection_list::common::{add_actions_to_entry, CanHaveSuffix};
 
 mod action_row;
@@ -43,7 +43,7 @@ pub async fn new_server_entry_row(
     connection_id: String,
     server_path: Vec<String>,
     server: Box<dyn ServerConnection>,
-) -> ConnectionResult<gtk::ListBoxRow> {
+) -> ConnectionResult<adw::PreferencesRow> {
     let path = iter::once(connection_id.as_str())
         .chain(server_path.iter().map(Deref::deref))
         .join("/");

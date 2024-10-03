@@ -42,12 +42,12 @@ use libfieldmonitor::connection::{Connection, DualScopedConnectionConfiguration}
 use libfieldmonitor::connection::ConnectionConfiguration;
 use libfieldmonitor::connection::ConnectionInstance;
 use libfieldmonitor::connection::ConnectionProvider;
+use libfieldmonitor::i18n::gettext_f;
 use libfieldmonitor::ManagesSecrets;
 
 use crate::config::{APP_ID, VERSION};
 use crate::connection::CONNECTION_PROVIDERS;
 use crate::connection_loader::ConnectionLoader;
-use crate::i18n::gettext_f;
 use crate::secrets::SecretManager;
 use crate::widget::add_connection_dialog::FieldMonitorAddConnectionDialog;
 use crate::widget::authenticate_connection_dialog::FieldMonitorAuthenticateConnectionDialog;
@@ -592,7 +592,7 @@ impl FieldMonitorApplication {
         };
 
         let window = self.active_window();
-        let dialog = FieldMonitorAuthenticateConnectionDialog::new(self, connection);
+        let dialog = FieldMonitorAuthenticateConnectionDialog::new(self, connection, &[]);
         let msg = gettext("Authentication successfully updated");
 
         self.show_toast_or_parentless_dialog_on_signal(

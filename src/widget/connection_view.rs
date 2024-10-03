@@ -27,7 +27,7 @@ use gettextrs::gettext;
 use glib::object::ObjectExt;
 use gtk::gio;
 use gtk::glib;
-use log::{error, info, warn};
+use log::{info, warn};
 use rdw::DisplayExt;
 
 use libfieldmonitor::adapter::types::AdapterDisplay;
@@ -423,7 +423,7 @@ impl FieldMonitorConnectionView {
                 self.action_set_enabled("view.fit-to-screen", false);
                 self.imp().dynamic_resize.set(false);
             }
-            Some(display) => {
+            Some(_) => {
                 self.action_set_enabled("view.dynamic-resize", true);
                 self.action_set_enabled("view.scale-to-window", true);
                 self.action_set_enabled("view.fit-to-screen", true);

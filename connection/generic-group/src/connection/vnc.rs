@@ -15,13 +15,10 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
 use std::borrow::Cow;
-use std::convert::Infallible;
 use std::num::NonZeroU32;
+use std::rc::Rc;
 
-use adw::prelude::*;
-use anyhow::anyhow;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use indexmap::IndexMap;
@@ -32,12 +29,7 @@ use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::config_error;
 use libfieldmonitor::connection::*;
 
-use crate::credential_preferences::VncCredentialPreferences;
-use crate::preferences::{VncConfiguration, VncPreferences};
-
-mod credential_preferences;
-mod preferences;
-mod util;
+use crate::preferences::GenericGroupConfiguration;
 
 pub struct VncConnectionProviderConstructor;
 
@@ -55,93 +47,49 @@ impl ConnectionProvider for VncConnectionProvider {
     }
 
     fn title(&self) -> Cow<'static, str> {
-        gettext("VNC Connection").into()
+        gettext("VNC Connection Group").into()
     }
 
     fn title_plural(&self) -> Cow<str> {
-        gettext("VNC Connections").into()
+        gettext("VNC Connection Groups").into()
     }
 
     fn add_title(&self) -> Cow<str> {
-        gettext("Add VNC Connection").into()
+        gettext("Add VNC Connection Group").into()
     }
 
     fn description(&self) -> Cow<str> {
-        gettext("Setup a connection to a single VNC server.").into()
+        gettext("Setup a connection to one or more VNC servers.").into()
     }
 
     fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget {
-        VncPreferences::new(configuration).upcast()
+        super::preferences(configuration)
     }
 
     fn update_connection(
         &self,
         preferences: gtk::Widget,
-        mut configuration: DualScopedConnectionConfiguration,
+        configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
-        Box::pin(async {
-            let preferences = preferences
-                .downcast::<VncPreferences>()
-                .expect("update_connection got invalid widget type");
-
-            configuration = configuration.transform_update_unified(|configuration| {
-                // Update general config
-                configuration.set_title(&preferences.title());
-                configuration.set_host(&preferences.host());
-                let port_str = preferences.port();
-                let Ok(port_int) = port_str.parse::<u32>() else {
-                    preferences.port_entry_error(true);
-                    return Err(anyhow!(gettext("Please enter a valid port")));
-                };
-                let Some(port_nzint) = NonZeroU32::new(port_int) else {
-                    preferences.port_entry_error(true);
-                    return Err(anyhow!(gettext("Please enter a valid port")));
-                };
-                configuration.set_port(port_nzint);
-                Ok(())
-            })?;
-
-            // Update credentials
-            let credentials = preferences.credentials();
-            self.store_credentials(credentials.clone().upcast(), configuration)
-                .await
-        })
+        super::update_connection(preferences, configuration)
     }
 
     fn configure_credentials(
         &self,
+        server: &[String],
         configuration: &ConnectionConfiguration,
     ) -> adw::PreferencesGroup {
-        VncCredentialPreferences::new(Some(configuration), true).upcast()
+        super::configure_credentials(server, configuration)
     }
 
     fn store_credentials(
         &self,
+        server: &[String],
         preferences: adw::PreferencesGroup,
-        mut configuration: DualScopedConnectionConfiguration,
+        configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
-        Box::pin(async move {
-            let preferences = preferences
-                .downcast::<VncCredentialPreferences>()
-                .expect("store_credentials got invalid widget type");
-
-            configuration = configuration.transform_update_separate(
-                |c_session| {
-                    c_session.set_user(Some(&preferences.user()));
-                    c_session
-                        .set_password_session(Some(&SecureString::from(preferences.password())));
-                    Result::<(), Infallible>::Ok(())
-                },
-                |c_persistent| {
-                    c_persistent.set_user(preferences.user_if_remembered().as_deref());
-                    c_persistent
-                        .set_password(preferences.password_if_remembered().map(SecureString::from));
-                    Result::<(), Infallible>::Ok(())
-                },
-            )?;
-
-            Ok(configuration)
-        })
+        let server = server.to_vec();
+        Box::pin(async move { super::store_credentials(&server, preferences, configuration) })
     }
 
     fn load_connection(
@@ -150,7 +98,7 @@ impl ConnectionProvider for VncConnectionProvider {
     ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>> {
         Box::pin(async move {
             let title = configuration
-                .title()
+                .connection_title()
                 .ok_or_else(|| config_error(None))?
                 .to_string();
 
@@ -163,7 +111,7 @@ impl ConnectionProvider for VncConnectionProvider {
 #[derive(Clone)]
 pub struct VncConnection {
     title: String,
-    config: ConnectionConfiguration,
+    config: Rc<ConnectionConfiguration>,
 }
 
 impl Actionable for VncConnection {}
@@ -180,7 +128,18 @@ impl Connection for VncConnection {
         Box::pin(async move {
             let mut hm: IndexMap<_, Box<dyn ServerConnection>> = IndexMap::with_capacity(1);
 
-            hm.insert(Cow::Borrowed("server"), Box::new(self.clone()));
+            let mut keys = self.config.section_keys().collect::<Vec<_>>();
+            keys.sort_by_key(|key| self.config.title(key).unwrap_or_default());
+
+            for server in keys {
+                hm.insert(
+                    server.to_string().into(),
+                    Box::new(VncConnectionServer {
+                        key: server.to_string(),
+                        config: self.config.clone(),
+                    }),
+                );
+            }
 
             Ok(hm)
         })
@@ -189,14 +148,38 @@ impl Connection for VncConnection {
 
 impl VncConnection {
     fn new(title: String, config: ConnectionConfiguration) -> Self {
-        Self { title, config }
+        Self {
+            title,
+            config: Rc::new(config),
+        }
     }
 }
 
-impl ServerConnection for VncConnection {
+struct VncConnectionServer {
+    key: String,
+    config: Rc<ConnectionConfiguration>,
+}
+
+impl Actionable for VncConnectionServer {}
+
+impl ServerConnection for VncConnectionServer {
     fn metadata(&self) -> ServerMetadata {
+        let user_part = self
+            .config
+            .user(&self.key)
+            .map(|u| format!("{u}@"))
+            .unwrap_or_default();
         ServerMetadataBuilder::default()
-            .title(self.title.clone())
+            .title(self.config.title(&self.key).unwrap_or_default())
+            .subtitle(Some(format!(
+                "{}{}:{}",
+                user_part,
+                self.config.host(&self.key).unwrap_or_default(),
+                self.config
+                    .port(&self.key)
+                    .map(u32::from)
+                    .unwrap_or_default()
+            )))
             .build()
             .unwrap()
     }
@@ -210,8 +193,9 @@ impl ServerConnection for VncConnection {
         tag: &str,
     ) -> LocalBoxFuture<Result<Box<dyn Adapter>, ConnectionError>> {
         assert_eq!(tag, VncAdapter::TAG, "unsupported adapter type");
+
         Box::pin(async move {
-            let password = match self.config.password().await {
+            let password = match self.config.password(&self.key).await {
                 Ok(pass) => pass.unwrap_or_else(|| SecureString::from("")),
                 Err(err) => {
                     return Err(ConnectionError::AuthFailed(
@@ -223,18 +207,18 @@ impl ServerConnection for VncConnection {
 
             let bx: Box<dyn Adapter> = Box::new(VncAdapter::new(
                 self.config
-                    .host()
+                    .host(&self.key)
                     .as_ref()
                     .map(ToString::to_string)
                     .unwrap_or_default(),
                 self.config
-                    .port()
+                    .port(&self.key)
                     .as_ref()
                     .copied()
                     .map(NonZeroU32::get)
                     .unwrap_or_default(),
                 self.config
-                    .user()
+                    .user(&self.key)
                     .as_ref()
                     .map(ToString::to_string)
                     .unwrap_or_default(),

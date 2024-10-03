@@ -1,5 +1,5 @@
 [package]
-name = "field-monitor-vnc"
+name = "field-monitor-generic-group"
 edition.workspace = true
 rust-version.workspace = true
 
@@ -17,6 +17,7 @@ gtk = { workspace = true }
 adw = { workspace = true }
 indexmap = { workspace = true }
 secure-string = { workspace = true }
+uuid = { version = "1.10", features = ["v7"] }
 
 [lints]
 workspace = true

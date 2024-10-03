@@ -26,16 +26,19 @@ use gtk::prelude::*;
 use libfieldmonitor::connection::ConnectionConfiguration;
 use libfieldmonitor::gtk::FieldMonitorSaveCredentialsButton;
 
-use crate::preferences::VncConfiguration;
+use crate::preferences::GenericGroupConfiguration;
+use crate::server_config::FinalizedServerConfig;
 use crate::util::clear_editable_if_becoming_not_editable;
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[properties(wrapper_type = super::VncCredentialPreferences)]
-    #[template(resource = "/de/capypara/FieldMonitor/connection/vnc/credential_preferences.ui")]
-    pub struct VncCredentialPreferences {
+    #[properties(wrapper_type = super::GenericGroupCredentialPreferences)]
+    #[template(
+        resource = "/de/capypara/FieldMonitor/connection/generic-group/credential_preferences.ui"
+    )]
+    pub struct GenericGroupCredentialPreferences {
         #[template_child]
         pub(super) user_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
@@ -57,9 +60,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for VncCredentialPreferences {
-        const NAME: &'static str = "VncCredentialPreferences";
-        type Type = super::VncCredentialPreferences;
+    impl ObjectSubclass for GenericGroupCredentialPreferences {
+        const NAME: &'static str = "GenericGroupCredentialPreferences";
+        type Type = super::GenericGroupCredentialPreferences;
         type ParentType = adw::PreferencesGroup;
 
         fn class_init(klass: &mut Self::Class) {
@@ -73,7 +76,7 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for VncCredentialPreferences {
+    impl ObjectImpl for GenericGroupCredentialPreferences {
         fn constructed(&self) {
             self.parent_constructed();
             if !self.use_temporary_credentials.get() {
@@ -90,17 +93,18 @@ mod imp {
             }
         }
     }
-    impl WidgetImpl for VncCredentialPreferences {}
-    impl PreferencesGroupImpl for VncCredentialPreferences {}
+    impl WidgetImpl for GenericGroupCredentialPreferences {}
+    impl PreferencesGroupImpl for GenericGroupCredentialPreferences {}
 }
 
 glib::wrapper! {
-    pub struct VncCredentialPreferences(ObjectSubclass<imp::VncCredentialPreferences>)
+    pub struct GenericGroupCredentialPreferences(ObjectSubclass<imp::GenericGroupCredentialPreferences>)
         @extends gtk::Widget, adw::PreferencesGroup;
 }
 
-impl VncCredentialPreferences {
+impl GenericGroupCredentialPreferences {
     pub fn new(
+        server: &str,
         existing_configuration: Option<&ConnectionConfiguration>,
         use_temporary_credentials: bool,
     ) -> Self {
@@ -108,43 +112,52 @@ impl VncCredentialPreferences {
             .property("use-temporary-credentials", use_temporary_credentials)
             .build();
 
+        let server = server.to_string();
         if let Some(existing_configuration) = existing_configuration.cloned() {
             glib::spawn_future_local(clone!(
                 #[weak]
                 slf,
                 async move {
-                    slf.propagate_settings(&existing_configuration).await;
+                    slf.propagate_settings(&server, &existing_configuration)
+                        .await;
                 }
             ));
         }
         slf
     }
 
-    pub async fn propagate_settings(&self, existing_configuration: &ConnectionConfiguration) {
-        if let Some(v) = existing_configuration.user() {
+    pub async fn propagate_settings<T: GenericGroupConfiguration>(
+        &self,
+        server: &str,
+        existing_configuration: &T,
+    ) {
+        if let Some(v) = existing_configuration.user(server) {
             self.set_user(v);
         }
-        if let Ok(Some(v)) = existing_configuration.password().await {
+        if let Ok(Some(v)) = existing_configuration.password(server).await {
             self.set_password(v.unsecure());
         }
     }
 
-    pub fn user_if_remembered(&self) -> Option<String> {
-        if self.imp().user_entry_save_button.save_password() {
-            Some(self.user())
-        } else {
+    pub fn update_server_config(&self, config: &mut FinalizedServerConfig) {
+        let user = self.user();
+        let pass = self.password();
+        config.user = if user.is_empty() { None } else { Some(user) };
+        config.password = if pass.is_empty() {
             None
-        }
+        } else {
+            Some(pass.into())
+        };
+        config.user_remember = self.imp().user_entry_save_button.save_password();
+        config.password_remember = self.imp().password_entry_save_button.save_password();
     }
 
-    pub fn password_if_remembered(&self) -> Option<String> {
-        if self.imp().password_entry_save_button.save_password() {
-            Some(self.password())
-        } else {
-            None
-        }
+    pub fn as_incomplete_server_config(&self) -> FinalizedServerConfig {
+        let mut config = FinalizedServerConfig::default();
+        self.update_server_config(&mut config);
+        config
     }
 }
 
 #[gtk::template_callbacks]
-impl VncCredentialPreferences {}
+impl GenericGroupCredentialPreferences {}

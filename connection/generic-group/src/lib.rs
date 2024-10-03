@@ -15,25 +15,11 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use anyhow::anyhow;
-use gettextrs::gettext;
+pub use connection::*;
 
-pub use secrets::ManagesSecrets;
-
-use crate::connection::ConnectionError;
-
-#[macro_use]
-mod macros;
-pub mod adapter;
-pub mod busy;
-pub mod connection;
-pub mod gtk;
-pub mod i18n;
-mod secrets;
-
-pub fn config_error(connection_title: Option<String>) -> ConnectionError {
-    ConnectionError::General(
-        connection_title,
-        anyhow!(gettext("The connection configuration is invalid")),
-    )
-}
+mod connection;
+mod credential_preferences;
+mod preferences;
+mod server_config;
+mod server_preferences;
+mod util;

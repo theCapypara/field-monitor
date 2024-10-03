@@ -33,16 +33,18 @@ use crate::connection::ConnectionError;
 pub struct SpiceAdapter {
     host: String,
     port: u32,
+    user: String,
     password: SecureString,
 }
 
 impl SpiceAdapter {
     pub const TAG: &'static str = "spice";
 
-    pub fn new(host: String, port: u32, password: SecureString) -> Self {
+    pub fn new(host: String, port: u32, user: String, password: SecureString) -> Self {
         Self {
             host,
             port,
+            user,
             password,
         }
     }
@@ -63,6 +65,7 @@ impl Adapter for SpiceAdapter {
         let session = spice.session();
 
         session.set_uri(Some(&format!("spice://{}:{}", self.host, self.port)));
+        session.set_username(Some(&self.user));
         session.set_password(Some(self.password.unsecure()));
 
         let on_disconnected_cln = on_disconnected.clone();

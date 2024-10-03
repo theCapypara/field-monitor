@@ -132,6 +132,7 @@ impl ConnectionLoader {
                 let mut servers = match Self::do_load_server(
                     connection.servers(),
                     connection.clone(),
+                    &path_parts_orig,
                     app.clone(),
                     active_window.cloned(),
                     try_reauth,
@@ -164,6 +165,7 @@ impl ConnectionLoader {
                         match Self::do_load_server(
                             server.servers(),
                             connection.clone(),
+                            &path_parts_orig,
                             app.clone(),
                             active_window.cloned(),
                             try_reauth,
@@ -223,6 +225,7 @@ impl ConnectionLoader {
     async fn do_load_server(
         servers_fut: LocalBoxFuture<'_, ConnectionResult<ServerMap>>,
         connection: ConnectionInstance,
+        server_path: &[String],
         app: Option<FieldMonitorApplication>,
         active_window: Option<gtk::Window>,
         try_reauth: bool,
@@ -231,9 +234,10 @@ impl ConnectionLoader {
             Ok(servers) => Ok(servers),
             Err(ConnectionError::AuthFailed(_, _)) if try_reauth => {
                 warn!("auth failed, asking to re-auth");
-                let connection = Self::handle_auth_needed(connection, app, active_window)
-                    .await
-                    .unwrap();
+                let connection =
+                    Self::handle_auth_needed(connection, server_path, app, active_window)
+                        .await
+                        .unwrap();
                 debug!("reauth finished");
                 Err(Some(connection))
             }
@@ -302,6 +306,7 @@ impl ConnectionLoader {
 
         let connection = Self::handle_auth_needed(
             self.connection.clone(),
+            &self.server_path,
             self.app.clone(),
             self.window.clone(),
         )
@@ -334,6 +339,7 @@ impl ConnectionLoader {
                     warn!("auth failed, asking to re-auth");
                     let connection = Self::handle_auth_needed(
                         self.connection.clone(),
+                        self.server_path.as_slice(),
                         self.app.clone(),
                         self.window.clone(),
                     )
@@ -359,6 +365,7 @@ impl ConnectionLoader {
     /// Runs the authentication dialog to update the connection, returns the connection.
     fn handle_auth_needed(
         connection: ConnectionInstance,
+        server_path: &[String],
         app: Option<FieldMonitorApplication>,
         window: Option<gtk::Window>,
     ) -> oneshot::Receiver<ConnectionInstance> {
@@ -367,7 +374,11 @@ impl ConnectionLoader {
 
         if let Some(app) = app {
             let sender = Rc::new(RefCell::new(Some(sender)));
-            let dialog = FieldMonitorAuthenticateConnectionDialog::new(&app, connection.clone());
+            let dialog = FieldMonitorAuthenticateConnectionDialog::new(
+                &app,
+                connection.clone(),
+                server_path,
+            );
 
             dialog.connect_closure(
                 "closed",

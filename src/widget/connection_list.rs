@@ -61,7 +61,7 @@ mod imp {
         #[template_child]
         pub connection_list_model_sorted_filtered: TemplateChild<gtk::FilterListModel>,
         #[template_child]
-        pub model_string_filter: TemplateChild<gtk::StringFilter>,
+        pub connection_list_filter: TemplateChild<gtk::CustomFilter>,
         #[template_child]
         pub empty_list_status_page: TemplateChild<adw::StatusPage>,
         #[template_child]
@@ -337,9 +337,32 @@ impl FieldMonitorConnectionList {
         );
         imp.connection_list_model_sorted
             .set_sorter(Some(&gtk::StringSorter::new(Some(&property_expr))));
-        imp.model_string_filter.set_expression(Some(&property_expr));
+        // Filter by connection name and server name
+        imp.connection_list_filter.set_filter_func(glib::clone!(
+            #[weak(rename_to = slf)]
+            self,
+            #[upgrade_or_default]
+            move |item| {
+                let search_term = slf.imp().search_entry.text().to_lowercase();
+                let search_term = search_term.trim();
+                if search_term.is_empty() {
+                    return true;
+                }
+                let item: &FieldMonitorCLConnectionEntry = item.downcast_ref().unwrap();
+
+                if item.title().to_lowercase().contains(search_term) {
+                    return true;
+                }
+                for server_title in item.server_titles() {
+                    if server_title.to_lowercase().contains(search_term) {
+                        return true;
+                    }
+                }
+                false
+            }
+        ));
         imp.connection_list_model_sorted_filtered
-            .set_filter(Some(&*imp.model_string_filter));
+            .set_filter(Some(&*imp.connection_list_filter));
         imp.connection_list_box.bind_model(
             Some(&*imp.connection_list_model_sorted_filtered),
             glib::clone!(
@@ -397,7 +420,7 @@ impl FieldMonitorConnectionList {
     #[template_callback]
     fn on_search_entry_search_changed(&self) {
         self.imp()
-            .model_string_filter
-            .set_search(Some(&*self.imp().search_entry.text()));
+            .connection_list_filter
+            .changed(gtk::FilterChange::Different);
     }
 }
