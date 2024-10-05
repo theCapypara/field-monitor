@@ -1,0 +1,59 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $LibvirtQemuPreferences: Adw.PreferencesPage {
+    title: bind title_entry.text bidirectional;
+    // user-session
+    use-ssh: bind use_ssh_expander.enable-expansion bidirectional;
+    ssh-hostname: bind ssh_hostname_entry.text bidirectional;
+    ssh-username: bind ssh_username_entry.text bidirectional;
+
+    Adw.PreferencesGroup {
+        Adw.EntryRow title_entry {
+            title: _("Connection Name");
+        }
+    }
+
+    Adw.PreferencesGroup {
+        title: _("Session Type");
+
+        Adw.ActionRow {
+            title: _("System Session");
+            subtitle: _("This is the QEMU/KVM default.");
+            activatable-widget: radio_session_system;
+
+            [prefix]
+            CheckButton radio_session_system {
+                group: radio_session_system;
+            }
+        }
+
+        Adw.ActionRow {
+            title: _("User Session");
+            activatable-widget: radio_session_user;
+
+            [prefix]
+            CheckButton radio_session_user {
+                group: radio_session_system;
+            }
+        }
+    }
+
+    Adw.PreferencesGroup {
+        title: _("Remote Connection");
+
+        Adw.ExpanderRow use_ssh_expander {
+            title: _("Connect via SSH");
+            show-enable-switch: true;
+            enable-expansion: false;
+
+            Adw.EntryRow ssh_hostname_entry {
+                title: _("Hostname");
+            }
+
+            Adw.EntryRow ssh_username_entry {
+                title: _("Username");
+            }
+        }
+    }
+}

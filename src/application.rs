@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
+use std::borrow::Cow;
 use std::cell::Cell;
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -520,7 +520,7 @@ impl FieldMonitorApplication {
             return;
         };
 
-        let title = connection.title().unwrap_or_default();
+        let title = connection.title();
 
         let window = self.active_window();
         let dialog = adw::AlertDialog::builder()
@@ -659,7 +659,7 @@ impl FieldMonitorApplication {
         .await?;
 
         let action = loader.action(action_id)?;
-        action
+        let should_reload = action
             .execute(
                 window.clone().as_ref(),
                 window
@@ -668,6 +668,9 @@ impl FieldMonitorApplication {
                     .as_ref(),
             )
             .await;
+        if should_reload {
+            self.reload_connection(&loader.connection_id()).await;
+        }
         Some(())
     }
 
@@ -844,11 +847,17 @@ impl FieldMonitorApplication {
                 dir.for_each_concurrent(5, |dir_entry_res| async {
                     match dir_entry_res {
                         Ok(dir_entry) => {
-                            debug!("processing connection file {}", dir_entry.path().display());
-                            if let Err(err) = self
-                                .update_connection_by_file(&dir_entry.path().into())
-                                .await
-                            {
+                            let path = dir_entry.path();
+                            let ext = path.extension().map(|s| s.to_string_lossy());
+                            if ext != Some(Cow::Borrowed("yaml")) {
+                                warn!(
+                                    "Skipped file in connections without 'yaml' extension: {}",
+                                    path.display()
+                                );
+                                return;
+                            }
+                            debug!("processing connection file {}", path.display());
+                            if let Err(err) = self.update_connection_by_file(&path.into()).await {
                                 error!(
                                     "Failed to read connection {}: {}",
                                     dir_entry.file_name().to_string_lossy(),
@@ -869,6 +878,29 @@ impl FieldMonitorApplication {
         }
         debug!("reloading connections done");
         self.imp().set_loading_connection(false);
+    }
+
+    /// Reloads a single connections.
+    pub async fn reload_connection(&self, id: &str) {
+        let _busy = self.be_busy();
+        debug!("reloading connection {id}");
+
+        let file_path = self.connections_dir().await.join(format!("{id}.yaml"));
+        if !file_path.exists() {
+            warn!("refusing to reload {id}: connection file does no longer exist");
+            return;
+        }
+
+        debug!("processing connection file {}", file_path.display());
+        if let Err(err) = self.update_connection_by_file(&file_path).await {
+            error!(
+                "Failed to read connection {:?}: {}",
+                file_path.file_name(),
+                err
+            );
+        }
+
+        debug!("reloading connection done");
     }
 
     /// Save a connection. May fail for I/O, serialization or secret service communication reasons.

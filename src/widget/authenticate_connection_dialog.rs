@@ -24,7 +24,7 @@ use gettextrs::gettext;
 use gtk::glib;
 use log::warn;
 
-use libfieldmonitor::connection::ConnectionInstance;
+use libfieldmonitor::connection::{ConnectionInstance, PreferencesGroupOrPage};
 
 use crate::application::FieldMonitorApplication;
 
@@ -43,8 +43,6 @@ mod imp {
     pub struct FieldMonitorAuthenticateConnectionDialog {
         #[template_child]
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
-        #[template_child]
-        pub preferences_page: TemplateChild<adw::PreferencesPage>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
@@ -52,7 +50,7 @@ mod imp {
         #[property(get, construct_only)]
         pub server_path: RefCell<Vec<String>>,
         pub saved_connection: RefCell<Option<ConnectionInstance>>,
-        pub preferences: RefCell<Option<adw::PreferencesGroup>>,
+        pub preferences: RefCell<Option<gtk::Widget>>,
     }
 
     #[glib::object_subclass]
@@ -102,12 +100,40 @@ impl FieldMonitorAuthenticateConnectionDialog {
 
         let provider = connection.provider();
 
+        /*
+           Adw.PreferencesPage preferences_page {
+               description: _("This connection needs additional authentication to proceed.");
+               description-centered: true;
+               icon-name: "key-symbolic";
+           }
+        */
+
         connection.with_configuration(|configuration| {
             let preferences =
                 provider.configure_credentials(server_path, configuration.persistent());
 
-            imp.preferences_page.add(&preferences);
-            imp.preferences.replace(Some(preferences));
+            let desc = gettext("This connection needs additional authentication to proceed.");
+            let prfpage = match preferences {
+                PreferencesGroupOrPage::Group(prfgrp) => {
+                    let prfpage = adw::PreferencesPage::builder()
+                        .description(desc)
+                        .icon_name("key-symbolic")
+                        .build();
+                    prfpage.set_property("description-centered", true);
+                    prfpage.add(&prfgrp);
+                    imp.preferences.replace(Some(prfgrp.upcast()));
+                    prfpage
+                }
+                PreferencesGroupOrPage::Page(prfpage) => {
+                    prfpage.set_description(&desc);
+                    prfpage.set_property("description-centered", true);
+                    prfpage.set_icon_name(Some("key-symbolic"));
+                    imp.preferences.replace(Some(prfpage.clone().upcast()));
+                    prfpage
+                }
+            };
+
+            imp.toast_overlay.set_child(Some(&prfpage));
         });
 
         slf

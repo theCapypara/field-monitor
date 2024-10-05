@@ -15,17 +15,9 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+pub use hypervisor::*;
 
-use field_monitor_generic_group::*;
-use field_monitor_libvirt::*;
-use libfieldmonitor::connection::ConnectionProviderConstructor;
-
-// TODO: Plugin system?
-pub static CONNECTION_PROVIDERS: &[&dyn ConnectionProviderConstructor] = &[
-    #[cfg(feature = "devel")]
-    &field_monitor_debug::DebugConnectionProviderConstructor,
-    &RdpConnectionProviderConstructor,
-    &SpiceConnectionProviderConstructor,
-    &LibvirtQemuConnectionProviderConstructor,
-    &VncConnectionProviderConstructor,
-];
+mod connection;
+mod console;
+mod hypervisor;
+mod qemu_preferences;

@@ -3,12 +3,14 @@ members = [
     ".",
     "lib",
     "connection/debug",
-    "connection/generic-group"
+    "connection/generic-group",
+    "connection/libvirt"
 ]
 
 [workspace.package]
 edition = "2021"
 rust-version = "1.78"
+version = "47.0.0"
 
 [workspace.dependencies]
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
@@ -22,6 +24,8 @@ async-std = "1.12"
 num_enum = "0.7"
 indexmap = "2.5"
 secure-string = "0.3"
+http = "1.1"
+uuid = { version = "1.10", features = ["v7"] }
 
 [workspace.dependencies.glib]
 features = ["log"]
@@ -86,7 +90,7 @@ anyhow = { workspace = true }
 serde = { workspace = true }
 serde_yaml = { workspace = true }
 futures = { workspace = true }
-uuid = { version = "1.10", features = ["v7"] }
+uuid = { workspace = true }
 itertools = "0.13"
 indexmap = { workspace = true }
 secure-string = { workspace = true }
@@ -102,6 +106,7 @@ vte = { workspace = true }
 oo7 = { workspace = true }
 libfieldmonitor = { path = "./lib" }
 field-monitor-generic-group = { path = "./connection/generic-group" }
+field-monitor-libvirt = { path = "./connection/libvirt" }
 field-monitor-debug = { path = "./connection/debug", optional = true }
 
 [dev-dependencies]

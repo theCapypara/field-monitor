@@ -19,30 +19,30 @@
 #[macro_export]
 macro_rules! impl_simple_macro_param_spec {
     ($name:ty, $base:tt) => {
-        impl ::glib::HasParamSpec for $name {
-            type ParamSpec = <$base as ::glib::HasParamSpec>::ParamSpec;
+        impl ::gtk::glib::HasParamSpec for $name {
+            type ParamSpec = <$base as ::gtk::glib::HasParamSpec>::ParamSpec;
             type SetValue = Self;
-            type BuilderFn = <$base as ::glib::HasParamSpec>::BuilderFn;
+            type BuilderFn = <$base as ::gtk::glib::HasParamSpec>::BuilderFn;
 
             fn param_spec_builder() -> Self::BuilderFn {
                 Self::ParamSpec::builder
             }
         }
 
-        impl ::glib::value::ToValue for $name {
-            fn to_value(&self) -> ::glib::Value {
+        impl ::gtk::glib::value::ToValue for $name {
+            fn to_value(&self) -> ::gtk::glib::Value {
                 $base::to_value(&(*self as $base))
             }
 
-            fn value_type(&self) -> ::glib::Type {
+            fn value_type(&self) -> ::gtk::glib::Type {
                 $base::static_type()
             }
         }
 
-        unsafe impl<'a> ::glib::value::FromValue<'a> for $name {
-            type Checker = <$base as ::glib::value::FromValue<'a>>::Checker;
+        unsafe impl<'a> ::gtk::glib::value::FromValue<'a> for $name {
+            type Checker = <$base as ::gtk::glib::value::FromValue<'a>>::Checker;
 
-            unsafe fn from_value(value: &'a ::glib::Value) -> Self {
+            unsafe fn from_value(value: &'a ::gtk::glib::Value) -> Self {
                 Self::try_from($base::from_value(value)).unwrap_or_default()
             }
         }

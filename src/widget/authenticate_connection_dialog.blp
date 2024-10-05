@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $FieldMonitorAuthenticateConnectionDialog : Adw.Dialog {
+template $FieldMonitorAuthenticateConnectionDialog: Adw.Dialog {
     content-width: 420;
     title: _("Authentication required");
 
@@ -9,23 +9,18 @@ template $FieldMonitorAuthenticateConnectionDialog : Adw.Dialog {
         [top]
         Adw.HeaderBar header_bar {}
 
-        Adw.ToastOverlay toast_overlay {
-            Adw.PreferencesPage preferences_page {
-                description: _("This connection needs additional authentication to proceed.");
-                description-centered: true;
-                icon-name: "key-symbolic";
-            }
-        }
+        Adw.ToastOverlay toast_overlay {}
 
         [bottom]
         ActionBar {
             [end]
             Button {
                 label: _("Apply");
-
                 clicked => $on_connection_update() swapped;
 
-                styles ["suggested-action"]
+                styles [
+                    "suggested-action"
+                ]
             }
         }
     }

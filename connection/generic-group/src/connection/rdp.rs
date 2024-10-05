@@ -47,15 +47,19 @@ impl ConnectionProvider for RdpConnectionProvider {
     }
 
     fn title(&self) -> Cow<'static, str> {
-        gettext("RDP Connection Group").into()
+        gettext("RDP Group").into()
     }
 
     fn title_plural(&self) -> Cow<str> {
-        gettext("RDP Connection Groups").into()
+        gettext("RDP Groups").into()
     }
 
     fn add_title(&self) -> Cow<str> {
         gettext("Add RDP Connection Group").into()
+    }
+
+    fn title_for<'a>(&self, config: &'a ConnectionConfiguration) -> Option<&'a str> {
+        config.connection_title()
     }
 
     fn description(&self) -> Cow<str> {
@@ -78,14 +82,14 @@ impl ConnectionProvider for RdpConnectionProvider {
         &self,
         server: &[String],
         configuration: &ConnectionConfiguration,
-    ) -> adw::PreferencesGroup {
+    ) -> PreferencesGroupOrPage {
         super::configure_credentials(server, configuration)
     }
 
     fn store_credentials(
         &self,
         server: &[String],
-        preferences: adw::PreferencesGroup,
+        preferences: gtk::Widget,
         configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         let server = server.to_vec();

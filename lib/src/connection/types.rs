@@ -15,9 +15,8 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
+use std::any::Any;
 use std::borrow::Cow;
-use std::collections::HashMap;
 use std::fmt;
 use std::sync::Arc;
 
@@ -78,6 +77,12 @@ pub enum IconSpec<M> {
     /// Generate a custom GTK widget to be used as the widget. Callers MUST only try to use the
     /// returned widget if it doesn't already have a parent.
     Custom(Arc<IconFactory<M>>),
+}
+
+#[derive(Clone, Debug)]
+pub enum PreferencesGroupOrPage {
+    Group(adw::PreferencesGroup),
+    Page(adw::PreferencesPage),
 }
 
 impl<M> fmt::Debug for IconSpec<M> {
@@ -150,6 +155,9 @@ pub trait ConnectionProvider {
     /// Title to display when showing the dialog to add a new connection of this type.
     fn add_title(&self) -> Cow<str>;
 
+    /// Title for a connection given it's config, or None if the config can not be resolved to a title.
+    fn title_for<'a>(&self, config: &'a ConnectionConfiguration) -> Option<&'a str>;
+
     /// Returns a description to be shown in the "add new connection" dialog.
     fn description(&self) -> Cow<str>;
 
@@ -170,13 +178,12 @@ pub trait ConnectionProvider {
         configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>>;
 
-    /// Creates a preference group (or another applicable widgets, such as a box to group multiple)
-    /// for configuring credentials.
+    /// Creates a preference group or page for configuring credentials.
     ///
     /// This is shown to the user when a connection with the stored credentials
     /// could not be made, or when no credentials were stored.
     ///
-    /// `server_path` may be set if the authentification failed while connecting to
+    /// `server_path` may be set if the authentication failed while connecting to
     /// a specific server.
     ///
     /// The passed parameter contains the current configuration before.
@@ -184,7 +191,7 @@ pub trait ConnectionProvider {
         &self,
         server_path: &[String],
         configuration: &ConnectionConfiguration,
-    ) -> adw::PreferencesGroup;
+    ) -> PreferencesGroupOrPage;
 
     /// Update the credentials of a connection.
     /// It may be asserted that the  passed `preferences` are a widget returned from
@@ -198,7 +205,7 @@ pub trait ConnectionProvider {
     fn store_credentials(
         &self,
         server_path: &[String],
-        preferences: adw::PreferencesGroup,
+        preferences: gtk::Widget,
         configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>>;
 
@@ -213,14 +220,15 @@ pub trait ConnectionProvider {
     ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>>;
 }
 
-/// A map of values as parameters for an action.
-pub type Parameters = HashMap<String, serde_yaml::Value>;
+/// Parameters for an action. Can be downcast to expected type.
+pub type Parameters = Box<dyn Any>;
 
 /// A future that executes whatever action was requested. These actions are defined by `actions`
 /// methods on `Connection` and `ServerConnection`. See also `ActionMap`, `ServerAction`.
 /// Parameters: static parameters, parent window, toast overlay
+/// Return value: True if the connection should be reloaded, false otherwise.
 pub type ActionExecuteFut<'a> =
-    dyn Fn(Parameters, Option<gtk::Window>, Option<adw::ToastOverlay>) -> LocalBoxFuture<'a, ()>;
+    dyn Fn(Parameters, Option<gtk::Window>, Option<adw::ToastOverlay>) -> LocalBoxFuture<'a, bool>;
 pub type ServerMap = IndexMap<Cow<'static, str>, Box<dyn ServerConnection>>;
 
 pub struct ServerAction<'a> {
@@ -241,22 +249,9 @@ impl<'a> ServerAction<'a> {
         self,
         window: Option<&gtk::Window>,
         toast_overlay: Option<&adw::ToastOverlay>,
-    ) -> LocalBoxFuture<'a, ()> {
+    ) -> LocalBoxFuture<'a, bool> {
         (self.action_fn)(
             self.static_parameters,
-            window.cloned(),
-            toast_overlay.cloned(),
-        )
-    }
-
-    /// Execute the action, but don't consume Self. Clones the static parameters.
-    pub fn execute_ref(
-        &self,
-        window: Option<&gtk::Window>,
-        toast_overlay: Option<&adw::ToastOverlay>,
-    ) -> LocalBoxFuture<'a, ()> {
-        (self.action_fn)(
-            self.static_parameters.clone(),
             window.cloned(),
             toast_overlay.cloned(),
         )

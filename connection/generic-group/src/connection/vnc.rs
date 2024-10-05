@@ -47,15 +47,19 @@ impl ConnectionProvider for VncConnectionProvider {
     }
 
     fn title(&self) -> Cow<'static, str> {
-        gettext("VNC Connection Group").into()
+        gettext("VNC Group").into()
     }
 
     fn title_plural(&self) -> Cow<str> {
-        gettext("VNC Connection Groups").into()
+        gettext("VNC Groups").into()
     }
 
     fn add_title(&self) -> Cow<str> {
         gettext("Add VNC Connection Group").into()
+    }
+
+    fn title_for<'a>(&self, config: &'a ConnectionConfiguration) -> Option<&'a str> {
+        config.connection_title()
     }
 
     fn description(&self) -> Cow<str> {
@@ -78,14 +82,14 @@ impl ConnectionProvider for VncConnectionProvider {
         &self,
         server: &[String],
         configuration: &ConnectionConfiguration,
-    ) -> adw::PreferencesGroup {
+    ) -> PreferencesGroupOrPage {
         super::configure_credentials(server, configuration)
     }
 
     fn store_credentials(
         &self,
         server: &[String],
-        preferences: adw::PreferencesGroup,
+        preferences: gtk::Widget,
         configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         let server = server.to_vec();

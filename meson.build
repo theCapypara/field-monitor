@@ -1,6 +1,6 @@
 project('field-monitor', 'rust',
-          version: '0.1.0',
-    meson_version: '>= 0.62.0',
+          version: '47.0',
+    meson_version: '>= 1.1.0',
   default_options: [ 'warning_level=2', 'werror=false', ],
 )
 
@@ -12,6 +12,7 @@ gnome = import('gnome')
 subdir('data')
 subdir('lib/src')
 subdir('connection/generic-group/src')
+subdir('connection/libvirt/src')
 subdir('src')
 subdir('po')
 

@@ -1,5 +1,5 @@
 [package]
-name = "field-monitor-generic-group"
+name = "field-monitor-libvirt"
 edition.workspace = true
 rust-version.workspace = true
 
@@ -7,17 +7,18 @@ rust-version.workspace = true
 libfieldmonitor = { path = "../../lib" }
 gettext-rs = { workspace = true }
 anyhow = { workspace = true }
-serde = { workspace = true }
-serde_yaml = { workspace = true }
 futures = { workspace = true }
-log = { workspace = true }
 async-std = { workspace = true }
-glib = { workspace = true }
+log = { workspace = true }
 gtk = { workspace = true }
 adw = { workspace = true }
-indexmap = { workspace = true }
-secure-string = { workspace = true }
+vte = { workspace = true }
 uuid = { workspace = true }
+num_enum = { workspace = true }
+secure-string = { workspace = true }
+virt = { version = "0.4", features = ["qemu"] }
+quick-xml = { version = "0.36", features = ["serialize", "serde-types"] }
+serde = { workspace = true }
 
 [lints]
 workspace = true

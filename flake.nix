@@ -1,121 +1,34 @@
 {
-  description = "Development Environment for Field Monitor";
+  description = "Field Monitor";
 
   inputs = {
-    #nixpkgs.url = "github:NixOS/nixpkgs";
-    nixpkgs-gnome.url = "github:NixOS/nixpkgs/gnome";
+    nixpkgs.url = "github:NixOS/nixpkgs/gnome";
+    flake-utils.url = "github:numtide/flake-utils";
+    systems.url = "github:nix-systems/default";
   };
 
   outputs =
     {
       self,
       nixpkgs,
-      nixpkgs-gnome,
+      systems,
+      flake-utils,
     }:
-    let
-      supportedSystems = [
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
-      forEachSupportedSystem =
-        f:
-        nixpkgs.lib.genAttrs supportedSystems (
-          system:
-          f {
-            #pkgs = import nixpkgs { inherit system; };
-            pkgs = import nixpkgs-gnome { inherit system; };
-          }
-        );
-    in
-    {
-      devShells = forEachSupportedSystem (
-        { pkgs }:
-        let
-          overrides = (builtins.fromTOML (builtins.readFile ./rust-toolchain.toml));
-          extraLibs = with pkgs; [
-            stdenv.cc.cc.lib
-            zlib
-            usbredir
-            gst_all_1.gstreamer
-            gst_all_1.gst-plugins-base
-            gst_all_1.gst-plugins-good
-            gtk-vnc
-            freerdp
-            spice-protocol
-            spice-gtk
-            libepoxy
-          ];
-          libPath = with pkgs; lib.makeLibraryPath extraLibs;
-        in
-        {
-          default = pkgs.mkShell {
-            RUSTC_VERSION = overrides.toolchain.channel;
-            # https://github.com/rust-lang/rust-bindgen#environment-variables
-            LIBCLANG_PATH = pkgs.lib.makeLibraryPath [ pkgs.llvmPackages_latest.libclang.lib ];
-            shellHook = ''
-              export PATH=$PATH:''${CARGO_HOME:-~/.cargo}/bin
-              export PATH=$PATH:''${RUSTUP_HOME:-~/.rustup}/toolchains/$RUSTC_VERSION-x86_64-unknown-linux-gnu/bin/
-            '';
-            # Add precompiled library to rustc search path
-            RUSTFLAGS = (
-              builtins.map (a: ''-L ${a}/lib'') [
-                # add libraries here (e.g. pkgs.libvmi)
-              ]
-            );
-            LD_LIBRARY_PATH = libPath;
-            # Add glibc, clang, glib, and other headers to bindgen search path
-            BINDGEN_EXTRA_CLANG_ARGS =
-              # Includes normal include path
-              (builtins.map (a: ''-I"${a}/include"'') [
-                # add dev libraries here (e.g. pkgs.libvmi.dev)
-                pkgs.glibc.dev
-              ])
-              # Includes with special directory paths
-              ++ [
-                ''-I"${pkgs.llvmPackages_latest.libclang.lib}/lib/clang/${pkgs.llvmPackages_latest.libclang.version}/include"''
-                ''-I"${pkgs.glib.dev}/include/glib-2.0"''
-                ''-I${pkgs.glib.out}/lib/glib-2.0/include/''
-              ];
+    flake-utils.lib.eachSystem (import systems) (
+      system:
+      let
+        pkgs = import nixpkgs { inherit system; };
+      in
+      {
+        packages = rec {
+          field-monitor = pkgs.callPackage ./build-aux/nix/pkg.nix { };
+          field-monitor-devel = pkgs.callPackage ./build-aux/nix/pkg-devel.nix { inherit field-monitor; };
+          default = field-monitor;
+        };
 
-            nativeBuildInputs = with pkgs; [
-              wrapGAppsHook
-              gobject-introspection
-            ];
-
-            buildInputs =
-              with pkgs;
-              [
-                gtk4
-                vte-gtk4
-                libadwaita
-                libadwaita.devdoc
-                meson
-                ninja
-                cmake
-                zlib
-                usbredir
-                gst_all_1.gstreamer
-                gst_all_1.gst-plugins-base
-                gst_all_1.gst-plugins-good
-                gtk-vnc
-                freerdp
-                spice-protocol
-                spice-gtk
-                libepoxy
-                flatpak-builder
-                python312
-              ]
-              ++ (with python312Packages; [ pygobject3 ])
-              ## RUST
-              ++ [
-                clang
-                llvmPackages_12.bintools
-                rustup
-                openssl
-                pkg-config
-              ];
-          };
-        }
-      );
-    };
+        devShells = {
+          default = pkgs.callPackage ./build-aux/nix/shell.nix { };
+        };
+      }
+    );
 }

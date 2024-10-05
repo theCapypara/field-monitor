@@ -18,7 +18,9 @@
 use futures::future::LocalBoxFuture;
 use gtk::prelude::*;
 
-use libfieldmonitor::connection::{ConnectionConfiguration, DualScopedConnectionConfiguration};
+use libfieldmonitor::connection::{
+    ConnectionConfiguration, DualScopedConnectionConfiguration, PreferencesGroupOrPage,
+};
 pub use rdp::*;
 pub use spice::*;
 pub use vnc::*;
@@ -84,13 +86,16 @@ fn update_connection<'a>(
 fn configure_credentials(
     server: &[String],
     configuration: &ConnectionConfiguration,
-) -> adw::PreferencesGroup {
-    GenericGroupCredentialPreferences::new(&server.join("/"), Some(configuration), true).upcast()
+) -> PreferencesGroupOrPage {
+    PreferencesGroupOrPage::Group(
+        GenericGroupCredentialPreferences::new(&server.join("/"), Some(configuration), true)
+            .upcast(),
+    )
 }
 
 fn store_credentials(
     server: &[String],
-    preferences: adw::PreferencesGroup,
+    preferences: gtk::Widget,
     mut configuration: DualScopedConnectionConfiguration,
 ) -> anyhow::Result<DualScopedConnectionConfiguration> {
     let server = server.join("/");

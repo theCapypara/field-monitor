@@ -468,7 +468,7 @@ dependencies = [
 [[package]]
 name = "cbindgen"
 version = "0.20.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#c91182ce2daddae7d6a9a9a786106400d4f5436c"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#21094bd9d749a072a821269d66cace8d475477fc"
 dependencies = [
  "clap",
  "heck 0.3.3",
@@ -485,9 +485,9 @@ dependencies = [
 
 [[package]]
 name = "cc"
-version = "1.1.22"
+version = "1.1.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9540e661f81799159abee814118cc139a2004b3a3aa3ea37724a1b66530b90e0"
+checksum = "812acba72f0a070b003d3697490d2b55b837230ae7c6c6497f05cc2ddbb8d938"
 dependencies = [
  "shlex",
 ]
@@ -839,11 +839,12 @@ dependencies = [
  "env_logger 0.11.5",
  "field-monitor-debug",
  "field-monitor-generic-group",
+ "field-monitor-libvirt",
  "futures",
  "gettext-rs",
  "glib",
  "gtk4",
- "indexmap 2.5.0",
+ "indexmap 2.6.0",
  "itertools",
  "libadwaita",
  "libfieldmonitor",
@@ -872,7 +873,7 @@ dependencies = [
  "gettext-rs",
  "glib",
  "gtk4",
- "indexmap 2.5.0",
+ "indexmap 2.6.0",
  "libadwaita",
  "libfieldmonitor",
  "log",
@@ -897,7 +898,7 @@ dependencies = [
  "gettext-rs",
  "glib",
  "gtk4",
- "indexmap 2.5.0",
+ "indexmap 2.6.0",
  "libadwaita",
  "libfieldmonitor",
  "log",
@@ -905,6 +906,27 @@ dependencies = [
  "serde",
  "serde_yaml",
  "uuid",
+]
+
+[[package]]
+name = "field-monitor-libvirt"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "async-std",
+ "futures",
+ "gettext-rs",
+ "gtk4",
+ "libadwaita",
+ "libfieldmonitor",
+ "log",
+ "num_enum",
+ "quick-xml",
+ "secure-string",
+ "serde",
+ "uuid",
+ "virt",
+ "vte4",
 ]
 
 [[package]]
@@ -1619,6 +1641,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "hashbrown"
+version = "0.15.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1e087f84d4f86bf4b218b927129862374b72199ae7d8657835f1e89000eea4fb"
+
+[[package]]
 name = "heck"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1696,12 +1724,12 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "2.5.0"
+version = "2.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "68b900aa2f7301e21c36462b170ee99994de34dff39a4a6a528e80e7376d07e5"
+checksum = "707907fe3c25f5424cce2cb7e1cbcafee6bdbe735ca90ef77c29e84591e5b9da"
 dependencies = [
  "equivalent",
- "hashbrown 0.14.5",
+ "hashbrown 0.15.0",
 ]
 
 [[package]]
@@ -1849,7 +1877,7 @@ dependencies = [
  "gettext-rs",
  "glib",
  "gtk4",
- "indexmap 2.5.0",
+ "indexmap 2.6.0",
  "libadwaita",
  "log",
  "num_enum",
@@ -2137,9 +2165,12 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.19.0"
+version = "1.20.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3fdb12b2476b595f9358c5161aa467c2438859caa136dec86c26fdd2efe17b92"
+checksum = "82881c4be219ab5faaf2ad5e5e5ecdff8c66bd7402ca3160975c93b24961afd1"
+dependencies = [
+ "portable-atomic",
+]
 
 [[package]]
 name = "oo7"
@@ -2284,6 +2315,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "portable-atomic"
+version = "1.9.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cc9c68a3f6da06753e9335d63e27f6b9754dd1920d941135b7ea8224f141adb2"
+
+[[package]]
 name = "ppv-lite86"
 version = "0.2.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2327,6 +2364,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f7649a7b4df05aed9ea7ec6f628c67c9953a43869b8bc50929569b2999d443fe"
 dependencies = [
  "memchr",
+ "serde",
 ]
 
 [[package]]
@@ -2371,12 +2409,12 @@ dependencies = [
 [[package]]
 name = "rdw-keycodemap"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#c91182ce2daddae7d6a9a9a786106400d4f5436c"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#21094bd9d749a072a821269d66cace8d475477fc"
 
 [[package]]
 name = "rdw4"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#c91182ce2daddae7d6a9a9a786106400d4f5436c"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#21094bd9d749a072a821269d66cace8d475477fc"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -2406,7 +2444,7 @@ dependencies = [
 [[package]]
 name = "rdw4-rdp"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#c91182ce2daddae7d6a9a9a786106400d4f5436c"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#21094bd9d749a072a821269d66cace8d475477fc"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -2423,7 +2461,7 @@ dependencies = [
 [[package]]
 name = "rdw4-spice"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#c91182ce2daddae7d6a9a9a786106400d4f5436c"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#21094bd9d749a072a821269d66cace8d475477fc"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -2438,7 +2476,7 @@ dependencies = [
 [[package]]
 name = "rdw4-vnc"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#c91182ce2daddae7d6a9a9a786106400d4f5436c"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?branch=field-monitor#21094bd9d749a072a821269d66cace8d475477fc"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -2599,7 +2637,7 @@ version = "0.9.34+deprecated"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6a8b1a1a2ebf674015cc02edccce75287f1a0130d394307b36743c2f5d504b47"
 dependencies = [
- "indexmap 2.5.0",
+ "indexmap 2.6.0",
  "itoa",
  "ryu",
  "serde",
@@ -2780,9 +2818,9 @@ checksum = "61c41af27dd6d1e27b1b16b489db798443478cef1f06a660c96db617ba5de3b1"
 
 [[package]]
 name = "temp-dir"
-version = "0.1.13"
+version = "0.1.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1f227968ec00f0e5322f9b8173c7a0cbcff6181a0a5b28e9892491c286277231"
+checksum = "bc1ee6eef34f12f765cb94725905c6312b6610ab2b0940889cfe58dae7bc3c72"
 
 [[package]]
 name = "tempfile"
@@ -2871,7 +2909,7 @@ version = "0.22.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ae48d6208a266e853d946088ed816055e556cc6028c5e8e2b84d9fa5dd7c7f5"
 dependencies = [
- "indexmap 2.5.0",
+ "indexmap 2.6.0",
  "serde",
  "serde_spanned",
  "toml_datetime",
@@ -3036,6 +3074,27 @@ name = "version_check"
 version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0b928f33d975fc6ad9f86c8f283853ad26bdd5b10b7f1542aa2fa15e2289105a"
+
+[[package]]
+name = "virt"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f620c3a1ad2659309abe73b93720c395b9d55d180424baec2b25f6bbe2033f0f"
+dependencies = [
+ "libc",
+ "uuid",
+ "virt-sys",
+]
+
+[[package]]
+name = "virt-sys"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c504e459878f09177f41bf2f8bb3e9a8af4fca7a09e73152fee02535d501601c"
+dependencies = [
+ "libc",
+ "pkg-config",
+]
 
 [[package]]
 name = "vte4"

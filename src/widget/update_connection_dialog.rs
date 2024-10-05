@@ -82,9 +82,7 @@ glib::wrapper! {
 
 impl FieldMonitorUpdateConnectionDialog {
     pub fn new(app: &FieldMonitorApplication, connection: ConnectionInstance) -> Self {
-        let title = connection
-            .title()
-            .unwrap_or_else(|| gettext("Unknown Connection"));
+        let title = connection.title();
 
         let slf: Self = glib::Object::builder()
             .property("application", app)

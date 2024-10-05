@@ -38,7 +38,7 @@ mod imp {
     #[properties(wrapper_type = super::ConnectionInstance)]
     pub struct ConnectionInstance {
         #[property(get, set)]
-        pub title: RefCell<Option<String>>,
+        pub title: RefCell<String>,
         #[property(get, construct_only)]
         pub connection_id: RefCell<String>,
         pub configuration: RefCell<Option<DualScopedConnectionConfiguration>>,
@@ -72,6 +72,7 @@ impl ConnectionInstance {
         let slf_id = Arc::new(configuration.session().id().to_string());
         let slf: Self = glib::Object::builder()
             .property("connection-id", &*slf_id)
+            .property("title", provider.title_for(configuration.session()))
             .build();
 
         // Listen to own signals for debug purposes
@@ -112,7 +113,6 @@ impl ConnectionInstance {
                 slf_imp.implementation.replace(Some(implementation));
             }
             Err(err) => {
-                self.set_title(provider.title().as_ref());
                 error!(
                     "Failed to load connection implementation (provider: {}): {:?}",
                     provider.tag(),
@@ -162,7 +162,7 @@ impl Connection for ConnectionInstance {
         match brw.as_ref() {
             Some(implementation) => implementation.metadata(),
             None => ConnectionMetadataBuilder::default()
-                .title("Unknown Connection".to_string())
+                .title(self.title())
                 .build()
                 .unwrap(),
         }

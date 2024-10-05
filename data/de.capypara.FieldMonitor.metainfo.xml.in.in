@@ -13,7 +13,7 @@
 	<developer id="de.capypara">
 		<name translate="no">Marco Köpcke</name>
 	</developer>
-	<translation type="gettext">@gettext-package@</translation>
+	<translation type="gettext">@APP_ID@</translation>
 
 	<categories>
 		<category>Utility</category>

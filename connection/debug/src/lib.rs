@@ -45,7 +45,7 @@ impl ConnectionProvider for DebugConnectionProvider {
     }
 
     fn title(&self) -> Cow<'static, str> {
-        Cow::Borrowed("Debug Connection")
+        Cow::Borrowed("Debug")
     }
 
     fn title_plural(&self) -> Cow<str> {
@@ -54,6 +54,15 @@ impl ConnectionProvider for DebugConnectionProvider {
 
     fn add_title(&self) -> Cow<str> {
         Cow::Borrowed("Add Debug Connection")
+    }
+
+    fn title_for<'a>(&self, config: &'a ConnectionConfiguration) -> Option<&'a str> {
+        let title = config.title();
+        if title.is_empty() {
+            None
+        } else {
+            Some(title)
+        }
     }
 
     fn description(&self) -> Cow<str> {
@@ -110,15 +119,15 @@ impl ConnectionProvider for DebugConnectionProvider {
         &self,
         server_path: &[String],
         configuration: &ConnectionConfiguration,
-    ) -> adw::PreferencesGroup {
+    ) -> PreferencesGroupOrPage {
         debug!("configure_credentials server_path : {server_path:?}");
-        DebugBehaviourPreferences::new(Some(configuration)).upcast()
+        PreferencesGroupOrPage::Group(DebugBehaviourPreferences::new(Some(configuration)).upcast())
     }
 
     fn store_credentials(
         &self,
         server_path: &[String],
-        preferences: adw::PreferencesGroup,
+        preferences: gtk::Widget,
         mut configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         debug!("store_credentials server_path : {server_path:?}");
@@ -201,48 +210,36 @@ impl Actionable for DebugConnection {
 
     fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
         match action_id {
-            "dialog_persisted" => {
-                let mut params_dialog_persisted = HashMap::new();
-                params_dialog_persisted.insert(
-                    "v".into(),
-                    self.config.store_persistent().to_string().into(),
-                );
-                Some(ServerAction::new(
-                    params_dialog_persisted,
-                    Box::new(|params, window, _toasts| {
-                        Box::pin(async move {
-                            let persisted_v =
-                                params.get("v").and_then(serde_yaml::Value::as_str).unwrap();
-                            adw::AlertDialog::builder()
-                                .body(persisted_v)
-                                .build()
-                                .present(window.as_ref())
-                        })
-                    }),
-                ))
-            }
+            "dialog_persisted" => Some(ServerAction::new(
+                Box::new(self.config.store_persistent().to_string()),
+                Box::new(|params, window, _toasts| {
+                    Box::pin(async move {
+                        let persisted_v = params.downcast::<String>().unwrap();
+                        adw::AlertDialog::builder()
+                            .body(&*persisted_v)
+                            .build()
+                            .present(window.as_ref());
+                        true
+                    })
+                }),
+            )),
 
-            "dialog_session" => {
-                let mut params_dialog_session = HashMap::new();
-                params_dialog_session
-                    .insert("v".into(), self.config.store_session().to_string().into());
-                Some(ServerAction::new(
-                    params_dialog_session,
-                    Box::new(|params, window, _toasts| {
-                        Box::pin(async move {
-                            let session_v =
-                                params.get("v").and_then(serde_yaml::Value::as_str).unwrap();
-                            adw::AlertDialog::builder()
-                                .body(session_v)
-                                .build()
-                                .present(window.as_ref())
-                        })
-                    }),
-                ))
-            }
+            "dialog_session" => Some(ServerAction::new(
+                Box::new(self.config.store_session().to_string()),
+                Box::new(|params, window, _toasts| {
+                    Box::pin(async move {
+                        let session_v = params.downcast::<String>().unwrap();
+                        adw::AlertDialog::builder()
+                            .body(&*session_v)
+                            .build()
+                            .present(window.as_ref());
+                        true
+                    })
+                }),
+            )),
 
             "bazbaz" => Some(ServerAction::new(
-                HashMap::new(),
+                Box::new(()),
                 Box::new(|_params, _window, toasts| {
                     Box::pin(async move {
                         sleep(Duration::from_secs(2)).await;
@@ -250,6 +247,7 @@ impl Actionable for DebugConnection {
                         if let Some(toasts) = toasts {
                             toasts.add_toast(toast);
                         }
+                        false
                     })
                 }),
             )),
@@ -492,18 +490,19 @@ impl Actionable for DebugConnectionServer {
     fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
         match action_id {
             "foobar" => Some(ServerAction::new(
-                HashMap::new(),
+                Box::new(()),
                 Box::new(|_params, window, _toasts| {
                     Box::pin(async move {
                         adw::AlertDialog::builder()
                             .body("Testing! This is from a server.")
                             .build()
-                            .present(window.as_ref())
+                            .present(window.as_ref());
+                        true
                     })
                 }),
             )),
             "bazbaz" => Some(ServerAction::new(
-                HashMap::new(),
+                Box::new(()),
                 Box::new(|_params, _window, toasts| {
                     Box::pin(async move {
                         sleep(Duration::from_secs(2)).await;
@@ -514,6 +513,7 @@ impl Actionable for DebugConnectionServer {
                         if let Some(toasts) = toasts {
                             toasts.add_toast(toast);
                         }
+                        false
                     })
                 }),
             )),

@@ -217,6 +217,45 @@
             ]
         },
         {
+            "name": "json-c",
+            "buildsystem": "cmake",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/json-c/json-c/archive/refs/tags/json-c-0.18-20240915.tar.gz",
+                    "sha256": "3112c1f25d39eca661fe3fc663431e130cc6e2f900c081738317fba49d29e298"
+                }
+            ]
+        },
+        {
+            "name": "libtirpc",
+            "buildsystem": "autotools",
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://downloads.sourceforge.net/libtirpc/libtirpc-1.3.4.tar.bz2",
+                    "sha256": "1e0b0c7231c5fa122e06c0609a76723664d068b0dba3b8219b63e6340b347860"
+                }
+            ]
+        },
+        {
+            "name": "libvirt",
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Ddriver_remote=enabled",
+                "-Ddriver_libvirtd=enabled",
+                "-Ddriver_qemu=enabled",
+                "-Ddocs=disabled"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://download.libvirt.org/libvirt-10.8.0.tar.xz",
+                    "sha256": "57e3e8238d31a197f1b26b958bd2be71f99f271a822132afa66f70b7c2100984"
+                }
+            ]
+        },
+        {
             "name": "field-monitor",
             "builddir": true,
             "buildsystem": "meson",
@@ -226,7 +265,7 @@
             "sources": [
                 {
                     "type": "dir",
-                    "path": ".."
+                    "path": "../.."
                 }
             ]
         }

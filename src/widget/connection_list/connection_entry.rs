@@ -219,8 +219,7 @@ impl FieldMonitorCLConnectionEntry {
     #[template_callback]
     async fn on_self_connection_changed(&self) {
         let connection = self.connection().unwrap();
-        let unknown = gettext("Unknown Connection");
-        self.set_title(connection.title().as_deref().unwrap_or(unknown.as_str()));
+        self.set_title(&connection.title());
         self.set_load_state(LOAD_STATE_LOADING);
         self.imp().servers.remove_all();
 

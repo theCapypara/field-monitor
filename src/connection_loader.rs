@@ -254,6 +254,10 @@ impl ConnectionLoader {
         }
     }
 
+    pub fn connection_id(&self) -> String {
+        self.connection.connection_id()
+    }
+
     /// Gets the name of the server. Panics if this is not for a server.
     pub fn server_title(&self) -> String {
         match &self.entity {
