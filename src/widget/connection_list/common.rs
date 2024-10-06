@@ -19,6 +19,7 @@ use std::borrow::Cow;
 
 use adw::gio;
 use adw::prelude::*;
+use gettextrs::gettext;
 use glib::object::IsA;
 use gtk::Widget;
 
@@ -59,6 +60,7 @@ pub(super) fn add_actions_to_entry(
     let button = gtk::MenuButton::builder()
         .menu_model(&menu)
         .icon_name("view-more-symbolic")
+        .tooltip_text(gettext("Actions"))
         .valign(gtk::Align::Center)
         .css_classes(["flat"])
         .build();

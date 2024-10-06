@@ -9,7 +9,7 @@ template $FieldMonitorConnectionView: Adw.Bin {
     unrealize => $on_self_unrealize() swapped;
 
     child: Overlay {
-        // This great idea and base of implementation comes rom Showtime!
+        // This great idea and base of implementation comes from Showtime!
 
         [overlay]
         Revealer header_revealer_start {
@@ -220,16 +220,16 @@ template $FieldMonitorConnectionView: Adw.Bin {
                                             halign: center;
                                             action-name: "tab.close";
 
-                                            /*styles [
+                                            styles [
                                                 "destructive-action"
-                                            ]*/
+                                            ]
                                         }
 
-                                        /*Gtk.Button {
+                                        Gtk.Button {
                                             label: _("Reconnect");
                                             halign: center;
                                             action-name: "view.reconnect";
-                                        }*/
+                                        }
                                     };
                                 };
                             }
@@ -283,132 +283,4 @@ template $FieldMonitorConnectionView: Adw.Bin {
             }
         }
     };
-}
-
-menu on_connection_menu_rdw {
-    section {
-        item {
-            label: _('_Dynamic Resize');
-            action: 'view.dynamic-resize';
-        }
-
-        item {
-            label: _('_Scale to Window');
-            action: 'view.scale-to-window';
-        }
-    }
-
-    section {
-        item {
-            label: _('_Resize Window to Screen');
-            action: 'view.fit-to-screen';
-        }
-    }
-
-    section {
-        item {
-            label: _('_Move to New Window');
-            action: 'tab.move-to-new-window';
-        }
-
-        item {
-            label: _('_Close Connection');
-            action: 'tab.close';
-        }
-    }
-
-    section {
-        item {
-            label: _('_New Window');
-            action: 'app.new-window';
-        }
-
-        item {
-            label: _('_Preferences');
-            action: 'app.preferences';
-        }
-
-        item {
-            label: _('_Keyboard Shortcuts');
-            action: 'win.show-help-overlay';
-        }
-
-        item {
-            label: _('_About Field Monitor');
-            action: 'app.about';
-        }
-    }
-}
-
-menu on_connection_menu_vte {
-    // TODO
-    section {
-        item {
-            label: _('_Move to New Window');
-            action: 'tab.move-to-new-window';
-        }
-
-        item {
-            label: _('_Close Connection');
-            action: 'tab.close';
-        }
-    }
-
-    section {
-        item {
-            label: _('_New Window');
-            action: 'app.new-window';
-        }
-
-        item {
-            label: _('_Preferences');
-            action: 'app.preferences';
-        }
-
-        item {
-            label: _('_Keyboard Shortcuts');
-            action: 'win.show-help-overlay';
-        }
-
-        item {
-            label: _('_About Field Monitor');
-            action: 'app.about';
-        }
-    }
-}
-
-menu on_connection_menu_other {
-    section {
-        item {
-            label: _('_Move to New Window');
-            action: 'tab.move-to-new-window';
-        }
-
-        item {
-            label: _('_Close Connection');
-            action: 'tab.close';
-        }
-    }
-
-    section {
-        item {
-            label: _('_New Window');
-            action: 'app.new-window';
-        }
-
-        item {
-            label: _('_Preferences');
-            action: 'app.preferences';
-        }
-
-        item {
-            label: _('_Keyboard Shortcuts');
-            action: 'win.show-help-overlay';
-        }
-
-        item {
-            label: _('_About Field Monitor');
-            action: 'app.about';
-        }
-    }
 }

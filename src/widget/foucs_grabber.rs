@@ -22,6 +22,7 @@ use std::cell::RefCell;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gtk::glib;
+use log::debug;
 use rdw::DisplayExt;
 
 mod imp {
@@ -125,18 +126,34 @@ glib::wrapper! {
 impl FieldMonitorFocusGrabber {
     fn grab(&self) {
         let imp = self.imp();
+        if imp.grabbed.get() {
+            return;
+        }
 
         imp.grabbed.set(true);
         self.notify_grabbed();
+
+        if let Some(display) = self.imp().display.borrow().as_ref() {
+            let grab = display.try_grab();
+            debug!("try_grab result: {grab:?}");
+        }
 
         self.set_visible(false);
     }
 
     fn ungrab(&self) {
         let imp = self.imp();
+        if !imp.grabbed.get() {
+            return;
+        }
 
         imp.grabbed.set(false);
         self.notify_grabbed();
+
+        if let Some(display) = self.imp().display.borrow().as_ref() {
+            display.ungrab();
+            debug!("ungrab");
+        }
 
         self.set_visible(true);
     }

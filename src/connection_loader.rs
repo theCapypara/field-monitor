@@ -271,6 +271,13 @@ impl ConnectionLoader {
         self.connection.metadata().title
     }
 
+    pub fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
+        match &self.entity {
+            Entity::Connection(e) => e.actions(),
+            Entity::Server(e) => e.actions(),
+        }
+    }
+
     pub fn action(&self, action_id: &str) -> Option<ServerAction> {
         match &self.entity {
             Entity::Connection(e) => e.action(action_id),

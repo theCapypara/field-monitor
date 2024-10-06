@@ -74,7 +74,7 @@ menubutton.header-osd button:not(.nohover):active,
 }
 
 .header-bg-gradient {
-    background-image: linear-gradient(color-mix(in srgb, var(--window-bg-color) 60%, transparent), transparent);
+    background-image: linear-gradient(color-mix(in srgb, var(--window-bg-color) 40%, transparent), transparent);
 }
 
 .connection-view-grabbed:not(.fullscreen) {

@@ -646,6 +646,7 @@ impl FieldMonitorApplication {
         path: &str,
         action_id: &str,
     ) -> Option<()> {
+        debug!("perform-connection-action: {is_server}, {path}, {action_id}");
         let imp = self.imp();
         let window = self.active_window();
 
@@ -659,6 +660,7 @@ impl FieldMonitorApplication {
         .await?;
 
         let action = loader.action(action_id)?;
+        debug!("executing action...");
         let should_reload = action
             .execute(
                 window.clone().as_ref(),
@@ -668,7 +670,9 @@ impl FieldMonitorApplication {
                     .as_ref(),
             )
             .await;
+        debug!("action executed");
         if should_reload {
+            debug!("action executed: asked to reload");
             self.reload_connection(&loader.connection_id()).await;
         }
         Some(())

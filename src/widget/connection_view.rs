@@ -15,10 +15,13 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use std::borrow::Cow;
 use std::cell::Cell;
 use std::cell::RefCell;
+use std::iter;
 use std::rc::Rc;
 
+use adw::gdk::{Key, ModifierType};
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use anyhow::anyhow;
@@ -27,7 +30,7 @@ use gettextrs::gettext;
 use glib::object::ObjectExt;
 use gtk::gio;
 use gtk::glib;
-use log::{info, warn};
+use log::{debug, info, warn};
 use rdw::DisplayExt;
 
 use libfieldmonitor::adapter::types::AdapterDisplay;
@@ -40,6 +43,8 @@ use crate::widget::foucs_grabber::FieldMonitorFocusGrabber;
 use crate::widget::window::FieldMonitorWindow;
 
 mod imp {
+    use log::debug;
+
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
@@ -64,12 +69,6 @@ mod imp {
         pub focus_grabber: TemplateChild<FieldMonitorFocusGrabber>,
         #[template_child]
         pub menu_button: TemplateChild<gtk::MenuButton>,
-        #[template_child]
-        pub on_connection_menu_rdw: TemplateChild<gio::MenuModel>,
-        #[template_child]
-        pub on_connection_menu_vte: TemplateChild<gio::MenuModel>,
-        #[template_child]
-        pub on_connection_menu_other: TemplateChild<gio::MenuModel>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
@@ -116,6 +115,30 @@ mod imp {
                     slf.fit_to_screen();
                 },
             );
+
+            klass.install_action(
+                "view.reconnect",
+                None,
+                |slf: &super::FieldMonitorConnectionView, _, _| {
+                    glib::spawn_future_local(glib::clone!(
+                        #[strong]
+                        slf,
+                        async move { slf.reset().await }
+                    ));
+                },
+            );
+
+            klass.install_action(
+                "view.send-keys",
+                Some(&String::static_variant_type()),
+                |slf: &super::FieldMonitorConnectionView, _, params| {
+                    debug!("view.send-keys: {params:?}");
+                    let Some(keys) = params.and_then(String::from_variant) else {
+                        return;
+                    };
+                    slf.send_keys(&keys);
+                },
+            )
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -153,6 +176,8 @@ impl FieldMonitorConnectionView {
             .property("allow-reauths", true)
             .build();
         let imp = slf.imp();
+
+        slf.add_menu(MenuKind::Other, vec![]);
 
         if let Some(window) = window {
             window.connect_notify_local(
@@ -230,26 +255,66 @@ impl FieldMonitorConnectionView {
             )),
         );
 
-        self.add_display(display);
+        let actions = loader.actions();
+
+        self.add_display(display, actions);
     }
 
-    pub fn add_display(&self, display: AdapterDisplay) {
+    pub fn send_keys(&self, keys: &str) {
+        let acc = gtk::accelerator_parse(keys);
+        debug!("parsed keys: {acc:?}");
+        if let Some((key, mods)) = acc {
+            let keys = mods
+                .iter()
+                .filter_map(|modf| {
+                    if modf == ModifierType::SHIFT_MASK {
+                        Some(Key::Shift_L)
+                    } else if modf == ModifierType::LOCK_MASK {
+                        Some(Key::Caps_Lock)
+                    } else if modf == ModifierType::CONTROL_MASK {
+                        Some(Key::Control_L)
+                    } else if modf == ModifierType::ALT_MASK {
+                        Some(Key::Alt_L)
+                    } else if modf == ModifierType::SUPER_MASK {
+                        Some(Key::Super_L)
+                    } else if modf == ModifierType::HYPER_MASK {
+                        Some(Key::Hyper_L)
+                    } else if modf == ModifierType::META_MASK {
+                        Some(Key::Meta_L)
+                    } else {
+                        None
+                    }
+                })
+                .chain(iter::once(key))
+                .collect::<Vec<_>>();
+            debug!("processed keys: {keys:?}");
+            let display = self
+                .imp()
+                .display_bin
+                .child()
+                .map(Cast::downcast::<rdw::Display>)
+                .and_then(Result::ok);
+            if let Some(display) = display {
+                display.send_keys(&keys);
+            }
+        }
+    }
+
+    pub fn add_display(&self, display: AdapterDisplay, server_actions: Vec<(Cow<str>, Cow<str>)>) {
         let imp = self.imp();
+
         let widget: gtk::Widget = match display {
             AdapterDisplay::Rdw(display) => {
-                imp.menu_button
-                    .set_menu_model(Some(&*imp.on_connection_menu_rdw));
                 imp.header_gradient.set_visible(true);
                 display.set_visible(true);
                 display.set_vexpand(true);
                 display.set_hexpand(true);
                 self.configure_rdw_action_support(Some(&display));
                 imp.focus_grabber.set_display(Some(&display));
+                self.add_menu(MenuKind::Rdw, server_actions);
                 display.upcast()
             }
             AdapterDisplay::Vte(terminal) => {
-                imp.menu_button
-                    .set_menu_model(Some(&*imp.on_connection_menu_vte));
                 imp.header_gradient.set_visible(false);
                 terminal.set_vexpand(true);
                 terminal.set_hexpand(true);
@@ -283,11 +348,10 @@ impl FieldMonitorConnectionView {
 
                 self.configure_rdw_action_support(None);
                 imp.focus_grabber.set_display(None::<rdw::Display>);
+                self.add_menu(MenuKind::Vte, server_actions);
                 bx.upcast()
             }
             AdapterDisplay::Arbitrary { widget, overlayed } => {
-                imp.menu_button
-                    .set_menu_model(Some(&*imp.on_connection_menu_other));
                 let bx = gtk::Box::builder()
                     .orientation(gtk::Orientation::Vertical)
                     .build();
@@ -310,6 +374,7 @@ impl FieldMonitorConnectionView {
 
                 self.configure_rdw_action_support(None);
                 imp.focus_grabber.set_display(None::<rdw::Display>);
+                self.add_menu(MenuKind::Other, server_actions);
                 bx.upcast()
             }
         };
@@ -361,6 +426,8 @@ impl FieldMonitorConnectionView {
 
     fn handle_error(&self, result: ConnectionResult<()>, allow_reauth: bool) {
         let imp = self.imp();
+
+        self.add_menu(MenuKind::Other, vec![]);
 
         match result {
             Ok(()) => {
@@ -464,6 +531,171 @@ impl FieldMonitorConnectionView {
             window.remove_css_class("connection-view-grabbed");
         }
     }
+
+    fn add_menu(&self, menu_kind: MenuKind, server_actions: Vec<(Cow<str>, Cow<str>)>) {
+        let menu = gio::Menu::new();
+
+        match menu_kind {
+            MenuKind::Rdw => {
+                menu.append_section(
+                    None,
+                    &build_menu(&[
+                        Some(MenuObject::Item(gio::MenuItem::new(
+                            Some(&gettext("_Dynamic Resize")),
+                            Some("view.dynamic-resize"),
+                        ))),
+                        Some(MenuObject::Item(gio::MenuItem::new(
+                            Some(&gettext("_Scale to Window")),
+                            Some("view.scale-to-window"),
+                        ))),
+                    ]),
+                );
+
+                menu.append_section(
+                    None,
+                    &build_menu(&[
+                        Some(MenuObject::Item(gio::MenuItem::new(
+                            Some(&gettext("_Resize Window to Screen")),
+                            Some("view.fit-to-screen"),
+                        ))),
+                        Some(MenuObject::Submenu(
+                            gettext("Send _Keys"),
+                            build_menu(&[
+                                Some(MenuObject::Section(build_menu(&[
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+Backspace")),
+                                        Some("view.send-keys::<Control><Alt>Backspace"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+Delete")),
+                                        Some("view.send-keys::<Control><Alt>Delete"),
+                                    ))),
+                                ]))),
+                                Some(MenuObject::Section(build_menu(&[
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F1")),
+                                        Some("view.send-keys::<Control><Alt>F1"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F2")),
+                                        Some("view.send-keys::<Control><Alt>F2"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F3")),
+                                        Some("view.send-keys::<Control><Alt>F3"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F4")),
+                                        Some("view.send-keys::<Control><Alt>F4"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F5")),
+                                        Some("view.send-keys::<Control><Alt>F5"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F6")),
+                                        Some("view.send-keys::<Control><Alt>F6"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F7")),
+                                        Some("view.send-keys::<Control><Alt>F7"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F8")),
+                                        Some("view.send-keys::<Control><Alt>F8"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F9")),
+                                        Some("view.send-keys::<Control><Alt>F9"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F10")),
+                                        Some("view.send-keys::<Control><Alt>F10"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F11")),
+                                        Some("view.send-keys::<Control><Alt>F11"),
+                                    ))),
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt+F12")),
+                                        Some("view.send-keys::<Control><Alt>F12"),
+                                    ))),
+                                ]))),
+                                Some(MenuObject::Section(build_menu(&[Some(MenuObject::Item(
+                                    gio::MenuItem::new(
+                                        Some(&gettext("Print")),
+                                        Some("view.send-keys::Print"),
+                                    ),
+                                ))]))),
+                            ]),
+                        )),
+                    ]),
+                );
+            }
+            MenuKind::Vte => {
+                // TODO
+            }
+            _ => {}
+        }
+
+        let more_actions = if server_actions.is_empty() {
+            None
+        } else {
+            let server_path = self.server_path();
+            let submenu = gio::Menu::new();
+            for (action_id, label) in server_actions {
+                let action_target = (true, &server_path, &*action_id).to_variant();
+                submenu.append_item(&gio::MenuItem::new(
+                    Some(&*label),
+                    Some(&gio::Action::print_detailed_name(
+                        "app.perform-connection-action",
+                        Some(&action_target),
+                    )),
+                ))
+            }
+            Some(MenuObject::Submenu(gettext("More _Actions"), submenu))
+        };
+
+        menu.append_section(
+            None,
+            &build_menu(&[
+                Some(MenuObject::Item(gio::MenuItem::new(
+                    Some(&gettext("_Move to New Window")),
+                    Some("tab.move-to-new-window"),
+                ))),
+                more_actions,
+                Some(MenuObject::Item(gio::MenuItem::new(
+                    Some(&gettext("_Close Connection")),
+                    Some("tab.close"),
+                ))),
+            ]),
+        );
+
+        menu.append_section(
+            None,
+            &build_menu(&[
+                Some(MenuObject::Item(gio::MenuItem::new(
+                    Some(&gettext("_New Window")),
+                    Some("app.new-window"),
+                ))),
+                Some(MenuObject::Item(gio::MenuItem::new(
+                    Some(&gettext("_Preferences")),
+                    Some("app.preferences"),
+                ))),
+                Some(MenuObject::Item(gio::MenuItem::new(
+                    Some(&gettext("_Keyboard Shortcuts")),
+                    Some("win.show-help-overlay"),
+                ))),
+                Some(MenuObject::Item(gio::MenuItem::new(
+                    Some(&gettext("_About Field Monitor")),
+                    Some("app.about"),
+                ))),
+            ]),
+        );
+
+        menu.freeze();
+        self.imp().menu_button.set_menu_model(Some(&menu));
+    }
 }
 
 #[gtk::template_callbacks]
@@ -540,4 +772,30 @@ impl FieldMonitorConnectionView {
     fn on_self_unrealize(&self) {
         self.mark_as_ungrabbed();
     }
+}
+
+enum MenuKind {
+    Rdw,
+    Vte,
+    Other,
+}
+
+enum MenuObject {
+    Item(gio::MenuItem),
+    Section(gio::Menu),
+    Submenu(String, gio::Menu),
+}
+
+fn build_menu(items: &[Option<MenuObject>]) -> gio::Menu {
+    let menu = gio::Menu::new();
+
+    for item in items.iter().flatten() {
+        match item {
+            MenuObject::Item(item) => menu.append_item(item),
+            MenuObject::Section(section) => menu.append_section(None, section),
+            MenuObject::Submenu(label, submenu) => menu.append_submenu(Some(label), submenu),
+        }
+    }
+
+    menu
 }

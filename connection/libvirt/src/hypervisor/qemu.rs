@@ -158,7 +158,7 @@ impl LibvirtQemuConnectionProvider {
                 )
             }
         } else {
-            ("", String::new(), "")
+            ("", "/".into(), "")
         };
 
         format!("qemu{suffix}://{ssh_part}{session_type}{params}")
