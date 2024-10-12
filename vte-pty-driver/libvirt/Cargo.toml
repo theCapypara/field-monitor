@@ -1,0 +1,20 @@
+[package]
+name = "field-monitor-vte-driver-libvirt"
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+field-monitor-vte-driver-lib = { workspace = true, features = ["client"] }
+tokio = { version = "1.40", features = [
+    "macros",
+    "parking_lot",
+    "rt-multi-thread",
+] }
+parking_lot = { workspace = true }
+anyhow = { workspace = true }
+nix = { version = "0.29", features = ["signal", "term"] }
+virt = { version = "0.4" }
+ringbuf = "0.4"
+
+[lints]
+workspace = true

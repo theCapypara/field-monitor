@@ -19,8 +19,8 @@ use std::fs::read_dir;
 use std::path::PathBuf;
 
 use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
-use gtk::{gio, glib};
 use gtk::prelude::*;
+use gtk::{gio, glib};
 use log::info;
 
 use config::{GETTEXT_PACKAGE, LOCALEDIR, PKGDATADIR};

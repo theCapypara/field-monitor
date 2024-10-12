@@ -14,6 +14,7 @@
         "--socket=fallback-x11",
         "--device=dri",
         "--socket=wayland",
+        "--filesystem=~/.ssh/known_hosts:ro",
         "--env=RUST_LOG=field_monitor=info,libfieldmonitor=info,GLib=info,warning"
     ],
     "build-options": {

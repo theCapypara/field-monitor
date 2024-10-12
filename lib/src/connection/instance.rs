@@ -28,8 +28,8 @@ use glib::prelude::*;
 use glib::subclass::prelude::*;
 use log::{debug, error};
 
-use crate::connection::*;
 use crate::connection::types::{Connection, ConnectionProvider};
+use crate::connection::*;
 
 mod imp {
     use super::*;

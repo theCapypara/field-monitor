@@ -22,7 +22,7 @@ use std::collections::HashMap;
 use std::mem::take;
 use std::sync::Arc;
 
-use futures::future::{LocalBoxFuture, try_join_all};
+use futures::future::{try_join_all, LocalBoxFuture};
 use secure_string::SecureString;
 use serde_yaml::{Mapping, Value};
 

@@ -22,8 +22,8 @@ use std::cell::RefCell;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
-use gtk::{gio, glib};
 use gtk::glib::Variant;
+use gtk::{gio, glib};
 use itertools::Itertools;
 use log::debug;
 
@@ -257,8 +257,10 @@ impl FieldMonitorWindow {
     }
 
     fn act_open_overview(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
-        self.imp().overview.set_open(true);
-        self.imp().main_stack.set_visible_child_name("tabs");
+        if self.imp().tab_view.n_pages() > 0 {
+            self.imp().overview.set_open(true);
+            self.imp().main_stack.set_visible_child_name("tabs");
+        }
     }
 
     fn act_tab_move_to_new_window(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
@@ -345,9 +347,14 @@ impl FieldMonitorWindow {
                 .pages()
                 .iter::<adw::TabPage>()
                 .filter_map_ok(|tab| tab.child().downcast::<FieldMonitorConnectionView>().ok())
+                .filter_ok(|view| view.is_connected())
                 .map_ok(|view| (view.title(), view.subtitle()))
                 .collect::<Result<_, _>>()
                 .unwrap_or_default();
+
+            if open_connection_descs.is_empty() {
+                return false;
+            }
 
             let dialog = FieldMonitorCloseWarningDialog::new(open_connection_descs);
 

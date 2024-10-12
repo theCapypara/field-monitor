@@ -16,8 +16,19 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-pub mod rdp;
-pub mod spice;
-pub mod types;
-pub mod vnc;
-pub mod vte_pty;
+#[cfg(feature = "client")]
+pub use client::*;
+
+pub const DBUS_KEY_ENV_VAR: &str = "FM_KEY";
+pub const DBUS_PATH: &str = "/de/capypara/FieldMonitor/VtePtyProcMon";
+pub const DBUS_INTERFACE: &str = "de.capypara.FieldMonitor.VtePtyProcMon1";
+
+#[cfg(feature = "client")]
+mod client;
+#[cfg(feature = "client")]
+#[macro_use]
+mod client_macros;
+#[cfg(feature = "client")]
+mod dbus_client;
+#[cfg(feature = "server")]
+pub mod dbus_server;

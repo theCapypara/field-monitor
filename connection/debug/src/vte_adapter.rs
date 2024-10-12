@@ -21,7 +21,7 @@ use std::time::Duration;
 use anyhow::anyhow;
 use vte::TerminalExt;
 
-use libfieldmonitor::adapter::types::{Adapter, AdapterDisplay};
+use libfieldmonitor::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
 use libfieldmonitor::connection::ConnectionError;
 
 use crate::behaviour_preferences::DebugBehaviour;
@@ -39,7 +39,7 @@ impl Adapter for DebugVteAdapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
-    ) -> AdapterDisplay {
+    ) -> Box<dyn AdapterDisplay> {
         let vte = vte::Terminal::builder()
             .cursor_blink_mode(vte::CursorBlinkMode::On)
             .build();
@@ -63,6 +63,16 @@ impl Adapter for DebugVteAdapter {
             glib::ControlFlow::Break
         });
 
-        AdapterDisplay::Vte(vte)
+        Box::new(DebugVteAdapterDisplay(vte))
     }
+}
+
+pub struct DebugVteAdapterDisplay(vte::Terminal);
+
+impl AdapterDisplay for DebugVteAdapterDisplay {
+    fn widget(&self) -> AdapterDisplayWidget {
+        AdapterDisplayWidget::Vte(self.0.clone())
+    }
+
+    fn close(&self) {}
 }

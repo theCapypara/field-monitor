@@ -32,8 +32,9 @@ use gtk::gio;
 use gtk::glib;
 use log::{debug, info, warn};
 use rdw::DisplayExt;
+use vte::TerminalExt;
 
-use libfieldmonitor::adapter::types::AdapterDisplay;
+use libfieldmonitor::adapter::types::{AdapterDisplay, AdapterDisplayWidget};
 use libfieldmonitor::connection::{ConnectionError, ConnectionResult};
 
 use crate::application::FieldMonitorApplication;
@@ -69,6 +70,8 @@ mod imp {
         pub focus_grabber: TemplateChild<FieldMonitorFocusGrabber>,
         #[template_child]
         pub menu_button: TemplateChild<gtk::MenuButton>,
+        #[template_child]
+        pub show_output_button: TemplateChild<gtk::Button>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
@@ -92,6 +95,7 @@ mod imp {
         // false: Disconnected
         pub connection_state: RefCell<Option<bool>>,
         pub connection_loader: Mutex<Option<ConnectionLoader>>,
+        pub adapter: RefCell<Option<Box<dyn AdapterDisplay>>>,
     }
 
     #[glib::object_subclass]
@@ -138,7 +142,71 @@ mod imp {
                     };
                     slf.send_keys(&keys);
                 },
-            )
+            );
+
+            // Show the VTE output after the connection has been disconnected.
+            klass.install_action(
+                "view.show-output",
+                None,
+                |slf: &super::FieldMonitorConnectionView, _, _| {
+                    debug!("view.show-output");
+                    slf.imp().outer_stack.set_visible_child_name("connection");
+                },
+            );
+
+            klass.install_action(
+                "view.term-copy",
+                None,
+                |slf: &super::FieldMonitorConnectionView, _, _| {
+                    debug!("view.term-copy");
+                    slf.send_term_command(TermCommand::Copy);
+                },
+            );
+
+            klass.install_action(
+                "view.term-paste",
+                None,
+                |slf: &super::FieldMonitorConnectionView, _, _| {
+                    debug!("view.term-paste");
+                    slf.send_term_command(TermCommand::Paste);
+                },
+            );
+
+            klass.install_action(
+                "view.term-select-all",
+                None,
+                |slf: &super::FieldMonitorConnectionView, _, _| {
+                    debug!("view.term-select-all");
+                    slf.send_term_command(TermCommand::SelectAll);
+                },
+            );
+
+            klass.install_action(
+                "view.term-zoom-reset",
+                None,
+                |slf: &super::FieldMonitorConnectionView, _, _| {
+                    debug!("view.term-zoom-reset");
+                    slf.send_term_command(TermCommand::ZoomReset);
+                },
+            );
+
+            klass.install_action(
+                "view.term-zoom-in",
+                None,
+                |slf: &super::FieldMonitorConnectionView, _, _| {
+                    debug!("view.term-zoom-in");
+                    slf.send_term_command(TermCommand::ZoomIn);
+                },
+            );
+
+            klass.install_action(
+                "view.term-zoom-out",
+                None,
+                |slf: &super::FieldMonitorConnectionView, _, _| {
+                    debug!("view.term-zoom-out");
+                    slf.send_term_command(TermCommand::ZoomOut);
+                },
+            );
         }
 
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
@@ -150,6 +218,12 @@ mod imp {
     impl ObjectImpl for FieldMonitorConnectionView {}
     impl WidgetImpl for FieldMonitorConnectionView {}
     impl BinImpl for FieldMonitorConnectionView {}
+
+    impl Drop for FieldMonitorConnectionView {
+        fn drop(&mut self) {
+            debug!("drop FieldMonitorConnectionView");
+        }
+    }
 }
 
 glib::wrapper! {
@@ -217,9 +291,15 @@ impl FieldMonitorConnectionView {
         slf
     }
 
+    pub fn is_connected(&self) -> bool {
+        self.imp().connection_state.borrow().unwrap_or_default()
+    }
+
     pub async fn reset(&self) {
         info!("Connection view reset");
         let imp = self.imp();
+        imp.status_stack.set_visible_child_name("loading");
+        imp.outer_stack.set_visible_child_name("status");
 
         let mut loader_brw = imp.connection_loader.lock().await;
         let loader = loader_brw.as_mut().unwrap();
@@ -244,12 +324,12 @@ impl FieldMonitorConnectionView {
 
         let display = adapter.create_and_connect_display(
             Rc::new(glib::clone!(
-                #[strong(rename_to = slf)]
+                #[weak(rename_to = slf)]
                 self,
                 move || slf.on_connected()
             )),
             Rc::new(glib::clone!(
-                #[strong(rename_to = slf)]
+                #[weak(rename_to = slf)]
                 self,
                 move |result| slf.on_disconnected(result)
             )),
@@ -300,21 +380,39 @@ impl FieldMonitorConnectionView {
         }
     }
 
-    pub fn add_display(&self, display: AdapterDisplay, server_actions: Vec<(Cow<str>, Cow<str>)>) {
-        let imp = self.imp();
+    fn send_term_command(&self, cmd: TermCommand) {
+        let brw = self.imp().adapter.borrow();
+        if let Some(AdapterDisplayWidget::Vte(vte)) = brw.as_ref().map(|adapter| adapter.widget()) {
+            match cmd {
+                TermCommand::Copy => vte.copy_clipboard_format(vte::Format::Text),
+                TermCommand::Paste => vte.paste_clipboard(),
+                TermCommand::SelectAll => vte.select_all(),
+                TermCommand::ZoomReset => vte.set_font_scale(1.0),
+                TermCommand::ZoomIn => vte.set_font_scale(vte.font_scale() + 0.1),
+                TermCommand::ZoomOut => vte.set_font_scale(vte.font_scale() - 0.1),
+            }
+        }
+    }
 
-        let widget: gtk::Widget = match display {
-            AdapterDisplay::Rdw(display) => {
+    pub fn add_display(
+        &self,
+        display: Box<dyn AdapterDisplay>,
+        server_actions: Vec<(Cow<str>, Cow<str>)>,
+    ) {
+        let imp = self.imp();
+        let display_widget = display.widget();
+
+        let widget: gtk::Widget = match &display_widget {
+            AdapterDisplayWidget::Rdw(display) => {
                 imp.header_gradient.set_visible(true);
                 display.set_visible(true);
                 display.set_vexpand(true);
                 display.set_hexpand(true);
-                self.configure_rdw_action_support(Some(&display));
-                imp.focus_grabber.set_display(Some(&display));
+                imp.focus_grabber.set_display(Some(display));
                 self.add_menu(MenuKind::Rdw, server_actions);
-                display.upcast()
+                display.clone().upcast()
             }
-            AdapterDisplay::Vte(terminal) => {
+            AdapterDisplayWidget::Vte(terminal) => {
                 imp.header_gradient.set_visible(false);
                 terminal.set_vexpand(true);
                 terminal.set_hexpand(true);
@@ -342,16 +440,17 @@ impl FieldMonitorConnectionView {
                     terminal,
                     move |style_manager| configure_vte_styling(&terminal, style_manager)
                 ));
-                configure_vte_styling(&terminal, &style_manager);
+                configure_vte_styling(terminal, &style_manager);
 
-                bx.append(&terminal);
+                bx.append(terminal);
 
-                self.configure_rdw_action_support(None);
-                imp.focus_grabber.set_display(None::<rdw::Display>);
+                self.setup_vte_event_controllers(terminal);
+                self.setup_vte_menu_model(terminal);
+                imp.focus_grabber.set_display(None);
                 self.add_menu(MenuKind::Vte, server_actions);
                 bx.upcast()
             }
-            AdapterDisplay::Arbitrary { widget, overlayed } => {
+            AdapterDisplayWidget::Arbitrary { widget, overlayed } => {
                 let bx = gtk::Box::builder()
                     .orientation(gtk::Orientation::Vertical)
                     .build();
@@ -370,15 +469,17 @@ impl FieldMonitorConnectionView {
                     imp.header_gradient.set_visible(true);
                 }
 
-                bx.append(&widget);
+                bx.append(widget);
 
-                self.configure_rdw_action_support(None);
-                imp.focus_grabber.set_display(None::<rdw::Display>);
+                imp.focus_grabber.set_display(None);
                 self.add_menu(MenuKind::Other, server_actions);
                 bx.upcast()
             }
         };
 
+        self.configure_rdw_action_support(&display_widget);
+
+        imp.adapter.borrow_mut().replace(display);
         imp.display_bin.set_child(Some(&widget));
     }
 
@@ -482,20 +583,33 @@ impl FieldMonitorConnectionView {
         }
     }
 
-    fn configure_rdw_action_support(&self, display: Option<&rdw::Display>) {
+    fn configure_rdw_action_support(&self, display: &AdapterDisplayWidget) {
+        let mut is_rdw = false;
+        let mut is_vte = false;
+
         match display {
-            None => {
-                self.action_set_enabled("view.dynamic-resize", false);
-                self.action_set_enabled("view.scale-to-window", false);
-                self.action_set_enabled("view.fit-to-screen", false);
-                self.imp().dynamic_resize.set(false);
-            }
-            Some(_) => {
-                self.action_set_enabled("view.dynamic-resize", true);
-                self.action_set_enabled("view.scale-to-window", true);
-                self.action_set_enabled("view.fit-to-screen", true);
-            }
+            AdapterDisplayWidget::Rdw(_) => is_rdw = true,
+            AdapterDisplayWidget::Vte(_) => is_vte = true,
+            AdapterDisplayWidget::Arbitrary { .. } => {}
         }
+
+        self.action_set_enabled("view.dynamic-resize", is_rdw);
+        self.action_set_enabled("view.scale-to-window", is_rdw);
+        self.action_set_enabled("view.fit-to-screen", is_rdw);
+        if !is_rdw {
+            self.imp().dynamic_resize.set(false);
+        }
+
+        // Configure the "Show Output" button for disconnected connections.
+        self.imp().show_output_button.set_visible(is_vte);
+        self.action_set_enabled("view.show-output", is_vte);
+        self.action_set_enabled("view.term-copy", is_vte);
+        self.action_set_enabled("view.term-paste", is_vte);
+        self.action_set_enabled("view.term-select-all", is_vte);
+        self.action_set_enabled("view.term-zoom-reset", is_vte);
+        self.action_set_enabled("view.term-zoom-in", is_vte);
+        self.action_set_enabled("view.term-zoom-out", is_vte);
+
         self.notify_dynamic_resize();
         self.notify_scale_to_window();
     }
@@ -530,6 +644,83 @@ impl FieldMonitorConnectionView {
         if let Some(window) = window {
             window.remove_css_class("connection-view-grabbed");
         }
+    }
+
+    fn setup_vte_event_controllers(&self, terminal: &vte::Terminal) {
+        let shortcut_controller = gtk::ShortcutController::new();
+        shortcut_controller.set_propagation_phase(gtk::PropagationPhase::Capture);
+        shortcut_controller.add_shortcut(
+            gtk::Shortcut::builder()
+                .trigger(&gtk::ShortcutTrigger::parse_string("<Shift><Primary>C").unwrap())
+                .action(&gtk::ShortcutAction::parse_string("action(view.term-copy)").unwrap())
+                .build(),
+        );
+        shortcut_controller.add_shortcut(
+            gtk::Shortcut::builder()
+                .trigger(&gtk::ShortcutTrigger::parse_string("<Shift><Primary>V").unwrap())
+                .action(&gtk::ShortcutAction::parse_string("action(view.term-paste)").unwrap())
+                .build(),
+        );
+        shortcut_controller.add_shortcut(
+            gtk::Shortcut::builder()
+                .trigger(&gtk::ShortcutTrigger::parse_string("<Shift><Primary>A").unwrap())
+                .action(&gtk::ShortcutAction::parse_string("action(view.term-select-all)").unwrap())
+                .build(),
+        );
+        shortcut_controller.add_shortcut(
+            gtk::Shortcut::builder()
+                .trigger(&gtk::ShortcutTrigger::parse_string("<Primary>0").unwrap())
+                .action(&gtk::ShortcutAction::parse_string("action(view.term-zoom-reset)").unwrap())
+                .build(),
+        );
+        shortcut_controller.add_shortcut(
+            gtk::Shortcut::builder()
+                .trigger(&gtk::ShortcutTrigger::parse_string("<Primary>plus").unwrap())
+                .action(&gtk::ShortcutAction::parse_string("action(view.term-zoom-in)").unwrap())
+                .build(),
+        );
+        shortcut_controller.add_shortcut(
+            gtk::Shortcut::builder()
+                .trigger(&gtk::ShortcutTrigger::parse_string("<Primary>minus").unwrap())
+                .action(&gtk::ShortcutAction::parse_string("action(view.term-zoom-out)").unwrap())
+                .build(),
+        );
+
+        let scroll_controller = gtk::EventControllerScroll::new(
+            gtk::EventControllerScrollFlags::VERTICAL | gtk::EventControllerScrollFlags::DISCRETE,
+        );
+        scroll_controller.set_propagation_phase(gtk::PropagationPhase::Capture);
+        scroll_controller.connect_scroll(glib::clone!(
+            #[weak_allow_none(rename_to=slf)]
+            self,
+            move |scroll, _dx, dy| {
+                if let Some(slf) = slf {
+                    let mods = scroll.current_event_state();
+
+                    if !mods.contains(ModifierType::CONTROL_MASK) || dy == 0.0 {
+                        return glib::Propagation::Proceed;
+                    }
+                    if dy > 0.0 {
+                        slf.send_term_command(TermCommand::ZoomOut);
+                    } else {
+                        slf.send_term_command(TermCommand::ZoomIn);
+                    }
+
+                    glib::Propagation::Stop
+                } else {
+                    glib::Propagation::Proceed
+                }
+            }
+        ));
+
+        terminal.add_controller(shortcut_controller);
+        terminal.add_controller(scroll_controller);
+    }
+
+    fn setup_vte_menu_model(&self, terminal: &vte::Terminal) {
+        let menu = Self::vte_menu_shortcuts();
+        menu.append_section(None, &Self::vte_menu_zoom());
+        terminal.set_context_menu_model(Some(&menu));
     }
 
     fn add_menu(&self, menu_kind: MenuKind, server_actions: Vec<(Cow<str>, Cow<str>)>) {
@@ -633,7 +824,9 @@ impl FieldMonitorConnectionView {
                 );
             }
             MenuKind::Vte => {
-                // TODO
+                let menu_vte = Self::vte_menu_shortcuts();
+                menu_vte.append_submenu(Some(&gettext("_Zoom")), &Self::vte_menu_zoom());
+                menu.append_section(None, &menu_vte);
             }
             _ => {}
         }
@@ -653,7 +846,7 @@ impl FieldMonitorConnectionView {
                     )),
                 ))
             }
-            Some(MenuObject::Submenu(gettext("More _Actions"), submenu))
+            Some(MenuObject::Submenu(gettext("Server _Actions"), submenu))
         };
 
         menu.append_section(
@@ -679,10 +872,6 @@ impl FieldMonitorConnectionView {
                     Some("app.new-window"),
                 ))),
                 Some(MenuObject::Item(gio::MenuItem::new(
-                    Some(&gettext("_Preferences")),
-                    Some("app.preferences"),
-                ))),
-                Some(MenuObject::Item(gio::MenuItem::new(
                     Some(&gettext("_Keyboard Shortcuts")),
                     Some("win.show-help-overlay"),
                 ))),
@@ -695,6 +884,40 @@ impl FieldMonitorConnectionView {
 
         menu.freeze();
         self.imp().menu_button.set_menu_model(Some(&menu));
+    }
+
+    fn vte_menu_shortcuts() -> gio::Menu {
+        build_menu(&[
+            Some(MenuObject::Item(gio::MenuItem::new(
+                Some(&gettext("_Copy")),
+                Some("view.term-copy"),
+            ))),
+            Some(MenuObject::Item(gio::MenuItem::new(
+                Some(&gettext("_Paste")),
+                Some("view.term-paste"),
+            ))),
+            Some(MenuObject::Item(gio::MenuItem::new(
+                Some(&gettext("Select _All")),
+                Some("view.term-select-all"),
+            ))),
+        ])
+    }
+
+    fn vte_menu_zoom() -> gio::Menu {
+        build_menu(&[Some(MenuObject::Section(build_menu(&[
+            Some(MenuObject::Item(gio::MenuItem::new(
+                Some(&gettext("Zoom In")),
+                Some("view.term-zoom-in"),
+            ))),
+            Some(MenuObject::Item(gio::MenuItem::new(
+                Some(&gettext("Zoom Out")),
+                Some("view.term-zoom-out"),
+            ))),
+            Some(MenuObject::Item(gio::MenuItem::new(
+                Some(&gettext("Reset Zoom")),
+                Some("view.term-zoom-reset"),
+            ))),
+        ])))])
     }
 }
 
@@ -717,10 +940,10 @@ impl FieldMonitorConnectionView {
         if self.dynamic_resize() {
             self.set_scale_to_window(true); // needs also to be on.
             self.action_set_enabled("view.scale-to-window", false);
-            self.action_set_enabled("view.fit-to-screen", false);
+            //self.action_set_enabled("view.fit-to-screen", false);
         } else if display.is_some() {
             self.action_set_enabled("view.scale-to-window", true);
-            self.action_set_enabled("view.fit-to-screen", true);
+            //self.action_set_enabled("view.fit-to-screen", true);
         }
     }
 
@@ -770,6 +993,7 @@ impl FieldMonitorConnectionView {
 
     #[template_callback]
     fn on_self_unrealize(&self) {
+        debug!("connection view unrealized");
         self.mark_as_ungrabbed();
     }
 }
@@ -798,4 +1022,13 @@ fn build_menu(items: &[Option<MenuObject>]) -> gio::Menu {
     }
 
     menu
+}
+
+enum TermCommand {
+    Copy,
+    Paste,
+    SelectAll,
+    ZoomReset,
+    ZoomIn,
+    ZoomOut,
 }

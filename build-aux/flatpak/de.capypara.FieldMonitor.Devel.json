@@ -15,9 +15,9 @@
         "--socket=ssh-auth",
         "--device=dri",
         "--socket=wayland",
+        "--filesystem=~/.ssh/known_hosts:ro",
         "--env=RUST_LOG=field_monitor=debug,libfieldmonitor=debug,oo7=debug,rdw=debug,rdw-vnc=debug,rdw-spice=debug,rdw-rdp=debug,vte=debug,GLib=info,warning",
-        "--env=RUST_BACKTRACE=1",
-        "--filesystem=~/.ssh/known_hosts:ro"
+        "--env=RUST_BACKTRACE=1"
     ],
     "build-options": {
         "append-path": "/usr/lib/sdk/rust-stable/bin",

@@ -18,6 +18,5 @@
 pub use hypervisor::*;
 
 mod connection;
-mod console;
 mod hypervisor;
 mod qemu_preferences;

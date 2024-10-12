@@ -1,0 +1,17 @@
+[package]
+name = "field-monitor-vte-driver-lib"
+edition.workspace = true
+rust-version.workspace = true
+
+[features]
+server = ["dep:base64", "dep:parking_lot", "dep:log"]
+client = []
+
+[dependencies]
+log = { workspace = true, optional = true }
+zbus = "4.4"
+parking_lot = { workspace = true, optional = true }
+base64 = { version = "0.22", optional = true }
+
+[lints]
+workspace = true

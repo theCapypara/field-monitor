@@ -4,7 +4,9 @@ members = [
     "lib",
     "connection/debug",
     "connection/generic-group",
-    "connection/libvirt"
+    "connection/libvirt",
+    "vte-pty-driver/lib",
+    "vte-pty-driver/libvirt"
 ]
 
 [workspace.package]
@@ -25,6 +27,9 @@ indexmap = "2.5"
 secure-string = "0.3"
 http = "1.1"
 uuid = { version = "1.10", features = ["v7"] }
+parking_lot = "0.12"
+which = "6"
+field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 
 [workspace.dependencies.glib]
 features = ["log"]
@@ -66,6 +71,7 @@ default-features = false
 [workspace.dependencies.vte]
 package = "vte4"
 version = "0.8"
+features = ["v0_76"]
 
 [workspace.dependencies.oo7]
 version = "0.3"

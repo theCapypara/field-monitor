@@ -21,9 +21,12 @@ use std::cell::RefCell;
 
 use adw::prelude::*;
 use adw::subclass::prelude::*;
+use glib::WeakRef;
 use gtk::glib;
 use log::debug;
 use rdw::DisplayExt;
+
+use crate::application::FieldMonitorApplication;
 
 mod imp {
     use super::*;
@@ -33,9 +36,8 @@ mod imp {
     pub struct FieldMonitorFocusGrabber {
         #[property(get)]
         pub grabbed: Cell<bool>,
-        #[property(get, set = FieldMonitorFocusGrabber::set_display, nullable)]
-        pub display: RefCell<Option<rdw::Display>>,
-        display_signal_id: RefCell<Option<glib::SignalHandlerId>>,
+        pub display: RefCell<Option<WeakRef<rdw::Display>>>,
+        pub display_signal_id: RefCell<Option<glib::SignalHandlerId>>,
     }
 
     #[glib::object_subclass]
@@ -91,29 +93,14 @@ mod imp {
     }
     impl BinImpl for FieldMonitorFocusGrabber {}
 
-    impl FieldMonitorFocusGrabber {
-        pub fn set_display(&self, value: Option<rdw::Display>) {
-            let mut display_opt = self.display.borrow_mut();
-            if let Some(display) = display_opt.as_mut() {
-                let signal_id_opt = self.display_signal_id.take();
-                if let Some(display_signal_id) = signal_id_opt {
+    impl Drop for FieldMonitorFocusGrabber {
+        fn drop(&mut self) {
+            debug!("drop FieldMonitorFocusGrabber");
+            if let Some(display) = self.display.borrow().as_ref().and_then(WeakRef::upgrade) {
+                if let Some(display_signal_id) = self.display_signal_id.borrow_mut().take() {
                     display.disconnect(display_signal_id);
                 }
             }
-            if let Some(display) = &value {
-                self.obj().set_visible(true);
-                self.display_signal_id
-                    .replace(Some(display.connect_property_grabbed_notify(glib::clone!(
-                        #[weak(rename_to = slf)]
-                        self,
-                        move |_| {
-                            slf.obj().on_inner_grab_changed();
-                        }
-                    ))));
-            } else {
-                self.obj().set_visible(false);
-            }
-            *display_opt = value;
         }
     }
 }
@@ -124,6 +111,31 @@ glib::wrapper! {
 }
 
 impl FieldMonitorFocusGrabber {
+    pub fn set_display(&self, value: Option<&rdw::Display>) {
+        let imp = self.imp();
+        let mut display_opt = imp.display.borrow_mut();
+        if let Some(display) = display_opt.as_ref().and_then(WeakRef::upgrade) {
+            let signal_id_opt = imp.display_signal_id.take();
+            if let Some(display_signal_id) = signal_id_opt {
+                display.disconnect(display_signal_id);
+            }
+        }
+        if let Some(display) = &value {
+            self.set_visible(true);
+            imp.display_signal_id
+                .replace(Some(display.connect_property_grabbed_notify(glib::clone!(
+                    #[weak(rename_to = slf)]
+                    self,
+                    move |_| {
+                        slf.on_inner_grab_changed();
+                    }
+                ))));
+        } else {
+            self.set_visible(false);
+        }
+        *display_opt = value.map(ObjectExt::downgrade);
+    }
+
     fn grab(&self) {
         let imp = self.imp();
         if imp.grabbed.get() {
@@ -133,10 +145,17 @@ impl FieldMonitorFocusGrabber {
         imp.grabbed.set(true);
         self.notify_grabbed();
 
-        if let Some(display) = self.imp().display.borrow().as_ref() {
+        if let Some(display) = self
+            .imp()
+            .display
+            .borrow()
+            .as_ref()
+            .and_then(WeakRef::upgrade)
+        {
             let grab = display.try_grab();
             debug!("try_grab result: {grab:?}");
         }
+        self.try_mute_accels(true);
 
         self.set_visible(false);
     }
@@ -150,12 +169,34 @@ impl FieldMonitorFocusGrabber {
         imp.grabbed.set(false);
         self.notify_grabbed();
 
-        if let Some(display) = self.imp().display.borrow().as_ref() {
+        if let Some(display) = self
+            .imp()
+            .display
+            .borrow()
+            .as_ref()
+            .and_then(WeakRef::upgrade)
+        {
             display.ungrab();
             debug!("ungrab");
         }
+        self.try_mute_accels(false);
 
         self.set_visible(true);
+    }
+
+    fn try_mute_accels(&self, mute: bool) {
+        if let Some(fm_app) = self
+            .root()
+            .and_then(|root| root.downcast::<adw::ApplicationWindow>().ok())
+            .and_then(|win| win.application())
+            .and_then(|app| app.downcast::<FieldMonitorApplication>().ok())
+        {
+            if mute {
+                fm_app.remove_accels();
+            } else {
+                fm_app.add_accels();
+            }
+        }
     }
 
     fn on_inner_grab_changed(&self) {
@@ -164,7 +205,8 @@ impl FieldMonitorFocusGrabber {
             .display
             .borrow()
             .as_ref()
-            .map(DisplayExt::grabbed)
+            .and_then(WeakRef::upgrade)
+            .map(|d| d.grabbed())
         {
             if inner_grabbed.is_empty() {
                 self.ungrab();

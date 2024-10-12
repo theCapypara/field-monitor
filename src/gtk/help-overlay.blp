@@ -5,14 +5,85 @@ ShortcutsWindow help_overlay {
 
     ShortcutsSection {
         section-name: 'shortcuts';
-        max-height: 10;
 
         ShortcutsGroup {
-            title: C_('shortcut window', 'UI');
+            title: C_('shortcut window', 'Window');
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'New Window');
+                action-name: 'app.new-window';
+            }
 
             ShortcutsShortcut {
                 title: C_('shortcut window', 'Toggle Fullscreen');
-                action-name: 'win.toggle-fullscreen';
+                action-name: 'win.fullscreen';
+            }
+        }
+
+        ShortcutsGroup {
+            title: C_('shortcut window', 'Connection List');
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'Reload Connections');
+                action-name: 'app.reload-connections';
+            }
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'Open Connection List');
+                action-name: 'win.show-connection-list';
+            }
+        }
+
+        ShortcutsGroup {
+            title: C_('shortcut window', 'Connection');
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'Active Connections');
+                action-name: 'win.open-overview';
+            }
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'Close Connection');
+                action-name: 'tab.close';
+            }
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'Move Connection to New Window');
+                action-name: 'tab.move-to-new-window';
+            }
+        }
+
+        ShortcutsGroup {
+            title: C_('shortcut window', 'Terminal');
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'Copy');
+                action-name: 'view.term-copy';
+            }
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'Paste');
+                action-name: 'view.term-paste';
+            }
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'Select All');
+                action-name: 'view.term-select-all';
+            }
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'Zoom In');
+                action-name: 'view.term-zoom-in';
+            }
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'Zoom Out');
+                action-name: 'view.term-zoom-out';
+            }
+
+            ShortcutsShortcut {
+                title: C_('shortcut window', 'Reset Zoom');
+                action-name: 'view.term-reset-zoom';
             }
         }
 
@@ -22,11 +93,6 @@ ShortcutsWindow help_overlay {
             ShortcutsShortcut {
                 title: C_('shortcut window', 'Show Shortcuts');
                 action-name: 'win.show-help-overlay';
-            }
-
-            ShortcutsShortcut {
-                title: C_('shortcut window', 'Quit');
-                action-name: 'app.quit';
             }
         }
     }

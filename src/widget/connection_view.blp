@@ -56,7 +56,7 @@ template $FieldMonitorConnectionView: Adw.Bin {
                         valign: start;
                         halign: start;
                         icon-name: "view-grid-symbolic";
-                        tooltip-text: _("Open Connections");
+                        tooltip-text: _("Active Connections");
                         action-name: "overview.open";
 
                         styles [
@@ -212,24 +212,38 @@ template $FieldMonitorConnectionView: Adw.Bin {
 
                                     child: Box {
                                         halign: center;
-                                        orientation: horizontal;
+                                        orientation: vertical;
                                         spacing: 6;
 
-                                        Gtk.Button {
-                                            label: _("Close");
+                                        Box {
                                             halign: center;
-                                            action-name: "tab.close";
+                                            orientation: horizontal;
+                                            spacing: 6;
 
-                                            styles [
-                                                "destructive-action"
-                                            ]
+                                            Button {
+                                                label: _("Close");
+                                                halign: center;
+                                                action-name: "tab.close";
+
+                                                styles [
+                                                    "destructive-action"
+                                                ]
+                                            }
+
+                                            Button {
+                                                label: _("Reconnect");
+                                                halign: center;
+                                                action-name: "view.reconnect";
+                                            }
                                         }
 
-                                        Gtk.Button {
-                                            label: _("Reconnect");
+                                        Button show_output_button {
+                                            label: _("Show Output");
+                                            visible: false;
                                             halign: center;
-                                            action-name: "view.reconnect";
+                                            action-name: "view.show-output";
                                         }
+
                                     };
                                 };
                             }

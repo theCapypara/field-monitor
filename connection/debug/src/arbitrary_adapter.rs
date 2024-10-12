@@ -21,7 +21,7 @@ use std::time::Duration;
 use anyhow::anyhow;
 use gtk::prelude::*;
 
-use libfieldmonitor::adapter::types::{Adapter, AdapterDisplay};
+use libfieldmonitor::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
 use libfieldmonitor::connection::ConnectionError;
 
 use crate::behaviour_preferences::DebugBehaviour;
@@ -40,7 +40,7 @@ impl Adapter for DebugArbitraryAdapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
-    ) -> AdapterDisplay {
+    ) -> Box<dyn AdapterDisplay> {
         let overlayed = self.overlayed;
 
         glib::timeout_add_local(Duration::from_secs(1), move || {
@@ -60,9 +60,21 @@ impl Adapter for DebugArbitraryAdapter {
             glib::ControlFlow::Break
         });
 
-        AdapterDisplay::Arbitrary {
-            widget: gtk::Label::new(Some("Debug Arbitrary Display")).upcast(),
-            overlayed,
-        }
+        Box::new(DebugArbitraryAdapterDisplay(
+            AdapterDisplayWidget::Arbitrary {
+                widget: gtk::Label::new(Some("Debug Arbitrary Display")).upcast(),
+                overlayed,
+            },
+        ))
     }
+}
+
+pub struct DebugArbitraryAdapterDisplay(AdapterDisplayWidget);
+
+impl AdapterDisplay for DebugArbitraryAdapterDisplay {
+    fn widget(&self) -> AdapterDisplayWidget {
+        self.0.clone()
+    }
+
+    fn close(&self) {}
 }

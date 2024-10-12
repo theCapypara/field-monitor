@@ -23,11 +23,11 @@ use gettextrs::gettext;
 use glib::prelude::*;
 use log::debug;
 use rdw_spice::spice;
-use rdw_spice::spice::ChannelEvent;
 use rdw_spice::spice::prelude::ChannelExt;
+use rdw_spice::spice::ChannelEvent;
 use secure_string::SecureString;
 
-use crate::adapter::types::{Adapter, AdapterDisplay};
+use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
 use crate::connection::ConnectionError;
 
 pub struct SpiceAdapter {
@@ -59,7 +59,7 @@ impl Adapter for SpiceAdapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
-    ) -> AdapterDisplay {
+    ) -> Box<dyn AdapterDisplay> {
         let spice = rdw_spice::Display::new();
 
         let session = spice.session();
@@ -114,6 +114,24 @@ impl Adapter for SpiceAdapter {
             on_connected();
         });
 
-        AdapterDisplay::Rdw(spice.upcast())
+        Box::new(SpiceAdapterDisplay(spice))
+    }
+}
+
+pub struct SpiceAdapterDisplay(rdw_spice::Display);
+
+impl AdapterDisplay for SpiceAdapterDisplay {
+    fn widget(&self) -> AdapterDisplayWidget {
+        AdapterDisplayWidget::Rdw(self.0.clone().upcast())
+    }
+
+    fn close(&self) {
+        self.0.session().disconnect();
+    }
+}
+
+impl Drop for SpiceAdapterDisplay {
+    fn drop(&mut self) {
+        self.close()
     }
 }

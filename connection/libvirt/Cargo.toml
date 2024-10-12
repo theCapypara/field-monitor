@@ -19,6 +19,10 @@ secure-string = { workspace = true }
 virt = { version = "0.4", features = ["qemu"] }
 quick-xml = { version = "0.36", features = ["serialize", "serde-types"] }
 serde = { workspace = true }
+ringbuf = "0.4"
+libc = "0.2"
+parking_lot = { workspace = true }
+which = { workspace = true }
 
 [lints]
 workspace = true

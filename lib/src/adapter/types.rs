@@ -19,8 +19,9 @@ use std::rc::Rc;
 
 use crate::connection::ConnectionError;
 
-/// A display widget for interacting with the remote server
-pub enum AdapterDisplay {
+/// Widget backing the adapter display.
+#[derive(Clone, Debug)]
+pub enum AdapterDisplayWidget {
     Rdw(rdw::Display),
     Vte(vte::Terminal),
     Arbitrary {
@@ -31,6 +32,18 @@ pub enum AdapterDisplay {
     },
 }
 
+/// A display widget for interacting with the remote server
+pub trait AdapterDisplay {
+    /// The widget to show the display.
+    fn widget(&self) -> AdapterDisplayWidget;
+
+    /// Closes the connection. The widget is still usable afterwards.
+    /// Does nothing if the connection is already closed.
+    ///
+    /// Implementations should also call this in Drop.
+    fn close(&self);
+}
+
 /// An adapter to connect to a remote server and provide widgets
 /// to interact with said server.
 pub trait Adapter {
@@ -38,5 +51,5 @@ pub trait Adapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
-    ) -> AdapterDisplay;
+    ) -> Box<dyn AdapterDisplay>;
 }

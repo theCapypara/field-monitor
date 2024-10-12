@@ -27,7 +27,7 @@ use log::{debug, warn};
 use rdw_vnc::gvnc;
 use secure_string::SecureString;
 
-use crate::adapter::types::{Adapter, AdapterDisplay};
+use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
 use crate::connection::ConnectionError;
 
 pub struct VncAdapter {
@@ -59,7 +59,7 @@ impl Adapter for VncAdapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
-    ) -> AdapterDisplay {
+    ) -> Box<dyn AdapterDisplay> {
         let error_container: Rc<RefCell<Option<ConnectionError>>> = Rc::new(RefCell::new(None));
         let host = self.host.clone();
         let user = self.user.clone();
@@ -139,6 +139,24 @@ impl Adapter for VncAdapter {
             .open_host(&host, &format!("{}", port))
             .unwrap();
 
-        AdapterDisplay::Rdw(vnc.upcast())
+        Box::new(VncAdapterDisplay(vnc))
+    }
+}
+
+pub struct VncAdapterDisplay(rdw_vnc::Display);
+
+impl AdapterDisplay for VncAdapterDisplay {
+    fn widget(&self) -> AdapterDisplayWidget {
+        AdapterDisplayWidget::Rdw(self.0.clone().upcast())
+    }
+
+    fn close(&self) {
+        self.0.connection().shutdown()
+    }
+}
+
+impl Drop for VncAdapterDisplay {
+    fn drop(&mut self) {
+        self.close()
     }
 }

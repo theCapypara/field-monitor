@@ -26,7 +26,7 @@ use log::{debug, warn};
 use rdw_rdp::freerdp::{RdpCode, RdpErr, RdpErrConnect};
 use secure_string::SecureString;
 
-use crate::adapter::types::{Adapter, AdapterDisplay};
+use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
 use crate::connection::ConnectionError;
 
 pub struct RdpAdapter {
@@ -58,7 +58,7 @@ impl Adapter for RdpAdapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
-    ) -> AdapterDisplay {
+    ) -> Box<dyn AdapterDisplay> {
         let rdp = rdw_rdp::Display::new();
 
         let settings_result = rdp.with_settings(|s| {
@@ -99,7 +99,7 @@ impl Adapter for RdpAdapter {
             }
         ));
 
-        AdapterDisplay::Rdw(rdp.upcast())
+        Box::new(RdpAdapterDisplay(rdp))
     }
 }
 
@@ -134,5 +134,26 @@ fn handle_rdp_error(
                 anyhow!("{:?}: {}", dbg_err, RdpCode(err_code)),
             )))
         }
+    }
+}
+
+pub struct RdpAdapterDisplay(rdw_rdp::Display);
+
+impl AdapterDisplay for RdpAdapterDisplay {
+    fn widget(&self) -> AdapterDisplayWidget {
+        AdapterDisplayWidget::Rdw(self.0.clone().upcast())
+    }
+
+    fn close(&self) {
+        let rdp = self.0.clone();
+        glib::spawn_future_local(async move {
+            rdp.rdp_disconnect().await.ok();
+        });
+    }
+}
+
+impl Drop for RdpAdapterDisplay {
+    fn drop(&mut self) {
+        self.close()
     }
 }

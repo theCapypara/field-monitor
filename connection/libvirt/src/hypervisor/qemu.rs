@@ -118,6 +118,7 @@ impl ConnectionProvider for LibvirtQemuConnectionProvider {
         Box::pin(async move {
             let conn: Box<dyn Connection> = Box::new(
                 LibvirtConnection::new(
+                    configuration.id(),
                     &hostname,
                     &Self::build_uri(&configuration),
                     configuration.title().unwrap_or_default(),

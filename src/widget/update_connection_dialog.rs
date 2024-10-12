@@ -147,7 +147,7 @@ impl FieldMonitorUpdateConnectionDialog {
             Err(err) => imp.toast_overlay.add_toast(
                 adw::Toast::builder()
                     .title(err.to_string())
-                    .timeout(10)
+                    .timeout(5)
                     .build(),
             ),
         }

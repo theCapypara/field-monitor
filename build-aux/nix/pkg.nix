@@ -43,7 +43,7 @@ stdenv.mkDerivation rec {
     };
   };
 
-  nativeBuildInputs = [
+  prodNativeBuildInputs = [
     glib
     gtk4
     meson
@@ -62,12 +62,15 @@ stdenv.mkDerivation rec {
     freerdp
     spice-protocol
     spice-gtk
-    vte-gtk4
     gtk-vnc
     usbredir
     libepoxy
     libGL
   ];
+
+  nativeBuildInputs = prodNativeBuildInputs ++ [ vte-gtk4 ];
+
+  mesonFlags = [ "--buildtype=release" ];
 
   postInstall = ''
     wrapProgram $out/bin/de.capypara.FieldMonitor --set RUST_LOG 'field_monitor=info,libfieldmonitor=info,GLib=info,warning'

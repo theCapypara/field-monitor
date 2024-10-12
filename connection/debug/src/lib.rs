@@ -11,7 +11,7 @@ use futures::future::LocalBoxFuture;
 use gtk::prelude::*;
 use indexmap::IndexMap;
 use log::debug;
-use rand::{Rng, thread_rng};
+use rand::{thread_rng, Rng};
 
 use libfieldmonitor::adapter::rdp::RdpAdapter;
 use libfieldmonitor::adapter::spice::SpiceAdapter;

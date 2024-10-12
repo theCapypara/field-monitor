@@ -1,19 +1,27 @@
 {
-  field-monitor,
   stdenv,
+  field-monitor-source,
   lib,
+  vte-gtk4,
 }:
 
 stdenv.mkDerivation {
   pname = "field-monitor-devel";
   version = "47.0";
 
-  inherit (field-monitor)
-    src
-    cargoDeps
-    nativeBuildInputs
-    buildInputs
-    ;
+  inherit (field-monitor-source) src cargoDeps buildInputs;
+
+  nativeBuildInputs = field-monitor-source.prodNativeBuildInputs ++ [
+    (vte-gtk4.dev.overrideAttrs (
+      finalAttrs: previousAttrs: {
+        mesonFlags = previousAttrs.mesonFlags ++ [
+          "--buildtype=debug"
+          "-Ddebug=true"
+        ];
+        dontStrip = true;
+      }
+    ))
+  ];
 
   mesonFlags = [
     "--buildtype=debug"

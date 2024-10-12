@@ -15,9 +15,26 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use zbus::{proxy, Connection, Result};
 
-pub mod rdp;
-pub mod spice;
-pub mod types;
-pub mod vnc;
-pub mod vte_pty;
+#[proxy(
+    interface = "de.capypara.FieldMonitor.VtePtyProcMon1",
+    default_path = "/de/capypara/FieldMonitor/VtePtyProcMon"
+)]
+pub trait VtePtyProcMon {
+    fn extra_arguments(&self, fm_key: &str) -> Result<Vec<String>>;
+
+    fn set_result(&self, is_err: bool, msg: &str) -> Result<()>;
+
+    fn log_debug(&self, msg: &str) -> Result<()>;
+
+    fn log_error(&self, msg: &str) -> Result<()>;
+
+    fn log_warn(&self, msg: &str) -> Result<()>;
+}
+
+pub async fn make_dbus_client(name: &str) -> Result<VtePtyProcMonProxy<'static>> {
+    let connection = Connection::session().await?;
+    let proxy = VtePtyProcMonProxy::new(&connection, name.to_string()).await?;
+    Ok(proxy)
+}

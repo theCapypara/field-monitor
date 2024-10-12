@@ -33,7 +33,7 @@ template $FieldMonitorConnectionList: Adw.Bin {
 
             Button overview_button {
                 icon-name: "view-grid-symbolic";
-                tooltip-text: _("Open Connections");
+                tooltip-text: _("Active Connections");
                 action-name: "win.open-overview";
             }
 
@@ -172,11 +172,6 @@ menu primary_menu {
         item {
             label: _('_New Window');
             action: 'app.new-window';
-        }
-
-        item {
-            label: _('_Preferences');
-            action: 'app.preferences';
         }
 
         item {

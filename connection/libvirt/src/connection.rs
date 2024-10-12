@@ -24,9 +24,9 @@ use std::time::Duration;
 
 use anyhow::anyhow;
 use async_std::task::sleep;
-use futures::{stream, StreamExt, TryStreamExt};
 use futures::channel::oneshot;
 use futures::future::LocalBoxFuture;
+use futures::{stream, StreamExt, TryStreamExt};
 use gettextrs::gettext;
 use log::{debug, error, warn};
 use quick_xml::de::from_str;
@@ -40,15 +40,17 @@ use virt::sys::{
     VIR_DOMAIN_DESTROY_GRACEFUL, VIR_DOMAIN_PAUSED, VIR_DOMAIN_REBOOT_ACPI_POWER_BTN,
     VIR_DOMAIN_SHUTDOWN_ACPI_POWER_BTN, VIR_DOMAIN_START_PAUSED, VIR_DOMAIN_XML_SECURE,
 };
+use which::which_global;
 
 use libfieldmonitor::adapter::rdp::RdpAdapter;
 use libfieldmonitor::adapter::spice::SpiceAdapter;
 use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
+use libfieldmonitor::adapter::vte_pty::VtePtyAdapter;
 use libfieldmonitor::connection::*;
 use libfieldmonitor::i18n::gettext_f;
 
-use crate::console::LibvirtConsoleAdapter;
+pub const PTY_DRIVER_BIN: &str = "de.capypara.FieldMonitor.PtyDrv.Libvirt";
 
 #[derive(Debug, Clone)]
 pub(crate) struct VirtArc<T>(Arc<()>, T, Connect);
@@ -90,13 +92,19 @@ impl<T> Drop for VirtArc<T> {
 }
 
 pub struct LibvirtConnection {
+    id: String,
     title: String,
     hostname: String,
     connection: VirtArc<Connect>,
 }
 
 impl LibvirtConnection {
-    pub async fn new(hostname: &str, uri: &str, title: &str) -> ConnectionResult<Self> {
+    pub async fn new(
+        connection_id: &str,
+        hostname: &str,
+        uri: &str,
+        title: &str,
+    ) -> ConnectionResult<Self> {
         let uri = uri.to_string();
         debug!(
             "Opening libvirt connection to {uri} [hostname for adapter connections: {hostname}]"
@@ -104,6 +112,7 @@ impl LibvirtConnection {
         let connection =
             run_in_thread(move || Connect::open(Some(&uri)).map_err(virt_err)).await??;
         Ok(Self {
+            id: connection_id.to_string(),
             title: title.to_string(),
             hostname: hostname.to_string(),
             connection: VirtArc::new(connection),
@@ -148,8 +157,13 @@ impl Connection for LibvirtConnection {
                         })
                         .await?
                         .map_err(virt_err)?;
-                        let bx: Box<dyn ServerConnection> =
-                            Box::new(LibvirtServer::new(&hostname_cln, domain, name, is_active));
+                        let bx: Box<dyn ServerConnection> = Box::new(LibvirtServer::new(
+                            &hostname_cln,
+                            domain,
+                            self.id.clone(),
+                            name,
+                            is_active,
+                        ));
                         Ok((Cow::Owned(domain_id.to_string()), bx))
                     }
                 })
@@ -230,12 +244,19 @@ struct LibvirtXmlDomain {
 pub struct LibvirtServer {
     domain: VirtArc<Domain>,
     is_active: Option<bool>,
+    connection_name: String,
     name: String,
     graphics: LibvirtGraphics,
 }
 
 impl LibvirtServer {
-    fn new(hostname: &str, domain: VirtArc<Domain>, name: String, is_active: Option<bool>) -> Self {
+    fn new(
+        hostname: &str,
+        domain: VirtArc<Domain>,
+        connection_name: String,
+        name: String,
+        is_active: Option<bool>,
+    ) -> Self {
         Self {
             graphics: if is_active.unwrap_or(true) {
                 Self::graphics_for(hostname, &name, &domain)
@@ -243,6 +264,7 @@ impl LibvirtServer {
                 LibvirtGraphics::default()
             },
             domain,
+            connection_name,
             name,
             is_active,
         }
@@ -558,10 +580,7 @@ impl ServerConnection for LibvirtServer {
         if self.graphics.vnc.is_some() {
             adapters.push((VncAdapter::TAG.into(), gettext("VNC (Graphical)").into()));
         }
-        adapters.push((
-            LibvirtConsoleAdapter::TAG.into(),
-            gettext("Serial Console").into(),
-        ));
+        adapters.push((VtePtyAdapter::TAG.into(), gettext("Serial Console").into()));
         adapters
     }
 
@@ -615,8 +634,23 @@ impl ServerConnection for LibvirtServer {
                         ))?
                     }
                 }
-                LibvirtConsoleAdapter::TAG => {
-                    Box::new(LibvirtConsoleAdapter::new(self.domain.clone()))
+                VtePtyAdapter::TAG => {
+                    let uri = self
+                        .domain
+                        .get_connect()
+                        .and_then(|c| c.get_uri())
+                        .map_err(|e| ConnectionError::General(None, e.into()))?;
+                    let domid = self
+                        .domain
+                        .get_uuid_string()
+                        .map_err(|e| ConnectionError::General(None, e.into()))?;
+                    Box::new(VtePtyAdapter::new(
+                        self.connection_name.clone(),
+                        self.name.clone(),
+                        VtePtyAdapter::TAG.to_string(),
+                        which_global(PTY_DRIVER_BIN).expect("failed to find libvirt vte driver in path. Is Field Monitor correctly installed?"),
+                        vec![uri, domid],
+                    ))
                 }
                 tag => Err(ConnectionError::General(
                     None,

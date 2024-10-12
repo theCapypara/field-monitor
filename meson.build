@@ -13,6 +13,7 @@ subdir('data')
 subdir('lib/src')
 subdir('connection/generic-group/src')
 subdir('connection/libvirt/src')
+subdir('vte-pty-driver/libvirt/src')
 subdir('src')
 subdir('po')
 
