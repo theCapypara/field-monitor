@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gresources>
+    <gresource prefix="/de/capypara/FieldMonitor/connection/proxmox">
+        <file preprocess="xml-stripblanks">credential_preferences.ui</file>
+        <file preprocess="xml-stripblanks">preferences.ui</file>
+    </gresource>
+</gresources>

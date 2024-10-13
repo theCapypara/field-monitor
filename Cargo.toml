@@ -5,8 +5,9 @@ members = [
     "connection/debug",
     "connection/generic-group",
     "connection/libvirt",
+    "connection/proxmox",
     "vte-pty-driver/lib",
-    "vte-pty-driver/libvirt"
+    "vte-pty-driver/libvirt",
 ]
 
 [workspace.package]
@@ -112,6 +113,7 @@ oo7 = { workspace = true }
 libfieldmonitor = { path = "./lib" }
 field-monitor-generic-group = { path = "./connection/generic-group" }
 field-monitor-libvirt = { path = "./connection/libvirt" }
+field-monitor-proxmox = { path = "./connection/proxmox" }
 field-monitor-debug = { path = "./connection/debug", optional = true }
 
 [dev-dependencies]

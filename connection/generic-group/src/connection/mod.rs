@@ -96,14 +96,14 @@ fn configure_credentials(
 fn store_credentials(
     server: &[String],
     preferences: gtk::Widget,
-    mut configuration: DualScopedConnectionConfiguration,
+    configuration: DualScopedConnectionConfiguration,
 ) -> anyhow::Result<DualScopedConnectionConfiguration> {
     let server = server.join("/");
     let preferences = preferences
         .downcast::<GenericGroupCredentialPreferences>()
         .expect("store_credentials got invalid widget type");
 
-    configuration = configuration.transform_update_separate(
+    configuration.transform_update_separate(
         |c_session| {
             store_credentials_session(
                 &server,
@@ -118,9 +118,7 @@ fn store_credentials(
                 c_persistent,
             )
         },
-    )?;
-
-    Ok(configuration)
+    )
 }
 
 fn store_credentials_session(

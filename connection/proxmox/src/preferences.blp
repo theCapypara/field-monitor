@@ -1,0 +1,38 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $ProxmoxPreferences: Adw.PreferencesPage {
+    title: bind title_entry.text bidirectional;
+    hostname: bind hostname_entry.text bidirectional;
+    port: bind port_entry.text bidirectional;
+    ignore_ssl_cert_error: bind set_ignore_ssl_cert_error_switch.active bidirectional;
+
+    Adw.PreferencesGroup {
+        Adw.EntryRow title_entry {
+            title: _("Connection Name");
+        }
+    }
+
+    Adw.PreferencesGroup {
+        title: _("Connection");
+
+        Adw.EntryRow hostname_entry {
+            title: _("Hostname");
+        }
+
+        Adw.EntryRow port_entry {
+            title: _("Port");
+            text: "8006";
+            input-purpose: number;
+        }
+
+        Adw.SwitchRow set_ignore_ssl_cert_error_switch {
+            title: _("Trust Any SSL Certificate");
+            subtitle: _("Allows connecting to servers with self-signed and otherwise invalid SSL certificates. Be careful, as this is a potential security risk.");
+        }
+    }
+
+    $ProxmoxCredentialPreferences credentials {
+        use_temporary_credentials: false;
+    }
+}

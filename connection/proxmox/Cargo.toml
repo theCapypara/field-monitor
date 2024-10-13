@@ -1,5 +1,5 @@
 [package]
-name = "field-monitor-libvirt"
+name = "field-monitor-proxmox"
 edition.workspace = true
 rust-version.workspace = true
 
@@ -8,18 +8,13 @@ libfieldmonitor = { path = "../../lib" }
 gettext-rs = { workspace = true }
 anyhow = { workspace = true }
 futures = { workspace = true }
-async-std = { workspace = true }
+tokio = { version = "1.40", features = ["parking_lot", "rt"] }
+reqwest = "0.12"
 log = { workspace = true }
 gtk = { workspace = true }
 adw = { workspace = true }
 vte = { workspace = true }
-uuid = { workspace = true }
-num_enum = { workspace = true }
 secure-string = { workspace = true }
-virt = { version = "0.4", features = ["qemu"] }
-quick-xml = { version = "0.36", features = ["serialize", "serde-types"] }
-serde = { workspace = true }
-which = { workspace = true }
 
 [lints]
 workspace = true

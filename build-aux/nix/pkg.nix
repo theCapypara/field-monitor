@@ -27,6 +27,7 @@
   usbredir,
   libepoxy,
   libGL,
+  openssl,
 }:
 
 stdenv.mkDerivation rec {
@@ -66,6 +67,7 @@ stdenv.mkDerivation rec {
     usbredir
     libepoxy
     libGL
+    openssl
   ];
 
   nativeBuildInputs = prodNativeBuildInputs ++ [ vte-gtk4 ];
@@ -83,6 +85,7 @@ stdenv.mkDerivation rec {
       libadwaita
       libvirt
       xdg-desktop-portal
+      openssl
     ]
     ++ (with gst_all_1; [
       gstreamer

@@ -18,6 +18,7 @@
 
 use field_monitor_generic_group::*;
 use field_monitor_libvirt::*;
+use field_monitor_proxmox::ProxmoxConnectionProviderConstructor;
 use libfieldmonitor::connection::ConnectionProviderConstructor;
 
 // TODO: Plugin system?
@@ -26,6 +27,7 @@ pub static CONNECTION_PROVIDERS: &[&dyn ConnectionProviderConstructor] = &[
     &field_monitor_debug::DebugConnectionProviderConstructor,
     &RdpConnectionProviderConstructor,
     &SpiceConnectionProviderConstructor,
+    &ProxmoxConnectionProviderConstructor,
     &LibvirtQemuConnectionProviderConstructor,
     &VncConnectionProviderConstructor,
 ];
