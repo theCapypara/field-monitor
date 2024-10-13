@@ -243,7 +243,6 @@ template $FieldMonitorConnectionView: Adw.Bin {
                                             halign: center;
                                             action-name: "view.show-output";
                                         }
-
                                     };
                                 };
                             }
@@ -287,6 +286,12 @@ template $FieldMonitorConnectionView: Adw.Bin {
                         notify::grabbed => $on_focus_grabber_grabbed_changed() swapped;
                         vexpand: true;
                         hexpand: true;
+                    }
+
+                    [overlay]
+                    $FieldMonitorGrabNote grab_note {
+                        halign: center;
+                        valign: end;
                     }
 
                     Adw.Bin display_bin {

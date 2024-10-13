@@ -36,16 +36,16 @@ use vte::TerminalExt;
 
 use libfieldmonitor::adapter::types::{AdapterDisplay, AdapterDisplayWidget};
 use libfieldmonitor::connection::{ConnectionError, ConnectionResult};
+use libfieldmonitor::i18n::gettext_f;
 
 use crate::application::FieldMonitorApplication;
 use crate::connection_loader::ConnectionLoader;
 use crate::util::configure_vte_styling;
 use crate::widget::foucs_grabber::FieldMonitorFocusGrabber;
+use crate::widget::grab_note::FieldMonitorGrabNote;
 use crate::widget::window::FieldMonitorWindow;
 
 mod imp {
-    use log::debug;
-
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
@@ -68,6 +68,8 @@ mod imp {
         pub header_gradient: TemplateChild<adw::Bin>,
         #[template_child]
         pub focus_grabber: TemplateChild<FieldMonitorFocusGrabber>,
+        #[template_child]
+        pub grab_note: TemplateChild<FieldMonitorGrabNote>,
         #[template_child]
         pub menu_button: TemplateChild<gtk::MenuButton>,
         #[template_child]
@@ -987,6 +989,28 @@ impl FieldMonitorConnectionView {
                 window.add_css_class("connection-view-grabbed");
             } else {
                 window.remove_css_class("connection-view-grabbed");
+            }
+        }
+
+        if let Some(display) = self
+            .imp()
+            .display_bin
+            .child()
+            .and_downcast::<rdw::Display>()
+        {
+            if grabbed {
+                let shortcut = display.grab_shortcut().to_label(&self.display());
+                // The shortcut may have alternatives for technical reasons, but only show the
+                // first part.
+                // TODO: The displayed string is not stable.
+                let shortcut = shortcut.split(',').next().unwrap();
+
+                self.imp().grab_note.show_note(&gettext_f(
+                    "Press {keycombo} to un-grab the mouse and keyboard.",
+                    &[("keycombo", shortcut)],
+                ));
+            } else {
+                self.imp().grab_note.hide_note();
             }
         }
     }

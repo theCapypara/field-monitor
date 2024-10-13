@@ -187,9 +187,9 @@ impl FieldMonitorFocusGrabber {
     fn try_mute_accels(&self, mute: bool) {
         if let Some(fm_app) = self
             .root()
-            .and_then(|root| root.downcast::<adw::ApplicationWindow>().ok())
+            .and_downcast::<adw::ApplicationWindow>()
             .and_then(|win| win.application())
-            .and_then(|app| app.downcast::<FieldMonitorApplication>().ok())
+            .and_downcast::<FieldMonitorApplication>()
         {
             if mute {
                 fm_app.remove_accels();

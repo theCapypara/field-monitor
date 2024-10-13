@@ -19,19 +19,19 @@ menubutton.header-osd button,
 }
 
 .window-controls-osd > button > image {
-    background-color: mix(var(--window-bg-color), var(--window-fg-color), 0.1);
+    background-color: color-mix(in oklab, var(--window-bg-color), var(--window-fg-color) 10%);
 }
 
 button.header-osd:not(.nohover):hover,
 menubutton.header-osd button:not(.nohover):hover,
 .window-controls-osd > button > image:not(.nohover):hover {
-    background-color: mix(var(--window-bg-color), var(--window-fg-color), 0.15);
+    background-color: color-mix(in oklab, var(--window-bg-color), var(--window-fg-color) 15%);
 }
 
 button.header-osd:not(.nohover):active,
 menubutton.header-osd button:not(.nohover):active,
 .window-controls-osd > button > image:not(.nohover):active {
-    background-color: mix(var(--window-bg-color), var(--window-fg-color), 0.3);
+    background-color: color-mix(in oklab, var(--window-bg-color), var(--window-fg-color) 30%);
 }
 
 .connection-list .list-inner-box {
@@ -81,7 +81,15 @@ menubutton.header-osd button:not(.nohover):active,
     outline: 2px solid var(--accent-bg-color);
 }
 
-/* * * * */
-.debug-solid-color {
-    background: rgb(200, 200, 0);
+.grab-note {
+    background-color: color-mix(in srgb, var(--window-bg-color) 90%, transparent);
+    padding: 12px;
+    margin-bottom: 24px;
+    border-radius: 12px;
+    opacity: 1;
+    transition: opacity 0.25s ease-in;
+}
+
+.grab-note.hidden {
+    opacity: 0;
 }

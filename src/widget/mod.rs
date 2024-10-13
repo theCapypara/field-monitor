@@ -22,5 +22,6 @@ mod close_warning_dialog;
 pub mod connection_list;
 pub mod connection_view;
 mod foucs_grabber;
+mod grab_note;
 pub mod update_connection_dialog;
 pub mod window;
