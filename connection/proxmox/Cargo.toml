@@ -4,12 +4,13 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+proxmox-api = { workspace = true }
 libfieldmonitor = { path = "../../lib" }
 gettext-rs = { workspace = true }
 anyhow = { workspace = true }
 futures = { workspace = true }
-tokio = { version = "1.40", features = ["parking_lot", "rt"] }
-reqwest = "0.12"
+http = "1.1"
+tokio = { version = "1.40", features = ["parking_lot", "rt-multi-thread"] }
 log = { workspace = true }
 gtk = { workspace = true }
 adw = { workspace = true }

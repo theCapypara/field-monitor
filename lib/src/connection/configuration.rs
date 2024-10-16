@@ -22,14 +22,13 @@ use std::collections::HashMap;
 use std::mem::take;
 use std::sync::Arc;
 
-use futures::future::{try_join_all, LocalBoxFuture};
+use futures::future::{try_join_all, BoxFuture, LocalBoxFuture};
 use secure_string::SecureString;
 use serde_yaml::{Mapping, Value};
 
 use crate::connection::config_value::{ConfigValue, ConfigValueRef};
 use crate::ManagesSecrets;
 
-#[allow(async_fn_in_trait)]
 pub trait ConfigAccess {
     fn get(&self, key: &str) -> Option<ConfigValueRef>;
     fn get_try_as_str(&self, key: &str) -> Option<&str> {
@@ -60,7 +59,7 @@ pub trait ConfigAccess {
         self.get(key)
             .and_then(|v| v.as_serde_value().and_then(Value::as_bool))
     }
-    async fn get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<SecureString>>;
+    fn get_secret(&self, key: impl ToString) -> BoxFuture<anyhow::Result<Option<SecureString>>>;
 }
 
 pub trait ConfigAccessMut {
@@ -149,14 +148,6 @@ impl ConnectionConfiguration {
         }
         try_join_all(futs.into_iter()).await?;
         Ok(self.config.clone())
-    }
-
-    async fn do_get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<SecureString>> {
-        self.secret_manager
-            .lookup(&self.connection_id, key.as_ref())
-            .await
-            .map(|gstr| gstr.map(Into::into))
-            .map_err(Into::into)
     }
 
     async fn do_clear_secret(
@@ -327,11 +318,19 @@ impl ConfigAccess for ConnectionConfiguration {
         }
     }
 
-    async fn get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<SecureString>> {
-        match self.pending_secret_changes.get(key.as_ref()) {
-            None => self.do_get_secret(key).await,
-            Some(v) => Ok(v.clone()),
-        }
+    fn get_secret(&self, key: impl ToString) -> BoxFuture<anyhow::Result<Option<SecureString>>> {
+        let key = key.to_string();
+        Box::pin(async move {
+            match self.pending_secret_changes.get(&key) {
+                None => self
+                    .secret_manager
+                    .lookup(&self.connection_id, key.as_ref())
+                    .await
+                    .map(|gstr| gstr.map(Into::into))
+                    .map_err(Into::into),
+                Some(v) => Ok(v.clone()),
+            }
+        })
     }
 }
 
@@ -390,17 +389,20 @@ impl<'a> ConfigAccess for ConfigSectionRef<'a> {
         }
     }
 
-    async fn get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<SecureString>> {
-        let key = format!("{}///{}", self.section_key, key.as_ref());
-        match self.pending_secret_changes.get(&key) {
-            None => self
-                .secret_manager
-                .lookup(self.connection_id, &key)
-                .await
-                .map(|gstr| gstr.map(Into::into))
-                .map_err(Into::into),
-            Some(v) => Ok(v.clone()),
-        }
+    fn get_secret(&self, key: impl ToString) -> BoxFuture<anyhow::Result<Option<SecureString>>> {
+        let key = key.to_string();
+        Box::pin(async move {
+            let key = format!("{}///{}", self.section_key, &key);
+            match self.pending_secret_changes.get(&key) {
+                None => self
+                    .secret_manager
+                    .lookup(self.connection_id, &key)
+                    .await
+                    .map(|gstr| gstr.map(Into::into))
+                    .map_err(Into::into),
+                Some(v) => Ok(v.clone()),
+            }
+        })
     }
 }
 
@@ -415,17 +417,20 @@ impl<'a> ConfigAccess for ConfigSectionMut<'a> {
         }
     }
 
-    async fn get_secret(&self, key: impl AsRef<str>) -> anyhow::Result<Option<SecureString>> {
-        let key = format!("{}///{}", self.section_key, key.as_ref());
-        match self.pending_secret_changes.get(&key) {
-            None => self
-                .secret_manager
-                .lookup(self.connection_id, &key)
-                .await
-                .map(|gstr| gstr.map(Into::into))
-                .map_err(Into::into),
-            Some(v) => Ok(v.clone()),
-        }
+    fn get_secret(&self, key: impl ToString) -> BoxFuture<anyhow::Result<Option<SecureString>>> {
+        let key = key.to_string();
+        Box::pin(async move {
+            let key = format!("{}///{}", self.section_key, &key);
+            match self.pending_secret_changes.get(&key) {
+                None => self
+                    .secret_manager
+                    .lookup(self.connection_id, &key)
+                    .await
+                    .map(|gstr| gstr.map(Into::into))
+                    .map_err(Into::into),
+                Some(v) => Ok(v.clone()),
+            }
+        })
     }
 }
 

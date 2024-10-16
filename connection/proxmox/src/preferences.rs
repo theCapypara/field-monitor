@@ -21,7 +21,7 @@ use std::num::NonZeroU32;
 
 use adw::subclass::prelude::*;
 use anyhow::anyhow;
-use futures::future::LocalBoxFuture;
+use futures::future::BoxFuture;
 use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
@@ -40,13 +40,13 @@ pub(super) trait ProxmoxConfiguration {
     fn set_hostname(&mut self, value: &str);
     fn port(&self) -> Option<NonZeroU32>;
     fn set_port(&mut self, value: NonZeroU32);
-    fn username(&self) -> Option<&str>;
-    fn set_username(&mut self, value: &str);
-    fn realm(&self) -> Option<&str>;
-    fn set_realm(&mut self, value: &str);
     fn use_apikey(&self) -> bool;
     fn set_use_apikey(&mut self, value: bool);
-    fn password_or_apikey(&self) -> LocalBoxFuture<anyhow::Result<Option<SecureString>>>;
+    fn username(&self) -> Option<&str>;
+    fn set_username(&mut self, value: &str);
+    fn tokenid(&self) -> Option<&str>;
+    fn set_tokenid(&mut self, value: &str);
+    fn password_or_apikey(&self) -> BoxFuture<anyhow::Result<Option<SecureString>>>;
     fn set_password_or_apikey(&mut self, value: Option<SecureString>);
     fn set_password_or_apikey_session(&mut self, value: Option<SecureString>);
 }
@@ -91,22 +91,6 @@ impl ProxmoxConfiguration for ConnectionConfiguration {
         self.set_value("port", value.get());
     }
 
-    fn username(&self) -> Option<&str> {
-        self.get_try_as_str("username")
-    }
-
-    fn set_username(&mut self, value: &str) {
-        self.set_value("username", value);
-    }
-
-    fn realm(&self) -> Option<&str> {
-        self.get_try_as_str("realm")
-    }
-
-    fn set_realm(&mut self, value: &str) {
-        self.set_value("realm", value);
-    }
-
     fn use_apikey(&self) -> bool {
         self.get_try_as_bool("use-apikey").unwrap_or_default()
     }
@@ -115,15 +99,28 @@ impl ProxmoxConfiguration for ConnectionConfiguration {
         self.set_value("use-apikey", value);
     }
 
-    fn password_or_apikey(&self) -> LocalBoxFuture<anyhow::Result<Option<SecureString>>> {
+    fn username(&self) -> Option<&str> {
+        self.get_try_as_str("username")
+    }
+
+    fn set_username(&mut self, value: &str) {
+        self.set_value("username", value);
+    }
+
+    fn tokenid(&self) -> Option<&str> {
+        self.get_try_as_str("tokenid")
+    }
+
+    fn set_tokenid(&mut self, value: &str) {
+        self.set_value("tokenid", value);
+    }
+
+    fn password_or_apikey(&self) -> BoxFuture<anyhow::Result<Option<SecureString>>> {
         Box::pin(async move {
-            Box::pin(async move {
-                if let Some(pw) = self.get_try_as_sec_string("__session__password-or-apikey") {
-                    return Ok(Some(pw));
-                }
-                self.get_secret("password-or-apikey").await
-            })
-            .await
+            if let Some(pw) = self.get_try_as_sec_string("__session__password-or-apikey") {
+                return Ok(Some(pw));
+            }
+            self.get_secret("password-or-apikey").await
         })
     }
 

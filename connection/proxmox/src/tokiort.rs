@@ -15,20 +15,28 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use futures::future::BoxFuture;
-use secure_string::SecureString;
+use std::future::Future;
+use std::sync::OnceLock;
 
-pub trait ManagesSecrets: Send + Sync {
-    fn lookup(
-        &self,
-        connection_id: &str,
-        field: &str,
-    ) -> BoxFuture<anyhow::Result<Option<SecureString>>>;
-    fn store(
-        &self,
-        connection_id: &str,
-        field: &str,
-        password: SecureString,
-    ) -> BoxFuture<anyhow::Result<()>>;
-    fn clear(&self, connection_id: &str, field: &str) -> BoxFuture<anyhow::Result<()>>;
+use tokio::runtime::Runtime;
+
+use libfieldmonitor::connection::{ConnectionError, ConnectionResult};
+
+pub fn tkruntime() -> &'static Runtime {
+    static RUNTIME: OnceLock<Runtime> = OnceLock::new();
+    RUNTIME.get_or_init(|| Runtime::new().expect("failed setting up tokio async runtime"))
+}
+
+pub async fn run_on_tokio<F, T>(fut: F) -> ConnectionResult<T>
+where
+    F: Future<Output = ConnectionResult<T>> + Send + 'static,
+    T: Send + 'static,
+{
+    tkruntime()
+        .spawn(fut)
+        .await
+        .map_err(|err| {
+            ConnectionError::General(None, anyhow::Error::from(err).context("tokio join failed"))
+        })
+        .and_then(|r| r) // flatten
 }

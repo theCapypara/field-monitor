@@ -213,6 +213,7 @@ impl FieldMonitorWindow {
         self.add_new_page(&view, server_title, Some(connection_title));
 
         self.imp().main_stack.set_visible_child_name("tabs");
+        self.change_window_title(WindowTitle::ConnectionView(view));
     }
 
     // Taken in parts from Showtime:

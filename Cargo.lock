@@ -924,10 +924,11 @@ dependencies = [
  "futures",
  "gettext-rs",
  "gtk4",
+ "http",
  "libadwaita",
  "libfieldmonitor",
  "log",
- "reqwest",
+ "proxmox-api",
  "secure-string",
  "tokio",
  "vte4",
@@ -2706,6 +2707,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5e719e8df665df0d1c8fbfd238015744736151d4445ec0836b8e628aae103b77"
 dependencies = [
  "unicode-ident",
+]
+
+[[package]]
+name = "proxmox-api"
+version = "0.0.0"
+dependencies = [
+ "anyhow",
+ "futures",
+ "http",
+ "log",
+ "reqwest",
+ "secure-string",
+ "serde",
+ "thiserror",
 ]
 
 [[package]]

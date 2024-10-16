@@ -19,8 +19,9 @@
 use std::cell::Cell;
 use std::cell::RefCell;
 
-use adw::prelude::ComboRowExt;
+use adw::prelude::{ComboRowExt, PreferencesRowExt};
 use adw::subclass::prelude::*;
+use gettextrs::gettext;
 use glib::clone;
 use gtk::glib;
 use gtk::prelude::*;
@@ -30,12 +31,6 @@ use libfieldmonitor::connection::ConnectionConfiguration;
 use libfieldmonitor::gtk::FieldMonitorSaveCredentialsButton;
 
 use crate::preferences::ProxmoxConfiguration;
-
-const REALM_ID_PAM: u32 = 0;
-const REALM_KEY_PAM: &str = "pam";
-const REALM_ID_PROXMOX: u32 = 1;
-const REALM_KEY_PROXMOX: &str = "pve";
-const REALM_ID_OTHER: u32 = 2;
 
 const AUTH_MODE_PASSWORD: u32 = 0;
 const AUTH_MODE_APIKEY: u32 = 1;
@@ -52,24 +47,25 @@ mod imp {
         #[template_child]
         pub password_entry_save_button: TemplateChild<FieldMonitorSaveCredentialsButton>,
         #[template_child]
-        pub realm_type_combo: TemplateChild<adw::ComboRow>,
-        #[template_child]
         pub auth_mode_combo: TemplateChild<adw::ComboRow>,
         #[template_child]
-        pub realm_other_entry: TemplateChild<adw::EntryRow>,
-        #[property(get, set)]
+        pub username_entry: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        pub tokenid_entry: TemplateChild<adw::EntryRow>,
+        #[property(get, set, default = "root@pam")]
         username: RefCell<String>,
         #[property(get, set)]
-        password: RefCell<String>,
+        tokenid: RefCell<String>,
         #[property(get, set)]
-        realm: RefCell<String>,
+        password_or_apikey: RefCell<String>,
         #[property(get, set)]
         use_apikey: Cell<bool>,
-
         #[property(get, construct_only, default = true)]
         /// If true: If the credentials are set to "ask", then still allow the user
         /// to input a value, if false, do not allow the user to input a value.
         pub use_temporary_credentials: Cell<bool>,
+
+        pub currently_updating_widgets: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -105,7 +101,6 @@ mod imp {
                         }
                     });
             }
-            self.obj().set_realm(REALM_KEY_PAM);
         }
     }
     impl WidgetImpl for ProxmoxCredentialPreferences {}
@@ -141,14 +136,10 @@ impl ProxmoxCredentialPreferences {
 
     pub async fn propagate_settings(&self, existing_configuration: &ConnectionConfiguration) {
         self.set_username(existing_configuration.username().unwrap_or_default());
-        if let Some(realm) = existing_configuration.realm() {
-            self.set_realm(realm);
-        } else {
-            self.set_realm(REALM_KEY_PAM);
-        }
+        self.set_tokenid(existing_configuration.tokenid().unwrap_or_default());
         self.set_use_apikey(existing_configuration.use_apikey());
         if let Ok(Some(v)) = existing_configuration.password_or_apikey().await {
-            self.set_password(v.unsecure());
+            self.set_password_or_apikey(v.unsecure());
         }
     }
 
@@ -157,9 +148,9 @@ impl ProxmoxCredentialPreferences {
         config: &mut ConnectionConfiguration,
     ) -> Result<(), anyhow::Error> {
         config.set_username(&self.username());
-        config.set_realm(&self.realm());
+        config.set_tokenid(&self.tokenid());
         config.set_use_apikey(self.use_apikey());
-        config.set_password_or_apikey(Some(SecureString::from(self.password())));
+        config.set_password_or_apikey(Some(SecureString::from(self.password_or_apikey())));
         Ok(())
     }
 
@@ -168,44 +159,15 @@ impl ProxmoxCredentialPreferences {
         config: &mut ConnectionConfiguration,
     ) -> Result<(), anyhow::Error> {
         config.set_username(&self.username());
-        config.set_realm(&self.realm());
+        config.set_tokenid(&self.tokenid());
         config.set_use_apikey(self.use_apikey());
-        config.set_password_or_apikey_session(Some(SecureString::from(self.password())));
+        config.set_password_or_apikey_session(Some(SecureString::from(self.password_or_apikey())));
         Ok(())
     }
 }
 
 #[gtk::template_callbacks]
 impl ProxmoxCredentialPreferences {
-    #[template_callback]
-    fn on_self_realm_changed(&self) {
-        let new_realm_type = match &*self.realm() {
-            REALM_KEY_PAM => REALM_ID_PAM,
-            REALM_KEY_PROXMOX => REALM_ID_PROXMOX,
-            _ => REALM_ID_OTHER,
-        };
-        if new_realm_type != self.imp().realm_type_combo.selected() {
-            self.imp().realm_type_combo.set_selected(new_realm_type)
-        }
-    }
-
-    #[template_callback]
-    fn on_realm_type_combo_selected(&self) {
-        match self.imp().realm_type_combo.selected() {
-            REALM_ID_OTHER => {
-                self.imp().realm_other_entry.set_visible(true);
-            }
-            v => {
-                self.imp().realm_other_entry.set_visible(false);
-                match v {
-                    REALM_ID_PAM => self.set_realm(REALM_KEY_PAM),
-                    REALM_ID_PROXMOX => self.set_realm(REALM_KEY_PROXMOX),
-                    _ => unreachable!(),
-                }
-            }
-        }
-    }
-
     #[template_callback]
     fn on_self_use_apikey_changed(&self) {
         let new_v = if self.use_apikey() {
@@ -220,10 +182,18 @@ impl ProxmoxCredentialPreferences {
 
     #[template_callback]
     fn on_auth_mode_combo_selected(&self) {
-        self.set_use_apikey(match self.imp().auth_mode_combo.selected() {
+        let use_apikey = match self.imp().auth_mode_combo.selected() {
             AUTH_MODE_PASSWORD => false,
             AUTH_MODE_APIKEY => true,
             _ => unreachable!(),
-        })
+        };
+        self.set_use_apikey(use_apikey);
+        self.imp().tokenid_entry.set_visible(use_apikey);
+        self.imp().username_entry.set_visible(!use_apikey);
+        self.imp().password_entry.set_title(&if use_apikey {
+            gettext("API Key")
+        } else {
+            gettext("Password")
+        });
     }
 }
