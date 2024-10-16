@@ -1,7 +1,3 @@
-.sharp-corners {
-    border-radius: 0;
-}
-
 window {
     transition: border-radius 0.5s ease, outline 0.5s ease;
 }
@@ -79,6 +75,7 @@ menubutton.header-osd button:not(.nohover):active,
 
 .connection-view-grabbed:not(.fullscreen) {
     outline: 2px solid var(--accent-bg-color);
+    border-radius: 0;
 }
 
 .grab-note {

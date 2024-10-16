@@ -22,8 +22,8 @@ use std::cell::RefCell;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
-use gtk::glib::Variant;
 use gtk::{gio, glib};
+use gtk::glib::Variant;
 use itertools::Itertools;
 use log::debug;
 
@@ -52,8 +52,6 @@ mod imp {
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         pub mobile_breakpoint: TemplateChild<adw::Breakpoint>,
-        #[property(get, set)]
-        pub sharp_window_corners: Cell<bool>,
         pub tab_title_notify_binding: RefCell<Option<(gtk::Widget, glib::SignalHandlerId)>>,
         pub force_close: Cell<bool>,
         // Currently active page for TabView menus.
@@ -117,12 +115,6 @@ impl FieldMonitorWindow {
         );
 
         slf.on_main_stack_visible_child_name_changed();
-
-        application
-            .settings()
-            .unwrap()
-            .bind("sharp-window-corners", &slf, "sharp-window-corners")
-            .build();
 
         slf
     }
@@ -380,15 +372,6 @@ impl FieldMonitorWindow {
             // No open connections, close.
 
             false
-        }
-    }
-
-    #[template_callback]
-    fn on_self_sharp_window_corners_changed(&self) {
-        if self.sharp_window_corners() {
-            self.add_css_class("sharp-corners")
-        } else {
-            self.remove_css_class("sharp-corners")
         }
     }
 
