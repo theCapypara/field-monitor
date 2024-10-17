@@ -98,6 +98,9 @@ mod imp {
         pub connection_state: RefCell<Option<bool>>,
         pub connection_loader: Mutex<Option<ConnectionLoader>>,
         pub adapter: RefCell<Option<Box<dyn AdapterDisplay>>>,
+        // Generation of the connection. This is used to prevent "old" adapters from triggering
+        // the connection / disconnection events.
+        pub connection_generation: RefCell<u32>,
     }
 
     #[glib::object_subclass]
@@ -324,16 +327,42 @@ impl FieldMonitorConnectionView {
             return;
         };
 
+        // Make sure we only react to events from this adapter as long as we don't again reconnect
+        // by having a counter that tracks the "generation" of connection attempt.
+        // This is only briefly relevant during reconnection (unless we have a memory leak).
+        let this_generation = {
+            let mut generation_brw = imp.connection_generation.borrow_mut();
+            *generation_brw += 1;
+            *generation_brw
+        };
+
+        // Create the display and connect to the connection events
         let display = adapter.create_and_connect_display(
             Rc::new(glib::clone!(
                 #[weak(rename_to = slf)]
                 self,
-                move || slf.on_connected()
+                move || if this_generation == *slf.imp().connection_generation.borrow() {
+                    slf.on_connected()
+                } else {
+                    warn!(
+                        "got old generation connection event (gen is: {} - should: {})",
+                        this_generation,
+                        *slf.imp().connection_generation.borrow()
+                    )
+                }
             )),
             Rc::new(glib::clone!(
                 #[weak(rename_to = slf)]
                 self,
-                move |result| slf.on_disconnected(result)
+                move |result| if this_generation == *slf.imp().connection_generation.borrow() {
+                    slf.on_disconnected(result)
+                } else {
+                    warn!(
+                        "got old generation disconnection event (gen is: {} - should: {})",
+                        this_generation,
+                        *slf.imp().connection_generation.borrow()
+                    )
+                }
             )),
         );
 
@@ -755,6 +784,10 @@ impl FieldMonitorConnectionView {
                             gettext("Send _Keys"),
                             build_menu(&[
                                 Some(MenuObject::Section(build_menu(&[
+                                    Some(MenuObject::Item(gio::MenuItem::new(
+                                        Some(&gettext("Ctrl+Alt L")),
+                                        Some("view.send-keys::<Control>Alt_L"),
+                                    ))),
                                     Some(MenuObject::Item(gio::MenuItem::new(
                                         Some(&gettext("Ctrl+Alt+Backspace")),
                                         Some("view.send-keys::<Control><Alt>Backspace"),
