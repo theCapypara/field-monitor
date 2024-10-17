@@ -155,12 +155,12 @@ async fn finish_load(row: &impl ServerEntry, metadata: &ServerMetadata) {
             .orientation(gtk::Orientation::Horizontal)
             .build();
 
-        add_actions_to_entry(&suffix_box, true, &row.path(), actions);
-
         if let Some(button) = connect_button {
             row.set_activatable_widget(Some(&button));
             suffix_box.add_suffix(&button);
         }
+
+        add_actions_to_entry(&suffix_box, true, &row.path(), actions);
 
         row.add_suffix(&suffix_box);
     })
