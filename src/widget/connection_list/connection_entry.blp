@@ -1,10 +1,9 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $FieldMonitorCLConnectionEntry : Adw.PreferencesGroup {
+template $FieldMonitorCLConnectionEntry: Adw.PreferencesGroup {
     error-text: bind error_row.subtitle bidirectional;
     load-state: bind status_stack.visible-child-name bidirectional;
-
     notify::connection => $on_self_connection_changed() swapped;
 
     [header-suffix]
@@ -20,7 +19,9 @@ template $FieldMonitorCLConnectionEntry : Adw.PreferencesGroup {
             action-name: "app.edit-connection";
             valign: center;
 
-            styles ["flat"]
+            styles [
+                "flat"
+            ]
         }
     }
 
@@ -29,20 +30,23 @@ template $FieldMonitorCLConnectionEntry : Adw.PreferencesGroup {
             name: "loading";
 
             child: ListBox {
-               valign: start;
-               hexpand: true;
-               selection-mode: none;
+                valign: start;
+                hexpand: true;
+                selection-mode: none;
 
-               Adw.ActionRow {
+                Adw.ActionRow {
                     [prefix]
                     Spinner {
                         spinning: true;
                     }
-               }
+                }
 
-               styles ["boxed-list"]
-           };
+                styles [
+                    "boxed-list"
+                ]
+            };
         }
+
         StackPage {
             name: "servers";
 
@@ -51,9 +55,12 @@ template $FieldMonitorCLConnectionEntry : Adw.PreferencesGroup {
                 hexpand: true;
                 selection-mode: none;
 
-                styles ["boxed-list"]
+                styles [
+                    "boxed-list"
+                ]
             };
         }
+
         StackPage {
             name: "error";
 
@@ -64,19 +71,24 @@ template $FieldMonitorCLConnectionEntry : Adw.PreferencesGroup {
 
                 Adw.ActionRow error_row {
                     activatable: false;
-                    title: _("Error loading connection");
+                    title: _("Error loading connection.");
 
                     [prefix]
                     Image {
                         icon-name: "dialog-error-symbolic";
                     }
 
-                    styles ["dim-label"]
+                    styles [
+                        "dim-label"
+                    ]
                 }
 
-                styles ["boxed-list"]
+                styles [
+                    "boxed-list"
+                ]
             };
         }
+
         StackPage {
             name: "auth-required";
 
@@ -101,10 +113,14 @@ template $FieldMonitorCLConnectionEntry : Adw.PreferencesGroup {
                         valign: center;
                     }
 
-                    styles ["warning"]
+                    styles [
+                        "warning"
+                    ]
                 }
 
-                styles ["boxed-list"]
+                styles [
+                    "boxed-list"
+                ]
             };
         }
     }

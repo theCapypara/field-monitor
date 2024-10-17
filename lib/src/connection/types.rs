@@ -42,6 +42,17 @@ pub enum ConnectionError {
 }
 
 impl ConnectionError {
+    pub fn clone_outside(self: &Arc<Self>) -> Self {
+        match self.as_ref() {
+            Self::AuthFailed(msg, _) => {
+                Self::AuthFailed(msg.clone(), anyhow::Error::from(self.clone()))
+            }
+            Self::General(msg, _) => Self::General(msg.clone(), anyhow::Error::from(self.clone())),
+        }
+    }
+}
+
+impl ConnectionError {
     pub fn auth_failed(&self) -> bool {
         match self {
             ConnectionError::AuthFailed(_, _) => true,

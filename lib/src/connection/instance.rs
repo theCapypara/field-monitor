@@ -28,8 +28,8 @@ use glib::prelude::*;
 use glib::subclass::prelude::*;
 use log::{debug, error};
 
-use crate::connection::types::{Connection, ConnectionProvider};
 use crate::connection::*;
+use crate::connection::types::{Connection, ConnectionProvider};
 
 mod imp {
     use super::*;
@@ -175,15 +175,10 @@ impl Connection for ConnectionInstance {
             let brw = self.imp().implementation.borrow();
             match brw.as_ref() {
                 Some(implementation) => implementation.servers().await,
-                None => Err(ConnectionError::General(
-                    Some(gettext("Unable to load connection.")),
-                    self.imp()
-                        .load_error
-                        .borrow()
-                        .as_ref()
-                        .map(|e| anyhow::Error::new(e.clone()))
-                        .unwrap_or_else(|| anyhow!(gettext("Unknown error"))),
-                )),
+                None => Err(match self.imp().load_error.borrow().as_ref() {
+                    Some(err) => err.clone_outside(),
+                    None => ConnectionError::General(None, anyhow!(gettext("Unknown error"))),
+                }),
             }
         })
     }
