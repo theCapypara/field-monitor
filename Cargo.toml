@@ -16,7 +16,6 @@ rust-version = "1.78"
 
 [workspace.dependencies]
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
-isahc = { version = "1.7" }
 anyhow = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
@@ -115,12 +114,6 @@ field-monitor-generic-group = { path = "./connection/generic-group" }
 field-monitor-libvirt = { path = "./connection/libvirt" }
 field-monitor-proxmox = { path = "./connection/proxmox" }
 field-monitor-debug = { path = "./connection/debug", optional = true }
-
-[dev-dependencies]
-rdw-spice = { workspace = true }
-rdw-vnc = { workspace = true }
-rdw-rdp = { workspace = true }
-env_logger = "0.11"
 
 [lints]
 workspace = true
