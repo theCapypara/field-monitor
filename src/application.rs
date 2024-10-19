@@ -27,7 +27,7 @@ use adw::glib::user_config_dir;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use anyhow::anyhow;
-use async_std::fs::{create_dir_all, OpenOptions, read_dir, read_to_string, remove_file};
+use async_std::fs::{create_dir_all, read_dir, read_to_string, remove_file, OpenOptions};
 use async_std::io::WriteExt;
 use futures::StreamExt;
 use gettextrs::gettext;
@@ -38,10 +38,10 @@ use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use libfieldmonitor::busy::{BusyGuard, BusyStack};
-use libfieldmonitor::connection::{Connection, DualScopedConnectionConfiguration};
 use libfieldmonitor::connection::ConnectionConfiguration;
 use libfieldmonitor::connection::ConnectionInstance;
 use libfieldmonitor::connection::ConnectionProvider;
+use libfieldmonitor::connection::{Connection, DualScopedConnectionConfiguration};
 use libfieldmonitor::i18n::gettext_f;
 use libfieldmonitor::ManagesSecrets;
 
@@ -273,6 +273,7 @@ impl FieldMonitorApplication {
     }
 
     pub fn add_accels(&self) {
+        self.set_accels_for_action("window.close", &["<Alt>F4"]);
         self.set_accels_for_action("app.new-window", &["<Primary>N"]);
         self.set_accels_for_action("app.reload-connections", &["<Primary>R"]);
         self.set_accels_for_action("win.show-help-overlay", &["<Primary>question"]);

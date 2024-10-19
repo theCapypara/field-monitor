@@ -6,6 +6,7 @@ members = [
     "connection/generic-group",
     "connection/libvirt",
     "connection/proxmox",
+    "connection/proxmox/proxmox-api",
     "vte-pty-driver/lib",
     "vte-pty-driver/libvirt",
 ]
@@ -30,6 +31,7 @@ uuid = { version = "1.10", features = ["v7"] }
 parking_lot = "0.12"
 which = "6"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
+proxmox-api = { path = "connection/proxmox/proxmox-api" }
 
 [workspace.dependencies.glib]
 features = ["log"]

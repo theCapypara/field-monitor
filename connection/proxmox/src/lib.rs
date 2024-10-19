@@ -16,24 +16,34 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::borrow::Cow;
+use std::num::NonZeroU32;
+use std::str::FromStr;
+use std::sync::Arc;
 
 use adw::prelude::Cast;
 use anyhow::anyhow;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use gtk::Widget;
+use http::Uri;
+use secure_string::SecureString;
 
+use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::connection::{
-    Connection, ConnectionConfiguration, ConnectionError, ConnectionProvider,
-    ConnectionProviderConstructor, ConnectionResult, DualScopedConnectionConfiguration,
-    PreferencesGroupOrPage,
+    Actionable, Connection, ConnectionConfiguration, ConnectionError, ConnectionMetadata,
+    ConnectionProvider, ConnectionProviderConstructor, ConnectionResult,
+    DualScopedConnectionConfiguration, PreferencesGroupOrPage, ServerConnection, ServerMap,
+    ServerMetadata,
 };
+use proxmox_api::ProxmoxApiClient;
 
 use crate::credential_preferences::ProxmoxCredentialPreferences;
 use crate::preferences::{ProxmoxConfiguration, ProxmoxPreferences};
+use crate::tokiort::run_on_tokio;
 
 mod credential_preferences;
 mod preferences;
+mod tokiort;
 
 pub struct ProxmoxConnectionProviderConstructor;
 
@@ -127,6 +137,124 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
         &self,
         configuration: ConnectionConfiguration,
     ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>> {
-        Box::pin(async move { Err(ConnectionError::General(None, anyhow!("TODO"))) })
+        Box::pin(async move {
+            let con: ProxmoxConnection =
+                run_on_tokio(ProxmoxConnection::connect(configuration)).await?;
+            let conbx: Box<dyn Connection> = Box::new(con);
+            Ok(conbx)
+        })
     }
+}
+
+struct ProxmoxConnection(Arc<ProxmoxApiClient>);
+
+impl ProxmoxConnection {
+    async fn connect(config: ConnectionConfiguration) -> ConnectionResult<Self> {
+        let authority = format!(
+            "{}:{}",
+            config.hostname().unwrap_or_default(),
+            config.port().map(NonZeroU32::get).unwrap_or(8006)
+        );
+
+        let api_root = Uri::builder()
+            .scheme("https")
+            .authority(authority)
+            .path_and_query("/api2/json")
+            .build()
+            .map_err(|err| {
+                ConnectionError::General(
+                    Some(gettext(
+                        "Was unable to build a valid URL to connect to. Check your settings.",
+                    )),
+                    anyhow!(err),
+                )
+            })?;
+
+        let pass = config
+            .password_or_apikey()
+            .await
+            .map_err(|err| {
+                ConnectionError::General(
+                    Some(gettext(
+                        "Failed to retrieve API Key or Password from secrets service.",
+                    )),
+                    anyhow!(err),
+                )
+            })?
+            .unwrap_or_else(|| SecureString::from_str("").unwrap());
+
+        let client = if config.use_apikey() {
+            ProxmoxApiClient::connect_with_apikey(
+                &api_root,
+                config.tokenid().unwrap_or_default(),
+                pass,
+                config.ignore_ssl_cert_error(),
+            )
+            .await
+            .map_err(map_proxmox_error)
+        } else {
+            ProxmoxApiClient::connect_with_ticket(
+                &api_root,
+                config.username().unwrap_or_default(),
+                pass,
+                config.ignore_ssl_cert_error(),
+            )
+            .await
+            .map_err(map_proxmox_error)
+        }?;
+
+        Ok(Self(Arc::new(client)))
+    }
+}
+
+impl Actionable for ProxmoxConnection {}
+
+impl Connection for ProxmoxConnection {
+    fn metadata(&self) -> ConnectionMetadata {
+        todo!()
+    }
+
+    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+        todo!()
+    }
+}
+
+struct ProxmoxServer;
+
+impl Actionable for ProxmoxServer {}
+
+impl ServerConnection for ProxmoxServer {
+    fn metadata(&self) -> ServerMetadata {
+        todo!()
+    }
+
+    fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
+        todo!()
+    }
+
+    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
+        todo!()
+    }
+}
+
+struct ProxmoxVm;
+
+impl Actionable for ProxmoxVm {}
+
+impl ServerConnection for ProxmoxVm {
+    fn metadata(&self) -> ServerMetadata {
+        todo!()
+    }
+
+    fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
+        todo!()
+    }
+
+    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
+        todo!()
+    }
+}
+
+fn map_proxmox_error(error: proxmox_api::Error) -> ConnectionError {
+    todo!()
 }
