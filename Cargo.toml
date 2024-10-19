@@ -99,7 +99,6 @@ serde_yaml = { workspace = true }
 futures = { workspace = true }
 uuid = { workspace = true }
 itertools = "0.13"
-indexmap = { workspace = true }
 secure-string = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = "0.5"

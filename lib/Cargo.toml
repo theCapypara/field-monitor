@@ -7,11 +7,9 @@ rust-version.workspace = true
 field-monitor-vte-driver-lib = { workspace = true, features = ["server"] }
 gettext-rs = { workspace = true }
 anyhow = { workspace = true }
-serde = { workspace = true }
 serde_yaml = { workspace = true }
 futures = { workspace = true }
 log = { workspace = true }
-async-std = { workspace = true }
 glib = { workspace = true }
 gtk = { workspace = true }
 adw = { workspace = true }
@@ -21,14 +19,12 @@ rdw-rdp = { workspace = true }
 rdw-vnc = { workspace = true }
 vte = { workspace = true }
 thiserror = "1.0"
-num_enum = { workspace = true }
 indexmap = { workspace = true }
 secure-string = { workspace = true }
 uuid = { workspace = true }
 parking_lot = { workspace = true }
 derive_builder = "0.20"
 nix = { version = "0.29", features = ["signal"] }
-libc = "0.2"
 
 [lints]
 workspace = true

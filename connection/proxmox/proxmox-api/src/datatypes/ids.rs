@@ -18,7 +18,6 @@
 
 use std::fmt;
 use std::fmt::{Display, Formatter};
-use std::ops::Deref;
 use std::str::FromStr;
 
 use log::warn;

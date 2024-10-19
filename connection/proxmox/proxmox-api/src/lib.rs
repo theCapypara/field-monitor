@@ -23,7 +23,7 @@ use futures::future::BoxFuture;
 use futures::lock::Mutex;
 use http::{header, HeaderMap, HeaderValue, Method, StatusCode, Uri};
 use log::{debug, warn};
-use reqwest::{Body, ClientBuilder, RequestBuilder, Response};
+use reqwest::{ClientBuilder, RequestBuilder, Response};
 use secure_string::SecureString;
 use serde::de::DeserializeOwned;
 use serde::Serialize;

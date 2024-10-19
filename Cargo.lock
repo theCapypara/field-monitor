@@ -947,7 +947,6 @@ dependencies = [
  "gettext-rs",
  "glib",
  "gtk4",
- "indexmap 2.6.0",
  "itertools",
  "libadwaita",
  "libfieldmonitor",
@@ -993,7 +992,6 @@ name = "field-monitor-generic-group"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "async-std",
  "futures",
  "gettext-rs",
  "glib",
@@ -1003,7 +1001,6 @@ dependencies = [
  "libfieldmonitor",
  "log",
  "secure-string",
- "serde",
  "serde_yaml",
  "uuid",
 ]
@@ -1024,9 +1021,7 @@ dependencies = [
  "quick-xml",
  "secure-string",
  "serde",
- "uuid",
  "virt",
- "vte4",
  "which",
 ]
 
@@ -2205,7 +2200,6 @@ name = "libfieldmonitor"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "async-std",
  "derive_builder",
  "field-monitor-vte-driver-lib",
  "futures",
@@ -2214,17 +2208,14 @@ dependencies = [
  "gtk4",
  "indexmap 2.6.0",
  "libadwaita",
- "libc",
  "log",
  "nix 0.29.0",
- "num_enum",
  "parking_lot",
  "rdw4",
  "rdw4-rdp",
  "rdw4-spice",
  "rdw4-vnc",
  "secure-string",
- "serde",
  "serde_yaml",
  "thiserror",
  "uuid",

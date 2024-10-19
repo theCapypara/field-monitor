@@ -289,15 +289,6 @@ pub enum VmConsoleProxyType {
     Vnc,
 }
 
-fn deserialize_int_bool<'de, D>(deserializer: D) -> Result<bool, D::Error>
-where
-    D: de::Deserializer<'de>,
-{
-    let s: u8 = de::Deserialize::deserialize(deserializer)?;
-
-    Ok(s > 0)
-}
-
 fn deserialize_opt_int_bool<'de, D>(deserializer: D) -> Result<Option<bool>, D::Error>
 where
     D: de::Deserializer<'de>,

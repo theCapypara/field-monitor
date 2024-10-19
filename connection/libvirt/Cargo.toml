@@ -12,8 +12,6 @@ async-std = { workspace = true }
 log = { workspace = true }
 gtk = { workspace = true }
 adw = { workspace = true }
-vte = { workspace = true }
-uuid = { workspace = true }
 num_enum = { workspace = true }
 secure-string = { workspace = true }
 virt = { version = "0.4", features = ["qemu"] }
