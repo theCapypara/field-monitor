@@ -239,16 +239,26 @@ impl ProxmoxApiClient {
     }
 
     pub async fn node_lxc(&self, node: &NodeId) -> Result<Vec<LxcVm>> {
-        self.get_without_params_json(&format!("nodes/{}/lxc", node))
-            .await
+        let mut vms: Vec<LxcVm> = self
+            .get_without_params_json(&format!("nodes/{}/lxc", node))
+            .await?;
+
+        vms.sort_unstable_by_key(|vm| vm.vmid.clone());
+
+        Ok(vms)
     }
 
     pub async fn node_qemu(&self, node: &NodeId, full: bool) -> Result<Vec<QemuVm>> {
-        self.get_json(
-            &format!("nodes/{}/qemu", node),
-            &[("full", if full { "1" } else { "0" })],
-        )
-        .await
+        let mut vms: Vec<QemuVm> = self
+            .get_json(
+                &format!("nodes/{}/qemu", node),
+                &[("full", if full { "1" } else { "0" })],
+            )
+            .await?;
+
+        vms.sort_unstable_by_key(|vm| vm.vmid.clone());
+
+        Ok(vms)
     }
 
     pub async fn node_reboot(&self, node: &NodeId) -> Result<()> {

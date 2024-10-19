@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
+use std::cmp::Ordering;
 use std::fmt;
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
@@ -101,6 +101,28 @@ impl PartialEq for VmId {
             VmIdInner::AsString(id) => id,
         };
         slf_str == oth_str
+    }
+}
+
+impl Eq for VmId {}
+
+impl PartialOrd for VmId {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+impl Ord for VmId {
+    fn cmp(&self, other: &Self) -> Ordering {
+        let slf_int = match &self.0 {
+            VmIdInner::AsU64(id) => *id,
+            VmIdInner::AsString(id) => id.parse().unwrap(),
+        };
+        let oth_int = match &other.0 {
+            VmIdInner::AsU64(id) => *id,
+            VmIdInner::AsString(id) => id.parse().unwrap(),
+        };
+        slf_int.cmp(&oth_int)
     }
 }
 

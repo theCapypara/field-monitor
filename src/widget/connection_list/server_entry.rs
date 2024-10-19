@@ -97,6 +97,7 @@ async fn load_multi_server_row(
         .property("path", path)
         .property("title", &metadata.title)
         .property("subtitle", &metadata.subtitle)
+        .property("expanded", true)
         .build();
     row.set_server(server).await;
 

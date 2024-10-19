@@ -241,6 +241,7 @@ pub type Parameters = Box<dyn Any>;
 pub type ActionExecuteFut<'a> =
     dyn Fn(Parameters, Option<gtk::Window>, Option<adw::ToastOverlay>) -> LocalBoxFuture<'a, bool>;
 pub type ServerMap = IndexMap<Cow<'static, str>, Box<dyn ServerConnection>>;
+pub type ServerMapSend = IndexMap<Cow<'static, str>, Box<dyn ServerConnection + Send>>;
 
 pub struct ServerAction<'a> {
     static_parameters: Parameters,

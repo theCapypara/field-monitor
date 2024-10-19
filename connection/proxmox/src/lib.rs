@@ -16,30 +16,35 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::borrow::Cow;
+use std::future::Future;
+use std::mem;
 use std::num::NonZeroU32;
 use std::str::FromStr;
 use std::sync::Arc;
+use std::time::Duration;
 
 use adw::prelude::Cast;
 use anyhow::anyhow;
+use async_std::task::sleep;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use gtk::Widget;
 use http::Uri;
+use log::{error, warn};
 use secure_string::SecureString;
 
+use libfieldmonitor::adapter::spice::SpiceAdapter;
 use libfieldmonitor::adapter::types::Adapter;
-use libfieldmonitor::connection::{
-    Actionable, Connection, ConnectionConfiguration, ConnectionError, ConnectionMetadata,
-    ConnectionProvider, ConnectionProviderConstructor, ConnectionResult,
-    DualScopedConnectionConfiguration, PreferencesGroupOrPage, ServerConnection, ServerMap,
-    ServerMetadata,
+use libfieldmonitor::adapter::vnc::VncAdapter;
+use libfieldmonitor::adapter::vte_pty::VtePtyAdapter;
+use libfieldmonitor::connection::*;
+use proxmox_api::{
+    Error, NodeId, NodeStatus, ProxmoxApiClient, VmConsoleProxyType, VmId, VmStatus, VmType,
 };
-use proxmox_api::ProxmoxApiClient;
 
 use crate::credential_preferences::ProxmoxCredentialPreferences;
 use crate::preferences::{ProxmoxConfiguration, ProxmoxPreferences};
-use crate::tokiort::run_on_tokio;
+use crate::tokiort::{run_on_tokio, tkruntime};
 
 mod credential_preferences;
 mod preferences;
@@ -146,7 +151,10 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
     }
 }
 
-struct ProxmoxConnection(Arc<ProxmoxApiClient>);
+struct ProxmoxConnection {
+    title: String,
+    client: Arc<ProxmoxApiClient>,
+}
 
 impl ProxmoxConnection {
     async fn connect(config: ConnectionConfiguration) -> ConnectionResult<Self> {
@@ -203,7 +211,10 @@ impl ProxmoxConnection {
             .map_err(map_proxmox_error)
         }?;
 
-        Ok(Self(Arc::new(client)))
+        Ok(Self {
+            title: config.title().unwrap_or_default().to_string(),
+            client: Arc::new(client),
+        })
     }
 }
 
@@ -211,43 +222,508 @@ impl Actionable for ProxmoxConnection {}
 
 impl Connection for ProxmoxConnection {
     fn metadata(&self) -> ConnectionMetadata {
-        todo!()
+        ConnectionMetadataBuilder::default()
+            .title(self.title.clone())
+            .build()
+            .unwrap()
     }
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
-        todo!()
+        Box::pin(async move {
+            let client = self.client.clone();
+            let map = run_on_tokio(async move {
+                let mut server_map = ServerMapSend::default();
+
+                for node in client.nodes().await.map_err(map_proxmox_error)? {
+                    server_map.insert(
+                        node.node.to_string().into(),
+                        Box::new(ProxmoxNode {
+                            client: client.clone(),
+                            id: node.node,
+                            status: NodeStatus::Online,
+                        }),
+                    );
+                }
+
+                Ok(server_map)
+            })
+            .await?;
+
+            // TODO: Is this actually safe?
+            let map_cast: ServerMap = unsafe { mem::transmute(map) };
+
+            Ok(map_cast)
+        })
     }
 }
 
-struct ProxmoxServer;
+struct ProxmoxNode {
+    client: Arc<ProxmoxApiClient>,
+    id: NodeId,
+    status: NodeStatus,
+}
 
-impl Actionable for ProxmoxServer {}
+impl Actionable for ProxmoxNode {
+    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
+        if self.status != NodeStatus::Offline {
+            vec![
+                ("nodereboot".into(), gettext("Reboot").into()),
+                ("nodeshutdown".into(), gettext("Shutdown").into()),
+            ]
+        } else {
+            vec![]
+        }
+    }
 
-impl ServerConnection for ProxmoxServer {
+    fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
+        match action_id {
+            "nodereboot" => Some(self.act_reboot()),
+            "nodeshutdown" => Some(self.act_shutdown()),
+            _ => None,
+        }
+    }
+}
+
+impl ProxmoxNode {
+    fn params(&self) -> ExecParams {
+        ExecParams {
+            client: self.client.clone(),
+            node_id: Some(self.id.clone()),
+            vm_id: None,
+            vm_type: None,
+        }
+    }
+
+    fn act_reboot<'a>(&self) -> ServerAction<'a> {
+        ServerAction::new(
+            Box::new(self.params()),
+            Box::new(|params, _window, toov| {
+                Box::pin(async move {
+                    let params = params.downcast::<ExecParams>().unwrap();
+
+                    let (success, force_reload) = exec_cmd(
+                        params,
+                        |params| async move {
+                            params.client.node_reboot(&params.node_id.unwrap()).await
+                        },
+                        || gettext("Reboot command successfully sent to server."),
+                        |err| {
+                            warn!("failed reboot: {err:?}");
+                            gettext("Failed to send reboot command.")
+                        },
+                        toov.as_ref(),
+                    )
+                    .await;
+                    success || force_reload
+                })
+            }),
+        )
+    }
+
+    fn act_shutdown<'a>(&self) -> ServerAction<'a> {
+        ServerAction::new(
+            Box::new(self.params()),
+            Box::new(|params, _window, toov| {
+                Box::pin(async move {
+                    let params = params.downcast::<ExecParams>().unwrap();
+
+                    let (success, force_reload) = exec_cmd(
+                        params,
+                        |params| async move {
+                            params.client.node_shutdown(&params.node_id.unwrap()).await
+                        },
+                        || gettext("Shutdown command successfully sent to server."),
+                        |err| {
+                            warn!("failed shutdown: {err:?}");
+                            gettext("Failed to send shutdown command.")
+                        },
+                        toov.as_ref(),
+                    )
+                    .await;
+                    success || force_reload
+                })
+            }),
+        )
+    }
+}
+
+impl ServerConnection for ProxmoxNode {
     fn metadata(&self) -> ServerMetadata {
-        todo!()
+        let is_online = match self.status {
+            NodeStatus::Online => Some(true),
+            NodeStatus::Offline => Some(false),
+            NodeStatus::Unknown => None,
+        };
+        ServerMetadataBuilder::default()
+            .title(self.id.to_string())
+            .icon(IconSpec::Named("building-symbolic".into()))
+            .is_online(is_online)
+            .build()
+            .unwrap()
     }
 
     fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
-        todo!()
+        if self.status == NodeStatus::Offline {
+            vec![]
+        } else {
+            vec![
+                (SpiceAdapter::TAG.into(), gettext("SPICE").into()),
+                (VncAdapter::TAG.into(), gettext("VNC").into()),
+                (VtePtyAdapter::TAG.into(), gettext("Console").into()),
+            ]
+        }
     }
 
     fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
         todo!()
     }
+
+    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+        Box::pin(async move {
+            let client = self.client.clone();
+            let node_id = self.id.clone();
+
+            let map = run_on_tokio(async move {
+                let mut server_map = ServerMapSend::default();
+
+                for vm in client.node_lxc(&node_id).await.map_err(map_proxmox_error)? {
+                    server_map.insert(
+                        vm.vmid.to_string().into(),
+                        Box::new(ProxmoxVm {
+                            client: client.clone(),
+                            node_id: node_id.clone(),
+                            vm_id: vm.vmid,
+                            vm_type: VmType::Lxc,
+                            name: vm.name,
+                            status: vm.status,
+                        }),
+                    );
+                }
+
+                for vm in client
+                    .node_qemu(&node_id, false)
+                    .await
+                    .map_err(map_proxmox_error)?
+                {
+                    server_map.insert(
+                        vm.vmid.to_string().into(),
+                        Box::new(ProxmoxVm {
+                            client: client.clone(),
+                            node_id: node_id.clone(),
+                            vm_id: vm.vmid,
+                            vm_type: VmType::Qemu,
+                            name: vm.name,
+                            status: vm.status,
+                        }),
+                    );
+                }
+
+                Ok(server_map)
+            })
+            .await?;
+
+            // TODO: Is this actually safe?
+            let map_cast: ServerMap = unsafe { mem::transmute(map) };
+
+            Ok(map_cast)
+        })
+    }
 }
 
-struct ProxmoxVm;
+struct ProxmoxVm {
+    client: Arc<ProxmoxApiClient>,
+    node_id: NodeId,
+    vm_id: VmId,
+    vm_type: VmType,
+    name: Option<String>,
+    status: VmStatus,
+}
 
-impl Actionable for ProxmoxVm {}
+impl Actionable for ProxmoxVm {
+    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
+        if self.status == VmStatus::Running {
+            match self.vm_type {
+                VmType::Lxc => vec![
+                    ("vmreboot".into(), gettext("Reboot").into()),
+                    ("vmshutdown".into(), gettext("Shutdown").into()),
+                    ("vmstop".into(), gettext("Force Poweroff").into()),
+                ],
+                VmType::Qemu => vec![
+                    ("vmreboot".into(), gettext("Reboot").into()),
+                    ("vmshutdown".into(), gettext("Shutdown").into()),
+                    ("vmreset".into(), gettext("Force Reset").into()),
+                    ("vmstop".into(), gettext("Force Poweroff").into()),
+                ],
+            }
+        } else {
+            vec![("vmstart".into(), gettext("Start / Resume").into())]
+        }
+    }
+
+    fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
+        match action_id {
+            "vmreboot" => Some(self.act_reboot()),
+            "vmshutdown" => Some(self.act_shutdown()),
+            "vmreset" => Some(self.act_reset()),
+            "vmstop" => Some(self.act_stop()),
+            "vmstart" => Some(self.act_start()),
+            _ => None,
+        }
+    }
+}
+
+impl ProxmoxVm {
+    fn params(&self) -> ExecParams {
+        ExecParams {
+            client: self.client.clone(),
+            node_id: Some(self.node_id.clone()),
+            vm_id: Some(self.vm_id.clone()),
+            vm_type: Some(self.vm_type),
+        }
+    }
+
+    fn act_reboot<'a>(&self) -> ServerAction<'a> {
+        ServerAction::new(
+            Box::new(self.params()),
+            Box::new(|params, _window, toov| {
+                Box::pin(async move {
+                    let params = params.downcast::<ExecParams>().unwrap();
+
+                    let (success, force_reload) = exec_cmd(
+                        params,
+                        |params| async move {
+                            params
+                                .client
+                                .vm_reboot(
+                                    &params.node_id.unwrap(),
+                                    &params.vm_id.unwrap(),
+                                    params.vm_type,
+                                    Default::default(),
+                                )
+                                .await
+                        },
+                        || gettext("Reboot command successfully sent to VM."),
+                        |err| {
+                            warn!("failed VM reboot: {err:?}");
+                            gettext("Failed to send reboot command.")
+                        },
+                        toov.as_ref(),
+                    )
+                    .await;
+                    success || force_reload
+                })
+            }),
+        )
+    }
+
+    fn act_shutdown<'a>(&self) -> ServerAction<'a> {
+        ServerAction::new(
+            Box::new(self.params()),
+            Box::new(|params, _window, toov| {
+                Box::pin(async move {
+                    let params = params.downcast::<ExecParams>().unwrap();
+
+                    let (success, force_reload) = exec_cmd(
+                        params,
+                        |params| async move {
+                            params
+                                .client
+                                .vm_shutdown(
+                                    &params.node_id.unwrap(),
+                                    &params.vm_id.unwrap(),
+                                    params.vm_type,
+                                    Default::default(),
+                                )
+                                .await
+                        },
+                        || gettext("Shutdown command successfully sent to VM."),
+                        |err| {
+                            warn!("failed VM shutdown: {err:?}");
+                            gettext("Failed to send shutdown command.")
+                        },
+                        toov.as_ref(),
+                    )
+                    .await;
+                    success || force_reload
+                })
+            }),
+        )
+    }
+
+    fn act_reset<'a>(&self) -> ServerAction<'a> {
+        ServerAction::new(
+            Box::new(self.params()),
+            Box::new(|params, _window, toov| {
+                Box::pin(async move {
+                    let params = params.downcast::<ExecParams>().unwrap();
+
+                    let (success, force_reload) = exec_cmd(
+                        params,
+                        |params| async move {
+                            params
+                                .client
+                                .qemu_vm_reset(
+                                    &params.node_id.unwrap(),
+                                    &params.vm_id.unwrap(),
+                                    Default::default(),
+                                )
+                                .await
+                        },
+                        || gettext("VM was successfully reset."),
+                        |err| {
+                            warn!("failed VM reset: {err:?}");
+                            gettext("Failed to send reset command.")
+                        },
+                        toov.as_ref(),
+                    )
+                    .await;
+                    success || force_reload
+                })
+            }),
+        )
+    }
+
+    fn act_stop<'a>(&self) -> ServerAction<'a> {
+        ServerAction::new(
+            Box::new(self.params()),
+            Box::new(|params, _window, toov| {
+                Box::pin(async move {
+                    let params = params.downcast::<ExecParams>().unwrap();
+
+                    let (success, force_reload) = exec_cmd(
+                        params,
+                        |params| async move {
+                            params
+                                .client
+                                .vm_stop(
+                                    &params.node_id.unwrap(),
+                                    &params.vm_id.unwrap(),
+                                    params.vm_type,
+                                    Default::default(),
+                                )
+                                .await
+                        },
+                        || gettext("VM is now stopping."),
+                        |err| {
+                            warn!("failed stop: {err:?}");
+                            gettext("Failed to send stop command.")
+                        },
+                        toov.as_ref(),
+                    )
+                    .await;
+                    success || force_reload
+                })
+            }),
+        )
+    }
+
+    fn act_start<'a>(&self) -> ServerAction<'a> {
+        ServerAction::new(
+            Box::new(self.params()),
+            Box::new(|params, _window, toov| {
+                Box::pin(async move {
+                    let params = params.downcast::<ExecParams>().unwrap();
+
+                    let (success, force_reload) = exec_cmd(
+                        params,
+                        |params| async move {
+                            params
+                                .client
+                                .vm_start(
+                                    &params.node_id.unwrap(),
+                                    &params.vm_id.unwrap(),
+                                    params.vm_type,
+                                    Default::default(),
+                                )
+                                .await
+                        },
+                        || gettext("VM is now starting."),
+                        |err| {
+                            warn!("failed stop: {err:?}");
+                            gettext("Failed to send start command.")
+                        },
+                        toov.as_ref(),
+                    )
+                    .await;
+                    success || force_reload
+                })
+            }),
+        )
+    }
+}
 
 impl ServerConnection for ProxmoxVm {
     fn metadata(&self) -> ServerMetadata {
-        todo!()
+        let is_online = match self.status {
+            VmStatus::Running => Some(true),
+            VmStatus::Stopped => Some(false),
+            VmStatus::Unknown => None,
+        };
+
+        let title = match &self.name {
+            None => self.vm_id.to_string(),
+            Some(name) => format!("{} ({})", self.vm_id, name),
+        };
+
+        let icon = match self.vm_type {
+            VmType::Lxc => IconSpec::Named("container-symbolic".into()),
+            VmType::Qemu => IconSpec::Default,
+        };
+
+        ServerMetadataBuilder::default()
+            .title(title)
+            .icon(icon)
+            .is_online(is_online)
+            .build()
+            .unwrap()
     }
 
     fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
-        todo!()
+        macro_rules! SPICE {
+            () => {
+                (SpiceAdapter::TAG.into(), gettext("SPICE").into())
+            };
+        }
+        macro_rules! VNC {
+            () => {
+                (VncAdapter::TAG.into(), gettext("VNC").into())
+            };
+        }
+        macro_rules! TERM {
+            () => {
+                (VtePtyAdapter::TAG.into(), gettext("Console").into())
+            };
+        }
+
+        if self.status != VmStatus::Running {
+            vec![]
+        } else {
+            // TODO: Async?
+            let res: proxmox_api::Result<Vec<_>> = tkruntime().block_on(async move {
+                let mut adapters: Vec<(Cow<str>, Cow<str>)> = Vec::with_capacity(3);
+                let supported = self
+                    .client
+                    .vm_available_console_proxies(&self.node_id, &self.vm_id, Some(self.vm_type))
+                    .await?;
+
+                if supported.as_ref().contains(&VmConsoleProxyType::Spice) {
+                    adapters.push(SPICE!());
+                }
+                if supported.as_ref().contains(&VmConsoleProxyType::Vnc) {
+                    adapters.push(VNC!());
+                }
+                if supported.as_ref().contains(&VmConsoleProxyType::Term) {
+                    adapters.push(TERM!());
+                }
+
+                Ok(adapters)
+            });
+
+            res.unwrap_or_else(|err| {
+                error!("Failed to load available connectors for a VM: {err:?}. Assume all.");
+                vec![SPICE!(), VNC!(), TERM!()]
+            })
+        }
     }
 
     fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
@@ -256,5 +732,57 @@ impl ServerConnection for ProxmoxVm {
 }
 
 fn map_proxmox_error(error: proxmox_api::Error) -> ConnectionError {
-    todo!()
+    match error {
+        Error::AuthFailed => ConnectionError::AuthFailed(None, error.into()),
+        _ => ConnectionError::General(None, error.into()),
+    }
+}
+
+struct ExecParams {
+    client: Arc<ProxmoxApiClient>,
+    node_id: Option<NodeId>,
+    vm_id: Option<VmId>,
+    vm_type: Option<VmType>,
+}
+
+async fn exec_cmd<F, Fut, S>(
+    params: Box<ExecParams>,
+    cmd: F,
+    success_msg: impl (Fn() -> String) + Send + 'static,
+    err_msg: impl (Fn(proxmox_api::Error) -> String) + Send + 'static,
+    toov: Option<&adw::ToastOverlay>,
+) -> (bool, bool)
+where
+    F: (Fn(Box<ExecParams>) -> Fut) + Send + 'static,
+    Fut: Future<Output = Result<S, proxmox_api::Error>> + Send + 'static,
+    S: Send,
+{
+    let (success, should_reload, text) = run_on_tokio(async move {
+        let result = cmd(params).await;
+        Ok((
+            result.is_ok(),
+            false,
+            result.map(|_| success_msg()).unwrap_or_else(err_msg),
+        ))
+    })
+    .await
+    .unwrap_or_else(|e| {
+        error!("Internal error running action: {e}");
+        (
+            false,
+            true,
+            gettext("Internal error while trying to execute command."),
+        )
+    });
+
+    if success {
+        // short sleep to maybe possibly give the chance to already have processed the task.
+        // TODO: We could actually wait for the task to finish.
+        sleep(Duration::from_millis(750)).await;
+    }
+
+    if let Some(toov) = toov {
+        toov.add_toast(adw::Toast::builder().title(&text).timeout(10).build());
+    }
+    (success, should_reload)
 }
