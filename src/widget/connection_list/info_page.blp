@@ -40,13 +40,15 @@ template $FieldMonitorConnectionInfoPage: Adw.Bin {
                     hscrollbar-policy: never;
                     vscrollbar-policy: automatic;
 
-                    child: Box group_box {
-                        spacing: 24;
-                        orientation: vertical;
+                    child: Adw.Clamp {
+                        child: Box group_box {
+                            spacing: 24;
+                            orientation: vertical;
 
-                        styles [
-                            "conn-list-server-groups"
-                        ]
+                            styles [
+                                "conn-list-server-groups"
+                            ]
+                        };
                     };
                 };
             }
