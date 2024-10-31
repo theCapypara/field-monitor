@@ -1,0 +1,23 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorConnectionStack: Adw.Bin {
+    notify::visible-connection-id => $on_self_visible_connection_id_changed() swapped;
+
+    child: Stack outer_stack {
+        transition-type: crossfade;
+        transition-duration: 150;
+
+        StackPage {
+            name: "loading";
+
+            child: Adw.Spinner {};
+        }
+
+        StackPage {
+            name: "content";
+
+            child: Stack stack {};
+        }
+    };
+}

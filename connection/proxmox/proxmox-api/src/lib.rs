@@ -16,8 +16,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::borrow::Cow;
-use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::sync::Arc;
 
 use futures::future::BoxFuture;
 use futures::lock::Mutex;

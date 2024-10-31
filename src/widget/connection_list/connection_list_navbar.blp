@@ -1,0 +1,16 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorNavbarConnectionList: Adw.Bin {
+    ListBox list {
+        row-activated => $on_list_row_activated() swapped;
+
+        accessibility {
+            label: _("Sidebar");
+        }
+
+        styles [
+            "navigation-sidebar"
+        ]
+    }
+}

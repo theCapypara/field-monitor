@@ -66,6 +66,10 @@ impl ConnectionProvider for SpiceConnectionProvider {
         gettext("Setup a connection to one or more SPICE servers.").into()
     }
 
+    fn icon(&self) -> IconSpec<()> {
+        IconSpec::Default
+    }
+
     fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget {
         super::preferences(configuration)
     }

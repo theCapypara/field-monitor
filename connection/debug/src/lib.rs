@@ -29,6 +29,8 @@ mod behaviour_preferences;
 mod preferences;
 mod vte_adapter;
 
+const ICON: &str = "bug-symbolic";
+
 pub struct DebugConnectionProviderConstructor;
 
 impl ConnectionProviderConstructor for DebugConnectionProviderConstructor {
@@ -67,6 +69,10 @@ impl ConnectionProvider for DebugConnectionProvider {
 
     fn description(&self) -> Cow<str> {
         Cow::Borrowed("Debug Connection")
+    }
+
+    fn icon(&self) -> IconSpec<()> {
+        IconSpec::Named(ICON.into())
     }
 
     fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget {
@@ -261,6 +267,7 @@ impl Connection for DebugConnection {
         ConnectionMetadataBuilder::default()
             .title(self.title.clone())
             .subtitle(self.subtitle.clone())
+            .icon(IconSpec::Named(ICON.into()))
             .build()
             .unwrap()
     }

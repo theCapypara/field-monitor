@@ -1,0 +1,56 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorServerGroup: Adw.Bin {
+    server-title: bind title.title bidirectional;
+    server-subtitle: bind title.subtitle bidirectional;
+
+    Box {
+        orientation: vertical;
+        spacing: 6;
+
+        Box server_title_box {
+            orientation: horizontal;
+            halign: fill;
+            hexpand: true;
+            spacing: 6;
+            margin-start: 6;
+            margin-end: 6;
+
+            Box prefix_box {
+                orientation: horizontal;
+                spacing: 6;
+                halign: start;
+            }
+
+            Box {
+                orientation: horizontal;
+                spacing: 6;
+                hexpand: true;
+                halign: fill;
+
+                Adw.WindowTitle title {}
+            }
+
+            Box suffix_box {
+                orientation: horizontal;
+                spacing: 6;
+                halign: end;
+            }
+        }
+
+        ListBox servers {
+            valign: start;
+            hexpand: true;
+            selection-mode: none;
+
+            styles [
+                "boxed-list",
+            ]
+        }
+    }
+
+    styles [
+        "conn-list-server-group"
+    ]
+}

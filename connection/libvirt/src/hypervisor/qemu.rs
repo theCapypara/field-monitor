@@ -16,14 +16,12 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use std::borrow::Cow;
-use std::convert::Infallible;
-
 use adw::prelude::*;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
-
 use libfieldmonitor::connection::*;
+use std::borrow::Cow;
+use std::convert::Infallible;
 
 use crate::connection::LibvirtConnection;
 use crate::qemu_preferences::{LibvirtQemuConfiguration, LibvirtQemuPreferences, SessionType};
@@ -61,6 +59,10 @@ impl ConnectionProvider for LibvirtQemuConnectionProvider {
 
     fn description(&self) -> Cow<str> {
         gettext("Setup a QEMU/KVM hypervisor connection via libvirt.").into()
+    }
+
+    fn icon(&self) -> IconSpec<()> {
+        IconSpec::Named("connection-qemu-symbolic".into())
     }
 
     fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget {
@@ -122,6 +124,7 @@ impl ConnectionProvider for LibvirtQemuConnectionProvider {
                     &hostname,
                     &Self::build_uri(&configuration),
                     configuration.title().unwrap_or_default(),
+                    "connection-libvirt-qemu-symbolic".into(),
                 )
                 .await?,
             );

@@ -1,0 +1,35 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorNavbarConnectionView: Adw.Bin {
+    Box {
+        orientation: vertical;
+        spacing: 6;
+
+        Label header_label {
+            halign: start;
+            margin-start: 12;
+            label: _("Active Connections");
+
+            styles [
+                "heading"
+            ]
+        }
+
+        ListBox list {
+            row-activated => $on_list_row_activated() swapped;
+
+            accessibility {
+                label: _("Sidebar");
+            }
+
+            styles [
+                "navigation-sidebar"
+            ]
+        }
+
+        styles [
+            "connection-view-navbar"
+        ]
+    }
+}

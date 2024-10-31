@@ -16,13 +16,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-pub mod add_connection_dialog;
-pub mod authenticate_connection_dialog;
-mod close_warning_dialog;
-pub mod connection_list;
-pub mod connection_view;
-mod foucs_grabber;
-mod grab_note;
-mod navbar_row;
-pub mod update_connection_dialog;
-pub mod window;
+mod connection_tab_view;
+mod connection_view_navbar;
+mod server_screen;
+pub use connection_tab_view::*;
+pub use connection_view_navbar::*;
+pub use server_screen::*;

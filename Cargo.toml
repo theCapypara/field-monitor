@@ -44,7 +44,7 @@ version = "0.9"
 
 [workspace.dependencies.adw]
 package = "libadwaita"
-features = ["v1_5"]
+features = ["v1_6"]
 version = "0.7"
 
 [workspace.dependencies.rdw]
@@ -99,10 +99,10 @@ serde_yaml = { workspace = true }
 futures = { workspace = true }
 uuid = { workspace = true }
 itertools = "0.13"
+sorted-vec = "0.8"
 secure-string = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = "0.5"
-lru = "0.12"
 async-std = { workspace = true }
 glib = { workspace = true }
 gtk = { workspace = true }

@@ -85,6 +85,10 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
         gettext("Setup a Proxmox hypervisor connection.").into()
     }
 
+    fn icon(&self) -> IconSpec<()> {
+        IconSpec::Named("connection-proxmox-symbolic".into())
+    }
+
     fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> Widget {
         ProxmoxPreferences::new(configuration).upcast()
     }
@@ -224,6 +228,7 @@ impl Connection for ProxmoxConnection {
     fn metadata(&self) -> ConnectionMetadata {
         ConnectionMetadataBuilder::default()
             .title(self.title.clone())
+            .icon(IconSpec::Named("connection-proxmox-symbolic".into()))
             .build()
             .unwrap()
     }

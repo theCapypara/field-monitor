@@ -2,43 +2,292 @@ using Gtk 4.0;
 using Adw 1;
 
 template $FieldMonitorWindow: Adw.ApplicationWindow {
-    default-width: 600;
+    default-width: 680;
     default-height: 600;
     width-request: 360;
     height-request: 480;
     title: _("Field Monitor");
     close-request => $on_self_close_request() swapped;
+    notify::fullscreened => $on_self_fullscreened_changed() swapped;
+    notify::quick-connect-visible => $on_quick_connect_visible_changed() swapped;
 
     Adw.Breakpoint mobile_breakpoint {
-        condition ('max-width: 540sp')
+        condition ('max-width: 480sp')
+
+        setters {
+            main_split_view.collapsed: true;
+            welcome_window_title.visible: true;
+        }
     }
 
     content: Adw.ToastOverlay toast_overlay {
-        child: Stack main_stack {
+        child: Stack outer_stack {
             transition-type: crossfade;
-            transition-duration: 100;
-            notify::visible-child-name => $on_main_stack_visible_child_name_changed() swapped;
+            transition-duration: 150;
 
             StackPage {
-                name: "connection-list";
+                name: "starting";
 
-                child: Adw.Bin connection_list_bin {};
+                child: WindowHandle {
+                    child: Adw.Spinner {};
+                };
             }
 
             StackPage {
-                name: "tabs";
+                name: "app";
 
-                child: Adw.TabOverview overview {
-                    enable-new-tab: false;
-                    view: tab_view;
-                    secondary-menu: overview_menu;
-                    notify::open => $on_overview_open_changed() swapped;
+                child: Adw.MultiLayoutView layout_view {
+                    layout-name: "main";
+                    notify::layout-name => $on_layout_view_layout_name_changed() swapped;
 
-                    Adw.TabView tab_view {
-                        menu-model: tab_menu;
-                        setup-menu => $on_tab_view_setup_menu() swapped;
-                        create-window => $on_tab_view_create_window() swapped;
-                        notify::selected-page => $on_tab_view_selected_page_changed() swapped;
+                    [sidebar]
+                    Adw.ToolbarView {
+                        [top]
+                        Adw.HeaderBar {
+                            title-widget: Adw.WindowTitle {
+                                title: _("Field Monitor");
+                            };
+
+                            Button button_fullscreen {
+                                icon-name: "arrows-pointing-outward-symbolic";
+                                tooltip-text: _("Toggle Fullscreen");
+                                action-name: "win.fullscreen";
+                            }
+
+                            [end]
+                            MenuButton {
+                                primary: true;
+                                icon-name: 'view-more-symbolic';
+                                tooltip-text: _('Menu');
+                                menu-model: primary_menu;
+                            }
+                        }
+
+                        content: Adw.Bin {
+                            ScrolledWindow {
+                                hscrollbar-policy: never;
+                                vscrollbar-policy: automatic;
+
+                                Box {
+                                    orientation: vertical;
+                                    spacing: 12;
+                                    vexpand: true;
+
+                                    $FieldMonitorNavbarConnectionView navbar_connection_view {
+                                        tab-view: active_connection_tab_view;
+                                    }
+
+                                    Stack connection_list_navbar_stack {
+                                        StackPage {
+                                            name: "list";
+
+                                            child: $FieldMonitorNavbarConnectionList navbar_connection_list {
+                                                stack: connection_list_stack;
+                                            };
+                                        }
+
+                                        StackPage {
+                                            name: "loader";
+
+                                            child: Adw.Spinner {
+                                                vexpand: true;
+                                            };
+                                        }
+                                    }
+                                }
+                            }
+                        };
+
+                        [bottom]
+                        Box {
+                            orientation: vertical;
+                            spacing: 6;
+                            margin-top: 6;
+                            margin-bottom: 6;
+                            margin-start: 6;
+                            margin-end: 6;
+
+                            Button {
+                                action-name: "app.add-connection";
+
+                                child: Adw.ButtonContent {
+                                    icon-name: "list-add-symbolic";
+                                    label: _("Add Connection");
+                                    halign: start;
+                                };
+
+                                styles [
+                                    "flat",
+                                    "body-label"
+                                ]
+                            }
+
+                            ToggleButton {
+                                action-name: "win.quick-connect";
+
+                                child: Adw.ButtonContent {
+                                    icon-name: "camera-flash-symbolic";
+                                    label: _("Quick Connect");
+                                    halign: start;
+                                };
+
+                                styles [
+                                    "flat",
+                                    "body-label"
+                                ]
+                            }
+                        }
+                    }
+
+                    [content]
+                    Stack inner_stack {
+                        StackPage {
+                            name: "main";
+
+                            child: Stack inner_list_stack {
+                                notify::visible-child-name => $on_inner_list_stack_visible_child_name_changed() swapped;
+
+                                StackPage {
+                                    name: "welcome";
+
+                                    child: Adw.ToolbarView {
+                                        [top]
+                                        Adw.HeaderBar welcome_header_bar {
+                                            title-widget: Adw.WindowTitle welcome_window_title {
+                                                visible: false;
+                                                title: _("Field Monitor");
+                                            };
+                                        }
+
+                                        content: Adw.StatusPage welcome_status_page {
+                                            icon-name: "de.capypara.FieldMonitor-symbolic";
+                                            title: _("Field Monitor");
+                                            // TODO: Show recent connections if any?
+                                            Box welcome_button_box {
+                                                orientation: vertical;
+                                                hexpand: false;
+                                                halign: center;
+                                                spacing: 12;
+
+                                                Button {
+                                                    action-name: "app.add-connection";
+
+                                                    child: Adw.ButtonContent {
+                                                        icon-name: "list-add-symbolic";
+                                                        label: _("Add Connection");
+                                                    };
+
+                                                    styles [
+                                                        "suggested-action",
+                                                        "pill"
+                                                    ]
+                                                }
+
+                                                ToggleButton quick_connect_button {
+                                                    action-name: "win.quick-connect";
+
+                                                    child: Adw.ButtonContent {
+                                                        icon-name: "camera-flash-symbolic";
+                                                        label: _("Quick Connect");
+                                                    };
+
+                                                    styles [
+                                                        "pill"
+                                                    ]
+                                                }
+                                            }
+                                        };
+                                    };
+                                }
+
+                                StackPage {
+                                    name: "connection-list";
+
+                                    child: $FieldMonitorConnectionStack connection_list_stack {
+                                        toast-overlay: toast_overlay;
+                                        notify::visible-connection-id => $on_connection_list_visible_connection_id_changed() swapped;
+                                    };
+                                }
+
+                                StackPage {
+                                    name: "quick-connect";
+
+                                    child: Adw.ToolbarView {
+                                        [top]
+                                        Adw.HeaderBar {
+                                            title-widget: Adw.WindowTitle {
+                                                title: _("Quick Connect");
+                                            };
+                                        }
+
+                                        content: Label {
+                                            label: "TODO!!";
+                                        };
+                                    };
+                                }
+                            };
+                        }
+
+                        StackPage connection_view {
+                            name: "connection-view";
+
+                            child: $FieldMonitorConnectionTabView active_connection_tab_view {
+                                notify::visible-page => $on_active_connection_tab_view_visible_page_changed() swapped;
+                                toast-overlay: toast_overlay;
+                            };
+                        }
+                    }
+
+                    Adw.Layout {
+                        name: "no-sidebar";
+
+                        content: Adw.LayoutSlot {
+                            id: "content";
+                        };
+                    }
+
+                    Adw.Layout {
+                        name: "main";
+
+                        content: Adw.NavigationSplitView main_split_view {
+                            min-sidebar-width: 215;
+                            // This is to (try) and force the sidebar to be as small as possible,
+                            // making it consistent with the overlay view.
+                            max-sidebar-width: 215;
+                            notify::show-content => $on_main_split_view_show_content_changed() swapped;
+
+                            sidebar: Adw.NavigationPage {
+                                child: Adw.LayoutSlot {
+                                    id: "sidebar";
+                                };
+                            };
+
+                            content: Adw.NavigationPage {
+                                child: Adw.LayoutSlot {
+                                    id: "content";
+                                };
+                            };
+                        };
+                    }
+
+                    Adw.Layout {
+                        name: "connection-view";
+
+                        content: Adw.OverlaySplitView connection_view_split_view {
+                            min-sidebar-width: 215;
+                            // This is to (try) and force the sidebar to be as small as possible,
+                            // making it consistent with the nav view.
+                            max-sidebar-width: 215;
+                            collapsed: true;
+
+                            sidebar: Adw.LayoutSlot {
+                                id: "sidebar";
+                            };
+
+                            content: Adw.LayoutSlot {
+                                id: "content";
+                            };
+                        };
                     }
                 };
             }
@@ -46,11 +295,16 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
     };
 }
 
-menu overview_menu {
+menu primary_menu {
     section {
         item {
-            label: _('Connection List');
-            action: "win.show-connection-list";
+            label: _("Add New Connection");
+            action: "app.add-connection";
+        }
+
+        item {
+            label: _('_Reload Connections');
+            action: 'app.reload-connections';
         }
     }
 
@@ -68,20 +322,6 @@ menu overview_menu {
         item {
             label: _('_About Field Monitor');
             action: 'app.about';
-        }
-    }
-}
-
-menu tab_menu {
-    section {
-        item {
-            label: _('_Move to New Window');
-            action: 'tab.move-to-new-window';
-        }
-
-        item {
-            label: _('_Close Connection');
-            action: 'tab.close';
         }
     }
 }

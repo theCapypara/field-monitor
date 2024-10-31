@@ -1,0 +1,13 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorConnectionTabView: Adw.Bin {
+    notify::visible-page => $on_self_visible_page_changed() swapped;
+
+    child: Adw.TabView tab_view {
+        close-page => $on_tab_view_close_page() swapped;
+        page-detached => $on_tab_view_page_detached() swapped;
+        create-window => $on_tab_view_create_window() swapped;
+        notify::selected-page => $on_tab_view_selected_page_changed() swapped;
+    };
+}

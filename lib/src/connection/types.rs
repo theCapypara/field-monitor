@@ -77,8 +77,9 @@ pub type IconFactory<M> = Box<dyn Fn(&M) -> gtk::Widget>;
 
 /// Specifies how this entity should be represented with an icon, if at all.
 /// Any named or custom icon should have a width of 16px.
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub enum IconSpec<M> {
+    #[default]
     /// Use the default icon.
     Default,
     /// Do not use an icon.
@@ -112,7 +113,7 @@ impl<M> fmt::Debug for IconSpec<M> {
 /// Metadata about a connection. Only the title is required.
 ///
 /// On the builder type, build can be unwrapped as long as the title is set.
-#[derive(Builder, Debug, Clone)]
+#[derive(Builder, Debug, Clone, Default)]
 #[builder(pattern = "owned")]
 #[non_exhaustive]
 pub struct ConnectionMetadata {
@@ -171,6 +172,9 @@ pub trait ConnectionProvider {
 
     /// Returns a description to be shown in the "add new connection" dialog.
     fn description(&self) -> Cow<str>;
+
+    /// The icon to represent this provider.
+    fn icon(&self) -> IconSpec<()>;
 
     /// Creates a preference page (or other applicable widget) for configuring a new connection.
     ///

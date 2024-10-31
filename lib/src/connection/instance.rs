@@ -28,8 +28,8 @@ use glib::prelude::*;
 use glib::subclass::prelude::*;
 use log::{debug, error};
 
-use crate::connection::*;
 use crate::connection::types::{Connection, ConnectionProvider};
+use crate::connection::*;
 
 mod imp {
     use super::*;
@@ -163,6 +163,7 @@ impl Connection for ConnectionInstance {
             Some(implementation) => implementation.metadata(),
             None => ConnectionMetadataBuilder::default()
                 .title(self.title())
+                .icon(IconSpec::Named("dialog-error-symbolic".into()))
                 .build()
                 .unwrap(),
         }

@@ -65,6 +65,9 @@ mod imp {
         pub providers: RefCell<HashMap<String, Rc<Box<dyn ConnectionProvider>>>>,
         /// Manages a stack for `pending_server_action`. If stack size is zero, sets to false.
         pub busy_stack: RefCell<Option<BusyStack>>,
+        /// Whether Field Monitor is currently loading all connections for the first time.
+        #[property(get, construct_only)]
+        pub starting: Cell<bool>,
         /// Whether Field Monitor is currently (re-)loading all connections.
         #[property(get)]
         pub loading_connections: Cell<bool>,
@@ -166,17 +169,16 @@ mod imp {
                                 slf.finish_activate();
                             }
                             Err(err) => {
-                                let alert = adw::MessageDialog::builder()
+                                let alert = adw::AlertDialog::builder()
                                 .title(gettext("Failed to initialize"))
                                 .body(format!(
                                     "{}:\n{}",
                                     gettext("Field Monitor could not start, because it could not connect to your system's secret service for accessing passwords"),
                                     err
                                 ))
-                                .application(&*slf.obj())
                                 .build();
                                 alert.add_response("ok", &gettext("OK"));
-                                alert.present();
+                                alert.present(None::<&gtk::Window>);
                             }
                         }
                     }
@@ -222,6 +224,10 @@ mod imp {
         pub fn set_loading_connection(&self, value: bool) {
             self.loading_connections.replace(value);
             self.obj().notify_loading_connections();
+            if !value && self.starting.get() {
+                self.starting.replace(value);
+                self.obj().notify_starting();
+            }
         }
 
         pub fn get_provider(&self, tag: &str) -> Option<Rc<Box<dyn ConnectionProvider>>> {
@@ -242,6 +248,7 @@ impl FieldMonitorApplication {
             .property("application-id", application_id)
             .property("flags", flags)
             .property("settings", gio::Settings::new(APP_ID))
+            .property("starting", true)
             .build();
         app.imp().busy_stack.borrow_mut().replace(BusyStack::new(
             app.imp().busy.clone(),
@@ -278,10 +285,8 @@ impl FieldMonitorApplication {
         self.set_accels_for_action("app.reload-connections", &["<Primary>R"]);
         self.set_accels_for_action("win.show-help-overlay", &["<Primary>question"]);
         self.set_accels_for_action("win.fullscreen", &["F11"]);
-        self.set_accels_for_action("win.open-overview", &["<Primary>O"]);
-        self.set_accels_for_action("win.show-connection-list", &["<Primary>L"]);
-        self.set_accels_for_action("tab.close", &["<Shift><Primary>W"]);
-        self.set_accels_for_action("tab.move-to-new-window", &["<Shift><Primary>N"]);
+        self.set_accels_for_action("win.show-sidebar", &["<Primary>E"]);
+        self.set_accels_for_action("view.close", &["<Shift><Primary>W"]);
         self.set_accels_for_action("view.term-copy", &["<Shift><Primary>C"]);
         self.set_accels_for_action("view.term-paste", &["<Shift><Primary>V"]);
         self.set_accels_for_action("view.term-select-all", &["<Shift><Primary>A"]);

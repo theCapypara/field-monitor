@@ -96,6 +96,7 @@ pub struct LibvirtConnection {
     title: String,
     hostname: String,
     connection: VirtArc<Connect>,
+    icon: Cow<'static, str>,
 }
 
 impl LibvirtConnection {
@@ -104,6 +105,7 @@ impl LibvirtConnection {
         hostname: &str,
         uri: &str,
         title: &str,
+        icon: Cow<'static, str>,
     ) -> ConnectionResult<Self> {
         let uri = uri.to_string();
         debug!(
@@ -116,6 +118,7 @@ impl LibvirtConnection {
             title: title.to_string(),
             hostname: hostname.to_string(),
             connection: VirtArc::new(connection),
+            icon,
         })
     }
 }
@@ -126,6 +129,7 @@ impl Connection for LibvirtConnection {
     fn metadata(&self) -> ConnectionMetadata {
         ConnectionMetadataBuilder::default()
             .title(self.title.clone())
+            .icon(IconSpec::Named(self.icon.clone()))
             .build()
             .unwrap()
     }

@@ -1,3 +1,8 @@
+:root {
+    /* Same as default --window-radius; but we don't use this because fullscreen disables border radius. */
+    --box-border-radius: 12px;
+}
+
 window {
     transition: border-radius 0.5s ease, outline 0.5s ease;
 }
@@ -30,14 +35,64 @@ menubutton.header-osd button:not(.nohover):active,
     background-color: color-mix(in oklab, var(--window-bg-color), var(--window-fg-color) 30%);
 }
 
-.connection-list .list-inner-box {
-    margin: 24px 12px;
-    border-spacing: 24px;
+.conn-list-server-groups {
+    margin: 12px;
+}
+
+.connection-view-vte button.header-osd,
+.connection-view-vte menubutton.header-osd button,
+.connection-view-vte .window-controls-osd > button > image {
     background: transparent;
 }
 
-.connection-list .list-inner-box > * {
-    margin-bottom: 24px;
+/* These are just the usual Adwaita defaults */
+
+.fm-navselected {
+    background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.fm-navselected:hover {
+    background: color-mix(in srgb, currentColor 13%, transparent);
+}
+
+.fm-navselected:active {
+    background: color-mix(in srgb, currentColor 19%, transparent);
+}
+
+.fm-navselected.has-open-popup {
+    background: color-mix(in srgb, currentColor 19%, transparent);
+}
+
+/* * */
+
+.connection-view-navbar {
+    border-radius: var(--box-border-radius);
+    /* colors are same as Adwaita's banner > revealer > widget */
+    background-color: color-mix(in srgb, var(--accent-bg-color) 30%, var(--sidebar-bg-color));
+    color: var(--sidebar-fg-color);
+    margin-top: 12px;
+    margin-left: 12px;
+    margin-right: 12px;
+}
+
+.connection-view-navbar:backdrop {
+    background-color: color-mix(in srgb, var(--accent-bg-color) 15%, var(--sidebar-bg-color));
+}
+
+
+window.connection-view-active .connection-view-navbar, window.connection-view-active .connection-view-navbar row {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-right: 0;
+}
+
+.compact-button {
+    padding: 3px;
+}
+
+.connection-view-navbar .heading {
+    margin-top: 6px;
+    margin-right: 12px;
 }
 
 .window-title {
@@ -46,11 +101,7 @@ menubutton.header-osd button:not(.nohover):active,
 }
 
 .window-title button {
-    margin-top: -3px;
-    padding-top: 6px;
-    padding-bottom: 3px;
-    padding-left: 12px;
-    padding-right: 12px;
+    padding: 6px;
 }
 
 .connection-view-status, .faux-header {
@@ -82,11 +133,15 @@ menubutton.header-osd button:not(.nohover):active,
     background-color: color-mix(in srgb, var(--window-bg-color) 90%, transparent);
     padding: 12px;
     margin-bottom: 24px;
-    border-radius: 12px;
+    border-radius: var(--box-border-radius);
     opacity: 1;
     transition: opacity 0.25s ease-in;
 }
 
 .grab-note.hidden {
     opacity: 0;
+}
+
+.body-label label {
+    font-weight: normal;
 }

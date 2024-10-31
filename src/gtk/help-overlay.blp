@@ -18,19 +18,10 @@ ShortcutsWindow help_overlay {
                 title: C_('shortcut window', 'Toggle Fullscreen');
                 action-name: 'win.fullscreen';
             }
-        }
-
-        ShortcutsGroup {
-            title: C_('shortcut window', 'Connection List');
 
             ShortcutsShortcut {
-                title: C_('shortcut window', 'Reload Connections');
-                action-name: 'app.reload-connections';
-            }
-
-            ShortcutsShortcut {
-                title: C_('shortcut window', 'Open Connection List');
-                action-name: 'win.show-connection-list';
+                title: C_('shortcut window', 'Show Navigation');
+                action-name: 'win.show-sidebar';
             }
         }
 
@@ -38,18 +29,8 @@ ShortcutsWindow help_overlay {
             title: C_('shortcut window', 'Connection');
 
             ShortcutsShortcut {
-                title: C_('shortcut window', 'Active Connections');
-                action-name: 'win.open-overview';
-            }
-
-            ShortcutsShortcut {
                 title: C_('shortcut window', 'Close Connection');
-                action-name: 'tab.close';
-            }
-
-            ShortcutsShortcut {
-                title: C_('shortcut window', 'Move Connection to New Window');
-                action-name: 'tab.move-to-new-window';
+                action-name: 'view.close';
             }
         }
 
@@ -83,7 +64,7 @@ ShortcutsWindow help_overlay {
 
             ShortcutsShortcut {
                 title: C_('shortcut window', 'Reset Zoom');
-                action-name: 'view.term-reset-zoom';
+                action-name: 'view.term-zoom-reset';
             }
         }
 

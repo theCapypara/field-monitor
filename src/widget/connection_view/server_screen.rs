@@ -15,16 +15,11 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use std::borrow::Cow;
-use std::cell::Cell;
-use std::cell::RefCell;
-use std::iter;
-use std::rc::Rc;
-
 use adw::gdk::{Key, ModifierType};
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use anyhow::anyhow;
+use async_std::task::sleep;
 use futures::lock::Mutex;
 use gettextrs::gettext;
 use glib::object::ObjectExt;
@@ -32,6 +27,12 @@ use gtk::gio;
 use gtk::glib;
 use log::{debug, info, warn};
 use rdw::DisplayExt;
+use std::borrow::Cow;
+use std::cell::Cell;
+use std::cell::RefCell;
+use std::iter;
+use std::rc::Rc;
+use std::time::Duration;
 use vte::TerminalExt;
 
 use libfieldmonitor::adapter::types::{AdapterDisplay, AdapterDisplayWidget};
@@ -49,9 +50,9 @@ mod imp {
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
-    #[properties(wrapper_type = super::FieldMonitorConnectionView)]
-    #[template(resource = "/de/capypara/FieldMonitor/widget/connection_view.ui")]
-    pub struct FieldMonitorConnectionView {
+    #[properties(wrapper_type = super::FieldMonitorServerScreen)]
+    #[template(resource = "/de/capypara/FieldMonitor/widget/connection_view/server_screen.ui")]
+    pub struct FieldMonitorServerScreen {
         #[template_child]
         pub outer_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -101,12 +102,13 @@ mod imp {
         // Generation of the connection. This is used to prevent "old" adapters from triggering
         // the connection / disconnection events.
         pub connection_generation: RefCell<u32>,
+        pub close_cb: RefCell<Option<Box<dyn Fn()>>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for FieldMonitorConnectionView {
-        const NAME: &'static str = "FieldMonitorConnectionView";
-        type Type = super::FieldMonitorConnectionView;
+    impl ObjectSubclass for FieldMonitorServerScreen {
+        const NAME: &'static str = "FieldMonitorServerScreen";
+        type Type = super::FieldMonitorServerScreen;
         type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
@@ -120,7 +122,7 @@ mod imp {
             klass.install_action(
                 "view.fit-to-screen",
                 None,
-                |slf: &super::FieldMonitorConnectionView, _, _| {
+                |slf: &super::FieldMonitorServerScreen, _, _| {
                     slf.fit_to_screen();
                 },
             );
@@ -128,7 +130,7 @@ mod imp {
             klass.install_action(
                 "view.reconnect",
                 None,
-                |slf: &super::FieldMonitorConnectionView, _, _| {
+                |slf: &super::FieldMonitorServerScreen, _, _| {
                     glib::spawn_future_local(glib::clone!(
                         #[strong]
                         slf,
@@ -138,9 +140,17 @@ mod imp {
             );
 
             klass.install_action(
+                "view.close",
+                None,
+                |slf: &super::FieldMonitorServerScreen, _, _| {
+                    slf.close();
+                },
+            );
+
+            klass.install_action(
                 "view.send-keys",
                 Some(&String::static_variant_type()),
-                |slf: &super::FieldMonitorConnectionView, _, params| {
+                |slf: &super::FieldMonitorServerScreen, _, params| {
                     debug!("view.send-keys: {params:?}");
                     let Some(keys) = params.and_then(String::from_variant) else {
                         return;
@@ -153,7 +163,7 @@ mod imp {
             klass.install_action(
                 "view.show-output",
                 None,
-                |slf: &super::FieldMonitorConnectionView, _, _| {
+                |slf: &super::FieldMonitorServerScreen, _, _| {
                     debug!("view.show-output");
                     slf.imp().outer_stack.set_visible_child_name("connection");
                 },
@@ -162,7 +172,7 @@ mod imp {
             klass.install_action(
                 "view.term-copy",
                 None,
-                |slf: &super::FieldMonitorConnectionView, _, _| {
+                |slf: &super::FieldMonitorServerScreen, _, _| {
                     debug!("view.term-copy");
                     slf.send_term_command(TermCommand::Copy);
                 },
@@ -171,7 +181,7 @@ mod imp {
             klass.install_action(
                 "view.term-paste",
                 None,
-                |slf: &super::FieldMonitorConnectionView, _, _| {
+                |slf: &super::FieldMonitorServerScreen, _, _| {
                     debug!("view.term-paste");
                     slf.send_term_command(TermCommand::Paste);
                 },
@@ -180,7 +190,7 @@ mod imp {
             klass.install_action(
                 "view.term-select-all",
                 None,
-                |slf: &super::FieldMonitorConnectionView, _, _| {
+                |slf: &super::FieldMonitorServerScreen, _, _| {
                     debug!("view.term-select-all");
                     slf.send_term_command(TermCommand::SelectAll);
                 },
@@ -189,7 +199,7 @@ mod imp {
             klass.install_action(
                 "view.term-zoom-reset",
                 None,
-                |slf: &super::FieldMonitorConnectionView, _, _| {
+                |slf: &super::FieldMonitorServerScreen, _, _| {
                     debug!("view.term-zoom-reset");
                     slf.send_term_command(TermCommand::ZoomReset);
                 },
@@ -198,7 +208,7 @@ mod imp {
             klass.install_action(
                 "view.term-zoom-in",
                 None,
-                |slf: &super::FieldMonitorConnectionView, _, _| {
+                |slf: &super::FieldMonitorServerScreen, _, _| {
                     debug!("view.term-zoom-in");
                     slf.send_term_command(TermCommand::ZoomIn);
                 },
@@ -207,7 +217,7 @@ mod imp {
             klass.install_action(
                 "view.term-zoom-out",
                 None,
-                |slf: &super::FieldMonitorConnectionView, _, _| {
+                |slf: &super::FieldMonitorServerScreen, _, _| {
                     debug!("view.term-zoom-out");
                     slf.send_term_command(TermCommand::ZoomOut);
                 },
@@ -220,24 +230,24 @@ mod imp {
     }
 
     #[glib::derived_properties]
-    impl ObjectImpl for FieldMonitorConnectionView {}
-    impl WidgetImpl for FieldMonitorConnectionView {}
-    impl BinImpl for FieldMonitorConnectionView {}
+    impl ObjectImpl for FieldMonitorServerScreen {}
+    impl WidgetImpl for FieldMonitorServerScreen {}
+    impl BinImpl for FieldMonitorServerScreen {}
 
-    impl Drop for FieldMonitorConnectionView {
+    impl Drop for FieldMonitorServerScreen {
         fn drop(&mut self) {
-            debug!("drop FieldMonitorConnectionView");
+            debug!("drop FieldMonitorServerScreen");
         }
     }
 }
 
 glib::wrapper! {
-    pub struct FieldMonitorConnectionView(ObjectSubclass<imp::FieldMonitorConnectionView>)
+    pub struct FieldMonitorServerScreen(ObjectSubclass<imp::FieldMonitorServerScreen>)
         @extends gtk::Widget, adw::Bin,
         @implements gio::ActionGroup, gio::ActionMap;
 }
 
-impl FieldMonitorConnectionView {
+impl FieldMonitorServerScreen {
     pub fn new(
         app: &FieldMonitorApplication,
         window: Option<&FieldMonitorWindow>,
@@ -296,8 +306,19 @@ impl FieldMonitorConnectionView {
         slf
     }
 
+    pub fn set_close_cb(&self, close_cb: impl Fn() + 'static) {
+        self.imp().close_cb.replace(Some(Box::new(close_cb)));
+    }
+
     pub fn is_connected(&self) -> bool {
         self.imp().connection_state.borrow().unwrap_or_default()
+    }
+
+    pub fn close(&self) {
+        debug!("view.close");
+        if let Some(close_cb) = self.imp().close_cb.borrow().as_ref() {
+            close_cb()
+        }
     }
 
     pub async fn reset(&self) {
@@ -441,6 +462,7 @@ impl FieldMonitorConnectionView {
                 display.set_hexpand(true);
                 imp.focus_grabber.set_display(Some(display));
                 self.add_menu(MenuKind::Rdw, server_actions);
+                self.remove_css_class("connection-view-vte");
                 display.clone().upcast()
             }
             AdapterDisplayWidget::Vte(terminal) => {
@@ -479,6 +501,7 @@ impl FieldMonitorConnectionView {
                 self.setup_vte_menu_model(terminal);
                 imp.focus_grabber.set_display(None);
                 self.add_menu(MenuKind::Vte, server_actions);
+                self.add_css_class("connection-view-vte");
                 bx.upcast()
             }
             AdapterDisplayWidget::Arbitrary { widget, overlayed } => {
@@ -504,6 +527,7 @@ impl FieldMonitorConnectionView {
 
                 imp.focus_grabber.set_display(None);
                 self.add_menu(MenuKind::Other, server_actions);
+                self.remove_css_class("connection-view-vte");
                 bx.upcast()
             }
         };
@@ -532,7 +556,15 @@ impl FieldMonitorConnectionView {
             }
         }
         imp.outer_stack.set_visible_child_name("connection");
-        self.fit_to_screen();
+        glib::spawn_future_local(glib::clone!(
+            #[weak(rename_to=slf)]
+            self,
+            async move {
+                // TODO: Figure out why this delay is needed.
+                sleep(Duration::from_millis(75)).await;
+                slf.fit_to_screen();
+            }
+        ));
     }
 
     pub fn on_disconnected(&self, result: ConnectionResult<()>) {
@@ -565,7 +597,7 @@ impl FieldMonitorConnectionView {
             Ok(()) => {
                 imp.status_stack.set_visible_child_name("disconnected");
                 imp.outer_stack.set_visible_child_name("status");
-                self.mark_as_ungrabbed();
+                imp.focus_grabber.ungrab();
 
                 imp.error_status_page.set_title(&gettext("Disconnected"));
                 imp.error_status_page
@@ -599,7 +631,7 @@ impl FieldMonitorConnectionView {
             | Err(ConnectionError::AuthFailed(msg, err)) => {
                 imp.status_stack.set_visible_child_name("disconnected");
                 imp.outer_stack.set_visible_child_name("status");
-                self.mark_as_ungrabbed();
+                imp.focus_grabber.ungrab();
 
                 warn!("Connection failed: {err}");
                 imp.error_status_page
@@ -666,17 +698,6 @@ impl FieldMonitorConnectionView {
         }
     }
 
-    fn mark_as_ungrabbed(&self) {
-        let window = self
-            .root()
-            .map(Cast::downcast::<FieldMonitorWindow>)
-            .and_then(Result::ok);
-
-        if let Some(window) = window {
-            window.remove_css_class("connection-view-grabbed");
-        }
-    }
-
     fn setup_vte_event_controllers(&self, terminal: &vte::Terminal) {
         let shortcut_controller = gtk::ShortcutController::new();
         shortcut_controller.set_propagation_phase(gtk::PropagationPhase::Capture);
@@ -714,6 +735,12 @@ impl FieldMonitorConnectionView {
             gtk::Shortcut::builder()
                 .trigger(&gtk::ShortcutTrigger::parse_string("<Primary>minus").unwrap())
                 .action(&gtk::ShortcutAction::parse_string("action(view.term-zoom-out)").unwrap())
+                .build(),
+        );
+        shortcut_controller.add_shortcut(
+            gtk::Shortcut::builder()
+                .trigger(&gtk::ShortcutTrigger::parse_string("<Shift><Primary>W").unwrap())
+                .action(&gtk::ShortcutAction::parse_string("action(view.close)").unwrap())
                 .build(),
         );
 
@@ -957,7 +984,7 @@ impl FieldMonitorConnectionView {
 }
 
 #[gtk::template_callbacks]
-impl FieldMonitorConnectionView {
+impl FieldMonitorServerScreen {
     #[template_callback]
     fn on_self_dynamic_resize_changed(&self) {
         let display = self
@@ -1051,7 +1078,7 @@ impl FieldMonitorConnectionView {
     #[template_callback]
     fn on_self_unrealize(&self) {
         debug!("connection view unrealized");
-        self.mark_as_ungrabbed();
+        self.imp().focus_grabber.ungrab();
     }
 }
 

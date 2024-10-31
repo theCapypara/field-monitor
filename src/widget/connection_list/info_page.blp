@@ -1,0 +1,85 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorConnectionInfoPage: Adw.Bin {
+    notify::connection => $on_self_connection_changed() swapped;
+
+    child: Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar {
+            title-widget: Adw.WindowTitle title_widget {
+                title: bind (template.connection as <$ConnectionInstance>).title;
+            };
+
+            [end]
+            Button settings_button {
+                icon-name: "settings-symbolic";
+                tooltip-text: _("Settings");
+                action-name: "app.edit-connection";
+            }
+
+            [end]
+            Box box_for_connection_action {}
+        }
+
+        content: Stack status_stack {
+            transition-type: crossfade;
+            transition-duration: 150;
+
+            StackPage {
+                name: "loading";
+
+                child: Adw.Spinner {};
+            }
+
+            StackPage {
+                name: "servers";
+
+                child: ScrolledWindow {
+                    vexpand: true;
+                    hscrollbar-policy: never;
+                    vscrollbar-policy: automatic;
+
+                    child: Box group_box {
+                        spacing: 24;
+                        orientation: vertical;
+
+                        styles [
+                            "conn-list-server-groups"
+                        ]
+                    };
+                };
+            }
+
+            StackPage {
+                name: "error";
+
+                child: Adw.StatusPage status_page_error {
+                    icon-name: "dialog-error-symbolic";
+                    title: _("Failed to load connection");
+                };
+            }
+
+            StackPage {
+                name: "auth-required";
+
+                child: Adw.StatusPage {
+                    icon-name: "dialog-error-symbolic";
+                    title: _("Authentication required");
+                    description: _("This connection requires additional authentication.");
+
+                    child: Button auth_button {
+                        label: _("Authenticate");
+                        action-name: "app.auth-connection";
+                        valign: center;
+
+                        styles [
+                            "suggested-action",
+                            "pill"
+                        ]
+                    };
+                };
+            }
+        };
+    };
+}

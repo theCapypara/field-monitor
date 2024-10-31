@@ -27,9 +27,12 @@ use gtk::glib::clone;
 use gtk::prelude::{ButtonExt, WidgetExt};
 use itertools::Itertools;
 
-use libfieldmonitor::connection::{ConnectionProvider, DualScopedConnectionConfiguration};
+use libfieldmonitor::connection::{
+    ConnectionProvider, DualScopedConnectionConfiguration, IconSpec,
+};
 
 use crate::application::FieldMonitorApplication;
+use crate::widget::connection_list::DEFAULT_GENERIC_ICON;
 
 mod imp {
     use std::sync::OnceLock;
@@ -96,6 +99,18 @@ impl FieldMonitorAddConnectionDialog {
                 .subtitle(provider.description())
                 .activatable(true)
                 .build();
+
+            let icon: gtk::Widget = match provider.icon() {
+                IconSpec::Default => gtk::Image::builder()
+                    .icon_name(DEFAULT_GENERIC_ICON)
+                    .build()
+                    .upcast(),
+                IconSpec::None => gtk::Box::builder().width_request(16).build().upcast(),
+                IconSpec::Named(name) => gtk::Image::builder().icon_name(&*name).build().upcast(),
+                IconSpec::Custom(factory) => factory(&()),
+            };
+
+            action_row.add_prefix(&icon);
             action_row.connect_activated(clone!(
                 #[weak]
                 slf,

@@ -16,6 +16,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use adw::gdk;
+use std::cmp::Ordering;
 use vte::prelude::*;
 
 const BLACK: gdk::RGBA = gdk::RGBA::new(0.0, 0.0, 0.0, 1.0);
@@ -28,5 +29,33 @@ pub fn configure_vte_styling(terminal: &vte::Terminal, style_manager: &adw::Styl
     } else {
         terminal.set_color_foreground(&BLACK);
         terminal.set_color_background(&WHITE);
+    }
+}
+
+#[derive(Debug)]
+pub enum ListChange<T> {
+    Update(T),
+    Append,
+}
+
+pub struct OrdKeyed<Key, Item>(pub Key, pub Item);
+
+impl<Key: PartialEq, Item> PartialEq for OrdKeyed<Key, Item> {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.eq(&other.0)
+    }
+}
+
+impl<Key: Eq, Item> Eq for OrdKeyed<Key, Item> {}
+
+impl<Key: PartialOrd, Item> PartialOrd for OrdKeyed<Key, Item> {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.0.partial_cmp(&other.0)
+    }
+}
+
+impl<Key: Ord, Item> Ord for OrdKeyed<Key, Item> {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.0.cmp(&other.0)
     }
 }

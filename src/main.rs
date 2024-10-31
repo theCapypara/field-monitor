@@ -15,17 +15,15 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use std::fs::read_dir;
-use std::path::PathBuf;
-
+use crate::config::APP_ID;
+use config::{GETTEXT_PACKAGE, LOCALEDIR, PKGDATADIR};
 use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
 use gtk::prelude::*;
 use gtk::{gio, glib};
 use log::info;
-
-use config::{GETTEXT_PACKAGE, LOCALEDIR, PKGDATADIR};
-
-use crate::config::APP_ID;
+use std::cell::RefCell;
+use std::fs::read_dir;
+use std::path::PathBuf;
 
 use self::application::FieldMonitorApplication;
 
@@ -36,6 +34,10 @@ mod connection_loader;
 mod secrets;
 mod util;
 mod widget;
+
+thread_local! {
+    pub static APP: RefCell<Option<FieldMonitorApplication>> = Default::default();
+}
 
 fn main() -> glib::ExitCode {
     glib::log_set_default_handler(glib::rust_log_handler);
@@ -66,6 +68,7 @@ fn main() -> glib::ExitCode {
     // application windows, integration with the window manager/compositor, and
     // desktop features such as file opening and single-instance applications.
     let app = FieldMonitorApplication::new(APP_ID, &gio::ApplicationFlags::empty());
+    APP.replace(Some(app.clone()));
 
     // Run the application. This function will block until the application
     // exits. Upon return, we have our exit code to return to the shell. (This

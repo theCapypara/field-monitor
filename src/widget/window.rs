@@ -16,45 +16,73 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use std::cell::Cell;
-use std::cell::RefCell;
-
-use adw::prelude::*;
-use adw::subclass::prelude::*;
-use gettextrs::gettext;
-use gtk::{gio, glib};
-use gtk::glib::Variant;
-use itertools::Itertools;
-use log::debug;
-
 use crate::application::FieldMonitorApplication;
 use crate::connection_loader::ConnectionLoader;
 use crate::widget::close_warning_dialog::FieldMonitorCloseWarningDialog;
-use crate::widget::connection_list::FieldMonitorConnectionList;
-use crate::widget::connection_view::FieldMonitorConnectionView;
+use crate::widget::connection_list::{
+    FieldMonitorConnectionStack, FieldMonitorNavbarConnectionList,
+};
+use crate::widget::connection_view::{
+    FieldMonitorConnectionTabView, FieldMonitorNavbarConnectionView, FieldMonitorServerScreen,
+};
+use adw::prelude::*;
+use adw::subclass::prelude::*;
+use async_std::task::sleep;
+use gettextrs::gettext;
+use gtk::{gdk, gio, glib};
+use log::debug;
+use std::cell::Cell;
+use std::cell::RefCell;
+use std::time::Duration;
 
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, gtk::CompositeTemplate)]
+    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
+    #[properties(wrapper_type = super::FieldMonitorWindow)]
     #[template(resource = "/de/capypara/FieldMonitor/widget/window.ui")]
     pub struct FieldMonitorWindow {
         #[template_child]
-        pub main_stack: TemplateChild<gtk::Stack>,
+        pub outer_stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub connection_list_bin: TemplateChild<adw::Bin>,
+        pub inner_stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub tab_view: TemplateChild<adw::TabView>,
+        pub main_split_view: TemplateChild<adw::NavigationSplitView>,
         #[template_child]
-        pub overview: TemplateChild<adw::TabOverview>,
+        pub connection_view_split_view: TemplateChild<adw::OverlaySplitView>,
+        #[template_child]
+        pub layout_view: TemplateChild<adw::MultiLayoutView>,
+        #[template_child]
+        pub inner_list_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         pub mobile_breakpoint: TemplateChild<adw::Breakpoint>,
+        #[template_child]
+        pub button_fullscreen: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub welcome_status_page: TemplateChild<adw::StatusPage>,
+        #[template_child]
+        pub connection_list_stack: TemplateChild<FieldMonitorConnectionStack>,
+        #[template_child]
+        pub active_connection_tab_view: TemplateChild<FieldMonitorConnectionTabView>,
+        #[template_child]
+        pub navbar_connection_view: TemplateChild<FieldMonitorNavbarConnectionView>,
+        #[template_child]
+        pub navbar_connection_list: TemplateChild<FieldMonitorNavbarConnectionList>,
+        #[template_child]
+        pub quick_connect_button: TemplateChild<gtk::ToggleButton>,
+        #[template_child]
+        pub connection_list_navbar_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub welcome_button_box: TemplateChild<gtk::Box>,
+        #[template_child]
+        pub welcome_window_title: TemplateChild<adw::WindowTitle>,
+        #[property(get, set)]
+        pub quick_connect_visible: Cell<bool>,
         pub tab_title_notify_binding: RefCell<Option<(gtk::Widget, glib::SignalHandlerId)>>,
         pub force_close: Cell<bool>,
-        // Currently active page for TabView menus.
-        pub menu_page: RefCell<Option<adw::TabPage>>,
+        pub inhibit_possible_sidebar_click: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -73,6 +101,7 @@ mod imp {
         }
     }
 
+    #[glib::derived_properties]
     impl ObjectImpl for FieldMonitorWindow {
         fn constructed(&self) {
             self.parent_constructed();
@@ -98,60 +127,90 @@ impl FieldMonitorWindow {
             .build();
 
         #[cfg(feature = "devel")]
-        slf.add_css_class("devel");
+        {
+            slf.add_css_class("devel");
+            slf.imp()
+                .welcome_status_page
+                .set_icon_name(Some("de.capypara.FieldMonitor.Devel-symbolic"));
+        }
 
-        let conn_list = FieldMonitorConnectionList::new(application, Some(&slf));
-        slf.imp().connection_list_bin.set_child(Some(&conn_list));
-        conn_list.set_show_overview_button(slf.imp().tab_view.n_pages() != 0);
-        slf.imp().tab_view.connect_notify_local(
-            Some("n-pages"),
+        application.connect_notify_local(
+            Some("busy"),
             glib::clone!(
                 #[weak]
-                conn_list,
-                move |view, _| conn_list.set_show_overview_button(view.n_pages() != 0)
+                slf,
+                move |app, _| {
+                    if app.busy() {
+                        slf.set_cursor(gdk::Cursor::from_name("wait", None).as_ref());
+                    } else if !app.loading_connections() {
+                        slf.set_cursor(None);
+                    }
+                }
             ),
         );
 
-        slf.on_main_stack_visible_child_name_changed();
+        application.connect_notify_local(
+            Some("loading-connections"),
+            glib::clone!(
+                #[weak]
+                slf,
+                move |app, _| slf.on_app_loading_connections_changed(app)
+            ),
+        );
+
+        application.connect_local(
+            "connection-updated",
+            false,
+            glib::clone!(
+                #[weak]
+                slf,
+                #[upgrade_or_default]
+                move |_| {
+                    // If a connection was updated then we now no longer have 0 connections if we
+                    // did before, so in that case switch to the normal app mode
+                    slf.maybe_disable_no_sidebar_mode();
+                    None
+                }
+            ),
+        );
+
+        application.connect_notify_local(
+            Some("starting"),
+            glib::clone!(
+                #[weak]
+                slf,
+                move |app, _| slf.on_app_starting_changed(app)
+            ),
+        );
+
+        slf.on_app_loading_connections_changed(application);
+        slf.on_app_starting_changed(application);
 
         slf
     }
 
     fn setup_actions(&self) {
-        let show_connection_action = gio::ActionEntry::builder("show-connection-list")
-            .activate(Self::act_show_connection_list)
-            .build();
-        let open_overview_action = gio::ActionEntry::builder("open-overview")
-            .activate(Self::act_open_overview)
-            .build();
-
         self.add_action(&gio::PropertyAction::new(
             "fullscreen",
             self,
             "fullscreened",
         ));
-
-        self.add_action_entries([open_overview_action, show_connection_action]);
-
-        let tab_move_to_new_window_action = gio::ActionEntry::builder("move-to-new-window")
+        self.add_action(&gio::PropertyAction::new(
+            "quick-connect",
+            self,
+            "quick-connect-visible",
+        ));
+        self.add_action_entries([gio::ActionEntry::builder("show-sidebar")
             .activate(glib::clone!(
-                #[weak(rename_to = slf)]
+                #[weak(rename_to=slf)]
                 self,
-                move |_, a, b| slf.act_tab_move_to_new_window(a, b)
+                move |_, _, _| {
+                    if slf.imp().layout_view.layout_name().as_deref() == Some("connection-view") {
+                        slf.imp().connection_view_split_view.set_show_sidebar(true);
+                    }
+                }
             ))
-            .build();
-
-        let tab_close_action = gio::ActionEntry::builder("close")
-            .activate(glib::clone!(
-                #[weak(rename_to = slf)]
-                self,
-                move |_, a, b| slf.act_tab_close(a, b)
-            ))
-            .build();
-
-        let tab_action_group = gio::SimpleActionGroup::new();
-        tab_action_group.add_action_entries([tab_move_to_new_window_action, tab_close_action]);
-        self.insert_action_group("tab", Some(&tab_action_group));
+            .build()]);
     }
 
     pub fn toast(&self, msg: &str) {
@@ -168,31 +227,22 @@ impl FieldMonitorWindow {
         &self.imp().mobile_breakpoint
     }
 
-    pub fn show_tabs(&self) {
-        self.imp().main_stack.set_visible_child_name("tabs");
-    }
-
     /// Try to focus an already open connection view, if a connection view for the given
     /// server is open
     pub fn focus_connection_view(&self, server_path: &str, adapter_id: &str) -> bool {
-        let tab_view = &self.imp().tab_view;
-        for page in tab_view.pages().iter::<adw::TabPage>() {
-            let Ok(page) = page else {
-                return false;
-            };
-            let Ok(view) = page.child().downcast::<FieldMonitorConnectionView>() else {
-                continue;
-            };
-            if view.server_path() == server_path && view.adapter_id() == adapter_id {
-                self.imp().overview.set_open(false);
-                tab_view.set_selected_page(&page);
-                self.imp().main_stack.set_visible_child_name("tabs");
-                return true;
-            }
+        if self
+            .imp()
+            .active_connection_tab_view
+            .focus(server_path, adapter_id)
+        {
+            self.imp().layout_view.set_layout_name("connection-view");
+            true
+        } else {
+            false
         }
-        false
     }
 
+    /// Open a connection view
     pub fn open_connection_view(
         &self,
         server_path: &str,
@@ -201,19 +251,15 @@ impl FieldMonitorWindow {
         connection_title: &str,
         loader: ConnectionLoader,
     ) {
-        let app = self
-            .application()
-            .unwrap()
-            .downcast::<FieldMonitorApplication>()
-            .unwrap();
-
-        let view =
-            FieldMonitorConnectionView::new(&app, Some(self), server_path, adapter_id, loader);
-
-        self.add_new_page(&view, server_title, Some(connection_title));
-
-        self.imp().main_stack.set_visible_child_name("tabs");
-        self.change_window_title(WindowTitle::ConnectionView(view));
+        self.imp().active_connection_tab_view.open(
+            self,
+            server_path,
+            adapter_id,
+            server_title,
+            connection_title,
+            loader,
+        );
+        self.select_connection_view();
     }
 
     // Taken in parts from Showtime:
@@ -241,83 +287,47 @@ impl FieldMonitorWindow {
         }
     }
 
-    fn act_show_connection_list(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
-        self.imp()
-            .main_stack
-            .set_visible_child_name("connection-list");
-    }
-
-    fn act_open_overview(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
-        if self.imp().tab_view.n_pages() > 0 {
-            self.imp().overview.set_open(true);
-            self.imp().main_stack.set_visible_child_name("tabs");
-        }
-    }
-
-    fn act_tab_move_to_new_window(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
+    fn change_window_title(&self, title: WindowTitle) {
         let imp = self.imp();
-        if let Some(menu_page) = self.tab_view_current_page() {
-            let new_window =
-                FieldMonitorWindow::new(&self.application().unwrap().downcast().unwrap());
+        let field_monitor_str = gettext("Field Monitor");
+        match title {
+            WindowTitle::Main => {
+                if let Some((tab, signal)) = imp.tab_title_notify_binding.borrow_mut().take() {
+                    glib::signal_handler_disconnect(&tab, signal);
+                }
+                self.set_title(Some(&field_monitor_str));
+            }
+            WindowTitle::ConnectionView(tab) => {
+                fn change_title(
+                    slf: &FieldMonitorWindow,
+                    tab: &FieldMonitorServerScreen,
+                    suffix: &str,
+                ) {
+                    slf.set_title(Some(&format!("{} - {}", tab.title(), suffix)));
+                }
 
-            let child = menu_page.child();
-            new_window.set_default_size(child.width(), child.height());
+                change_title(self, &tab, &field_monitor_str);
 
-            imp.tab_view
-                .transfer_page(&menu_page, &new_window.imp().tab_view, 0);
-            new_window.present();
-            new_window.show_tabs();
-            if !imp.overview.is_open() {
-                imp.main_stack.set_visible_child_name("connection-list");
+                let signal_handler_id = tab.connect_notify_local(
+                    Some("title"),
+                    glib::clone!(
+                        #[weak(rename_to=slf)]
+                        self,
+                        move |tab, _| {
+                            change_title(&slf, tab, &field_monitor_str);
+                        }
+                    ),
+                );
+
+                imp.tab_title_notify_binding
+                    .borrow_mut()
+                    .replace((tab.upcast(), signal_handler_id));
             }
         }
     }
 
-    fn act_tab_close(&self, _action: &gio::SimpleAction, _param: Option<&Variant>) {
-        let imp = self.imp();
-        if let Some(menu_page) = self.tab_view_current_page() {
-            imp.tab_view.close_page(&menu_page);
-            if !imp.overview.is_open() {
-                imp.main_stack.set_visible_child_name("connection-list");
-            }
-        }
-    }
-
-    fn tab_view_current_page(&self) -> Option<adw::TabPage> {
-        self.imp()
-            .menu_page
-            .borrow()
-            .as_ref()
-            .cloned()
-            .or_else(|| self.imp().tab_view.selected_page())
-    }
-
-    fn add_new_page(
-        &self,
-        page: &impl IsA<gtk::Widget>,
-        title: &str,
-        subtitle: Option<&str>,
-    ) -> adw::TabPage {
-        let tab_view = &self.imp().tab_view;
-
-        let page = page.upcast_ref();
-        let tab_page = tab_view.append(page);
-
-        if let Some(view) = page.downcast_ref::<FieldMonitorConnectionView>() {
-            view.bind_property("title", &tab_page, "title")
-                .bidirectional()
-                .build();
-            if let Some(subtitle) = subtitle {
-                view.set_subtitle(subtitle);
-            }
-        }
-
-        tab_page.set_title(title);
-
-        self.imp().overview.set_open(false);
-        tab_view.set_selected_page(&tab_page);
-
-        tab_page
+    pub(crate) fn tab_view(&self) -> FieldMonitorConnectionTabView {
+        self.imp().active_connection_tab_view.get()
     }
 }
 
@@ -330,18 +340,10 @@ impl FieldMonitorWindow {
             // User has forced the window to close.
 
             false
-        } else if imp.tab_view.n_pages() > 0 {
+        } else if imp.active_connection_tab_view.n_pages() > 0 {
             // Handle still open connections and ask user to confirm.
 
-            let open_connection_descs: Vec<_> = imp
-                .tab_view
-                .pages()
-                .iter::<adw::TabPage>()
-                .filter_map_ok(|tab| tab.child().downcast::<FieldMonitorConnectionView>().ok())
-                .filter_ok(|view| view.is_connected())
-                .map_ok(|view| (view.title(), view.subtitle()))
-                .collect::<Result<_, _>>()
-                .unwrap_or_default();
+            let open_connection_descs = imp.active_connection_tab_view.describe_active();
 
             if open_connection_descs.is_empty() {
                 return false;
@@ -375,92 +377,223 @@ impl FieldMonitorWindow {
     }
 
     #[template_callback]
-    fn on_tab_view_setup_menu(&self, tab_page: Option<adw::TabPage>, _tab_view: &adw::TabView) {
-        self.imp().menu_page.replace(tab_page);
-    }
-
-    #[template_callback]
-    fn on_tab_view_create_window(&self, _tab_view: &adw::TabView) -> adw::TabView {
-        let new_window = FieldMonitorWindow::new(&self.application().unwrap().downcast().unwrap());
-        new_window.present();
-        new_window.show_tabs();
-        new_window.imp().tab_view.clone()
-    }
-
-    #[template_callback]
-    fn on_overview_open_changed(&self) {
-        if self.imp().overview.is_open() {
-            self.change_window_title(WindowTitle::Overview);
-            self.imp().main_stack.set_visible_child_name("tabs");
+    fn on_layout_view_layout_name_changed(&self) {
+        if let Some("connection-view") = self.imp().layout_view.layout_name().as_deref() {
+            if let Some(view) = self.imp().active_connection_tab_view.current() {
+                self.change_window_title(WindowTitle::ConnectionView(view));
+            }
+            self.add_css_class("connection-view-active");
         } else {
-            self.on_tab_view_selected_page_changed();
+            self.change_window_title(WindowTitle::Main);
+            self.remove_css_class("connection-view-active");
         }
     }
 
     #[template_callback]
-    fn on_main_stack_visible_child_name_changed(&self) {
-        if let Some("connection-list") = self.imp().main_stack.visible_child_name().as_deref() {
-            self.change_window_title(WindowTitle::ConnectionList);
+    fn on_self_fullscreened_changed(&self) {
+        if self.is_fullscreen() {
+            self.imp()
+                .button_fullscreen
+                .set_icon_name("arrows-pointing-inward-symbolic");
+        } else {
+            self.imp()
+                .button_fullscreen
+                .set_icon_name("arrows-pointing-outward-symbolic");
         }
     }
 
     #[template_callback]
-    fn on_tab_view_selected_page_changed(&self) {
-        if let Some("tabs") = self.imp().main_stack.visible_child_name().as_deref() {
-            if let Some(selected_page) = self.imp().tab_view.selected_page() {
-                if let Ok(view) = selected_page
-                    .child()
-                    .downcast::<FieldMonitorConnectionView>()
-                {
-                    self.change_window_title(WindowTitle::ConnectionView(view));
-                }
-            }
-        }
-    }
-
-    fn change_window_title(&self, title: WindowTitle) {
+    fn on_inner_list_stack_visible_child_name_changed(&self) {
         let imp = self.imp();
-        let field_monitor_str = gettext("Field Monitor");
-        match title {
-            WindowTitle::Overview | WindowTitle::ConnectionList => {
-                if let Some((tab, signal)) = imp.tab_title_notify_binding.borrow_mut().take() {
-                    glib::signal_handler_disconnect(&tab, signal);
-                }
-                self.set_title(Some(&field_monitor_str));
+        if imp.inner_list_stack.visible_child_name().as_deref() != Some("connection-list") {
+            imp.connection_list_stack.unselect_connection();
+        }
+    }
+
+    #[template_callback]
+    fn on_connection_list_visible_connection_id_changed(&self) {
+        let imp = self.imp();
+        let connection_id = imp.connection_list_stack.visible_connection_id();
+        debug!(
+            "Connection List page changed: {:?} - inner list stack page: {:?}",
+            connection_id,
+            imp.inner_list_stack.visible_child_name()
+        );
+
+        let connection_list_visible =
+            imp.inner_list_stack.visible_child_name().as_deref() == Some("connection-list");
+
+        if connection_id.is_none() && connection_list_visible {
+            debug!("switching to welcome view");
+            imp.inner_list_stack.set_visible_child_name("welcome");
+        } else if connection_id.is_some() {
+            if !connection_list_visible {
+                debug!("switching to connection list");
+                self.unselect_connection_view();
+                imp.inner_list_stack
+                    .set_visible_child_name("connection-list");
+                self.unselect_quick_connect();
+                self.maybe_disable_no_sidebar_mode();
             }
-            WindowTitle::ConnectionView(tab) => {
-                fn change_title(
-                    slf: &FieldMonitorWindow,
-                    tab: &FieldMonitorConnectionView,
-                    suffix: &str,
-                ) {
-                    slf.set_title(Some(&format!("{} - {}", tab.title(), suffix)));
-                }
+            self.maybe_clicked_item_on_sidebar();
+        }
+    }
 
-                change_title(self, &tab, &field_monitor_str);
+    #[template_callback]
+    fn on_quick_connect_visible_changed(&self) {
+        let imp = self.imp();
+        debug!("quick connect visible changed");
 
-                let signal_handler_id = tab.connect_notify_local(
-                    Some("title"),
-                    glib::clone!(
-                        #[weak(rename_to=slf)]
-                        self,
-                        move |tab, _| {
-                            change_title(&slf, tab, &field_monitor_str);
-                        }
-                    ),
-                );
+        if self.quick_connect_visible() {
+            imp.inner_list_stack.set_visible_child_name("quick-connect");
+            self.unselect_connection_view();
+            self.unselect_connection_list();
+            self.maybe_clicked_item_on_sidebar();
+            self.maybe_disable_no_sidebar_mode();
+        } else if imp.inner_list_stack.visible_child_name().as_deref() == Some("quick-connect") {
+            // do not allow disabling if stack still visible
+            self.set_quick_connect_visible(true);
+        }
+    }
 
-                imp.tab_title_notify_binding
-                    .borrow_mut()
-                    .replace((tab.upcast(), signal_handler_id));
+    #[template_callback]
+    fn on_active_connection_tab_view_visible_page_changed(&self) {
+        let imp = self.imp();
+        let page = imp.active_connection_tab_view.visible_page();
+        debug!(
+            "Connection View active page changed: {:?} - inner stack page: {:?}",
+            page,
+            imp.inner_stack.visible_child_name()
+        );
+
+        let connection_view_visible =
+            imp.inner_stack.visible_child_name().as_deref() == Some("connection-view");
+
+        if page.is_none() && connection_view_visible {
+            debug!("switching to welcome view");
+            self.unselect_connection_view();
+            imp.inner_list_stack.set_visible_child_name("welcome");
+        } else if page.is_some() {
+            if !connection_view_visible {
+                debug!("switching to connection view");
+                self.select_connection_view();
             }
+            self.maybe_clicked_item_on_sidebar();
+        }
+    }
+
+    /// called when the window is small and the user hits the button to return to the "sidebar page".
+    #[template_callback]
+    fn on_main_split_view_show_content_changed(&self) {
+        let imp = self.imp();
+        if !imp.main_split_view.shows_content() {
+            // unselect all items in the sidebar for cosmetic clarity. We do this with some delay
+            // so it doesn't happen during the transition animation.
+            glib::spawn_future_local(glib::clone!(
+                #[weak(rename_to=slf)]
+                self,
+                async move {
+                    sleep(Duration::from_millis(100)).await;
+                    let imp = slf.imp();
+                    // just in case the user resizes the window:
+                    imp.inner_list_stack.set_visible_child_name("welcome");
+                    imp.inhibit_possible_sidebar_click.set(true);
+                    slf.unselect_connection_view();
+                    slf.unselect_connection_list();
+                    slf.unselect_quick_connect();
+                    imp.inhibit_possible_sidebar_click.set(false);
+                }
+            ));
+        }
+    }
+
+    fn on_app_loading_connections_changed(&self, app: &FieldMonitorApplication) {
+        if app.loading_connections() {
+            self.imp()
+                .connection_list_navbar_stack
+                .set_visible_child_name("loader");
+        } else {
+            self.imp()
+                .connection_list_navbar_stack
+                .set_visible_child_name("list");
+
+            if self.imp().connection_list_stack.is_empty() {
+                if self.imp().layout_view.layout_name().as_deref() == Some("main") {
+                    // Enable "no sidebar mode"
+                    self.imp()
+                        .inner_list_stack
+                        .set_visible_child_name("welcome");
+                    self.imp().welcome_button_box.set_visible(true);
+                    self.imp().layout_view.set_layout_name("no-sidebar");
+                    self.imp()
+                        .welcome_status_page
+                        .set_description(Some(&gettext(
+                            "Connect to your virtual machines and remote servers.",
+                        )));
+                }
+            } else {
+                self.maybe_disable_no_sidebar_mode();
+            }
+        }
+    }
+
+    fn on_app_starting_changed(&self, app: &FieldMonitorApplication) {
+        if app.starting() {
+            debug!("app is starting");
+            self.imp().outer_stack.set_visible_child_name("starting");
+        } else {
+            debug!("app is not starting");
+            self.imp().outer_stack.set_visible_child_name("app");
+        }
+    }
+
+    pub(crate) fn select_connection_view(&self) {
+        self.unselect_connection_list();
+        self.unselect_quick_connect();
+        self.imp()
+            .inner_stack
+            .set_visible_child_name("connection-view");
+        self.imp().layout_view.set_layout_name("connection-view");
+    }
+
+    fn unselect_connection_view(&self) {
+        let imp = self.imp();
+        if imp.inner_stack.visible_child_name().as_deref() == Some("connection-view") {
+            imp.active_connection_tab_view
+                .set_visible_page(None::<&adw::TabPage>);
+            imp.inner_stack.set_visible_child_name("main");
+            imp.layout_view.set_layout_name("main");
+        }
+    }
+
+    fn unselect_connection_list(&self) {
+        self.imp().connection_list_stack.unselect_connection();
+    }
+
+    fn unselect_quick_connect(&self) {
+        self.set_quick_connect_visible(false);
+    }
+
+    fn maybe_clicked_item_on_sidebar(&self) {
+        let imp = self.imp();
+        if !imp.inhibit_possible_sidebar_click.get() {
+            imp.main_split_view.set_show_content(true);
+            imp.connection_view_split_view.set_show_sidebar(false);
+        }
+    }
+
+    /// Disable the no-sidebar mode used for initial presentation if no connections are present.
+    fn maybe_disable_no_sidebar_mode(&self) {
+        if self.imp().layout_view.layout_name().as_deref() == Some("no-sidebar") {
+            self.imp().welcome_button_box.set_visible(false);
+            self.imp().layout_view.set_layout_name("main");
+            self.imp().welcome_status_page.set_description(None);
         }
     }
 }
 
 #[derive(Debug, Clone)]
 enum WindowTitle {
-    Overview,
-    ConnectionList,
-    ConnectionView(FieldMonitorConnectionView),
+    Main,
+    ConnectionView(FieldMonitorServerScreen),
 }

@@ -160,7 +160,7 @@ impl FieldMonitorFocusGrabber {
         self.set_visible(false);
     }
 
-    fn ungrab(&self) {
+    pub fn ungrab(&self) {
         let imp = self.imp();
         if !imp.grabbed.get() {
             return;
