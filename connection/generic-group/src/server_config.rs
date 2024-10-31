@@ -25,7 +25,7 @@ use glib::prelude::*;
 use glib::subclass::prelude::*;
 use secure_string::SecureString;
 
-use crate::preferences::GenericGroupConfiguration;
+use crate::preferences::{GenericGroupConfiguration, ServerType};
 
 mod imp {
     use super::*;
@@ -35,6 +35,8 @@ mod imp {
     pub struct ServerConfigForRow {
         #[property(get, construct_only)]
         pub key: RefCell<String>,
+        #[property(get, set, nullable)]
+        pub server_type: RefCell<String>,
         #[property(get, set)]
         pub title: RefCell<String>,
         #[property(get, set)]
@@ -63,6 +65,7 @@ glib::wrapper! {
 #[derive(Debug, Clone)]
 pub struct FinalizedServerConfig {
     pub key: String,
+    pub server_type: Option<ServerType>,
     pub title: String,
     pub host: String,
     pub port: NonZeroU32,
@@ -76,6 +79,7 @@ impl Default for FinalizedServerConfig {
     fn default() -> Self {
         FinalizedServerConfig {
             key: String::default(),
+            server_type: None,
             title: String::default(),
             host: String::default(),
             port: NonZeroU32::new(1).unwrap(),
@@ -134,6 +138,10 @@ impl GenericGroupConfiguration for ServerUpdateMap {
         None
     }
 
+    fn server_type(&self, server: &str) -> Option<ServerType> {
+        self.0.get(server).and_then(|s| s.server_type)
+    }
+
     fn title(&self, server: &str) -> Option<String> {
         self.0.get(server).map(|s| s.title.clone())
     }
@@ -170,6 +178,10 @@ impl GenericGroupConfiguration for ServerUpdateMap {
     }
 
     fn set_connection_title(&mut self, _value: &str) {
+        unimplemented!()
+    }
+
+    fn set_server_type(&mut self, _server: &str, _value: Option<ServerType>) {
         unimplemented!()
     }
 
@@ -223,6 +235,10 @@ where
         self.0.connection_title().or(self.1.connection_title())
     }
 
+    fn server_type(&self, server: &str) -> Option<ServerType> {
+        self.0.server_type(server).or(self.1.server_type(server))
+    }
+
     fn title(&self, server: &str) -> Option<String> {
         self.0.title(server).or(self.1.title(server))
     }
@@ -251,6 +267,10 @@ where
     }
 
     fn set_connection_title(&mut self, _value: &str) {
+        unimplemented!()
+    }
+
+    fn set_server_type(&mut self, _server: &str, _value: Option<ServerType>) {
         unimplemented!()
     }
 

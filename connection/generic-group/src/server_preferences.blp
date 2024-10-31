@@ -5,10 +5,25 @@ template $GenericGroupServerPreferences: Adw.PreferencesPage {
     title: bind title_entry.text bidirectional;
     host: bind host_entry.text bidirectional;
     port: bind port_entry.text bidirectional;
+    
+    notify::server-type => $on_self_server_type_changed() swapped;
 
     Adw.PreferencesGroup {
         Adw.EntryRow title_entry {
             title: _("Server Name");
+        }
+        
+        Adw.ComboRow server_type_row {
+            title: _("Server Type");
+            notify::selected => $on_server_type_combo_selected() swapped;
+    
+            model: StringList {
+                strings [
+                    _("RDP"),
+                    _("SPICE"),
+                    _("VNC"),
+                ]
+            };
         }
     }
 

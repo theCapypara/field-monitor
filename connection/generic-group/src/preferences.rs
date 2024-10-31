@@ -15,35 +15,40 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
+use std::borrow::Cow;
 use std::cell::Cell;
 use std::cell::RefCell;
+use std::fmt::{Display, Formatter};
 use std::num::NonZeroU32;
 use std::ops::{Deref, DerefMut};
 
+use crate::server_config::{ServerConfigChanges, ServerConfigForRow};
+use crate::server_preferences::GenericGroupServerPreferences;
 use adw::gio;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
+use libfieldmonitor::adapter::rdp::RdpAdapter;
+use libfieldmonitor::adapter::spice::SpiceAdapter;
+use libfieldmonitor::adapter::types::Adapter;
+use libfieldmonitor::adapter::vnc::VncAdapter;
+use libfieldmonitor::connection::*;
+use libfieldmonitor::i18n::gettext_f;
 use log::warn;
 use secure_string::SecureString;
 use uuid::Uuid;
 
-use libfieldmonitor::connection::*;
-use libfieldmonitor::i18n::gettext_f;
-
-use crate::server_config::{ServerConfigChanges, ServerConfigForRow};
-use crate::server_preferences::GenericGroupServerPreferences;
-
 pub trait GenericGroupConfiguration {
     fn connection_title(&self) -> Option<&str>;
+    fn server_type(&self, server: &str) -> Option<ServerType>;
     fn title(&self, server: &str) -> Option<String>;
     fn host(&self, server: &str) -> Option<String>;
     fn port(&self, server: &str) -> Option<NonZeroU32>;
     fn user(&self, server: &str) -> Option<String>;
     fn password(&self, server: &str) -> LocalBoxFuture<anyhow::Result<Option<SecureString>>>;
     fn set_connection_title(&mut self, value: &str);
+    fn set_server_type(&mut self, server: &str, value: Option<ServerType>);
     fn set_title(&mut self, server: &str, value: &str);
     fn set_host(&mut self, server: &str, value: &str);
     fn set_port(&mut self, server: &str, value: NonZeroU32);
@@ -56,6 +61,14 @@ pub trait GenericGroupConfiguration {
 impl GenericGroupConfiguration for ConnectionConfiguration {
     fn connection_title(&self) -> Option<&str> {
         self.get_try_as_str("title")
+    }
+
+    fn server_type(&self, server: &str) -> Option<ServerType> {
+        self.with_section(server, |section| {
+            section
+                .get_try_as_string("server_type")
+                .and_then(|s| s.try_into().ok())
+        })
     }
 
     fn title(&self, server: &str) -> Option<String> {
@@ -99,6 +112,15 @@ impl GenericGroupConfiguration for ConnectionConfiguration {
 
     fn set_connection_title(&mut self, value: &str) {
         self.set_value("title", value);
+    }
+
+    fn set_server_type(&mut self, server: &str, value: Option<ServerType>) {
+        self.with_section_mut(server, |mut section| {
+            section.set_value(
+                "server_type",
+                value.map(|s| s.to_string()).unwrap_or_default(),
+            )
+        });
     }
 
     fn set_title(&mut self, server: &str, value: &str) {
@@ -152,6 +174,10 @@ impl<T: GenericGroupConfiguration + ?Sized> GenericGroupConfiguration for Box<T>
         self.deref().connection_title()
     }
 
+    fn server_type(&self, server: &str) -> Option<ServerType> {
+        self.deref().server_type(server)
+    }
+
     fn title(&self, server: &str) -> Option<String> {
         self.deref().title(server)
     }
@@ -174,6 +200,10 @@ impl<T: GenericGroupConfiguration + ?Sized> GenericGroupConfiguration for Box<T>
 
     fn set_connection_title(&mut self, value: &str) {
         self.deref_mut().set_connection_title(value)
+    }
+
+    fn set_server_type(&mut self, server: &str, value: Option<ServerType>) {
+        self.deref_mut().set_server_type(server, value)
     }
 
     fn set_title(&mut self, server: &str, value: &str) {
@@ -202,6 +232,73 @@ impl<T: GenericGroupConfiguration + ?Sized> GenericGroupConfiguration for Box<T>
 
     fn remove_server(&mut self, server: &str) {
         self.deref_mut().remove_server(server)
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ServerType {
+    Rdp,
+    Spice,
+    Vnc,
+}
+
+impl TryFrom<String> for ServerType {
+    type Error = ();
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        match &*value {
+            "rdp" => Ok(ServerType::Rdp),
+            "spice" => Ok(ServerType::Spice),
+            "vnc" => Ok(ServerType::Vnc),
+            _ => Err(()),
+        }
+    }
+}
+
+impl Display for ServerType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ServerType::Rdp => "rdp".fmt(f),
+            ServerType::Spice => "spice".fmt(f),
+            ServerType::Vnc => "vnc".fmt(f),
+        }
+    }
+}
+
+impl ServerType {
+    pub fn tag(&self) -> &'static str {
+        match self {
+            ServerType::Rdp => RdpAdapter::TAG,
+            ServerType::Spice => SpiceAdapter::TAG,
+            ServerType::Vnc => VncAdapter::TAG,
+        }
+    }
+
+    pub fn protocol(&self) -> &'static str {
+        self.tag()
+    }
+
+    pub fn label(&self) -> Cow<'static, str> {
+        match self {
+            ServerType::Rdp => RdpAdapter::label(),
+            ServerType::Spice => SpiceAdapter::label(),
+            ServerType::Vnc => VncAdapter::label(),
+        }
+    }
+
+    pub fn new_adapter(
+        &self,
+        host: String,
+        port: u32,
+        user: String,
+        password: SecureString,
+    ) -> Box<dyn Adapter> {
+        let bx: Box<dyn Adapter> = match self {
+            ServerType::Rdp => Box::new(RdpAdapter::new(host, port, user, password)),
+            ServerType::Spice => Box::new(SpiceAdapter::new(host, port, user, password)),
+            ServerType::Vnc => Box::new(VncAdapter::new(host, port, user, password)),
+        };
+        bx
     }
 }
 
@@ -275,6 +372,12 @@ impl GenericGroupPreferences {
 
                     glib::Object::builder()
                         .property("key", section_key)
+                        .property(
+                            "server-type",
+                            existing_configuration
+                                .server_type(section_key)
+                                .map(|s| s.to_string()),
+                        )
                         .property("title", title)
                         .property("host", host)
                         .property("port", existing_configuration.port(section_key))
@@ -338,7 +441,16 @@ impl GenericGroupPreferences {
                         .unwrap_or_default();
                     let row = adw::ActionRow::builder()
                         .title(config.title())
-                        .subtitle(format!("{}{}:{}", user_part, config.host(), config.port()))
+                        .subtitle(format!(
+                            "{}://{}{}:{}",
+                            ServerType::try_from(config.server_type())
+                                .ok()
+                                .map(|s| s.protocol())
+                                .unwrap_or_default(),
+                            user_part,
+                            config.host(),
+                            config.port()
+                        ))
                         .activatable_widget(&edit)
                         .build();
                     row.add_suffix(&edit);
@@ -391,6 +503,7 @@ impl GenericGroupPreferences {
                         let server = server.unwrap().downcast::<ServerConfigForRow>().unwrap();
                         if server.key() == cfg.key {
                             found = true;
+                            server.set_server_type(cfg.server_type.map(|s| s.to_string()));
                             server.set_title(&*cfg.title);
                             server.set_host(&*cfg.host);
                             server.set_port(u32::from(cfg.port));
@@ -399,15 +512,18 @@ impl GenericGroupPreferences {
                         }
                     }
                     if !found {
-                        slf.imp().server_store.append(
-                            &glib::Object::builder::<ServerConfigForRow>()
-                                .property("key", &cfg.key)
-                                .property("title", &cfg.title)
-                                .property("host", &cfg.host)
-                                .property("port", cfg.port)
-                                .property("user", cfg.user.as_deref())
-                                .build(),
-                        )
+                        let obj = glib::Object::builder::<ServerConfigForRow>()
+                            .property("key", &cfg.key)
+                            .property("server-type", cfg.server_type.map(|s| s.to_string()))
+                            .property("title", &cfg.title)
+                            .property("host", &cfg.host)
+                            .property("port", cfg.port)
+                            .property("user", cfg.user.as_deref())
+                            .build();
+                        if let Some(server_type) = cfg.server_type {
+                            obj.set_server_type(Some(server_type.to_string()));
+                        }
+                        slf.imp().server_store.append(&obj)
                     }
                     // Insert into changes
                     slf.imp()

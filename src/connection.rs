@@ -16,7 +16,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use field_monitor_generic_group::*;
+use field_monitor_generic_group::GenericConnectionProviderConstructor;
 use field_monitor_libvirt::*;
 use field_monitor_proxmox::ProxmoxConnectionProviderConstructor;
 use libfieldmonitor::connection::ConnectionProviderConstructor;
@@ -25,9 +25,7 @@ use libfieldmonitor::connection::ConnectionProviderConstructor;
 pub static CONNECTION_PROVIDERS: &[&dyn ConnectionProviderConstructor] = &[
     #[cfg(feature = "devel")]
     &field_monitor_debug::DebugConnectionProviderConstructor,
-    &RdpConnectionProviderConstructor,
-    &SpiceConnectionProviderConstructor,
+    &GenericConnectionProviderConstructor,
     &ProxmoxConnectionProviderConstructor,
     &LibvirtQemuConnectionProviderConstructor,
-    &VncConnectionProviderConstructor,
 ];

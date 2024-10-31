@@ -1,12 +1,11 @@
 use std::cell::RefCell;
 use std::num::NonZeroU32;
 
+use crate::credential_preferences::GenericGroupCredentialPreferences;
+use crate::preferences::{GenericGroupConfiguration, ServerType};
+use crate::server_config::FinalizedServerConfig;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
-
-use crate::credential_preferences::GenericGroupCredentialPreferences;
-use crate::preferences::GenericGroupConfiguration;
-use crate::server_config::FinalizedServerConfig;
 
 mod imp {
     use super::*;
@@ -18,6 +17,8 @@ mod imp {
     )]
     pub struct GenericGroupServerPreferences {
         #[template_child]
+        pub(crate) server_type_row: TemplateChild<adw::ComboRow>,
+        #[template_child]
         pub(crate) title_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub(crate) host_entry: TemplateChild<adw::EntryRow>,
@@ -28,6 +29,8 @@ mod imp {
 
         #[property(get, construct_only)]
         pub key: RefCell<String>,
+        #[property(get, set)]
+        pub server_type: RefCell<String>,
         #[property(get, set)]
         pub title: RefCell<String>,
         #[property(get, set)]
@@ -76,6 +79,9 @@ impl GenericGroupServerPreferences {
                 #[weak]
                 slf,
                 async move {
+                    if let Some(v) = existing_configuration.server_type(&server) {
+                        slf.set_server_type(v.to_string());
+                    }
                     if let Some(v) = existing_configuration.title(&server) {
                         slf.set_title(v);
                     }
@@ -92,6 +98,8 @@ impl GenericGroupServerPreferences {
                         .await;
                 }
             ));
+        } else {
+            slf.set_server_type(ServerType::Rdp.to_string());
         }
         slf
     }
@@ -113,6 +121,8 @@ impl GenericGroupServerPreferences {
         self.port_entry_error(false);
 
         config.title = self.title();
+        debug_assert!(ServerType::try_from(self.server_type()).is_ok());
+        config.server_type = self.server_type().try_into().ok();
         config.host = self.host();
         config.port = port;
         config.key = self.key();
@@ -130,4 +140,30 @@ impl GenericGroupServerPreferences {
 }
 
 #[gtk::template_callbacks]
-impl GenericGroupServerPreferences {}
+impl GenericGroupServerPreferences {
+    const SELECTED_IDX_RDP: u32 = 0;
+    const SELECTED_IDX_SPICE: u32 = 1;
+    const SELECTED_IDX_VNC: u32 = 2;
+
+    #[template_callback]
+    fn on_self_server_type_changed(&self) {
+        let server_type: Option<ServerType> = self.server_type().try_into().ok();
+        self.imp().server_type_row.set_selected(match server_type {
+            Some(ServerType::Rdp) => Self::SELECTED_IDX_RDP,
+            Some(ServerType::Spice) => Self::SELECTED_IDX_SPICE,
+            Some(ServerType::Vnc) => Self::SELECTED_IDX_VNC,
+            _ => return,
+        });
+    }
+
+    #[template_callback]
+    fn on_server_type_combo_selected(&self) {
+        let server_type = match self.imp().server_type_row.selected() {
+            Self::SELECTED_IDX_RDP => ServerType::Rdp,
+            Self::SELECTED_IDX_SPICE => ServerType::Spice,
+            Self::SELECTED_IDX_VNC => ServerType::Vnc,
+            _ => return,
+        };
+        self.set_server_type(server_type.to_string());
+    }
+}
