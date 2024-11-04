@@ -936,6 +936,7 @@ dependencies = [
  "oo7",
  "pretty_env_logger",
  "rdw4",
+ "rdw4-vnc",
  "secure-string",
  "serde",
  "serde_yaml",

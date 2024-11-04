@@ -66,14 +66,14 @@ template $FieldMonitorConnectionInfoPage: Adw.Bin {
                 name: "auth-required";
 
                 child: Adw.StatusPage {
-                    icon-name: "dialog-error-symbolic";
+                    icon-name: "key-symbolic";
                     title: _("Authentication required");
                     description: _("This connection requires additional authentication.");
 
                     child: Button auth_button {
                         label: _("Authenticate");
                         action-name: "app.auth-connection";
-                        valign: center;
+                        halign: center;
 
                         styles [
                             "suggested-action",

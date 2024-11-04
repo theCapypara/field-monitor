@@ -33,18 +33,18 @@ use http::Uri;
 use log::{error, warn};
 use secure_string::SecureString;
 
-use libfieldmonitor::adapter::spice::SpiceAdapter;
+use crate::credential_preferences::ProxmoxCredentialPreferences;
+use crate::preferences::{ProxmoxConfiguration, ProxmoxPreferences};
+use crate::tokiort::{run_on_tokio, tkruntime};
+use libfieldmonitor::adapter::spice::{SpiceAdapter, SpiceSessionConfigBuilder};
 use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::adapter::vte_pty::VtePtyAdapter;
 use libfieldmonitor::connection::*;
 use proxmox_api::{
-    Error, NodeId, NodeStatus, ProxmoxApiClient, VmConsoleProxyType, VmId, VmStatus, VmType,
+    NodeId, NodeStatus, ProxmoxApiClient, Spiceproxy, Termproxy, VmConsoleProxyType, VmId,
+    VmStatus, VmType, Vncproxy,
 };
-
-use crate::credential_preferences::ProxmoxCredentialPreferences;
-use crate::preferences::{ProxmoxConfiguration, ProxmoxPreferences};
-use crate::tokiort::{run_on_tokio, tkruntime};
 
 mod credential_preferences;
 mod preferences;
@@ -156,6 +156,7 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
 }
 
 struct ProxmoxConnection {
+    connection_id: String,
     title: String,
     client: Arc<ProxmoxApiClient>,
 }
@@ -216,6 +217,7 @@ impl ProxmoxConnection {
         }?;
 
         Ok(Self {
+            connection_id: config.id().to_string(),
             title: config.title().unwrap_or_default().to_string(),
             client: Arc::new(client),
         })
@@ -235,6 +237,7 @@ impl Connection for ProxmoxConnection {
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move {
+            let connection_id = self.connection_id.clone();
             let client = self.client.clone();
             let map = run_on_tokio(async move {
                 let mut server_map = ServerMapSend::default();
@@ -244,6 +247,7 @@ impl Connection for ProxmoxConnection {
                         node.node.to_string().into(),
                         Box::new(ProxmoxNode {
                             client: client.clone(),
+                            connection_id: connection_id.clone(),
                             id: node.node,
                             status: NodeStatus::Online,
                         }),
@@ -264,6 +268,7 @@ impl Connection for ProxmoxConnection {
 
 struct ProxmoxNode {
     client: Arc<ProxmoxApiClient>,
+    connection_id: String,
     id: NodeId,
     status: NodeStatus,
 }
@@ -380,12 +385,19 @@ impl ServerConnection for ProxmoxNode {
     }
 
     fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
-        todo!()
+        create_proxmox_adapter(
+            tag,
+            &self.connection_id,
+            self.id.as_ref(),
+            self.client.clone(),
+            ProxmoxEntity::Node(self.id.clone()),
+        )
     }
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move {
             let client = self.client.clone();
+            let connection_id = self.connection_id.clone();
             let node_id = self.id.clone();
 
             let map = run_on_tokio(async move {
@@ -396,6 +408,7 @@ impl ServerConnection for ProxmoxNode {
                         vm.vmid.to_string().into(),
                         Box::new(ProxmoxVm {
                             client: client.clone(),
+                            connection_id: connection_id.clone(),
                             node_id: node_id.clone(),
                             vm_id: vm.vmid,
                             vm_type: VmType::Lxc,
@@ -414,6 +427,7 @@ impl ServerConnection for ProxmoxNode {
                         vm.vmid.to_string().into(),
                         Box::new(ProxmoxVm {
                             client: client.clone(),
+                            connection_id: connection_id.clone(),
                             node_id: node_id.clone(),
                             vm_id: vm.vmid,
                             vm_type: VmType::Qemu,
@@ -437,6 +451,7 @@ impl ServerConnection for ProxmoxNode {
 
 struct ProxmoxVm {
     client: Arc<ProxmoxApiClient>,
+    connection_id: String,
     node_id: NodeId,
     vm_id: VmId,
     vm_type: VmType,
@@ -732,13 +747,19 @@ impl ServerConnection for ProxmoxVm {
     }
 
     fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
-        todo!()
+        create_proxmox_adapter(
+            tag,
+            &self.connection_id,
+            &format!("{}/{}", self.node_id, self.vm_id),
+            self.client.clone(),
+            ProxmoxEntity::Vm(self.vm_type, self.node_id.clone(), self.vm_id.clone()),
+        )
     }
 }
 
 fn map_proxmox_error(error: proxmox_api::Error) -> ConnectionError {
     match error {
-        Error::AuthFailed => ConnectionError::AuthFailed(None, error.into()),
+        proxmox_api::Error::AuthFailed => ConnectionError::AuthFailed(None, error.into()),
         _ => ConnectionError::General(None, error.into()),
     }
 }
@@ -790,4 +811,119 @@ where
         toov.add_toast(adw::Toast::builder().title(&text).timeout(10).build());
     }
     (success, should_reload)
+}
+
+enum ProxmoxEntity {
+    Node(NodeId),
+    Vm(VmType, NodeId, VmId),
+}
+
+enum AdapterCreds {
+    Vnc(Vncproxy),
+    Spice(Spiceproxy),
+    Term(Termproxy),
+}
+
+fn create_proxmox_adapter<'a>(
+    adapter_tag: &str,
+    connection_id: &str,
+    server_id: &str,
+    client: Arc<ProxmoxApiClient>,
+    entity: ProxmoxEntity,
+) -> LocalBoxFuture<'a, ConnectionResult<Box<dyn Adapter>>> {
+    let connection_id = connection_id.to_string();
+    let server_id = server_id.to_string();
+    let adapter_tag = adapter_tag.to_string();
+    let adapter_type = match &*adapter_tag {
+        SpiceAdapter::TAG => VmConsoleProxyType::Spice,
+        VncAdapter::TAG => VmConsoleProxyType::Vnc,
+        VtePtyAdapter::TAG => VmConsoleProxyType::Term,
+        _ => {
+            return Box::pin(async move {
+                Err(ConnectionError::General(
+                    None,
+                    anyhow!("invalid adapter tag"),
+                ))
+            });
+        }
+    };
+
+    Box::pin(run_on_tokio(async move {
+        let adapter_creds = match entity {
+            ProxmoxEntity::Node(node_id) => match adapter_type {
+                VmConsoleProxyType::Vnc => AdapterCreds::Vnc(
+                    client
+                        .node_vncshell(&node_id, Default::default())
+                        .await
+                        .map_err(map_proxmox_error)?,
+                ),
+                VmConsoleProxyType::Spice => AdapterCreds::Spice(
+                    client
+                        .node_spiceshell(&node_id, Default::default())
+                        .await
+                        .map_err(map_proxmox_error)?,
+                ),
+                VmConsoleProxyType::Term => AdapterCreds::Term(
+                    client
+                        .node_termproxy(&node_id, Default::default())
+                        .await
+                        .map_err(map_proxmox_error)?,
+                ),
+            },
+            ProxmoxEntity::Vm(vm_type, node_id, vm_id) => match adapter_type {
+                VmConsoleProxyType::Vnc => AdapterCreds::Vnc(
+                    client
+                        .vm_vncproxy(&node_id, &vm_id, Some(vm_type), Default::default())
+                        .await
+                        .map_err(map_proxmox_error)?,
+                ),
+                VmConsoleProxyType::Spice => AdapterCreds::Spice(
+                    client
+                        .vm_spiceproxy(&node_id, &vm_id, Some(vm_type), Default::default())
+                        .await
+                        .map_err(map_proxmox_error)?,
+                ),
+                VmConsoleProxyType::Term => AdapterCreds::Term(
+                    client
+                        .vm_termproxy(&node_id, &vm_id, Some(vm_type), Default::default())
+                        .await
+                        .map_err(map_proxmox_error)?
+                        .1,
+                ),
+            },
+        };
+
+        let adapter: Box<dyn Adapter> = match adapter_creds {
+            AdapterCreds::Vnc(vncproxy) => Box::new(VncAdapter::new_with_ca(
+                client.hostname().to_string(),
+                vncproxy.port.into(),
+                vncproxy.user,
+                vncproxy.ticket.into(),
+                vncproxy.cert,
+            )),
+            AdapterCreds::Spice(spiceproxy) => Box::new(SpiceAdapter::new_with_custom_config(
+                SpiceSessionConfigBuilder::default()
+                    .host(Some(spiceproxy.host))
+                    .password(Some(spiceproxy.password.into()))
+                    .proxy(Some(spiceproxy.proxy))
+                    .tls_port(Some(spiceproxy.tls_port))
+                    .ca(spiceproxy
+                        .ca
+                        .map(|s| s.replace(r"\n", "\n"))
+                        .map(String::into_bytes))
+                    .cert_subject(spiceproxy.host_subject)
+                    .build()
+                    .unwrap(),
+            )),
+            AdapterCreds::Term(termproxy) => Box::new(VtePtyAdapter::new(
+                connection_id,
+                server_id,
+                adapter_tag,
+                todo!(),
+                todo!(),
+            )),
+        };
+
+        Ok(adapter)
+    }))
 }

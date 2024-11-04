@@ -245,6 +245,10 @@ pub struct Spiceproxy {
     )]
     pub tls_port: NonZeroU32,
     pub r#type: String,
+    #[serde(default)]
+    pub ca: Option<String>,
+    #[serde(rename = "host-subject", default)]
+    pub host_subject: Option<String>,
 }
 
 /// Return value of vncproxy/vncshell API endpoints:

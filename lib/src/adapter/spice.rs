@@ -16,37 +16,96 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::borrow::Cow;
+use std::cell::RefCell;
+use std::num::NonZeroU32;
 use std::rc::Rc;
 
 use anyhow::anyhow;
+use derive_builder::Builder;
 use gettextrs::gettext;
 use glib::prelude::*;
 use log::debug;
 use rdw_spice::spice;
 use rdw_spice::spice::prelude::ChannelExt;
-use rdw_spice::spice::ChannelEvent;
+use rdw_spice::spice::{ChannelEvent, Session};
 use secure_string::SecureString;
 
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
 use crate::connection::ConnectionError;
 
-pub struct SpiceAdapter {
-    host: String,
-    port: u32,
-    user: String,
-    password: SecureString,
+#[derive(Builder, Debug, Clone, Default)]
+#[builder(pattern = "owned")]
+#[non_exhaustive]
+pub struct SpiceSessionConfig {
+    #[builder(default = "None")]
+    uri: Option<String>,
+    #[builder(default = "None")]
+    username: Option<String>,
+    #[builder(default = "None")]
+    password: Option<SecureString>,
+    #[builder(default = "None")]
+    ca: Option<Vec<u8>>,
+    #[builder(default = "None")]
+    host: Option<String>,
+    #[builder(default = "None")]
+    cert_subject: Option<String>,
+    #[builder(default = "None")]
+    tls_port: Option<NonZeroU32>,
+    #[builder(default = "None")]
+    proxy: Option<String>,
 }
+
+impl SpiceSessionConfig {
+    fn apply(self, session: &mut Session) {
+        // We check for Some, because the bindings seem to have some bugs / weird behaviour
+        // with None values.
+        if self.uri.is_some() {
+            session.set_uri(self.uri.as_deref());
+        }
+        if self.username.is_some() {
+            session.set_username(self.username.as_deref());
+        }
+        if self.password.is_some() {
+            session.set_password(self.password.as_ref().map(|v| v.unsecure()));
+        }
+        if self.ca.is_some() {
+            session.set_ca(self.ca.as_ref().map(Into::into).as_ref());
+        }
+        if self.host.is_some() {
+            session.set_host(self.host.as_deref());
+        }
+        if self.cert_subject.is_some() {
+            session.set_cert_subject(self.cert_subject.as_deref());
+        }
+        if self.tls_port.is_some() {
+            session.set_tls_port(self.tls_port.map(|v| v.to_string()).as_deref());
+        }
+        if self.proxy.is_some() {
+            session.set_proxy(self.proxy.as_deref());
+        }
+    }
+}
+
+pub struct SpiceAdapter(SpiceSessionConfig);
 
 impl SpiceAdapter {
     pub const TAG: &'static str = "spice";
 
     pub fn new(host: String, port: u32, user: String, password: SecureString) -> Self {
-        Self {
-            host,
-            port,
-            user,
-            password,
-        }
+        Self(SpiceSessionConfig {
+            uri: Some(format!("spice://{}:{}", host, port)),
+            username: Some(user),
+            password: Some(password),
+            ca: None,
+            host: None,
+            cert_subject: None,
+            tls_port: None,
+            proxy: None,
+        })
+    }
+
+    pub fn new_with_custom_config(config: SpiceSessionConfig) -> Self {
+        Self(config)
     }
 
     pub fn label() -> Cow<'static, str> {
@@ -62,11 +121,10 @@ impl Adapter for SpiceAdapter {
     ) -> Box<dyn AdapterDisplay> {
         let spice = rdw_spice::Display::new();
 
-        let session = spice.session();
+        let mut session = spice.session();
+        self.0.apply(&mut session);
 
-        session.set_uri(Some(&format!("spice://{}:{}", self.host, self.port)));
-        session.set_username(Some(&self.user));
-        session.set_password(Some(self.password.unsecure()));
+        let disconnect_error: Rc<RefCell<Option<glib::Error>>> = Default::default();
 
         let on_disconnected_cln = on_disconnected.clone();
         session.connect_channel_new(move |_, channel| {
@@ -84,7 +142,7 @@ impl Adapter for SpiceAdapter {
                                 if let Some(e) = error {
                                     e.into()
                                 } else {
-                                    anyhow!("unknown error")
+                                    anyhow!("unknown error for event {event:?}")
                                 },
                             )))
                         }
@@ -94,7 +152,7 @@ impl Adapter for SpiceAdapter {
                                 if let Some(e) = error {
                                     e.into()
                                 } else {
-                                    anyhow!("unknown error")
+                                    anyhow!("unknown error for event {event:?}")
                                 },
                             )))
                         }
@@ -103,11 +161,39 @@ impl Adapter for SpiceAdapter {
                 });
             }
         });
+        session.connect_channel_destroy(glib::clone!(
+            #[strong]
+            disconnect_error,
+            move |_, channel| {
+                if let Some(error) = channel.error() {
+                    disconnect_error.replace(Some(error));
+                }
+            }
+        ));
 
-        session.connect_disconnected(move |_| {
-            // TODO: Error handling
-            on_disconnected(Ok(()))
-        });
+        session.connect_disconnected(glib::clone!(
+            #[strong]
+            disconnect_error,
+            move |_| {
+                if let Some(error) = disconnect_error.take() {
+                    let con_error = if let Some(error) = error.kind::<spice::ClientError>() {
+                        match error {
+                            spice::ClientError::AuthNeedsPassword
+                            | spice::ClientError::AuthNeedsUsername
+                            | spice::ClientError::AuthNeedsPasswordAndUsername => {
+                                ConnectionError::AuthFailed(None, anyhow!("auth failed"))
+                            }
+                            _ => ConnectionError::General(None, anyhow!("{:?}", error)),
+                        }
+                    } else {
+                        ConnectionError::General(None, anyhow::Error::from(Box::new(error)))
+                    };
+                    on_disconnected(Err(con_error))
+                } else {
+                    on_disconnected(Ok(()))
+                }
+            }
+        ));
 
         glib::spawn_future_local(async move {
             session.connect();

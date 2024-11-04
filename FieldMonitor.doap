@@ -6,8 +6,8 @@
     <shortdesc>XXXXXX</shortdesc>
     <description>XXXXXX</description>
 
-    <homepage rdf:resource="https://github.com/theCapypara/FieldMonitor"/>
-    <bug-database rdf:resource="https://github.com/theCapypara/FieldMonitor/issues"/>
+    <homepage rdf:resource="https://github.com/theCapypara/field-monitor"/>
+    <bug-database rdf:resource="https://github.com/theCapypara/field-monitor/issues"/>
 
     <programming-language>Rust</programming-language>
 

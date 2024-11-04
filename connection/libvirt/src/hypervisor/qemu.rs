@@ -62,7 +62,7 @@ impl ConnectionProvider for LibvirtQemuConnectionProvider {
     }
 
     fn icon(&self) -> IconSpec<()> {
-        IconSpec::Named("connection-qemu-symbolic".into())
+        IconSpec::Named("connection-libvirt-qemu-symbolic".into())
     }
 
     fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget {

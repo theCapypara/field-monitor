@@ -46,7 +46,7 @@ pub trait AdapterDisplay {
 
 /// An adapter to connect to a remote server and provide widgets
 /// to interact with said server.
-pub trait Adapter {
+pub trait Adapter: Send + Sync {
     fn create_and_connect_display(
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,

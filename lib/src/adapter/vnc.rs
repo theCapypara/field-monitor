@@ -35,6 +35,7 @@ pub struct VncAdapter {
     port: u32,
     user: String,
     password: SecureString,
+    ca: Option<String>,
 }
 
 impl VncAdapter {
@@ -46,6 +47,23 @@ impl VncAdapter {
             port,
             user,
             password,
+            ca: None,
+        }
+    }
+
+    pub fn new_with_ca(
+        host: String,
+        port: u32,
+        user: String,
+        password: SecureString,
+        ca: String,
+    ) -> Self {
+        Self {
+            host,
+            port,
+            user,
+            password,
+            ca: Some(ca),
         }
     }
 
@@ -104,21 +122,22 @@ impl Adapter for VncAdapter {
             on_connected();
         });
 
-        vnc.connection()
-            .connect_vnc_auth_credential(move |conn, va| {
+        let ca = Rc::new(self.ca.clone());
+
+        vnc.connection().connect_vnc_auth_credential(glib::clone!(
+            #[strong]
+            ca,
+            move |conn, va| {
                 debug!("VNC connection authenticating");
                 let creds: Vec<_> = va
                     .iter()
                     .map(|v| v.get::<gvnc::ConnectionCredential>().unwrap())
                     .collect();
-                dbg!(&creds);
                 if creds.contains(&gvnc::ConnectionCredential::Username) {
-                    dbg!("username", &user);
                     conn.set_credential(gvnc::ConnectionCredential::Username.into_glib(), &user)
                         .unwrap();
                 }
                 if creds.contains(&gvnc::ConnectionCredential::Clientname) {
-                    dbg!("clientname", "field-monitor");
                     conn.set_credential(
                         gvnc::ConnectionCredential::Clientname.into_glib(),
                         "field-monitor",
@@ -126,14 +145,29 @@ impl Adapter for VncAdapter {
                     .unwrap();
                 }
                 if creds.contains(&gvnc::ConnectionCredential::Password) {
-                    dbg!("password", self.password.unsecure());
                     conn.set_credential(
                         gvnc::ConnectionCredential::Password.into_glib(),
                         self.password.unsecure(),
                     )
                     .unwrap();
                 }
-            });
+
+                // TODO: gtk-vnc with this option is not released as stable yet, and we don't
+                //       want to bother updating the Rust bindings to the unstable release,
+                //       so we use this instead.
+                //       In the future this will be gvnc::ConnectionCredential::CaCertData probably.
+                const VNC_CONNECTION_CREDENTIAL_CA_CERT_DATA: i32 = 3;
+                if let Some(ca) = &*ca {
+                    if creds.contains(&gvnc::ConnectionCredential::__Unknown(
+                        VNC_CONNECTION_CREDENTIAL_CA_CERT_DATA,
+                    )) {
+                        debug!("providing CA cert");
+                        conn.set_credential(VNC_CONNECTION_CREDENTIAL_CA_CERT_DATA, ca)
+                            .unwrap();
+                    }
+                }
+            }
+        ));
 
         vnc.connection()
             .open_host(&host, &format!("{}", port))

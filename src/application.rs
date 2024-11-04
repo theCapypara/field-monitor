@@ -437,8 +437,8 @@ impl FieldMonitorApplication {
             .version(VERSION)
             .developers(vec!["Marco Köpcke"])
             .copyright("© 2024 Marco Köpcke")
-            .website("https://github.com/theCapypara/FieldMonitor")
-            .issue_url("https://github.com/theCapypara/FieldMonitor/issues")
+            .website("https://github.com/theCapypara/field-monitor")
+            .issue_url("https://github.com/theCapypara/field-monitor/issues")
             .support_url("https://matrix.to/#/#fieldmonitor:matrix.org")
             .translator_credits(gettext("translator-credits"))
             .build();

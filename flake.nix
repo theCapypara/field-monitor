@@ -18,17 +18,11 @@
       system:
       let
         pkgs = import nixpkgs { inherit system; };
-        mkFieldMonitorWrapped = import ./build-aux/nix/_mkFieldMonitorWrapped.nix {
-          inherit (pkgs) writeShellApplication;
-        };
-        field-monitor-source = pkgs.callPackage ./build-aux/nix/pkg.nix { };
       in
       {
         packages = rec {
-          field-monitor = mkFieldMonitorWrapped field-monitor-source;
-          field-monitor-devel = mkFieldMonitorWrapped (
-            pkgs.callPackage ./build-aux/nix/pkg-devel.nix { inherit field-monitor-source; }
-          );
+          field-monitor = pkgs.callPackage ./build-aux/nix/pkg.nix { };
+          field-monitor-devel = pkgs.callPackage ./build-aux/nix/pkg-devel.nix { inherit field-monitor; };
           default = field-monitor;
         };
 

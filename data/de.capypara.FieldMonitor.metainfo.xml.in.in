@@ -20,11 +20,11 @@
 		<category>Network</category>
 	</categories>
 
-	<url type="bugtracker">https://github.com/theCapypara/FieldMonitor/issues</url>
+	<url type="bugtracker">https://github.com/theCapypara/field-monitor/issues</url>
 	<url type="translate">https://hosted.weblate.org/projects/fieldmonitor/</url>
 	<url type="donation">https://ko-fi.com/parakoopa</url>
 	<url type="contact">https://matrix.to/#/#fieldmonitor:matrix.org</url>
-	<url type="vcs-browser">https://github.com/theCapypara/FieldMonitor</url>
+	<url type="vcs-browser">https://github.com/theCapypara/field-monitor</url>
 
 	<description>
 		<!-- Translators: Part of the description of the application in the metainfo. -->

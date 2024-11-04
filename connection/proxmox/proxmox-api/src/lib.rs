@@ -56,20 +56,22 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Clone, Debug)]
 struct Client {
     client: reqwest::Client,
+    hostname: String,
     root: String, // ends with /
 }
 
 impl Client {
     fn new(root: &Uri, ignore_ssl_errors: bool) -> Result<Self> {
-        let mut root = root.to_string();
-        if !root.ends_with('/') {
-            root = format!("{root}/");
+        let mut root_str = root.to_string();
+        if !root_str.ends_with('/') {
+            root_str = format!("{root}/");
         }
         Ok(Self {
             client: ClientBuilder::new()
                 .danger_accept_invalid_certs(ignore_ssl_errors)
                 .build()?,
-            root,
+            hostname: root.host().unwrap().to_string(),
+            root: root_str,
         })
     }
 
@@ -232,6 +234,10 @@ impl ProxmoxApiClient {
                 current_ticket: Arc::new(Default::default()),
             }),
         })
+    }
+
+    pub fn hostname(&self) -> &str {
+        &self.client.hostname
     }
 
     pub async fn nodes(&self) -> Result<Vec<Node>> {

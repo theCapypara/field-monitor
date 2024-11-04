@@ -123,7 +123,6 @@ impl FieldMonitorConnectionInfoPage {
 
         debug!("reloading connection, removing old entries");
         while let Some(child) = imp.group_box.last_child() {
-            dbg!(&child);
             imp.group_box.remove(&child);
         }
 

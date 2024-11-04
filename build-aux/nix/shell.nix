@@ -2,6 +2,7 @@
   mkShell,
   lib,
   stdenv,
+  fetchgit,
 
   zlib,
   usbredir,
@@ -34,6 +35,26 @@
   libGL,
 }:
 let
+  patched-gtk-vnc = (
+    gtk-vnc.dev.overrideAttrs (
+      finalAttrs: previousAttrs: {
+        version = "1.3.1+ca-dbg";
+        dontStrip = true;
+        enableDebugging = true;
+        mesonFlags = previousAttrs.mesonFlags ++ [
+          "--buildtype=debug"
+          "-Ddebug=true"
+        ];
+        src = fetchgit {
+          # see note in flatpak sources
+          url = "https://gitlab.gnome.org/theCapypara/gtk-vnc.git";
+          rev = "c2cbddff5ad62bb3022643edb98eeacee94092ae";
+          hash = "sha256-ITudGW6gx7lyZskUxCOh1K5e58zuQbY2gxlT7BcMYCs=";
+        };
+      }
+    )
+  );
+
   overrides = (builtins.fromTOML (builtins.readFile ../../rust-toolchain.toml));
   extraLibs = [
     stdenv.cc.cc.lib
@@ -42,7 +63,7 @@ let
     gst_all_1.gstreamer
     gst_all_1.gst-plugins-base
     gst_all_1.gst-plugins-good
-    gtk-vnc
+    patched-gtk-vnc
     freerdp
     spice-protocol
     spice-gtk
@@ -99,7 +120,7 @@ mkShell {
       gst_all_1.gstreamer
       gst_all_1.gst-plugins-base
       gst_all_1.gst-plugins-good
-      gtk-vnc
+      patched-gtk-vnc
       freerdp
       spice-protocol
       spice-gtk
