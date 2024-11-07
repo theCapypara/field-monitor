@@ -249,7 +249,7 @@ impl Actionable for DebugConnection {
                 Box::new(|_params, _window, toasts| {
                     Box::pin(async move {
                         sleep(Duration::from_secs(2)).await;
-                        let toast = adw::Toast::builder().title("Foobar").timeout(10).build();
+                        let toast = adw::Toast::builder().title("Foobar").timeout(5).build();
                         if let Some(toasts) = toasts {
                             toasts.add_toast(toast);
                         }
@@ -515,7 +515,7 @@ impl Actionable for DebugConnectionServer {
                         sleep(Duration::from_secs(2)).await;
                         let toast = adw::Toast::builder()
                             .title("Server bazbaz")
-                            .timeout(10)
+                            .timeout(5)
                             .build();
                         if let Some(toasts) = toasts {
                             toasts.add_toast(toast);

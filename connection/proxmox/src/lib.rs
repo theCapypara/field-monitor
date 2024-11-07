@@ -808,7 +808,7 @@ where
     }
 
     if let Some(toov) = toov {
-        toov.add_toast(adw::Toast::builder().title(&text).timeout(10).build());
+        toov.add_toast(adw::Toast::builder().title(&text).timeout(5).build());
     }
     (success, should_reload)
 }

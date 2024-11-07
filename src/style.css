@@ -1,48 +1,10 @@
 :root {
-    /* Same as default --window-radius; but we don't use this because fullscreen disables border radius. */
+    /* Same as default --window-radius; but we don't use this because maximize/fullscreen disables border radius. */
     --box-border-radius: 12px;
 }
 
 window {
     transition: border-radius 0.5s ease, outline 0.5s ease;
-}
-
-/*
- * Styles for header from Showtime, thanks for the great implementation of fullscreen overlay
- * window controls!
- */
-
-button.header-osd,
-menubutton.header-osd button,
-.window-controls-osd > button > image {
-    color: var(--window-fg-color);
-    background-color: var(--window-bg-color);
-}
-
-.window-controls-osd > button > image {
-    background-color: color-mix(in oklab, var(--window-bg-color), var(--window-fg-color) 10%);
-}
-
-button.header-osd:not(.nohover):hover,
-menubutton.header-osd button:not(.nohover):hover,
-.window-controls-osd > button > image:not(.nohover):hover {
-    background-color: color-mix(in oklab, var(--window-bg-color), var(--window-fg-color) 15%);
-}
-
-button.header-osd:not(.nohover):active,
-menubutton.header-osd button:not(.nohover):active,
-.window-controls-osd > button > image:not(.nohover):active {
-    background-color: color-mix(in oklab, var(--window-bg-color), var(--window-fg-color) 30%);
-}
-
-.conn-list-server-groups {
-    margin: 12px;
-}
-
-.connection-view-vte button.header-osd,
-.connection-view-vte menubutton.header-osd button,
-.connection-view-vte .window-controls-osd > button > image {
-    background: transparent;
 }
 
 /* These are just the usual Adwaita defaults */
@@ -95,6 +57,10 @@ window.connection-view-active .connection-view-navbar, window.connection-view-ac
     margin-right: 12px;
 }
 
+.connection-info-page:backdrop, .fm-navbar:backdrop {
+    opacity: var(--dim-opacity);
+}
+
 .window-title {
     padding-top: 6px;
     padding-bottom: 6px;
@@ -110,21 +76,13 @@ window.connection-view-active .connection-view-navbar, window.connection-view-ac
 
 .vte-box {
     background: #fff;
+    color: #000;
     padding-left: 12px;
     padding-right: 12px;
-    padding-bottom: 12px;
+    padding-top: 12px;
 }
 
-.faux-header.vte {
-    background: #fff;
-    color: #000;
-}
-
-.header-bg-gradient {
-    background-image: linear-gradient(color-mix(in srgb, var(--window-bg-color) 40%, transparent), transparent);
-}
-
-.connection-view-grabbed:not(.fullscreen) {
+.connection-view-grabbed:not(.fullscreen):not(.maximized) {
     outline: 2px solid var(--accent-bg-color);
     border-radius: 0;
 }

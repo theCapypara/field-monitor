@@ -54,6 +54,8 @@ mod imp {
     #[template(resource = "/de/capypara/FieldMonitor/widget/connection_view/server_screen.ui")]
     pub struct FieldMonitorServerScreen {
         #[template_child]
+        pub toolbar_view: TemplateChild<adw::ToolbarView>,
+        #[template_child]
         pub outer_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub status_stack: TemplateChild<gtk::Stack>,
@@ -62,11 +64,7 @@ mod imp {
         #[template_child]
         pub button_fullscreen: TemplateChild<gtk::Button>,
         #[template_child]
-        pub osd_title_revealer: TemplateChild<gtk::Revealer>,
-        #[template_child]
         pub display_bin: TemplateChild<adw::Bin>,
-        #[template_child]
-        pub header_gradient: TemplateChild<adw::Bin>,
         #[template_child]
         pub focus_grabber: TemplateChild<FieldMonitorFocusGrabber>,
         #[template_child]
@@ -287,12 +285,6 @@ impl FieldMonitorServerScreen {
                     }
                 ),
             );
-
-            window.mobile_breakpoint().add_setter(
-                &*imp.osd_title_revealer,
-                "reveal-child",
-                Some(&false.into()),
-            );
         }
 
         imp.connection_loader.try_lock().unwrap().replace(loader);
@@ -456,17 +448,18 @@ impl FieldMonitorServerScreen {
 
         let widget: gtk::Widget = match &display_widget {
             AdapterDisplayWidget::Rdw(display) => {
-                imp.header_gradient.set_visible(true);
                 display.set_visible(true);
                 display.set_vexpand(true);
                 display.set_hexpand(true);
+                imp.toolbar_view
+                    .set_top_bar_style(adw::ToolbarStyle::Raised);
+                imp.toolbar_view.set_extend_content_to_top_edge(true);
                 imp.focus_grabber.set_display(Some(display));
                 self.add_menu(MenuKind::Rdw, server_actions);
                 self.remove_css_class("connection-view-vte");
                 display.clone().upcast()
             }
             AdapterDisplayWidget::Vte(terminal) => {
-                imp.header_gradient.set_visible(false);
                 terminal.set_vexpand(true);
                 terminal.set_hexpand(true);
 
@@ -474,17 +467,7 @@ impl FieldMonitorServerScreen {
                 let bx = gtk::Box::builder()
                     .orientation(gtk::Orientation::Vertical)
                     .css_classes(["vte-box"])
-                    .spacing(12)
                     .build();
-
-                bx.append(
-                    &gtk::WindowHandle::builder()
-                        .hexpand(true)
-                        .vexpand(false)
-                        .height_request(46)
-                        .css_classes(["faux-header", "vte"])
-                        .build(),
-                );
 
                 // make vte react to theme
                 let style_manager = self.application().unwrap().style_manager();
@@ -499,36 +482,26 @@ impl FieldMonitorServerScreen {
 
                 self.setup_vte_event_controllers(terminal);
                 self.setup_vte_menu_model(terminal);
+                imp.toolbar_view
+                    .set_top_bar_style(adw::ToolbarStyle::RaisedBorder);
+                imp.toolbar_view.set_extend_content_to_top_edge(false);
                 imp.focus_grabber.set_display(None);
                 self.add_menu(MenuKind::Vte, server_actions);
                 self.add_css_class("connection-view-vte");
                 bx.upcast()
             }
             AdapterDisplayWidget::Arbitrary { widget, overlayed } => {
-                let bx = gtk::Box::builder()
-                    .orientation(gtk::Orientation::Vertical)
-                    .build();
-
-                if !overlayed {
-                    imp.header_gradient.set_visible(false);
-                    bx.append(
-                        &gtk::WindowHandle::builder()
-                            .hexpand(true)
-                            .vexpand(false)
-                            .height_request(46)
-                            .css_classes(["faux-header"])
-                            .build(),
-                    )
+                // TODO: The arbitrary widget in overlay-mode has no way to hide the top bar.
+                imp.toolbar_view.set_top_bar_style(if *overlayed {
+                    adw::ToolbarStyle::Raised
                 } else {
-                    imp.header_gradient.set_visible(true);
-                }
-
-                bx.append(widget);
-
+                    adw::ToolbarStyle::Flat
+                });
+                imp.toolbar_view.set_extend_content_to_top_edge(*overlayed);
                 imp.focus_grabber.set_display(None);
                 self.add_menu(MenuKind::Other, server_actions);
                 self.remove_css_class("connection-view-vte");
-                bx.upcast()
+                widget.clone()
             }
         };
 
@@ -985,6 +958,16 @@ impl FieldMonitorServerScreen {
 
 #[gtk::template_callbacks]
 impl FieldMonitorServerScreen {
+    #[template_callback]
+    fn on_self_reveal_osd_controls_changed(&self) {
+        let toolbar_view = &self.imp().toolbar_view;
+        if toolbar_view.is_extend_content_to_top_edge() && !self.reveal_osd_controls() {
+            toolbar_view.set_reveal_top_bars(false);
+        } else {
+            toolbar_view.set_reveal_top_bars(true);
+        }
+    }
+
     #[template_callback]
     fn on_self_dynamic_resize_changed(&self) {
         let display = self
