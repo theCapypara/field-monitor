@@ -28,6 +28,7 @@ use crate::behaviour_preferences::DebugBehaviour;
 
 pub struct DebugArbitraryAdapter {
     pub mode: DebugBehaviour,
+    // todo: this is no longer used
     pub overlayed: bool,
 }
 
@@ -41,8 +42,6 @@ impl Adapter for DebugArbitraryAdapter {
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
     ) -> Box<dyn AdapterDisplay> {
-        let overlayed = self.overlayed;
-
         glib::timeout_add_local(Duration::from_secs(1), move || {
             match self.mode {
                 DebugBehaviour::Ok => {
@@ -63,7 +62,6 @@ impl Adapter for DebugArbitraryAdapter {
         Box::new(DebugArbitraryAdapterDisplay(
             AdapterDisplayWidget::Arbitrary {
                 widget: gtk::Label::new(Some("Debug Arbitrary Display")).upcast(),
-                overlayed,
             },
         ))
     }

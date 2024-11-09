@@ -56,6 +56,8 @@ mod imp {
         #[template_child]
         pub toolbar_view: TemplateChild<adw::ToolbarView>,
         #[template_child]
+        pub header_bar: TemplateChild<adw::HeaderBar>,
+        #[template_child]
         pub outer_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub status_stack: TemplateChild<gtk::Stack>,
@@ -277,11 +279,14 @@ impl FieldMonitorServerScreen {
                             slf.imp()
                                 .button_fullscreen
                                 .set_icon_name("arrows-pointing-inward-symbolic");
+                            slf.imp().toolbar_view.set_extend_content_to_top_edge(true);
                         } else {
                             slf.imp()
                                 .button_fullscreen
                                 .set_icon_name("arrows-pointing-outward-symbolic");
+                            slf.imp().toolbar_view.set_extend_content_to_top_edge(false);
                         }
+                        slf.on_self_reveal_osd_controls_changed();
                     }
                 ),
             );
@@ -451,9 +456,6 @@ impl FieldMonitorServerScreen {
                 display.set_visible(true);
                 display.set_vexpand(true);
                 display.set_hexpand(true);
-                imp.toolbar_view
-                    .set_top_bar_style(adw::ToolbarStyle::Raised);
-                imp.toolbar_view.set_extend_content_to_top_edge(true);
                 imp.focus_grabber.set_display(Some(display));
                 self.add_menu(MenuKind::Rdw, server_actions);
                 self.remove_css_class("connection-view-vte");
@@ -482,22 +484,12 @@ impl FieldMonitorServerScreen {
 
                 self.setup_vte_event_controllers(terminal);
                 self.setup_vte_menu_model(terminal);
-                imp.toolbar_view
-                    .set_top_bar_style(adw::ToolbarStyle::RaisedBorder);
-                imp.toolbar_view.set_extend_content_to_top_edge(false);
                 imp.focus_grabber.set_display(None);
                 self.add_menu(MenuKind::Vte, server_actions);
                 self.add_css_class("connection-view-vte");
                 bx.upcast()
             }
-            AdapterDisplayWidget::Arbitrary { widget, overlayed } => {
-                // TODO: The arbitrary widget in overlay-mode has no way to hide the top bar.
-                imp.toolbar_view.set_top_bar_style(if *overlayed {
-                    adw::ToolbarStyle::Raised
-                } else {
-                    adw::ToolbarStyle::Flat
-                });
-                imp.toolbar_view.set_extend_content_to_top_edge(*overlayed);
+            AdapterDisplayWidget::Arbitrary { widget } => {
                 imp.focus_grabber.set_display(None);
                 self.add_menu(MenuKind::Other, server_actions);
                 self.remove_css_class("connection-view-vte");
@@ -664,8 +656,13 @@ impl FieldMonitorServerScreen {
 
         if let (Some(display), Some(window)) = (display, window) {
             if let Some((w, h)) = display.display_size() {
+                let header_bar_h = if !self.imp().toolbar_view.is_extend_content_to_top_edge() {
+                    self.imp().header_bar.height() as usize
+                } else {
+                    0
+                };
                 if w != 0 && h != 0 {
-                    window.resize(w, h);
+                    window.resize(w, h + header_bar_h);
                 }
             }
         }
@@ -1056,6 +1053,13 @@ impl FieldMonitorServerScreen {
                 self.imp().grab_note.hide_note();
             }
         }
+    }
+
+    #[template_callback]
+    fn on_show_navigation_clicked(&self) {
+        // TODO: A bug somewhere? For some reason clicking this button only partially ungrabs in a
+        //       weird sort of hybrid state. So we ungrab manually.
+        self.imp().focus_grabber.ungrab();
     }
 
     #[template_callback]

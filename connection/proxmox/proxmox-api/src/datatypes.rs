@@ -15,10 +15,11 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use std::fmt::{Display, Formatter};
 use std::num::NonZeroU32;
 
 use serde::de::{Error, Unexpected};
-use serde::{de, Deserialize, Deserializer};
+use serde::{de, Deserialize, Deserializer, Serialize};
 use serde_json::Value;
 
 pub use crate::datatypes::ids::*;
@@ -220,7 +221,7 @@ pub enum VmStatus {
 /// - https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/termproxy
 /// - https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/lxc/{vmid}/termproxy
 /// - https://pve.proxmox.com/pve-docs/api-viewer/index.html#/nodes/{node}/qemu/{vmid}/termproxy
-#[derive(PartialEq, Deserialize, Debug, Clone)]
+#[derive(PartialEq, Serialize, Deserialize, Debug, Clone)]
 pub struct Termproxy {
     #[serde(deserialize_with = "try_deserialize_port_from_str")]
     pub port: NonZeroU32,
@@ -284,6 +285,15 @@ pub(crate) struct Wrapper<T> {
 pub enum VmType {
     Lxc,
     Qemu,
+}
+
+impl Display for VmType {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        match self {
+            VmType::Lxc => "lxc".fmt(f),
+            VmType::Qemu => "qemu".fmt(f),
+        }
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

@@ -24,12 +24,7 @@ use crate::connection::ConnectionError;
 pub enum AdapterDisplayWidget {
     Rdw(rdw::Display),
     Vte(vte::Terminal),
-    Arbitrary {
-        widget: gtk::Widget,
-        /// If true, the header controls are placed as an overlay over the widget.
-        /// If false, they are placed below a visual header bar.
-        overlayed: bool,
-    },
+    Arbitrary { widget: gtk::Widget },
 }
 
 /// A display widget for interacting with the remote server

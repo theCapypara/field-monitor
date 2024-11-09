@@ -19,6 +19,7 @@ use std::borrow::Cow;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
 
+pub use crate::datatypes::*;
 use futures::future::BoxFuture;
 use futures::lock::Mutex;
 use http::{header, HeaderMap, HeaderValue, Method, StatusCode, Uri};
@@ -29,14 +30,14 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 use thiserror::Error;
 
-pub use crate::datatypes::*;
-
 mod datatypes;
 
 #[derive(Debug, Error)]
 pub enum Error {
     #[error("http: {0}")]
-    Http(#[from] reqwest::Error),
+    Request(#[from] reqwest::Error),
+    #[error("http: {0}")]
+    Http(#[from] http::Error),
     #[error("invalid header value: {0}")]
     InvalidHeaderValue(#[from] http::header::InvalidHeaderValue),
     #[error("the value provided for an identifier is invalid")]
@@ -56,6 +57,7 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[derive(Clone, Debug)]
 struct Client {
     client: reqwest::Client,
+    ignore_ssl_errors: bool,
     hostname: String,
     root: String, // ends with /
 }
@@ -70,6 +72,7 @@ impl Client {
             client: ClientBuilder::new()
                 .danger_accept_invalid_certs(ignore_ssl_errors)
                 .build()?,
+            ignore_ssl_errors,
             hostname: root.host().unwrap().to_string(),
             root: root_str,
         })
@@ -127,12 +130,27 @@ enum DoAfterAuthRetry {
 }
 
 trait ApiAccessProvider {
+    fn tag(&self) -> &'static str;
+    fn user_or_tokenid(&self) -> &str;
+    fn password_or_apikey(&self) -> &SecureString;
     fn provide_auth_headers(&self) -> BoxFuture<Result<AuthHeaders>>;
     fn auth_success(&self) {}
     fn failed_auth(&self) -> BoxFuture<DoAfterAuthRetry>;
 }
 
 impl ApiAccessProvider for ApikeyProvider {
+    fn tag(&self) -> &'static str {
+        "apikey"
+    }
+
+    fn user_or_tokenid(&self) -> &str {
+        &self.tokenid
+    }
+
+    fn password_or_apikey(&self) -> &SecureString {
+        &self.apikey
+    }
+
     fn provide_auth_headers(&self) -> BoxFuture<Result<AuthHeaders>> {
         Box::pin(async move {
             Ok(AuthHeaders {
@@ -149,6 +167,18 @@ impl ApiAccessProvider for ApikeyProvider {
 }
 
 impl ApiAccessProvider for TicketProvider {
+    fn tag(&self) -> &'static str {
+        "ticket"
+    }
+
+    fn user_or_tokenid(&self) -> &str {
+        &self.user
+    }
+
+    fn password_or_apikey(&self) -> &SecureString {
+        &self.password
+    }
+
     fn provide_auth_headers(&self) -> BoxFuture<Result<AuthHeaders>> {
         let current_ticket = self.current_ticket.clone();
         Box::pin(async move {
@@ -236,7 +266,27 @@ impl ProxmoxApiClient {
         })
     }
 
-    pub fn hostname(&self) -> &str {
+    pub fn clientconfig_connection_type(&self) -> &str {
+        self.api_access_provider.tag()
+    }
+
+    pub fn clientconfig_root(&self) -> &str {
+        &self.client.root
+    }
+
+    pub fn clientconfig_user_or_tokenid(&self) -> &str {
+        self.api_access_provider.user_or_tokenid()
+    }
+
+    pub fn clientconfig_password_or_apikey(&self) -> &SecureString {
+        self.api_access_provider.password_or_apikey()
+    }
+
+    pub fn clientconfig_ignore_ssl_errors(&self) -> bool {
+        self.client.ignore_ssl_errors
+    }
+
+    pub fn clientconfig_hostname(&self) -> &str {
         &self.client.hostname
     }
 
@@ -486,6 +536,77 @@ impl ProxmoxApiClient {
                 .await
             }
         }
+    }
+
+    pub async fn node_vncwebsocket(
+        &self,
+        node: &NodeId,
+        input: &VncwebsocketInput,
+    ) -> Result<http::Request<()>> {
+        self.make_vncwebsocket(node, None, input).await
+    }
+
+    pub async fn vm_vncwebsocket(
+        &self,
+        node: &NodeId,
+        vm: &VmId,
+        vm_type: VmType,
+        input: &VncwebsocketInput,
+    ) -> Result<http::Request<()>> {
+        self.make_vncwebsocket(node, Some((vm, vm_type)), input)
+            .await
+    }
+
+    async fn make_vncwebsocket(
+        &self,
+        node: &NodeId,
+        vm: Option<(&VmId, VmType)>,
+        input: &VncwebsocketInput,
+    ) -> Result<http::Request<()>> {
+        let auth_header = self.api_access_provider.provide_auth_headers().await?;
+
+        let url = match vm {
+            None => format!(
+                "{}nodes/{}/vncwebsocket?port={}&vncticket={}",
+                self.client.root.replacen("http", "ws", 1),
+                node,
+                input.port,
+                urlencoding::encode(&input.vncticket)
+            ),
+            Some((vm_id, VmType::Qemu)) => format!(
+                "{}nodes/{}/qemu/{}/vncwebsocket?port={}&vncticket={}",
+                self.client.root.replacen("http", "ws", 1),
+                node,
+                vm_id,
+                input.port,
+                urlencoding::encode(&input.vncticket)
+            ),
+            Some((vm_id, VmType::Lxc)) => format!(
+                "{}nodes/{}/lxc/{}/vncwebsocket?port={}&vncticket={}",
+                self.client.root.replacen("http", "ws", 1),
+                node,
+                vm_id,
+                input.port,
+                urlencoding::encode(&input.vncticket)
+            ),
+        };
+
+        let mut builder = http::Request::builder()
+            .method(Method::GET)
+            .uri(&url)
+            .header("Host", &self.client.hostname)
+            .header("Connection", "Upgrade")
+            .header("Upgrade", "websocket")
+            .header("Sec-WebSocket-Protocol", "binary")
+            .header("Authorization", &*auth_header.auth_header);
+        if let Some(headers) = builder.headers_mut() {
+            for (k, v) in auth_header.extra_headers {
+                if let Some(k) = k {
+                    headers.insert(k, v);
+                }
+            }
+        }
+        Ok(builder.body(())?)
     }
 }
 

@@ -139,15 +139,15 @@ impl Adapter for VtePtyAdapter {
                         child_pid_cln.lock().replace(Pid::from_raw(pid.0));
                         debug!("pty pid: {pid:?}");
                         on_connected();
-                        let dbus_server_opt = Arc::new(Mutex::new(Some(dbus_server)));
+                        let dbus_server_arc = Arc::new(Mutex::new(Some(dbus_server)));
                         vte.connect_child_exited(glib::clone!(
                             #[strong]
-                            dbus_server_opt,
+                            dbus_server_arc,
                             #[strong]
                             on_disconnected,
                             move |_, code| {
                                 *child_pid_cln.lock() = None;
-                                let dbus_server_guard = dbus_server_opt.lock();
+                                let dbus_server_guard = dbus_server_arc.lock();
                                 // if this is None then child-exited was somehow called more than once?
                                 if dbus_server_guard.is_some() {
                                     let end_result = dbus_server_guard
@@ -164,9 +164,9 @@ impl Adapter for VtePtyAdapter {
                                         });
                                     drop(dbus_server_guard);
                                     debug!("pty child exited: {code}. Result: {end_result:?}");
-                                    let dbus_server_opt_cln = dbus_server_opt.clone();
+                                    let dbus_server_arc_cln = dbus_server_arc.clone();
                                     glib::spawn_future_local(Box::pin(async move {
-                                        if let Some(dbus_server) = dbus_server_opt_cln.lock().take()
+                                        if let Some(dbus_server) = dbus_server_arc_cln.lock().take()
                                         {
                                             dbus_server.close().await.ok();
                                         }

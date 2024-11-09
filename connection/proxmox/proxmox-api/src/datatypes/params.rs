@@ -16,6 +16,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use serde::Serialize;
+use std::num::NonZeroU32;
 
 pub(crate) trait VmStatusInput {
     type LxcInput: Serialize;
@@ -371,6 +372,14 @@ impl VmStatusInput for VmTermproxyInput {
     fn into_qemu(self) -> Self::QemuInput {
         VmTermproxyInputQemu {}
     }
+}
+
+#[derive(Serialize, Debug, Clone, PartialEq, Eq)]
+pub struct VncwebsocketInput {
+    /// Port number returned by previous vncproxy call.
+    pub port: NonZeroU32,
+    /// Ticket from previous call to vncproxy.
+    pub vncticket: String,
 }
 
 #[derive(Serialize, Debug, Default, Clone, PartialEq, Eq)]

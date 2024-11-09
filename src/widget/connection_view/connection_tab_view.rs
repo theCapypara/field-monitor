@@ -179,8 +179,20 @@ impl FieldMonitorConnectionTabView {
         let child = page.child();
         new_window.set_default_size(child.width(), child.height());
 
-        imp.tab_view
-            .transfer_page(page, &new_window.tab_view().inner(), 0);
+        let tab_view = new_window.tab_view();
+        imp.tab_view.transfer_page(page, &tab_view.inner(), 0);
+
+        if let Ok(view) = child.downcast::<FieldMonitorServerScreen>() {
+            view.set_close_cb(glib::clone!(
+                #[weak]
+                page,
+                #[weak]
+                tab_view,
+                move || {
+                    tab_view.imp().tab_view.get().close_page(&page);
+                }
+            ));
+        }
 
         new_window.present();
         new_window.select_connection_view();

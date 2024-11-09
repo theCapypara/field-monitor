@@ -4,7 +4,7 @@
 }
 
 window {
-    transition: border-radius 0.5s ease, outline 0.5s ease;
+    transition: border-bottom-left-radius 0.5s ease, border-bottom-right-radius 0.5s ease;
 }
 
 /* These are just the usual Adwaita defaults */
@@ -26,6 +26,10 @@ window {
 }
 
 /* * */
+
+.conn-list-server-groups {
+    margin: 12px;
+}
 
 .connection-view-navbar {
     border-radius: var(--box-border-radius);
@@ -70,10 +74,6 @@ window.connection-view-active .connection-view-navbar, window.connection-view-ac
     padding: 6px;
 }
 
-.connection-view-status, .faux-header {
-    background: var(--window-bg-color);
-}
-
 .vte-box {
     background: #fff;
     color: #000;
@@ -82,9 +82,21 @@ window.connection-view-active .connection-view-navbar, window.connection-view-ac
     padding-top: 12px;
 }
 
-.connection-view-grabbed:not(.fullscreen):not(.maximized) {
-    outline: 2px solid var(--accent-bg-color);
-    border-radius: 0;
+.connection-view-grabbed {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.connection-view-toolbarview headerbar {
+    transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.connection-view-grabbed .connection-view-toolbarview .border {
+    box-shadow: 0 1px color-mix(in srgb, var(--accent-bg-color) 30%, var(--headerbar-darker-shade-color));
+}
+
+.connection-view-grabbed .connection-view-toolbarview headerbar {
+    background-color: color-mix(in srgb, var(--accent-bg-color) 30%, var(--headerbar-bg-color));
 }
 
 .grab-note {

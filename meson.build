@@ -15,6 +15,7 @@ subdir('connection/generic-group/src')
 subdir('connection/libvirt/src')
 subdir('connection/proxmox/src')
 subdir('vte-pty-driver/libvirt/src')
+subdir('vte-pty-driver/proxmox/src')
 subdir('src')
 subdir('po')
 

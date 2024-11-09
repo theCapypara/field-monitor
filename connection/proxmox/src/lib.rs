@@ -23,6 +23,9 @@ use std::str::FromStr;
 use std::sync::Arc;
 use std::time::Duration;
 
+use crate::credential_preferences::ProxmoxCredentialPreferences;
+use crate::preferences::{ProxmoxConfiguration, ProxmoxPreferences};
+use crate::tokiort::{run_on_tokio, tkruntime};
 use adw::prelude::Cast;
 use anyhow::anyhow;
 use async_std::task::sleep;
@@ -30,25 +33,24 @@ use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use gtk::Widget;
 use http::Uri;
-use log::{error, warn};
-use secure_string::SecureString;
-
-use crate::credential_preferences::ProxmoxCredentialPreferences;
-use crate::preferences::{ProxmoxConfiguration, ProxmoxPreferences};
-use crate::tokiort::{run_on_tokio, tkruntime};
 use libfieldmonitor::adapter::spice::{SpiceAdapter, SpiceSessionConfigBuilder};
 use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::adapter::vte_pty::VtePtyAdapter;
 use libfieldmonitor::connection::*;
+use log::{error, warn};
 use proxmox_api::{
     NodeId, NodeStatus, ProxmoxApiClient, Spiceproxy, Termproxy, VmConsoleProxyType, VmId,
     VmStatus, VmType, Vncproxy,
 };
+use secure_string::SecureString;
+use which::which_global;
 
 mod credential_preferences;
 mod preferences;
 mod tokiort;
+
+pub const PTY_DRIVER_BIN: &str = "de.capypara.FieldMonitor.PtyDrv.Proxmox";
 
 pub struct ProxmoxConnectionProviderConstructor;
 
@@ -849,23 +851,23 @@ fn create_proxmox_adapter<'a>(
     };
 
     Box::pin(run_on_tokio(async move {
-        let adapter_creds = match entity {
+        let adapter_creds = match &entity {
             ProxmoxEntity::Node(node_id) => match adapter_type {
                 VmConsoleProxyType::Vnc => AdapterCreds::Vnc(
                     client
-                        .node_vncshell(&node_id, Default::default())
+                        .node_vncshell(node_id, Default::default())
                         .await
                         .map_err(map_proxmox_error)?,
                 ),
                 VmConsoleProxyType::Spice => AdapterCreds::Spice(
                     client
-                        .node_spiceshell(&node_id, Default::default())
+                        .node_spiceshell(node_id, Default::default())
                         .await
                         .map_err(map_proxmox_error)?,
                 ),
                 VmConsoleProxyType::Term => AdapterCreds::Term(
                     client
-                        .node_termproxy(&node_id, Default::default())
+                        .node_termproxy(node_id, Default::default())
                         .await
                         .map_err(map_proxmox_error)?,
                 ),
@@ -873,19 +875,19 @@ fn create_proxmox_adapter<'a>(
             ProxmoxEntity::Vm(vm_type, node_id, vm_id) => match adapter_type {
                 VmConsoleProxyType::Vnc => AdapterCreds::Vnc(
                     client
-                        .vm_vncproxy(&node_id, &vm_id, Some(vm_type), Default::default())
+                        .vm_vncproxy(node_id, vm_id, Some(*vm_type), Default::default())
                         .await
                         .map_err(map_proxmox_error)?,
                 ),
                 VmConsoleProxyType::Spice => AdapterCreds::Spice(
                     client
-                        .vm_spiceproxy(&node_id, &vm_id, Some(vm_type), Default::default())
+                        .vm_spiceproxy(node_id, vm_id, Some(*vm_type), Default::default())
                         .await
                         .map_err(map_proxmox_error)?,
                 ),
                 VmConsoleProxyType::Term => AdapterCreds::Term(
                     client
-                        .vm_termproxy(&node_id, &vm_id, Some(vm_type), Default::default())
+                        .vm_termproxy(node_id, vm_id, Some(*vm_type), Default::default())
                         .await
                         .map_err(map_proxmox_error)?
                         .1,
@@ -895,7 +897,7 @@ fn create_proxmox_adapter<'a>(
 
         let adapter: Box<dyn Adapter> = match adapter_creds {
             AdapterCreds::Vnc(vncproxy) => Box::new(VncAdapter::new_with_ca(
-                client.hostname().to_string(),
+                client.clientconfig_hostname().to_string(),
                 vncproxy.port.into(),
                 vncproxy.user,
                 vncproxy.ticket.into(),
@@ -915,13 +917,42 @@ fn create_proxmox_adapter<'a>(
                     .build()
                     .unwrap(),
             )),
-            AdapterCreds::Term(termproxy) => Box::new(VtePtyAdapter::new(
-                connection_id,
-                server_id,
-                adapter_tag,
-                todo!(),
-                todo!(),
-            )),
+            AdapterCreds::Term(termproxy) => {
+                let (node_id, vm_type, vm_id) = match entity {
+                    ProxmoxEntity::Node(node_id) => {
+                        (node_id.to_string(), String::new(), String::new())
+                    }
+                    ProxmoxEntity::Vm(vm_type, node_id, vm_id) => {
+                        (vm_type.to_string(), node_id.to_string(), vm_id.to_string())
+                    }
+                };
+                let ignore_ssl_errors = if client.clientconfig_ignore_ssl_errors() {
+                    "1"
+                } else {
+                    "0"
+                };
+
+                Box::new(VtePtyAdapter::new(
+                    connection_id,
+                    server_id,
+                    adapter_tag,
+                    which_global(PTY_DRIVER_BIN).expect("failed to find libvirt vte driver in path. Is Field Monitor correctly installed?"),
+                    vec![
+                        client.clientconfig_connection_type().to_string(),
+                        client.clientconfig_root().to_string(),
+                        client.clientconfig_user_or_tokenid().to_string(),
+                        client.clientconfig_password_or_apikey().unsecure().to_string(),
+                        ignore_ssl_errors.to_string(),
+                        node_id,
+                        vm_type,
+                        vm_id,
+                        serde_json::to_string(&termproxy)
+                            .map_err(|e| ConnectionError::General(
+                                None, anyhow!("failed serialization: {e}").context(e)
+                            ))?
+                    ],
+                ))
+            }
         };
 
         Ok(adapter)
