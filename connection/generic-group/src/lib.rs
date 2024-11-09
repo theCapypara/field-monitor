@@ -70,7 +70,7 @@ impl ConnectionProvider for GenericConnectionProvider {
     }
 
     fn description(&self) -> Cow<str> {
-        gettext("Setup a connection to one or more RDP, SPICE and VNC servers.").into()
+        gettext("Connection to one or more RDP, SPICE and VNC servers").into()
     }
 
     fn icon(&self) -> IconSpec<()> {

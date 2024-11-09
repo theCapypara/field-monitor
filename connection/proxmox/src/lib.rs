@@ -84,7 +84,7 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
     }
 
     fn description(&self) -> Cow<str> {
-        gettext("Setup a Proxmox hypervisor connection.").into()
+        gettext("Proxmox hypervisor connection").into()
     }
 
     fn icon(&self) -> IconSpec<()> {
