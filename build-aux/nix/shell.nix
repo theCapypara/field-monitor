@@ -17,6 +17,7 @@
   glibc,
   wrapGAppsHook4,
   gobject-introspection,
+  desktop-file-utils,
 
   gtk4,
   vte-gtk4,
@@ -129,6 +130,7 @@ mkShell {
       python312
       libvirt
       libGL
+      desktop-file-utils
     ]
     ++ (with python312Packages; [ pygobject3 ])
     ## RUST

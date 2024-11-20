@@ -275,21 +275,11 @@ impl FieldMonitorServerScreen {
                     #[weak]
                     slf,
                     move |window, _| {
-                        if window.is_fullscreen() {
-                            slf.imp()
-                                .button_fullscreen
-                                .set_icon_name("arrows-pointing-inward-symbolic");
-                            slf.imp().toolbar_view.set_extend_content_to_top_edge(true);
-                        } else {
-                            slf.imp()
-                                .button_fullscreen
-                                .set_icon_name("arrows-pointing-outward-symbolic");
-                            slf.imp().toolbar_view.set_extend_content_to_top_edge(false);
-                        }
-                        slf.on_self_reveal_osd_controls_changed();
+                        slf.on_window_fullscreened_changed(window);
                     }
                 ),
             );
+            slf.on_window_fullscreened_changed(window);
         }
 
         imp.connection_loader.try_lock().unwrap().replace(loader);
@@ -459,6 +449,7 @@ impl FieldMonitorServerScreen {
                 imp.focus_grabber.set_display(Some(display));
                 self.add_menu(MenuKind::Rdw, server_actions);
                 self.remove_css_class("connection-view-vte");
+                display.add_css_class("rdw-display");
                 display.clone().upcast()
             }
             AdapterDisplayWidget::Vte(terminal) => {
@@ -1066,6 +1057,23 @@ impl FieldMonitorServerScreen {
     fn on_self_unrealize(&self) {
         debug!("connection view unrealized");
         self.imp().focus_grabber.ungrab();
+    }
+
+    fn on_window_fullscreened_changed(&self, window: &impl IsA<gtk::Window>) {
+        if window.is_fullscreen() {
+            self.imp()
+                .button_fullscreen
+                .set_icon_name("arrows-pointing-inward-symbolic");
+            self.imp().toolbar_view.set_extend_content_to_top_edge(true);
+        } else {
+            self.imp()
+                .button_fullscreen
+                .set_icon_name("arrows-pointing-outward-symbolic");
+            self.imp()
+                .toolbar_view
+                .set_extend_content_to_top_edge(false);
+        }
+        self.on_self_reveal_osd_controls_changed();
     }
 }
 

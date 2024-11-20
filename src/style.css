@@ -115,3 +115,7 @@ window.connection-view-active .connection-view-navbar, window.connection-view-ac
 .body-label label {
     font-weight: normal;
 }
+
+.rdw-display {
+    background: black;
+}
