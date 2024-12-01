@@ -43,6 +43,7 @@
         <file preprocess="xml-stripblanks">icons/scalable/actions/key-off-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/key-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/list-add-symbolic.svg</file>
+        <file preprocess="xml-stripblanks">icons/scalable/actions/menu-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/multitasking-windows-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/network-server-symbolic.svg</file>
         <file preprocess="xml-stripblanks">icons/scalable/actions/sidebar-show-symbolic.svg</file>
