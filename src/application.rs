@@ -436,6 +436,7 @@ impl FieldMonitorApplication {
             .developer_name("Marco Köpcke")
             .version(VERSION)
             .developers(vec!["Marco Köpcke"])
+            .artists(vec!["Jakub Steiner"])
             .copyright("© 2024 Marco Köpcke")
             .website("https://github.com/theCapypara/field-monitor")
             .issue_url("https://github.com/theCapypara/field-monitor/issues")
