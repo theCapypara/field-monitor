@@ -14,8 +14,8 @@ let
         version = "1.3.1+ca-dbg";
         dontStrip = true;
         enableDebugging = true;
+        mesonBuildType = "debug";
         mesonFlags = previousAttrs.mesonFlags ++ [
-          "--buildtype=debug"
           "-Ddebug=true"
         ];
         src = fetchgit {
@@ -29,8 +29,8 @@ let
   );
   patched-vte-gtk4 = vte-gtk4.dev.overrideAttrs (
     finalAttrs: previousAttrs: {
+      mesonBuildType = "debug";
       mesonFlags = previousAttrs.mesonFlags ++ [
-        "--buildtype=debug"
         "-Ddebug=true"
       ];
       dontStrip = true;
@@ -53,14 +53,16 @@ stdenv.mkDerivation {
     patched-gtk-vnc
   ];
 
+  mesonBuildType = "debug";
   mesonFlags = [
-    "--buildtype=debug"
     "-Dapp-id=de.capypara.FieldMonitor.Devel"
   ];
 
   postInstall = ''
     wrapProgram $out/bin/de.capypara.FieldMonitor.Devel --prefix PATH ':' "$out/bin" --set RUST_LOG 'field_monitor=debug,libfieldmonitor=debug,oo7=debug,rdw=debug,rdw-vnc=debug,rdw-spice=debug,rdw-rdp=debug,vte=debug,gtk-vnc=debug,Adwaita=info,GLib=info,warning' --set RUST_BACKTRACE '1'
   '';
+
+  doCheck = true;
 
   meta = with lib; {
     description = "XXXXXXXXXXXXXXX";

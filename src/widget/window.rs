@@ -131,7 +131,7 @@ impl FieldMonitorWindow {
             slf.add_css_class("devel");
             slf.imp()
                 .welcome_status_page
-                .set_icon_name(Some("de.capypara.FieldMonitor.Devel-symbolic"));
+                .set_icon_name(Some("de.capypara.FieldMonitor.Devel"));
         }
 
         application.connect_notify_local(

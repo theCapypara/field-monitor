@@ -9,6 +9,7 @@
   rustc,
   pkg-config,
   glib,
+  gsettings-desktop-schemas,
   gtk4,
   libadwaita,
   libvirt,
@@ -89,16 +90,19 @@ stdenv.mkDerivation rec {
     patched-gtk-vnc
   ];
 
-  mesonFlags = [ "--buildtype=release" ];
+  mesonBuildType = "release";
 
   postInstall = ''
     wrapProgram $out/bin/de.capypara.FieldMonitor --prefix PATH ':' "$out/bin" --set RUST_LOG 'field_monitor=info,libfieldmonitor=info,GLib=info,warning'
   '';
 
+  doCheck = true;
+
   buildInputs =
     [
       glib
       gtk4
+      gsettings-desktop-schemas
       libadwaita
       libvirt
       xdg-desktop-portal

@@ -7,8 +7,6 @@ project('field-monitor', 'rust',
 i18n = import('i18n')
 gnome = import('gnome')
 
-
-
 subdir('data')
 subdir('lib/src')
 subdir('connection/generic-group/src')

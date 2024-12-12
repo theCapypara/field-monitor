@@ -1037,7 +1037,7 @@ impl FieldMonitorServerScreen {
                 let shortcut = shortcut.split(',').next().unwrap();
 
                 self.imp().grab_note.show_note(&gettext_f(
-                    "Press {keycombo} to un-grab the mouse and keyboard.",
+                    "Press {keycombo} to ungrab the mouse and keyboard.",
                     &[("keycombo", shortcut)],
                 ));
             } else {

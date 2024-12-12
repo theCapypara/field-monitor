@@ -32,6 +32,7 @@ mod config;
 mod connection;
 mod connection_loader;
 mod secrets;
+mod settings;
 mod util;
 mod widget;
 

@@ -27,7 +27,7 @@ use gtk::prelude::*;
 use num_enum::TryFromPrimitive;
 
 use libfieldmonitor::connection::{ConfigAccess, ConfigAccessMut, ConnectionConfiguration};
-use libfieldmonitor::impl_simple_macro_param_spec;
+use libfieldmonitor::impl_primitive_enum_param_spec;
 
 use crate::behaviour_preferences::{DebugBehaviour, DebugBehaviourPreferences};
 
@@ -260,7 +260,7 @@ pub enum DebugMode {
     NoServers = 255, // TODO
 }
 
-impl_simple_macro_param_spec!(DebugMode, u32);
+impl_primitive_enum_param_spec!(DebugMode, u32);
 
 mod imp {
     use super::*;

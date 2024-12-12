@@ -1,0 +1,65 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorPreferencesDialog: Adw.PreferencesDialog {
+    search-enabled: false; // not many settings
+    open_in_new_window: bind open_in_new_window_row.active bidirectional;
+    notify::sharp-window-corners => $on_self_sharp_window_corners_changed() swapped;
+    notify::header-bar-behavior => $on_self_header_bar_behavior_changed() swapped;
+
+    Adw.PreferencesPage {
+        title: _("Preferences");
+
+        Adw.PreferencesGroup {
+            title: _("Behavior");
+
+            Adw.SwitchRow open_in_new_window_row {
+                title: _("Open connections in new windows");
+            }
+        }
+
+        Adw.PreferencesGroup {
+            title: _("Appearance");
+
+            Adw.ActionRow sharp_window_corners_row {
+                title: _("Sharp window corners");
+                activatable: true;
+                activated => $on_sharp_window_corners_row_activated() swapped;
+
+                [suffix]
+                Gtk.Label sharp_window_corners_label {
+                    styles [
+                        "dim-label"
+                    ]
+                }
+
+                [suffix]
+                Box {
+                    Image {
+                        icon-name: 'go-next-symbolic';
+                    }
+                }
+            }
+
+            Adw.ActionRow header_bar_behavior_row {
+                title: _("Header bars for active connections");
+                activatable: true;
+                activated => $on_header_bar_behavior_row_activated() swapped;
+
+                [suffix]
+                Gtk.Label header_bar_behavior_label {
+                    styles [
+                        "dim-label"
+                    ]
+                }
+
+                [suffix]
+                Box {
+                    Image {
+                        icon-name: 'go-next-symbolic';
+                    }
+                }
+            }
+        }
+    }
+}

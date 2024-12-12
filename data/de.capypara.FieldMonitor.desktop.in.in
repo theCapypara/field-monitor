@@ -4,8 +4,8 @@ Exec=@APP_ID@
 Icon=@APP_ID@
 Terminal=false
 Type=Application
-X-Purism-FormFactor=Workstation;Mobile;
+X-Purism-FormFactor=Workstation;
 Categories=GTK;Network;
 StartupNotify=true
 # Translators: The keywords from the desktop file.
-Keywords=proxmox;vnc;spice;
+Keywords=proxmox;vnc;spice;rdp;kvm;qemu;

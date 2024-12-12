@@ -49,8 +49,10 @@ use crate::config::{APP_ID, VERSION};
 use crate::connection::CONNECTION_PROVIDERS;
 use crate::connection_loader::ConnectionLoader;
 use crate::secrets::SecretManager;
+use crate::settings::FieldMonitorSettings;
 use crate::widget::add_connection_dialog::FieldMonitorAddConnectionDialog;
 use crate::widget::authenticate_connection_dialog::FieldMonitorAuthenticateConnectionDialog;
+use crate::widget::preferences::FieldMonitorPreferencesDialog;
 use crate::widget::update_connection_dialog::FieldMonitorUpdateConnectionDialog;
 use crate::widget::window::FieldMonitorWindow;
 
@@ -75,7 +77,7 @@ mod imp {
         #[property(get)]
         pub busy: Rc<Cell<bool>>,
         #[property(get, construct_only)]
-        pub settings: RefCell<Option<gio::Settings>>,
+        pub settings: RefCell<Option<FieldMonitorSettings>>,
     }
 
     #[glib::object_subclass]
@@ -247,7 +249,7 @@ impl FieldMonitorApplication {
         let app: FieldMonitorApplication = glib::Object::builder()
             .property("application-id", application_id)
             .property("flags", flags)
-            .property("settings", gio::Settings::new(APP_ID))
+            .property("settings", FieldMonitorSettings::new(APP_ID))
             .property("starting", true)
             .build();
         app.imp().busy_stack.borrow_mut().replace(BusyStack::new(
@@ -282,6 +284,7 @@ impl FieldMonitorApplication {
     pub fn add_accels(&self) {
         self.set_accels_for_action("window.close", &["<Alt>F4"]);
         self.set_accels_for_action("app.new-window", &["<Primary>N"]);
+        self.set_accels_for_action("app.preferences", &["<Primary>comma"]);
         self.set_accels_for_action("app.reload-connections", &["<Primary>R"]);
         self.set_accels_for_action("win.show-help-overlay", &["<Primary>question"]);
         self.set_accels_for_action("win.fullscreen", &["F11"]);
@@ -299,6 +302,12 @@ impl FieldMonitorApplication {
         let win = FieldMonitorWindow::new(self);
         win.present();
         win
+    }
+
+    pub fn open_preferences(&self) {
+        let window = self.active_window();
+        let dialog = FieldMonitorPreferencesDialog::new(self);
+        dialog.present(window.as_ref());
     }
 
     async fn connections_dir(&self) -> PathBuf {
@@ -403,6 +412,11 @@ impl FieldMonitorApplication {
                 app.open_new_window();
             })
             .build();
+        let preferences_action = gio::ActionEntry::builder("preferences")
+            .activate(move |app: &Self, _, _| {
+                app.open_preferences();
+            })
+            .build();
 
         self.add_action_entries([
             quit_action,
@@ -415,6 +429,7 @@ impl FieldMonitorApplication {
             connect_to_server_action,
             perform_connection_action_action,
             new_window_action,
+            preferences_action,
         ]);
     }
 

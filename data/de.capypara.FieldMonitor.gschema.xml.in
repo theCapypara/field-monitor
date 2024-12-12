@@ -1,9 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<schemalist gettext-domain=@APP_ID@>
-	<schema id=@APP_ID@ path=@APP_ID_SLASHED@>
-	    <key name="sharp-window-corners" type="b">
-          <default>false</default>
-          <summary>If enabled, the Field Monitor's windows will have sharp corners instead of round corners. This removes the cut-off pixels at corners when connected to remote servers.</summary>
+<schemalist gettext-domain="@APP_ID@">
+    <schema id="@APP_ID@" path=@APP_ID_SLASHED@>
+        <key name="sharp-window-corners" type="s">
+            <default>"auto"</default>
+            <summary>
+                Specifies the behavior of window corners.
+                Allowed values: "auto" (default, fallback), "always", "never"
+            </summary>
+            <description>
+                Whether and when the window border radius will be changed to 0 (90 degrees).
+
+                auto: The border radius is only set to 0 if a connection view is currently capturing input;
+                always: The border radius set always set to 0;
+                never: The border radius is not changed.
+            </description>
         </key>
-	</schema>
+        <key name="header-bar-behavior" type="s">
+            <default>"default"</default>
+            <summary>
+                Specifies the behavior of the header bar for active connection views.
+                Allowed values: "default" (default, fallback), "overlay", "no-overlay"
+            </summary>
+            <description>
+                How the header bar is presented for active connection views.
+
+                default: The header bar is only overlayed when the window is fullscreened;
+                overlay: The header bar is always overlayed;
+                no-overlay: The header bar is never overlayed.
+
+                If the header bar is overlayed, it is hidden when the connection view is currently capturing input.
+            </description>
+        </key>
+        <key name="open-in-new-window" type="b">
+            <default>false</default>
+            <summary>
+                Specifies whether new connections are opened in new windows.
+            </summary>
+            <description>
+                If enabled, connecting to a server will result in a new window being opened.
+            </description>
+        </key>
+    </schema>
 </schemalist>

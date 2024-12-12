@@ -9,7 +9,6 @@
 	<summary>XXXXXXXXXX</summary>
 	<launchable type="desktop-id">@APP_ID@.desktop</launchable>
 	<content_rating type="oars-1.1"/>
-	<developer_name translate="no">Marco Köpcke</developer_name>
 	<developer id="de.capypara">
 		<name translate="no">Marco Köpcke</name>
 	</developer>
@@ -20,6 +19,7 @@
 		<category>Network</category>
 	</categories>
 
+	<url type="homepage">https://github.com/theCapypara/field-monitor</url>
 	<url type="bugtracker">https://github.com/theCapypara/field-monitor/issues</url>
 	<url type="translate">https://hosted.weblate.org/projects/fieldmonitor/</url>
 	<url type="donation">https://ko-fi.com/parakoopa</url>
@@ -38,20 +38,20 @@
 	</description>
 
 	<releases>
-		<release version="46.0.0" date="2024-XX-XX">
+		<release version="47.0" date="2024-12-31"> <!-- TODO -->
 			<description translate="no">
 				<p>Initial Release.</p>
 			</description>
 		</release>
 	</releases>
 
-	<screenshots>
+	<!--<screenshots>
 		<screenshot type="default">
-			<!-- Translators: Subtitle of the screenshot in the metainfo -->
+			<!-XX- Translators: Subtitle of the screenshot in the metainfo -XX->
 			<caption>Application Overview</caption>
 			<image>...</image>
 		</screenshot>
-	</screenshots>
+	</screenshots>-->
 
 	<recommends>
 		<control>keyboard</control>
@@ -59,14 +59,10 @@
 		<control>touch</control>
 		<internet>always</internet>
 	</recommends>
-	<requires>
-		<display_length compare="ge" side="shortest">...</display_length>
-		<display_length compare="ge" side="longest">...</display_length>
-	</requires>
 
 	<branding>
-		<color type="primary" scheme_preference="light">...</color>
-		<color type="primary" scheme_preference="dark">...</color>
+		<color type="primary" scheme_preference="light">#000000</color> <!-- TODO -->
+		<color type="primary" scheme_preference="dark">#000000</color> <!-- TODO -->
 	</branding>
 
 </component>

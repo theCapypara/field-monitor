@@ -377,7 +377,7 @@ pub struct ConfigSectionMut<'a> {
     pending_secret_changes: &'a mut HashMap<String, Option<SecureString>>,
 }
 
-impl<'a> ConfigAccess for ConfigSectionRef<'a> {
+impl ConfigAccess for ConfigSectionRef<'_> {
     fn get(&self, key: &str) -> Option<ConfigValueRef> {
         if key.starts_with("__") {
             self.config_not_persisted
@@ -406,7 +406,7 @@ impl<'a> ConfigAccess for ConfigSectionRef<'a> {
     }
 }
 
-impl<'a> ConfigAccess for ConfigSectionMut<'a> {
+impl ConfigAccess for ConfigSectionMut<'_> {
     fn get(&self, key: &str) -> Option<ConfigValueRef> {
         if key.starts_with("__") {
             self.config_not_persisted
@@ -434,7 +434,7 @@ impl<'a> ConfigAccess for ConfigSectionMut<'a> {
     }
 }
 
-impl<'a> ConfigAccessMut for ConfigSectionMut<'a> {
+impl ConfigAccessMut for ConfigSectionMut<'_> {
     fn clear(&mut self, key: impl AsRef<str>) {
         self.section_map.remove(key.as_ref());
     }

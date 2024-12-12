@@ -160,7 +160,7 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                                         }
 
                                         content: Adw.StatusPage welcome_status_page {
-                                            icon-name: "de.capypara.FieldMonitor-symbolic";
+                                            icon-name: "de.capypara.FieldMonitor";
                                             title: _("Field Monitor");
                                             // TODO: Show recent connections if any?
                                             Box welcome_button_box {
@@ -312,6 +312,11 @@ menu primary_menu {
         item {
             label: _('_New Window');
             action: 'app.new-window';
+        }
+
+        item {
+            label: _('_Preferences');
+            action: 'app.preferences';
         }
 
         item {
