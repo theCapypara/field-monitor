@@ -18,7 +18,7 @@ rdw-spice = { workspace = true }
 rdw-rdp = { workspace = true }
 rdw-vnc = { workspace = true }
 vte = { workspace = true }
-thiserror = "1.0"
+thiserror = "2"
 indexmap = { workspace = true }
 secure-string = { workspace = true }
 uuid = { workspace = true }

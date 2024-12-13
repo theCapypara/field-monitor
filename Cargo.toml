@@ -31,7 +31,7 @@ secure-string = "0.3"
 http = "1.1"
 uuid = { version = "1.10", features = ["v7"] }
 parking_lot = "0.12"
-which = "6"
+which = "7"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 proxmox-api = { path = "connection/proxmox/proxmox-api" }
 
@@ -51,25 +51,29 @@ version = "0.7"
 
 [workspace.dependencies.rdw]
 package = "rdw4"
-git = "https://gitlab.gnome.org/theCapypara/rdw.git"
-branch = "field-monitor"
+git = "https://gitlab.gnome.org/malureau/rdw.git"
+#branch = "master"
+rev = "4e07cc9b6b57922f9f399710e72dae4b5c7ab0c5"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
-git = "https://gitlab.gnome.org/theCapypara/rdw.git"
-branch = "field-monitor"
+git = "https://gitlab.gnome.org/malureau/rdw.git"
+#branch = "master"
+rev = "4e07cc9b6b57922f9f399710e72dae4b5c7ab0c5"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
-git = "https://gitlab.gnome.org/theCapypara/rdw.git"
-branch = "field-monitor"
+git = "https://gitlab.gnome.org/malureau/rdw.git"
+#branch = "master"
+rev = "4e07cc9b6b57922f9f399710e72dae4b5c7ab0c5"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
-git = "https://gitlab.gnome.org/theCapypara/rdw.git"
-branch = "field-monitor"
+git = "https://gitlab.gnome.org/malureau/rdw.git"
+#branch = "master"
+rev = "4e07cc9b6b57922f9f399710e72dae4b5c7ab0c5"
 default-features = false
 
 [workspace.dependencies.vte]

@@ -9,9 +9,9 @@ libfieldmonitor = { path = "../../lib" }
 gettext-rs = { workspace = true }
 anyhow = { workspace = true }
 futures = { workspace = true }
-http = "1.1"
+http = "1.2"
 async-std = { workspace = true }
-tokio = { version = "1.40", features = ["parking_lot", "rt-multi-thread"] }
+tokio = { version = "1.42", features = ["parking_lot", "rt-multi-thread"] }
 log = { workspace = true }
 gtk = { workspace = true }
 adw = { workspace = true }

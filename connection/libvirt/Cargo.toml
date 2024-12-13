@@ -15,7 +15,7 @@ adw = { workspace = true }
 num_enum = { workspace = true }
 secure-string = { workspace = true }
 virt = { version = "0.4", features = ["qemu"] }
-quick-xml = { version = "0.36", features = ["serialize", "serde-types"] }
+quick-xml = { version = "0.37", features = ["serialize", "serde-types"] }
 serde = { workspace = true }
 which = { workspace = true }
 
