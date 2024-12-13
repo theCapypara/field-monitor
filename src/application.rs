@@ -656,7 +656,7 @@ impl FieldMonitorApplication {
 
     pub async fn connect_to_server(&self, path: &str, adapter_id: &str) -> Option<()> {
         let imp = self.imp();
-        let window = self
+        let mut window = self
             .active_window()
             .map(Cast::downcast)
             .map(Result::unwrap)
@@ -677,6 +677,11 @@ impl FieldMonitorApplication {
             Some(self.clone()),
         )
         .await?;
+
+        // If this setting is enabled open a new window to place the view into.
+        if self.settings().as_ref().unwrap().open_in_new_window() {
+            window = self.open_new_window();
+        }
 
         window.open_connection_view(
             path,
