@@ -12,6 +12,7 @@
         "--share=network",
         "--share=ipc",
         "--socket=fallback-x11",
+        "--socket=ssh-auth",
         "--device=dri",
         "--socket=wayland",
         "--filesystem=~/.ssh/known_hosts:ro",

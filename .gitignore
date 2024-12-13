@@ -1,4 +1,5 @@
 .idea/
+lib/src/config.rs
 src/config.rs
 src/field-monitor.gresource.xml
 data/de.capypara.FieldMonitor.gschema.xml
