@@ -18,6 +18,7 @@
 
 use crate::application::FieldMonitorApplication;
 use crate::connection_loader::ConnectionLoader;
+use crate::settings::{SettingHeaderBarBehavior, SettingSharpWindowCorners};
 use crate::widget::close_warning_dialog::FieldMonitorCloseWarningDialog;
 use crate::widget::connection_list::{
     FieldMonitorConnectionStack, FieldMonitorNavbarConnectionList,
@@ -185,6 +186,26 @@ impl FieldMonitorWindow {
 
         slf.on_app_loading_connections_changed(application);
         slf.on_app_starting_changed(application);
+
+        if let Some(settings) = application.settings() {
+            slf.on_settings_sharp_window_corners_changed(settings.sharp_window_corners());
+            slf.on_settings_header_bar_behavior_changed(settings.header_bar_behavior());
+            settings.connect_sharp_window_corners_notify(glib::clone!(
+                #[weak]
+                slf,
+                move |settings| slf
+                    .on_settings_sharp_window_corners_changed(settings.sharp_window_corners())
+            ));
+            settings.connect_header_bar_behavior_notify(glib::clone!(
+                #[weak]
+                slf,
+                move |settings| slf
+                    .on_settings_header_bar_behavior_changed(settings.header_bar_behavior())
+            ));
+        } else {
+            slf.on_settings_sharp_window_corners_changed(Default::default());
+            slf.on_settings_header_bar_behavior_changed(Default::default());
+        }
 
         slf
     }
@@ -544,6 +565,31 @@ impl FieldMonitorWindow {
         } else {
             debug!("app is not starting");
             self.imp().outer_stack.set_visible_child_name("app");
+        }
+    }
+
+    fn on_settings_sharp_window_corners_changed(&self, value: SettingSharpWindowCorners) {
+        match value {
+            SettingSharpWindowCorners::Auto => {
+                self.add_css_class("use-sharp-corners");
+                self.remove_css_class("always-sharp");
+            }
+            SettingSharpWindowCorners::Always => {
+                self.add_css_class("use-sharp-corners");
+                self.add_css_class("always-sharp");
+            }
+            SettingSharpWindowCorners::Never => {
+                self.remove_css_class("use-sharp-corners");
+                self.remove_css_class("always-sharp");
+            }
+        }
+    }
+
+    fn on_settings_header_bar_behavior_changed(&self, value: SettingHeaderBarBehavior) {
+        if matches!(value, SettingHeaderBarBehavior::Overlay) {
+            self.add_css_class("overlay-headerbar");
+        } else {
+            self.remove_css_class("overlay-headerbar");
         }
     }
 

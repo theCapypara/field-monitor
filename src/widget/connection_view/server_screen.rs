@@ -41,6 +41,7 @@ use libfieldmonitor::i18n::gettext_f;
 
 use crate::application::FieldMonitorApplication;
 use crate::connection_loader::ConnectionLoader;
+use crate::settings::{FieldMonitorSettings, SettingHeaderBarBehavior};
 use crate::util::configure_vte_styling;
 use crate::widget::foucs_grabber::FieldMonitorFocusGrabber;
 use crate::widget::grab_note::FieldMonitorGrabNote;
@@ -77,6 +78,8 @@ mod imp {
         pub show_output_button: TemplateChild<gtk::Button>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
+        #[property(get, construct_only, nullable)]
+        pub window: RefCell<Option<FieldMonitorWindow>>,
         #[property(get, construct_only)]
         pub server_path: RefCell<String>,
         #[property(get, construct_only)]
@@ -256,7 +259,8 @@ impl FieldMonitorServerScreen {
         loader: ConnectionLoader,
     ) -> Self {
         let slf: Self = glib::Object::builder()
-            .property("application", app)
+            .property("application", &app)
+            .property("window", &window)
             .property("server-path", server_path)
             .property("adapter-id", adapter_id)
             .property("dynamic-resize", true)
@@ -288,6 +292,16 @@ impl FieldMonitorServerScreen {
             slf,
             async move { slf.reset().await }
         ));
+
+        slf.update_header_bar_state();
+        if let Some(settings) = app.settings() {
+            settings.connect_header_bar_behavior_notify(glib::clone!(
+                #[weak]
+                slf,
+                move |_| slf.update_header_bar_state()
+            ));
+        }
+
         info!("Created connection view for {server_path}");
 
         slf
@@ -949,11 +963,7 @@ impl FieldMonitorServerScreen {
     #[template_callback]
     fn on_self_reveal_osd_controls_changed(&self) {
         let toolbar_view = &self.imp().toolbar_view;
-        if toolbar_view.is_extend_content_to_top_edge() && !self.reveal_osd_controls() {
-            toolbar_view.set_reveal_top_bars(false);
-        } else {
-            toolbar_view.set_reveal_top_bars(true);
-        }
+        self.update_header_bar_state();
     }
 
     #[template_callback]
@@ -1064,16 +1074,51 @@ impl FieldMonitorServerScreen {
             self.imp()
                 .button_fullscreen
                 .set_icon_name("arrows-pointing-inward-symbolic");
-            self.imp().toolbar_view.set_extend_content_to_top_edge(true);
         } else {
             self.imp()
                 .button_fullscreen
                 .set_icon_name("arrows-pointing-outward-symbolic");
-            self.imp()
-                .toolbar_view
-                .set_extend_content_to_top_edge(false);
         }
         self.on_self_reveal_osd_controls_changed();
+    }
+
+    fn update_header_bar_state(&self) {
+        let header_bar_behavior = self
+            .application()
+            .as_ref()
+            .and_then(FieldMonitorApplication::settings)
+            .as_ref()
+            .map(FieldMonitorSettings::header_bar_behavior)
+            .unwrap_or_default();
+        let reveal_osd_controls = self.reveal_osd_controls();
+        let fullscreened = self
+            .window()
+            .as_ref()
+            .map(FieldMonitorWindow::is_fullscreen)
+            .unwrap_or_default();
+
+        let toolbar_view = &self.imp().toolbar_view;
+
+        match (header_bar_behavior, reveal_osd_controls, fullscreened) {
+            // On top with no-overlay or not in fullscreen: no overlay
+            (SettingHeaderBarBehavior::NoOverlay, _, _)
+            | (SettingHeaderBarBehavior::Default, _, false) => {
+                toolbar_view.set_extend_content_to_top_edge(false);
+                toolbar_view.set_reveal_top_bars(true);
+            }
+            // Overlay (or fullscreen with default) and input is not captured: overlay and reveal
+            (SettingHeaderBarBehavior::Overlay, true, _)
+            | (SettingHeaderBarBehavior::Default, true, true) => {
+                toolbar_view.set_extend_content_to_top_edge(true);
+                toolbar_view.set_reveal_top_bars(true);
+            }
+            // Overlay (or fullscreen with default) and input is captured: overlay and not revealed
+            (SettingHeaderBarBehavior::Overlay, false, _)
+            | (SettingHeaderBarBehavior::Default, false, true) => {
+                toolbar_view.set_extend_content_to_top_edge(true);
+                toolbar_view.set_reveal_top_bars(false);
+            }
+        }
     }
 }
 

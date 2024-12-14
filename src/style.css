@@ -4,7 +4,7 @@
 }
 
 window {
-    transition: border-bottom-left-radius 0.5s ease, border-bottom-right-radius 0.5s ease;
+    transition: border-radius 0.5s ease;
 }
 
 /* These are just the usual Adwaita defaults */
@@ -82,9 +82,14 @@ window.connection-view-active .connection-view-navbar, window.connection-view-ac
     padding-top: 12px;
 }
 
-.connection-view-grabbed {
+window.use-sharp-corners.connection-view-grabbed, window.use-sharp-corners.always-sharp {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
+}
+
+window.use-sharp-corners.overlay-headerbar.connection-view-grabbed, window.use-sharp-corners.overlay-headerbar.always-sharp {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
 }
 
 .connection-view-toolbarview headerbar {
