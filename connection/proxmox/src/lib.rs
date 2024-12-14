@@ -38,13 +38,13 @@ use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::adapter::vte_pty::VtePtyAdapter;
 use libfieldmonitor::connection::*;
+use libfieldmonitor::libexec_path;
 use log::{error, warn};
 use proxmox_api::{
     NodeId, NodeStatus, ProxmoxApiClient, Spiceproxy, Termproxy, VmConsoleProxyType, VmId,
     VmStatus, VmType, Vncproxy,
 };
 use secure_string::SecureString;
-use which::which_global;
 
 mod credential_preferences;
 mod preferences;
@@ -936,7 +936,7 @@ fn create_proxmox_adapter<'a>(
                     connection_id,
                     server_id,
                     adapter_tag,
-                    which_global(PTY_DRIVER_BIN).expect("failed to find libvirt vte driver in path. Is Field Monitor correctly installed?"),
+                    libexec_path(PTY_DRIVER_BIN).expect("failed to find libvirt vte driver in path. Is Field Monitor correctly installed?"),
                     vec![
                         client.clientconfig_connection_type().to_string(),
                         client.clientconfig_root().to_string(),

@@ -71,25 +71,20 @@ impl VtePtyProcMon {
 
 impl VtePtyProcMon {
     pub async fn server(
+        app_id: &str,
         connection_id: &str,
         server_id: &str,
         adapter_id: &str,
         extra_args: &[String],
         fm_key: &str,
     ) -> Result<RunningVtePtyProcMon, zbus::Error> {
-        let connection_id_ne = format!("con-{}", hash(connection_id));
-        let server_id_ne = format!("srv-{}", hash(server_id));
-        let adapter_id_ne = format!("adp-{}", hash(adapter_id));
-        let name = [
-            "de",
-            "capypara",
-            "FieldMonitor",
-            "VtePtyProcMon",
-            &connection_id_ne,
-            &server_id_ne,
-            &adapter_id_ne,
-        ]
-        .join(".");
+        let name = format!(
+            "{}.con-{}.srv-{}.adp-{}",
+            app_id,
+            hash(connection_id),
+            hash(server_id),
+            hash(adapter_id)
+        );
         log::debug!("starting VtePtyProcMon with name {name}");
         let name = Arc::new(name);
         let result: Arc<Mutex<_>> = Default::default();

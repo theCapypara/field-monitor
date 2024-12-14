@@ -22,12 +22,7 @@ blueprints = custom_target('blueprints',
 )
 
 conf = configuration_data()
-conf.set_quoted('VERSION', meson.project_version())
-conf.set_quoted('APP_ID', get_option('app-id'))
 conf.set_quoted('APP_ID_SLASHED', get_option('app-id').replace('.', '/'))
-conf.set_quoted('GETTEXT_PACKAGE', get_option('app-id'))
-conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
-conf.set_quoted('PKGDATADIR', pkgdatadir)
 
 configure_file(
     input: 'field-monitor.gresource.xml.in',
@@ -40,20 +35,6 @@ run_command(
   'cp',
   meson.project_build_root() / 'src' / 'field-monitor.gresource.xml',
   meson.project_source_root() / 'src' / 'field-monitor.gresource.xml',
-  check: true
-)
-
-configure_file(
-    input: 'config.rs.in',
-    output: 'config.rs',
-    configuration: conf
-)
-
-# Copy the config.rs output to the source directory.
-run_command(
-  'cp',
-  meson.project_build_root() / 'src' / 'config.rs',
-  meson.project_source_root() / 'src' / 'config.rs',
   check: true
 )
 

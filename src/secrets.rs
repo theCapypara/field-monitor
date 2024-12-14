@@ -25,7 +25,7 @@ use secure_string::{SecureString, SecureVec};
 
 use libfieldmonitor::ManagesSecrets;
 
-use crate::config::APP_ID;
+use libfieldmonitor::config::APP_ID;
 
 #[derive(Debug)]
 pub struct SecretManager {

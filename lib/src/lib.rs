@@ -17,15 +17,18 @@
  */
 use anyhow::anyhow;
 use gettextrs::gettext;
+use std::io;
+use std::path::PathBuf;
 
-pub use secrets::ManagesSecrets;
-
+use crate::config::LIBEXECDIR;
 use crate::connection::ConnectionError;
+pub use secrets::ManagesSecrets;
 
 #[macro_use]
 mod macros;
 pub mod adapter;
 pub mod busy;
+pub mod config;
 pub mod connection;
 pub mod gtk;
 pub mod i18n;
@@ -36,4 +39,16 @@ pub fn config_error(connection_title: Option<String>) -> ConnectionError {
         connection_title,
         anyhow!(gettext("The connection configuration is invalid")),
     )
+}
+
+pub fn libexec_path(bin_name: &str) -> io::Result<PathBuf> {
+    let path = PathBuf::from(LIBEXECDIR).join(bin_name);
+    if !path.exists() {
+        Err(io::Error::new(
+            io::ErrorKind::NotFound,
+            format!("{} not found", path.display()),
+        ))
+    } else {
+        Ok(path)
+    }
 }

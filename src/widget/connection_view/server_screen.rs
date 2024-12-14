@@ -259,8 +259,8 @@ impl FieldMonitorServerScreen {
         loader: ConnectionLoader,
     ) -> Self {
         let slf: Self = glib::Object::builder()
-            .property("application", &app)
-            .property("window", &window)
+            .property("application", app)
+            .property("window", window)
             .property("server-path", server_path)
             .property("adapter-id", adapter_id)
             .property("dynamic-resize", true)
@@ -962,7 +962,6 @@ impl FieldMonitorServerScreen {
 impl FieldMonitorServerScreen {
     #[template_callback]
     fn on_self_reveal_osd_controls_changed(&self) {
-        let toolbar_view = &self.imp().toolbar_view;
         self.update_header_bar_state();
     }
 

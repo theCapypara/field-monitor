@@ -35,6 +35,7 @@ use field_monitor_vte_driver_lib::dbus_server::VtePtyProcMon;
 use field_monitor_vte_driver_lib::DBUS_KEY_ENV_VAR;
 
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
+use crate::config::APP_ID;
 use crate::connection::ConnectionError;
 
 pub struct VtePtyAdapter {
@@ -94,6 +95,7 @@ impl Adapter for VtePtyAdapter {
                 let fm_key = Uuid::now_v7().to_string();
 
                 let dbus_server = match VtePtyProcMon::server(
+                    APP_ID,
                     &self.connection_id,
                     &self.server_id,
                     &self.adapter_id,

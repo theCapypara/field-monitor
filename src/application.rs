@@ -45,7 +45,6 @@ use libfieldmonitor::connection::{Connection, DualScopedConnectionConfiguration}
 use libfieldmonitor::i18n::gettext_f;
 use libfieldmonitor::ManagesSecrets;
 
-use crate::config::{APP_ID, VERSION};
 use crate::connection::CONNECTION_PROVIDERS;
 use crate::connection_loader::ConnectionLoader;
 use crate::secrets::SecretManager;
@@ -55,6 +54,7 @@ use crate::widget::authenticate_connection_dialog::FieldMonitorAuthenticateConne
 use crate::widget::preferences::FieldMonitorPreferencesDialog;
 use crate::widget::update_connection_dialog::FieldMonitorUpdateConnectionDialog;
 use crate::widget::window::FieldMonitorWindow;
+use libfieldmonitor::config::{APP_ID, VERSION};
 
 mod imp {
     use super::*;

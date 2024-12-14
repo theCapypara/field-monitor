@@ -15,11 +15,10 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use crate::config::APP_ID;
-use config::{GETTEXT_PACKAGE, LOCALEDIR, PKGDATADIR};
 use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
 use gtk::prelude::*;
 use gtk::{gio, glib};
+use libfieldmonitor::config::{APP_ID, GETTEXT_PACKAGE, LOCALEDIR, PKGDATADIR};
 use log::info;
 use std::cell::RefCell;
 use std::fs::read_dir;
@@ -28,7 +27,6 @@ use std::path::PathBuf;
 use self::application::FieldMonitorApplication;
 
 mod application;
-mod config;
 mod connection;
 mod connection_loader;
 mod secrets;

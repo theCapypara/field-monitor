@@ -93,7 +93,7 @@ stdenv.mkDerivation rec {
   mesonBuildType = "release";
 
   postInstall = ''
-    wrapProgram $out/bin/de.capypara.FieldMonitor --prefix PATH ':' "$out/bin" --set RUST_LOG 'field_monitor=info,libfieldmonitor=info,GLib=info,warning'
+    wrapProgram $out/bin/de.capypara.FieldMonitor --prefix PATH ':' "$out/libexec" --set RUST_LOG 'field_monitor=info,libfieldmonitor=info,GLib=info,warning'
   '';
 
   doCheck = true;

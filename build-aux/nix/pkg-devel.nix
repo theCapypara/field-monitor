@@ -59,7 +59,7 @@ stdenv.mkDerivation {
   ];
 
   postInstall = ''
-    wrapProgram $out/bin/de.capypara.FieldMonitor.Devel --prefix PATH ':' "$out/bin" --set RUST_LOG 'field_monitor=debug,libfieldmonitor=debug,oo7=debug,rdw=debug,rdw-vnc=debug,rdw-spice=debug,rdw-rdp=debug,vte=debug,gtk-vnc=debug,Adwaita=info,GLib=info,warning' --set RUST_BACKTRACE '1'
+    wrapProgram $out/bin/de.capypara.FieldMonitor.Devel --prefix PATH ':' "$out/libexec" --set RUST_LOG 'field_monitor=debug,libfieldmonitor=debug,oo7=debug,rdw=debug,rdw-vnc=debug,rdw-spice=debug,rdw-rdp=debug,vte=debug,gtk-vnc=debug,Adwaita=info,GLib=info,warning' --set RUST_BACKTRACE '1'
   '';
 
   doCheck = true;

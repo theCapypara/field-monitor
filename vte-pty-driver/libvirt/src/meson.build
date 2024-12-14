@@ -22,7 +22,7 @@ cargo_build = custom_target(
   output: out_name,
   console: true,
   install: true,
-  install_dir: get_option('bindir'),
+  install_dir: get_option('libexecdir'),
   command: [
     'env', cargo_env,
     cargo_bin, 'build',

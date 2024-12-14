@@ -40,7 +40,6 @@ use virt::sys::{
     VIR_DOMAIN_DESTROY_GRACEFUL, VIR_DOMAIN_PAUSED, VIR_DOMAIN_REBOOT_ACPI_POWER_BTN,
     VIR_DOMAIN_SHUTDOWN_ACPI_POWER_BTN, VIR_DOMAIN_START_PAUSED, VIR_DOMAIN_XML_SECURE,
 };
-use which::which_global;
 
 use libfieldmonitor::adapter::rdp::RdpAdapter;
 use libfieldmonitor::adapter::spice::SpiceAdapter;
@@ -49,6 +48,7 @@ use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::adapter::vte_pty::VtePtyAdapter;
 use libfieldmonitor::connection::*;
 use libfieldmonitor::i18n::gettext_f;
+use libfieldmonitor::libexec_path;
 
 pub const PTY_DRIVER_BIN: &str = "de.capypara.FieldMonitor.PtyDrv.Libvirt";
 
@@ -652,7 +652,7 @@ impl ServerConnection for LibvirtServer {
                         self.connection_name.clone(),
                         self.name.clone(),
                         VtePtyAdapter::TAG.to_string(),
-                        which_global(PTY_DRIVER_BIN).expect("failed to find libvirt vte driver in path. Is Field Monitor correctly installed?"),
+                        libexec_path(PTY_DRIVER_BIN).expect("failed to find libvirt vte driver in path. Is Field Monitor correctly installed?"),
                         vec![uri, domid],
                     ))
                 }

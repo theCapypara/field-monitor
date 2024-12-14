@@ -3,3 +3,4 @@ pub static GETTEXT_PACKAGE: &str = @GETTEXT_PACKAGE@;
 pub static APP_ID: &str = @APP_ID@;
 pub static LOCALEDIR: &str = @LOCALEDIR@;
 pub static PKGDATADIR: &str = @PKGDATADIR@;
+pub static LIBEXECDIR: &str = @LIBEXECDIR@;
