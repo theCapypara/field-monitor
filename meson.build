@@ -7,6 +7,9 @@ project('field-monitor', 'rust',
 i18n = import('i18n')
 gnome = import('gnome')
 
+podir = join_paths(meson.current_source_dir(), 'po')
+itsdir = join_paths(meson.current_source_dir(), 'build-aux', 'gettext')
+
 subdir('data')
 subdir('lib/src')
 subdir('connection/generic-group/src')

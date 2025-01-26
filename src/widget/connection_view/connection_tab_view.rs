@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use crate::connection_loader::ConnectionLoader;
+use crate::remote_server_info::RemoteServerInfo;
 use crate::widget::connection_view::server_screen::FieldMonitorServerScreen;
 use crate::widget::window::FieldMonitorWindow;
 use crate::APP;
@@ -95,21 +95,18 @@ impl FieldMonitorConnectionTabView {
         false
     }
 
-    pub fn open(
-        &self,
-        window: &FieldMonitorWindow,
-        server_path: &str,
-        adapter_id: &str,
-        server_title: &str,
-        connection_title: &str,
-        loader: ConnectionLoader,
-    ) {
+    pub fn open(&self, window: &FieldMonitorWindow, info: RemoteServerInfo) {
         let app = window.application().unwrap().downcast().unwrap();
-        let view =
-            FieldMonitorServerScreen::new(&app, Some(window), server_path, adapter_id, loader);
+        let view = FieldMonitorServerScreen::new(
+            &app,
+            Some(window),
+            &info.server_path,
+            &info.adapter_id,
+            info.loader,
+        );
 
         let tab_view = self.imp().tab_view.get();
-        let tab = self.add_new_page(&view, server_title, Some(connection_title));
+        let tab = self.add_new_page(&view, &info.server_title, Some(&info.connection_title));
         view.set_close_cb(glib::clone!(
             #[weak]
             tab,

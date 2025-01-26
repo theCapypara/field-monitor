@@ -1,11 +1,18 @@
 [Desktop Entry]
 Name=Field Monitor
-Exec=@APP_ID@
+GenericName=Remote Desktop Viewer
+Comment=XXXXXXX
+Exec=@APP_ID@ %U
 Icon=@APP_ID@
 Terminal=false
 Type=Application
-X-Purism-FormFactor=Workstation;
 Categories=GTK;Network;
 StartupNotify=true
 # Translators: The keywords from the desktop file.
 Keywords=proxmox;vnc;spice;rdp;kvm;qemu;
+Actions=new-window;
+MimeType=x-scheme-handler/rdp;x-scheme-handler/spice;x-scheme-handler/vnc;x-scheme-handler/spice+unix;x-scheme-handler/spice+tls;application/x-virt-viewer;application/x-rdp;
+
+[Desktop Action new-window]
+Name=New Window
+Exec=@APP_ID@ --new-window

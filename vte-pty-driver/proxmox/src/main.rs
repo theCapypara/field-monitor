@@ -214,7 +214,6 @@ async fn run_console(client: &Arc<PtyClient>) -> Result<(), anyhow::Error> {
         Ok((ws, _)) => ws,
         Err(err) => {
             error!(&client, "websocket connection failed: {err:?}");
-            dbg!(&err);
             return Err(err.into());
         }
     };

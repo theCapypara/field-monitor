@@ -184,7 +184,7 @@ mod imp {
                     ));
                     let new_window_button = gtk::Button::builder()
                         .icon_name("multitasking-windows-symbolic")
-                        .tooltip_text(gettext("Move to new Window"))
+                        .tooltip_text(gettext("Move to New Window"))
                         .valign(gtk::Align::Center)
                         .css_classes(["flat", "compact-button"])
                         .build();

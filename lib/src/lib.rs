@@ -22,7 +22,7 @@ use std::path::PathBuf;
 
 use crate::config::LIBEXECDIR;
 use crate::connection::ConnectionError;
-pub use secrets::ManagesSecrets;
+pub use secrets::{ManagesSecrets, NullSecretsManager};
 
 #[macro_use]
 mod macros;

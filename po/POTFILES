@@ -1,6 +1,8 @@
 data/de.capypara.FieldMonitor.desktop.in.in
 data/de.capypara.FieldMonitor.metainfo.xml.in.in
-data/de.capypara.FieldMonitor.gschema.xml
+data/de.capypara.FieldMonitor.mime.rdp.xml.in
+data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in
+data/de.capypara.FieldMonitor.gschema.xml.in
 connection/vnc/src/preferences.blp
 connection/debug/src/preferences.blp
 connection/debug/src/behaviour_preferences.blp

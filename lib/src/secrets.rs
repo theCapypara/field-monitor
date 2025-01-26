@@ -32,3 +32,28 @@ pub trait ManagesSecrets: Send + Sync {
     ) -> BoxFuture<anyhow::Result<()>>;
     fn clear(&self, connection_id: &str, field: &str) -> BoxFuture<anyhow::Result<()>>;
 }
+
+pub struct NullSecretsManager;
+
+impl ManagesSecrets for NullSecretsManager {
+    fn lookup(
+        &self,
+        _connection_id: &str,
+        _field: &str,
+    ) -> BoxFuture<anyhow::Result<Option<SecureString>>> {
+        Box::pin(async move { Ok(None) })
+    }
+
+    fn store(
+        &self,
+        _connection_id: &str,
+        _field: &str,
+        _password: SecureString,
+    ) -> BoxFuture<anyhow::Result<()>> {
+        Box::pin(async move { Ok(()) })
+    }
+
+    fn clear(&self, _connection_id: &str, _field: &str) -> BoxFuture<anyhow::Result<()>> {
+        Box::pin(async move { Ok(()) })
+    }
+}

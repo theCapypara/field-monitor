@@ -1,0 +1,15 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $QuickConnectPreferences: Adw.PreferencesGroup {
+    user: bind user_entry_row.text bidirectional;
+    password: bind password_entry_row.text bidirectional;
+
+    Adw.EntryRow user_entry_row {
+        title: _("Username");
+    }
+
+    Adw.PasswordEntryRow password_entry_row {
+        title: _("Password");
+    }
+}

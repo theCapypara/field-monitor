@@ -18,7 +18,6 @@
 use std::borrow::Cow;
 use std::cell::RefCell;
 use std::collections::HashMap;
-use std::ops::Deref;
 use std::rc::Rc;
 
 use adw::prelude::{AdwDialogExt, AlertDialogExt};
@@ -52,7 +51,7 @@ pub struct ConnectionLoader {
 impl ConnectionLoader {
     #[allow(unused)]
     pub async fn load_connection(
-        connections: impl Deref<Target = Option<HashMap<String, ConnectionInstance>>>,
+        connections: Option<&HashMap<String, ConnectionInstance>>,
         active_window: Option<&gtk::Window>,
         path: &str,
         app: Option<FieldMonitorApplication>,
@@ -61,7 +60,7 @@ impl ConnectionLoader {
     }
 
     pub async fn load_server(
-        connections: impl Deref<Target = Option<HashMap<String, ConnectionInstance>>>,
+        connections: Option<&HashMap<String, ConnectionInstance>>,
         active_window: Option<&gtk::Window>,
         path: &str,
         app: Option<FieldMonitorApplication>,
@@ -71,12 +70,11 @@ impl ConnectionLoader {
 
     pub async fn load(
         is_server: bool,
-        connections: impl Deref<Target = Option<HashMap<String, ConnectionInstance>>>,
+        connections: Option<&HashMap<String, ConnectionInstance>>,
         active_window: Option<&gtk::Window>,
         path: &str,
         app: Option<FieldMonitorApplication>,
     ) -> Option<Self> {
-        let connections = connections.deref();
         debug!("Loading connection or server for an event: is server={is_server}; path={path}");
         let mut path_parts = path.split("/");
 

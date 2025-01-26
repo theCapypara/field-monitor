@@ -183,26 +183,39 @@ impl FieldMonitorAuthenticateConnectionDialog {
             .await
         {
             Ok(config) => {
-                match app.save_connection(config, true).await {
-                    Ok(Some(new_instance)) => {
-                        self.imp()
-                            .saved_connection
-                            .borrow_mut()
-                            .replace(new_instance);
-                        self.emit_by_name::<()>("auth-finished", &[]);
-                        self.force_close();
-                        return;
+                // If the app knew the connection, we save it, otherwise we don't. This can
+                // happen if we connect via quick connect.
+                if app.has_connection(config.session().id()) {
+                    match app.save_connection(config, true).await {
+                        Ok(Some(new_instance)) => {
+                            self.imp()
+                                .saved_connection
+                                .borrow_mut()
+                                .replace(new_instance);
+                            self.emit_by_name::<()>("auth-finished", &[]);
+                            self.force_close();
+                            return;
+                        }
+                        Ok(None) => {
+                            // Not ideal, it seems that the connection could not be reloaded.
+                            warn!("connection was not provided after re-auth. not updating saved connection.");
+                            self.emit_by_name::<()>("auth-finished", &[]);
+                            self.force_close();
+                            return;
+                        }
+                        Err(err) => {
+                            error(err, self.parent().as_ref());
+                        }
                     }
-                    Ok(None) => {
-                        // Not ideal, it seems that the connection could not be reloaded.
-                        warn!("connection was not provided after re-auth. not updating saved connection.");
-                        self.emit_by_name::<()>("auth-finished", &[]);
-                        self.force_close();
-                        return;
-                    }
-                    Err(err) => {
-                        error(err, self.parent().as_ref());
-                    }
+                } else {
+                    warn!(
+                        "did not save (instead reloaded in place), as it was not a known connection (quick connect?)"
+                    );
+                    connection.set_configuration(config).await;
+                    self.imp().saved_connection.borrow_mut().replace(connection);
+                    self.emit_by_name::<()>("auth-finished", &[]);
+                    self.force_close();
+                    return;
                 }
             }
             Err(err) => imp.toast_overlay.add_toast(

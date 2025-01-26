@@ -19,10 +19,12 @@ use std::borrow::Cow;
 use std::cell::Cell;
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::ops::Deref;
 use std::path::PathBuf;
 use std::rc::Rc;
 use std::sync::{Arc, OnceLock};
 
+use adw::gio::File;
 use adw::glib::user_config_dir;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
@@ -32,12 +34,14 @@ use async_std::io::WriteExt;
 use futures::StreamExt;
 use gettextrs::gettext;
 use glib::subclass::Signal;
+use glib::{ControlFlow, ExitCode, VariantDict};
 use gtk::{gio, glib};
 use log::{debug, error, info, warn};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use libfieldmonitor::busy::{BusyGuard, BusyStack};
+use libfieldmonitor::config::{APP_ID, VERSION};
 use libfieldmonitor::connection::ConnectionConfiguration;
 use libfieldmonitor::connection::ConnectionInstance;
 use libfieldmonitor::connection::ConnectionProvider;
@@ -47,6 +51,7 @@ use libfieldmonitor::ManagesSecrets;
 
 use crate::connection::CONNECTION_PROVIDERS;
 use crate::connection_loader::ConnectionLoader;
+use crate::remote_server_info::RemoteServerInfo;
 use crate::secrets::SecretManager;
 use crate::settings::FieldMonitorSettings;
 use crate::widget::add_connection_dialog::FieldMonitorAddConnectionDialog;
@@ -54,7 +59,6 @@ use crate::widget::authenticate_connection_dialog::FieldMonitorAuthenticateConne
 use crate::widget::preferences::FieldMonitorPreferencesDialog;
 use crate::widget::update_connection_dialog::FieldMonitorUpdateConnectionDialog;
 use crate::widget::window::FieldMonitorWindow;
-use libfieldmonitor::config::{APP_ID, VERSION};
 
 mod imp {
     use super::*;
@@ -111,6 +115,17 @@ mod imp {
             let obj = self.obj();
             obj.setup_gactions();
             obj.set_accels_for_action("app.quit", &["<primary>q"]);
+
+            // Register CLI options
+            obj.add_main_option(
+                "new-window",
+                b'n'.into(),
+                glib::OptionFlags::NONE,
+                glib::OptionArg::None,
+                &gettext("Open the app with a new window"),
+                None,
+            );
+
             // Listen to own signals for debug purposes
             self.obj().connect_closure(
                 "connection-updated",
@@ -137,12 +152,93 @@ mod imp {
     }
 
     impl ApplicationImpl for FieldMonitorApplication {
-        // We connect to the activate callback to create a window when the application
-        // has been launched. Additionally, this callback notifies us when the user
-        // tries to launch a "second instance" of the application. When they try
-        // to do that, we'll just present any existing window.
         fn activate(&self) {
+            let obj = self.obj();
             let hold = self.obj().hold();
+            glib::spawn_future_local(glib::clone!(
+                #[strong]
+                obj,
+                async move {
+                    let slf = obj.imp();
+                    let _hold = hold;
+                    if let ControlFlow::Continue = slf.init().await {
+                        slf.finish_activate(false);
+                    }
+                }
+            ));
+        }
+
+        fn open(&self, files: &[File], _hint: &str) {
+            if files.is_empty() {
+                return self.activate();
+            }
+            let file = files[0].clone();
+
+            let obj = self.obj();
+            let hold = self.obj().hold();
+            glib::spawn_future_local(glib::clone!(
+                #[strong]
+                obj,
+                #[strong]
+                file,
+                async move {
+                    let slf = obj.imp();
+                    let _hold = hold;
+                    if let ControlFlow::Continue = slf.init().await {
+                        let force_new_window = obj
+                            .settings()
+                            .as_ref()
+                            .map(FieldMonitorSettings::open_in_new_window)
+                            .unwrap_or_default();
+                        let window = slf.finish_activate(force_new_window);
+
+                        match RemoteServerInfo::try_from_file(file, &obj, Some(&window)).await {
+                            Err(err) => {
+                                let alert = adw::AlertDialog::builder()
+                                    .title(gettext("Failed to open"))
+                                    .body(format!(
+                                        "{}:\n{}",
+                                        gettext("Field Monitor could not connect to the server using the specified file or URI"),
+                                        err
+                                    ))
+                                    .build();
+                                alert.add_response("ok", &gettext("OK"));
+                                alert.present(None::<&gtk::Window>);
+                            }
+                            Ok(conn) => window.open_connection_view(conn),
+                        }
+                    }
+                }
+            ));
+        }
+
+        fn handle_local_options(&self, options: &VariantDict) -> ExitCode {
+            let obj = self.obj();
+
+            if let Err(err) = obj.register(None::<&gio::Cancellable>) {
+                error!("failed to register application: {err}");
+                1.into()
+            } else if obj.is_remote() {
+                if options.contains("new-window") {
+                    info!("opening new window");
+                    obj.activate_action("new-window", None);
+                    0.into()
+                } else {
+                    info!("focusing current window");
+                    (-1).into()
+                }
+            } else {
+                info!("starting Field Monitor...");
+                (-1).into()
+            }
+        }
+    }
+
+    impl GtkApplicationImpl for FieldMonitorApplication {}
+    impl AdwApplicationImpl for FieldMonitorApplication {}
+
+    impl FieldMonitorApplication {
+        async fn init(&self) -> ControlFlow {
             // Init providers if not done already.
             if self.providers.borrow().is_empty() {
                 self.providers.replace(
@@ -157,45 +253,38 @@ mod imp {
             }
             // Init secret service if not done already.
             if self.secret_manager.borrow().is_none() {
+                info!("Initializing secrets provider...");
                 let slf = self;
-                glib::spawn_future_local(glib::clone!(
-                    #[weak]
-                    slf,
-                    async move {
-                        let _hold = hold;
-                        let secrets = SecretManager::new().await;
-                        match secrets {
-                            Ok(secrets) => {
-                                slf.secret_manager
-                                    .replace(Some(Arc::new(Box::new(secrets))));
-                                slf.finish_activate();
-                            }
-                            Err(err) => {
-                                let alert = adw::AlertDialog::builder()
-                                .title(gettext("Failed to initialize"))
-                                .body(format!(
-                                    "{}:\n{}",
-                                    gettext("Field Monitor could not start, because it could not connect to your system's secret service for accessing passwords"),
-                                    err
-                                ))
-                                .build();
-                                alert.add_response("ok", &gettext("OK"));
-                                alert.present(None::<&gtk::Window>);
-                            }
-                        }
+                let secrets = SecretManager::new().await;
+                match secrets {
+                    Ok(secrets) => {
+                        slf.secret_manager
+                            .replace(Some(Arc::new(Box::new(secrets))));
+
+                        ControlFlow::Continue
                     }
-                ));
+                    Err(err) => {
+                        error!("Failed to initialize secrets provider: {err}");
+                        let alert = adw::AlertDialog::builder()
+                                    .title(gettext("Failed to initialize"))
+                                    .body(format!(
+                                        "{}:\n{}",
+                                        gettext("Field Monitor could not start, because it could not connect to your system's secret service for accessing passwords"),
+                                        err
+                                    ))
+                                    .build();
+                        alert.add_response("ok", &gettext("OK"));
+                        alert.present(None::<&gtk::Window>);
+
+                        ControlFlow::Break
+                    }
+                }
             } else {
-                self.finish_activate();
+                ControlFlow::Continue
             }
         }
-    }
 
-    impl GtkApplicationImpl for FieldMonitorApplication {}
-    impl AdwApplicationImpl for FieldMonitorApplication {}
-
-    impl FieldMonitorApplication {
-        fn finish_activate(&self) {
+        fn finish_activate(&self, force_new_window: bool) -> FieldMonitorWindow {
             // Init connections if not done already.
             if self.connections.borrow().is_none() {
                 self.connections.borrow_mut().replace(HashMap::new());
@@ -212,15 +301,18 @@ mod imp {
             let application = self.obj();
 
             // Get the current window or create one if necessary
-            let window = if let Some(window) = application.active_window() {
-                window
+            let window = if force_new_window {
+                FieldMonitorWindow::new(&application)
             } else {
-                let window = FieldMonitorWindow::new(&application);
-                window.upcast()
+                application
+                    .active_window()
+                    .and_downcast::<FieldMonitorWindow>()
+                    .unwrap_or_else(|| FieldMonitorWindow::new(&application))
             };
 
             // Ask the window manager/compositor to present the window
             window.present();
+            window
         }
 
         pub fn set_loading_connection(&self, value: bool) {
@@ -654,6 +746,8 @@ impl FieldMonitorApplication {
         dialog.present(window.as_ref());
     }
 
+    // TODO: This should be OK here, but we should confirm.
+    #[allow(clippy::await_holding_refcell_ref)]
     pub async fn connect_to_server(&self, path: &str, adapter_id: &str) -> Option<()> {
         let imp = self.imp();
         let mut window = self
@@ -671,7 +765,7 @@ impl FieldMonitorApplication {
         }
 
         let loader = ConnectionLoader::load_server(
-            imp.connections.borrow(),
+            imp.connections.borrow().deref().as_ref(),
             Some(window.upcast_ref()),
             path,
             Some(self.clone()),
@@ -683,17 +777,19 @@ impl FieldMonitorApplication {
             window = self.open_new_window();
         }
 
-        window.open_connection_view(
-            path,
-            adapter_id,
-            &loader.server_title(),
-            &loader.connection_title(),
+        window.open_connection_view(RemoteServerInfo::new(
+            path.into(),
+            adapter_id.into(),
+            Cow::Borrowed(&loader.server_title()),
+            Cow::Borrowed(&loader.connection_title()),
             loader,
-        );
+        ));
 
         Some(())
     }
 
+    // TODO: This should be OK here, but we should confirm.
+    #[allow(clippy::await_holding_refcell_ref)]
     pub async fn perform_connection_action(
         &self,
         is_server: bool,
@@ -706,7 +802,7 @@ impl FieldMonitorApplication {
 
         let loader = ConnectionLoader::load(
             is_server,
-            imp.connections.borrow(),
+            imp.connections.borrow().deref().as_ref(),
             window.as_ref(),
             path,
             Some(self.clone()),
@@ -761,6 +857,14 @@ impl FieldMonitorApplication {
             None => HashMap::new().into_values(),
             Some(brw) => brw.clone().into_values(),
         }
+    }
+
+    /// Checks if a connection is known.
+    pub fn has_connection(&self, id: &str) -> bool {
+        let brw = self.imp().connections.borrow();
+        brw.as_ref()
+            .map(|cs| cs.contains_key(id))
+            .unwrap_or_default()
     }
 
     /// Returns a connection by ID, if it exists.

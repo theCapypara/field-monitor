@@ -17,7 +17,7 @@
  */
 
 use crate::application::FieldMonitorApplication;
-use crate::connection_loader::ConnectionLoader;
+use crate::remote_server_info::RemoteServerInfo;
 use crate::settings::{SettingHeaderBarBehavior, SettingSharpWindowCorners};
 use crate::widget::close_warning_dialog::FieldMonitorCloseWarningDialog;
 use crate::widget::connection_list::{
@@ -264,22 +264,8 @@ impl FieldMonitorWindow {
     }
 
     /// Open a connection view
-    pub fn open_connection_view(
-        &self,
-        server_path: &str,
-        adapter_id: &str,
-        server_title: &str,
-        connection_title: &str,
-        loader: ConnectionLoader,
-    ) {
-        self.imp().active_connection_tab_view.open(
-            self,
-            server_path,
-            adapter_id,
-            server_title,
-            connection_title,
-            loader,
-        );
+    pub fn open_connection_view(&self, info: RemoteServerInfo) {
+        self.imp().active_connection_tab_view.open(self, info);
         self.select_connection_view();
     }
 
@@ -493,12 +479,18 @@ impl FieldMonitorWindow {
         if page.is_none() && connection_view_visible {
             debug!("switching to welcome view");
             self.unselect_connection_view();
-            imp.inner_list_stack.set_visible_child_name("welcome");
+            if !self.quick_connect_visible() {
+                imp.inner_list_stack.set_visible_child_name("welcome");
+            }
         } else if page.is_some() {
             if !connection_view_visible {
                 debug!("switching to connection view");
                 self.select_connection_view();
             }
+            if self.quick_connect_visible() {
+                imp.inner_list_stack.set_visible_child_name("welcome");
+            }
+            self.unselect_quick_connect();
             self.maybe_clicked_item_on_sidebar();
         }
     }

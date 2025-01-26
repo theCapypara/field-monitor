@@ -59,6 +59,7 @@ impl Adapter for RdpAdapter {
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
     ) -> Box<dyn AdapterDisplay> {
+        debug!("creating rdp adapter");
         let rdp = rdw_rdp::Display::new();
 
         let settings_result = rdp.with_settings(|s| {
@@ -72,6 +73,7 @@ impl Adapter for RdpAdapter {
         });
 
         if let Err(err) = settings_result {
+            warn!("failed to configure rdp connection: {err}");
             on_disconnected(Err(ConnectionError::General(
                 Some(gettext("Failed to process RDP connection configuration")),
                 anyhow::Error::new(err),

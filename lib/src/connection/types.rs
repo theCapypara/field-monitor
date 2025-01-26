@@ -18,10 +18,12 @@
 use std::any::Any;
 use std::borrow::Cow;
 use std::fmt;
+use std::fmt::{Display, Formatter};
 use std::sync::Arc;
 
 use derive_builder::Builder;
 use futures::future::LocalBoxFuture;
+use gettextrs::gettext;
 use indexmap::IndexMap;
 use thiserror::Error;
 
@@ -33,12 +35,21 @@ pub type ConnectionResult<T> = Result<T, ConnectionError>;
 
 #[derive(Debug, Error)]
 pub enum ConnectionError {
-    #[error("{1}")]
     /// Authentication failed and may be required
     AuthFailed(Option<String>, anyhow::Error),
-    #[error("{1}")]
     /// General failure, which can not be recovered from by re-authenticating
     General(Option<String>, anyhow::Error),
+}
+
+impl Display for ConnectionError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            ConnectionError::AuthFailed(Some(err), _) => err.fmt(f),
+            ConnectionError::General(Some(err), _) => err.fmt(f),
+            ConnectionError::AuthFailed(None, _) => gettext("Authentication failed").fmt(f),
+            ConnectionError::General(None, _) => gettext("General Error").fmt(f),
+        }
+    }
 }
 
 impl ConnectionError {

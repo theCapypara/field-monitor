@@ -102,9 +102,11 @@ gettext-rs = { workspace = true }
 anyhow = { workspace = true }
 serde = { workspace = true }
 serde_yaml = { workspace = true }
+serde_ini = "0.2"
 futures = { workspace = true }
 uuid = { workspace = true }
-itertools = "0.13"
+fluent-uri = "0.3"
+itertools = "0.14"
 sorted-vec = "0.8"
 secure-string = { workspace = true }
 log = { workspace = true }

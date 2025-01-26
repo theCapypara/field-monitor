@@ -78,6 +78,7 @@ impl Adapter for VncAdapter {
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
     ) -> Box<dyn AdapterDisplay> {
+        debug!("creating vnc adapter");
         let error_container: Rc<RefCell<Option<ConnectionError>>> = Rc::new(RefCell::new(None));
         let host = self.host.clone();
         let user = self.user.clone();

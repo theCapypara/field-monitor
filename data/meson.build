@@ -1,6 +1,26 @@
 conf = configuration_data()
 conf.set('APP_ID', get_option('app-id'))
-conf.set_quoted('APP_ID_SLASHED', '/' + get_option('app-id').replace('.', '/') + '/')
+conf.set_quoted('APP_ID_SLASHED', '/' + get_option('app-id').replace('.', '/') + '/'
+)
+
+# Field Monitor has limited support for reading Virt-Viewer / RDP files.
+# This installs the MIME types in case they don't exist yet.
+i18n.merge_file (
+        input: 'de.capypara.FieldMonitor.mime.virt-viewer.xml.in',
+       output: get_option('app-id') + '.mime.virt-viewer.xml',
+       po_dir: podir,
+      install: true,
+    data_dirs: itsdir,
+  install_dir: get_option('datadir') / 'mime' / 'packages'
+)
+i18n.merge_file (
+        input: 'de.capypara.FieldMonitor.mime.rdp.xml.in',
+       output: get_option('app-id') + '.mime.rdp.xml',
+       po_dir: podir,
+      install: true,
+    data_dirs: itsdir,
+  install_dir: get_option('datadir') / 'mime' / 'packages'
+)
 
 desktop_file = i18n.merge_file(
         input: configure_file(
@@ -10,7 +30,7 @@ desktop_file = i18n.merge_file(
         ),
        output: get_option('app-id') + '.desktop',
          type: 'desktop',
-       po_dir: '../po',
+       po_dir: podir,
       install: true,
   install_dir: get_option('datadir') / 'applications'
 )
@@ -25,7 +45,7 @@ appstream_file = i18n.merge_file(
             configuration: conf,
         ),
        output: get_option('app-id') + '.xml',
-       po_dir: '../po',
+       po_dir: podir,
       install: true,
   install_dir: get_option('datadir') / 'metainfo'
 )

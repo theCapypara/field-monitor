@@ -48,11 +48,15 @@ pub struct SpiceSessionConfig {
     #[builder(default = "None")]
     host: Option<String>,
     #[builder(default = "None")]
+    port: Option<NonZeroU32>,
+    #[builder(default = "None")]
     cert_subject: Option<String>,
     #[builder(default = "None")]
     tls_port: Option<NonZeroU32>,
     #[builder(default = "None")]
     proxy: Option<String>,
+    #[builder(default = "None")]
+    unix_path: Option<String>,
 }
 
 impl SpiceSessionConfig {
@@ -74,6 +78,9 @@ impl SpiceSessionConfig {
         if self.host.is_some() {
             session.set_host(self.host.as_deref());
         }
+        if self.port.is_some() {
+            session.set_port(self.port.map(|v| v.to_string()).as_deref());
+        }
         if self.cert_subject.is_some() {
             session.set_cert_subject(self.cert_subject.as_deref());
         }
@@ -82,6 +89,9 @@ impl SpiceSessionConfig {
         }
         if self.proxy.is_some() {
             session.set_proxy(self.proxy.as_deref());
+        }
+        if self.unix_path.is_some() {
+            session.set_unix_path(self.unix_path.as_deref());
         }
     }
 }
@@ -98,9 +108,11 @@ impl SpiceAdapter {
             password: Some(password),
             ca: None,
             host: None,
+            port: None,
             cert_subject: None,
             tls_port: None,
             proxy: None,
+            unix_path: None,
         })
     }
 
@@ -119,6 +131,7 @@ impl Adapter for SpiceAdapter {
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
     ) -> Box<dyn AdapterDisplay> {
+        debug!("creating spice adapter");
         let spice = rdw_spice::Display::new();
 
         let mut session = spice.session();

@@ -19,7 +19,6 @@ use gettextrs::{bind_textdomain_codeset, bindtextdomain, textdomain};
 use gtk::prelude::*;
 use gtk::{gio, glib};
 use libfieldmonitor::config::{APP_ID, GETTEXT_PACKAGE, LOCALEDIR, PKGDATADIR};
-use log::info;
 use std::cell::RefCell;
 use std::fs::read_dir;
 use std::path::PathBuf;
@@ -29,6 +28,8 @@ use self::application::FieldMonitorApplication;
 mod application;
 mod connection;
 mod connection_loader;
+mod quick_connect;
+mod remote_server_info;
 mod secrets;
 mod settings;
 mod util;
@@ -71,13 +72,12 @@ fn main() -> glib::ExitCode {
     // Create a new GtkApplication. The application manages our main loop,
     // application windows, integration with the window manager/compositor, and
     // desktop features such as file opening and single-instance applications.
-    let app = FieldMonitorApplication::new(APP_ID, &gio::ApplicationFlags::empty());
+    let app = FieldMonitorApplication::new(APP_ID, &gio::ApplicationFlags::HANDLES_OPEN);
     APP.replace(Some(app.clone()));
 
     // Run the application. This function will block until the application
     // exits. Upon return, we have our exit code to return to the shell. (This
     // is the code you see when you do `echo $?` after running a command in a
     // terminal.
-    info!("started Field Monitor");
     app.run()
 }
