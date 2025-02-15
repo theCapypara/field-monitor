@@ -40,5 +40,15 @@
                 If enabled, connecting to a server will result in a new window being opened.
             </description>
         </key>
+        <key name="show-grab-note" type="b">
+            <default>true</default>
+            <summary>
+                Enables the note text explaining how to ungrab mouse and keyboard.
+            </summary>
+            <description>
+                If enabled, a note is shown explaining how to ungrab mouse and keyboard, every time mouse and/or keyboard
+                input is grabbed.
+            </description>
+        </key>
     </schema>
 </schemalist>

@@ -19,6 +19,8 @@
 use std::sync::{Mutex, PoisonError};
 use std::time::Duration;
 
+use crate::application::FieldMonitorApplication;
+use crate::settings::FieldMonitorSettings;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gtk::glib;
@@ -61,6 +63,22 @@ glib::wrapper! {
 
 impl FieldMonitorGrabNote {
     pub fn show_note(&self, label: &str) {
+        let show_grab_note = self
+            .root()
+            .and_downcast::<gtk::Window>()
+            .as_ref()
+            .and_then(gtk::Window::application)
+            .and_downcast::<FieldMonitorApplication>()
+            .as_ref()
+            .and_then(FieldMonitorApplication::settings)
+            .as_ref()
+            .map(FieldMonitorSettings::show_grab_note)
+            .unwrap_or(true);
+
+        if !show_grab_note {
+            return;
+        }
+
         let mut timeout = self
             .imp()
             .timeout

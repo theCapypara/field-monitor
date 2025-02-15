@@ -99,6 +99,8 @@ mod imp {
         pub header_bar_behavior: RefCell<SettingHeaderBarBehavior>,
         #[property(get, set)]
         pub open_in_new_window: Cell<bool>,
+        #[property(get, set)]
+        pub show_grab_note: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -131,6 +133,9 @@ impl FieldMonitorSettings {
             .build();
         settings
             .bind("open-in-new-window", &slf, "open-in-new-window")
+            .build();
+        settings
+            .bind("show-grab-note", &slf, "show-grab-note")
             .build();
 
         slf

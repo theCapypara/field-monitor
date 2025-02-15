@@ -4,6 +4,7 @@ using Adw 1;
 template $FieldMonitorPreferencesDialog: Adw.PreferencesDialog {
     search-enabled: false; // not many settings
     open_in_new_window: bind open_in_new_window_row.active bidirectional;
+    show_grab_note: bind show_grab_note.active bidirectional;
     notify::sharp-window-corners => $on_self_sharp_window_corners_changed() swapped;
     notify::header-bar-behavior => $on_self_header_bar_behavior_changed() swapped;
 
@@ -59,6 +60,11 @@ template $FieldMonitorPreferencesDialog: Adw.PreferencesDialog {
                         icon-name: 'go-next-symbolic';
                     }
                 }
+            }
+
+            Adw.SwitchRow show_grab_note {
+                title: _("Show keyboard shortcut for how to ungrab");
+                subtitle: _("Show a message on what key combination can be used to ungrab mouse and keyboard from an active connection, every time this input is grabbed.");
             }
         }
     }

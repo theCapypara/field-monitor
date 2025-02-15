@@ -46,6 +46,8 @@ mod imp {
         pub header_bar_behavior: RefCell<SettingHeaderBarBehavior>,
         #[property(get, set)]
         pub open_in_new_window: Cell<bool>,
+        #[property(get, set)]
+        pub show_grab_note: Cell<bool>,
     }
 
     #[glib::object_subclass]
@@ -96,6 +98,11 @@ impl FieldMonitorPreferencesDialog {
             .build();
         settings
             .bind_property("open-in-new-window", &slf, "open-in-new-window")
+            .bidirectional()
+            .sync_create()
+            .build();
+        settings
+            .bind_property("show-grab-note", &slf, "show-grab-note")
             .bidirectional()
             .sync_create()
             .build();
