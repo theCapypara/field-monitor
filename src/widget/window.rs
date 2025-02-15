@@ -40,8 +40,7 @@ use std::time::Duration;
 mod imp {
     use super::*;
 
-    #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
-    #[properties(wrapper_type = super::FieldMonitorWindow)]
+    #[derive(Debug, Default, gtk::CompositeTemplate)]
     #[template(resource = "/de/capypara/FieldMonitor/widget/window.ui")]
     pub struct FieldMonitorWindow {
         #[template_child]
@@ -99,7 +98,6 @@ mod imp {
         }
     }
 
-    #[glib::derived_properties]
     impl ObjectImpl for FieldMonitorWindow {
         fn constructed(&self) {
             self.parent_constructed();

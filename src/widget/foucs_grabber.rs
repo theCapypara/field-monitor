@@ -16,6 +16,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+// TODO: Now that we just always propagate events down to RDW, this class is barely useful anymore.
+//       It probably still has some uses that would be hard to do with just rdw itself, so we keep
+//       it for now, but we should probably check again.
+
 use std::cell::Cell;
 use std::cell::RefCell;
 
@@ -55,7 +59,7 @@ mod imp {
             obj.set_visible(false);
 
             let controller = gtk::GestureClick::builder()
-                .propagation_phase(gtk::PropagationPhase::Capture)
+                .propagation_phase(gtk::PropagationPhase::Bubble)
                 .build();
 
             controller.connect_released(glib::clone!(
@@ -67,12 +71,12 @@ mod imp {
             obj.add_controller(controller);
             obj.add_controller(
                 gtk::EventControllerScroll::builder()
-                    .propagation_phase(gtk::PropagationPhase::Capture)
+                    .propagation_phase(gtk::PropagationPhase::Bubble)
                     .build(),
             );
             obj.add_controller(
                 gtk::EventControllerMotion::builder()
-                    .propagation_phase(gtk::PropagationPhase::Capture)
+                    .propagation_phase(gtk::PropagationPhase::Bubble)
                     .build(),
             );
         }
@@ -156,8 +160,6 @@ impl FieldMonitorFocusGrabber {
             debug!("try_grab result: {grab:?}");
         }
         self.try_mute_accels(true);
-
-        self.set_visible(false);
     }
 
     pub fn ungrab(&self) {
@@ -180,8 +182,6 @@ impl FieldMonitorFocusGrabber {
             debug!("ungrab");
         }
         self.try_mute_accels(false);
-
-        self.set_visible(true);
     }
 
     fn try_mute_accels(&self, mute: bool) {

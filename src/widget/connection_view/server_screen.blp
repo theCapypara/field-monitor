@@ -146,22 +146,21 @@ template $FieldMonitorServerScreen: Adw.Bin {
 
                 child: Overlay {
                     [overlay]
-                    $FieldMonitorFocusGrabber focus_grabber {
-                        notify::grabbed => $on_focus_grabber_grabbed_changed() swapped;
-                        vexpand: true;
-                        hexpand: true;
-                    }
-
-                    [overlay]
                     $FieldMonitorGrabNote grab_note {
                         halign: center;
                         valign: end;
                     }
 
-                    Adw.Bin display_bin {
+                    child: $FieldMonitorFocusGrabber focus_grabber {
+                        notify::grabbed => $on_focus_grabber_grabbed_changed() swapped;
                         vexpand: true;
                         hexpand: true;
-                    }
+
+                        Adw.Bin display_bin {
+                            vexpand: true;
+                            hexpand: true;
+                        }
+                    };
                 };
             }
         }
