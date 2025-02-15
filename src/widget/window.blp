@@ -9,7 +9,6 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
     title: _("Field Monitor");
     close-request => $on_self_close_request() swapped;
     notify::fullscreened => $on_self_fullscreened_changed() swapped;
-    notify::quick-connect-visible => $on_quick_connect_visible_changed() swapped;
 
     Adw.Breakpoint mobile_breakpoint {
         condition ('max-width: 480sp')
@@ -122,8 +121,8 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                                 ]
                             }
 
-                            ToggleButton {
-                                action-name: "win.quick-connect";
+                            Button {
+                                action-name: "win.open-quick-connect";
 
                                 child: Adw.ButtonContent {
                                     icon-name: "camera-flash-symbolic";
@@ -183,8 +182,8 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                                                     ]
                                                 }
 
-                                                ToggleButton quick_connect_button {
-                                                    action-name: "win.quick-connect";
+                                                Button {
+                                                    action-name: "win.open-quick-connect";
 
                                                     child: Adw.ButtonContent {
                                                         icon-name: "camera-flash-symbolic";
@@ -206,23 +205,6 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                                     child: $FieldMonitorConnectionStack connection_list_stack {
                                         toast-overlay: toast_overlay;
                                         notify::visible-connection-id => $on_connection_list_visible_connection_id_changed() swapped;
-                                    };
-                                }
-
-                                StackPage {
-                                    name: "quick-connect";
-
-                                    child: Adw.ToolbarView {
-                                        [top]
-                                        Adw.HeaderBar {
-                                            title-widget: Adw.WindowTitle {
-                                                title: _("Quick Connect");
-                                            };
-                                        }
-
-                                        content: Label {
-                                            label: "TODO!!";
-                                        };
                                     };
                                 }
                             };

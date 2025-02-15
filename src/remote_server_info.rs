@@ -58,7 +58,7 @@ impl RemoteServerInfo<'static> {
                 let info = quick_connect::try_from_file(stream.into_read(), app, window).await;
                 match info {
                     None => Err(ConnectionError::General(
-                        Some(gettext("Field Monitor was unable to read the file")),
+                        Some(gettext("Unable to detect supported file format")),
                         anyhow!("failed to detect file format of any supported"),
                     )),
                     Some(Err(err)) => Err(err),

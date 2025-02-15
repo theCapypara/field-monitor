@@ -80,8 +80,8 @@ pub async fn try_from_file<T: Read + Seek>(
             )))
         }
     };
-    // We do not read files > 128ib.
-    if bytes > LIMIT {
+    // We do not read files > 128mib. Also, if the file is empty it's obviously not an RDP file.
+    if bytes > LIMIT || bytes == 0 {
         return Err(stream);
     }
     let Ok(contents) = String::from_utf8(buffer) else {

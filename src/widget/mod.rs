@@ -25,5 +25,6 @@ mod foucs_grabber;
 mod grab_note;
 mod navbar_row;
 pub mod preferences;
+pub mod quick_connect_dialog;
 pub mod update_connection_dialog;
 pub mod window;

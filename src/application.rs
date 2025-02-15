@@ -195,7 +195,7 @@ mod imp {
                         match RemoteServerInfo::try_from_file(file, &obj, Some(&window)).await {
                             Err(err) => {
                                 let alert = adw::AlertDialog::builder()
-                                    .title(gettext("Failed to open"))
+                                    .heading(gettext("Failed to open"))
                                     .body(format!(
                                         "{}:\n{}",
                                         gettext("Field Monitor could not connect to the server using the specified file or URI"),

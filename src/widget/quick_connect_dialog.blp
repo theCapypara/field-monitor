@@ -1,0 +1,46 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorQuickConnectDialog: Adw.Dialog {
+    content-width: 420;
+    title: _("Quick Connect");
+
+    Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar header_bar {}
+
+        Box {
+            orientation: vertical;
+            spacing: 15;
+
+            Adw.PreferencesPage {
+                Adw.PreferencesGroup {
+                    description: _("Enter the URL of the server you want to connect to.\nSupported protocols are: RDP, SPICE, VNC.\n\n<b>Examples:</b>\n<i>rdp://full%20address=s:mypc:3389</i>\n<i>spice://server:15900</i>\n<i>spice://me@localhost:999?password=1234</i>\n<i>vnc://user@server?VncPassword=password123</i>");
+
+                    Adw.EntryRow url_entry {
+                        title: _("Connection URL");
+                    }
+                }
+            }
+        }
+
+        [bottom]
+        ActionBar {
+            [start]
+            Button {
+                label: _("Open File...");
+                clicked => $on_open_file() swapped;
+            }
+
+            [end]
+            Button {
+                label: _("Connect");
+                clicked => $on_connect() swapped;
+
+                styles [
+                    "suggested-action"
+                ]
+            }
+        }
+    }
+}

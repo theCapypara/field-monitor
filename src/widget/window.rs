@@ -26,6 +26,7 @@ use crate::widget::connection_list::{
 use crate::widget::connection_view::{
     FieldMonitorConnectionTabView, FieldMonitorNavbarConnectionView, FieldMonitorServerScreen,
 };
+use crate::widget::quick_connect_dialog::FieldMonitorQuickConnectDialog;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use async_std::task::sleep;
@@ -72,15 +73,11 @@ mod imp {
         #[template_child]
         pub navbar_connection_list: TemplateChild<FieldMonitorNavbarConnectionList>,
         #[template_child]
-        pub quick_connect_button: TemplateChild<gtk::ToggleButton>,
-        #[template_child]
         pub connection_list_navbar_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub welcome_button_box: TemplateChild<gtk::Box>,
         #[template_child]
         pub welcome_window_title: TemplateChild<adw::WindowTitle>,
-        #[property(get, set)]
-        pub quick_connect_visible: Cell<bool>,
         pub tab_title_notify_binding: RefCell<Option<(gtk::Widget, glib::SignalHandlerId)>>,
         pub force_close: Cell<bool>,
         pub inhibit_possible_sidebar_click: Cell<bool>,
@@ -216,22 +213,33 @@ impl FieldMonitorWindow {
             self,
             "fullscreened",
         ));
-        self.add_action(&gio::PropertyAction::new(
-            "quick-connect",
-            self,
-            "quick-connect-visible",
-        ));
-        self.add_action_entries([gio::ActionEntry::builder("show-sidebar")
-            .activate(glib::clone!(
-                #[weak(rename_to=slf)]
-                self,
-                move |_, _, _| {
-                    if slf.imp().layout_view.layout_name().as_deref() == Some("connection-view") {
-                        slf.imp().connection_view_split_view.set_show_sidebar(true);
+        self.add_action_entries([
+            gio::ActionEntry::builder("open-quick-connect")
+                .activate(glib::clone!(
+                    #[weak(rename_to=slf)]
+                    self,
+                    move |_, _, _| {
+                        let dialog = FieldMonitorQuickConnectDialog::new(
+                            &slf.application().and_downcast().unwrap(),
+                            &slf,
+                        );
+                        dialog.present(Some(&slf));
                     }
-                }
-            ))
-            .build()]);
+                ))
+                .build(),
+            gio::ActionEntry::builder("show-sidebar")
+                .activate(glib::clone!(
+                    #[weak(rename_to=slf)]
+                    self,
+                    move |_, _, _| {
+                        if slf.imp().layout_view.layout_name().as_deref() == Some("connection-view")
+                        {
+                            slf.imp().connection_view_split_view.set_show_sidebar(true);
+                        }
+                    }
+                ))
+                .build(),
+        ]);
     }
 
     pub fn toast(&self, msg: &str) {
@@ -439,27 +447,9 @@ impl FieldMonitorWindow {
                 self.unselect_connection_view();
                 imp.inner_list_stack
                     .set_visible_child_name("connection-list");
-                self.unselect_quick_connect();
                 self.maybe_disable_no_sidebar_mode();
             }
             self.maybe_clicked_item_on_sidebar();
-        }
-    }
-
-    #[template_callback]
-    fn on_quick_connect_visible_changed(&self) {
-        let imp = self.imp();
-        debug!("quick connect visible changed");
-
-        if self.quick_connect_visible() {
-            imp.inner_list_stack.set_visible_child_name("quick-connect");
-            self.unselect_connection_view();
-            self.unselect_connection_list();
-            self.maybe_clicked_item_on_sidebar();
-            self.maybe_disable_no_sidebar_mode();
-        } else if imp.inner_list_stack.visible_child_name().as_deref() == Some("quick-connect") {
-            // do not allow disabling if stack still visible
-            self.set_quick_connect_visible(true);
         }
     }
 
@@ -479,18 +469,12 @@ impl FieldMonitorWindow {
         if page.is_none() && connection_view_visible {
             debug!("switching to welcome view");
             self.unselect_connection_view();
-            if !self.quick_connect_visible() {
-                imp.inner_list_stack.set_visible_child_name("welcome");
-            }
+            imp.inner_list_stack.set_visible_child_name("welcome");
         } else if page.is_some() {
             if !connection_view_visible {
                 debug!("switching to connection view");
                 self.select_connection_view();
             }
-            if self.quick_connect_visible() {
-                imp.inner_list_stack.set_visible_child_name("welcome");
-            }
-            self.unselect_quick_connect();
             self.maybe_clicked_item_on_sidebar();
         }
     }
@@ -513,7 +497,6 @@ impl FieldMonitorWindow {
                     imp.inhibit_possible_sidebar_click.set(true);
                     slf.unselect_connection_view();
                     slf.unselect_connection_list();
-                    slf.unselect_quick_connect();
                     imp.inhibit_possible_sidebar_click.set(false);
                 }
             ));
@@ -587,7 +570,6 @@ impl FieldMonitorWindow {
 
     pub(crate) fn select_connection_view(&self) {
         self.unselect_connection_list();
-        self.unselect_quick_connect();
         self.imp()
             .inner_stack
             .set_visible_child_name("connection-view");
@@ -608,10 +590,6 @@ impl FieldMonitorWindow {
         self.imp().connection_list_stack.unselect_connection();
     }
 
-    fn unselect_quick_connect(&self) {
-        self.set_quick_connect_visible(false);
-    }
-
     fn maybe_clicked_item_on_sidebar(&self) {
         let imp = self.imp();
         if !imp.inhibit_possible_sidebar_click.get() {
@@ -622,10 +600,10 @@ impl FieldMonitorWindow {
 
     /// Disable the no-sidebar mode used for initial presentation if no connections are present.
     fn maybe_disable_no_sidebar_mode(&self) {
+        self.imp().welcome_button_box.set_visible(false);
+        self.imp().welcome_status_page.set_description(None);
         if self.imp().layout_view.layout_name().as_deref() == Some("no-sidebar") {
-            self.imp().welcome_button_box.set_visible(false);
             self.imp().layout_view.set_layout_name("main");
-            self.imp().welcome_status_page.set_description(None);
         }
     }
 }

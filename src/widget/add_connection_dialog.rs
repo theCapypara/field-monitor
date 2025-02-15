@@ -33,12 +33,11 @@ use libfieldmonitor::connection::{
 
 use crate::application::FieldMonitorApplication;
 use crate::widget::connection_list::DEFAULT_GENERIC_ICON;
+use std::sync::OnceLock;
+
+use glib::subclass::Signal;
 
 mod imp {
-    use std::sync::OnceLock;
-
-    use glib::subclass::Signal;
-
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
