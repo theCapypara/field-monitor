@@ -252,9 +252,8 @@ pub type Parameters = Box<dyn Any>;
 /// A future that executes whatever action was requested. These actions are defined by `actions`
 /// methods on `Connection` and `ServerConnection`. See also `ActionMap`, `ServerAction`.
 /// Parameters: static parameters, parent window, toast overlay
-/// Return value: True if the connection should be reloaded, false otherwise.
 pub type ActionExecuteFut<'a> =
-    dyn Fn(Parameters, Option<gtk::Window>, Option<adw::ToastOverlay>) -> LocalBoxFuture<'a, bool>;
+    dyn Fn(Parameters, Option<gtk::Window>, Option<adw::ToastOverlay>) -> LocalBoxFuture<'a, ()>;
 pub type ServerMap = IndexMap<Cow<'static, str>, Box<dyn ServerConnection>>;
 pub type ServerMapSend = IndexMap<Cow<'static, str>, Box<dyn ServerConnection + Send>>;
 
@@ -276,7 +275,7 @@ impl<'a> ServerAction<'a> {
         self,
         window: Option<&gtk::Window>,
         toast_overlay: Option<&adw::ToastOverlay>,
-    ) -> LocalBoxFuture<'a, bool> {
+    ) -> LocalBoxFuture<'a, ()> {
         (self.action_fn)(
             self.static_parameters,
             window.cloned(),
@@ -289,8 +288,8 @@ impl<'a> ServerAction<'a> {
 /// Not to be confused with GTK's Actionable, although the concepts and purpose are similar.
 pub trait Actionable {
     /// Get the list of supported action IDs and titles.
-    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
-        vec![]
+    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+        Box::pin(async { vec![] })
     }
 
     /// Get an action, if supported; see `actions`.
@@ -305,7 +304,7 @@ pub trait Actionable {
 /// It manages zero, one or multiple servers.
 pub trait Connection: Actionable {
     /// Metadata about the connection.
-    fn metadata(&self) -> ConnectionMetadata;
+    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata>;
 
     /// Returns the servers managed by this connection.
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>>;
@@ -315,10 +314,10 @@ pub trait Connection: Actionable {
 /// It may contain sub-servers.
 pub trait ServerConnection: Actionable {
     /// Metadata about the server.
-    fn metadata(&self) -> ServerMetadata;
+    fn metadata(&self) -> LocalBoxFuture<ServerMetadata>;
 
     /// List of supported adapters that can be used to connect to the server as tuples (tag, human-readable name)
-    fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)>;
+    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>>;
 
     /// Create an adapter of the given type, if supported (see `supported_adapters`).
     /// If not supported, may fail or panic (panic only if `supported_adapters` can never return

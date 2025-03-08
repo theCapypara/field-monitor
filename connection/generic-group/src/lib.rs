@@ -219,11 +219,13 @@ pub struct GenericConnection {
 impl Actionable for GenericConnection {}
 
 impl Connection for GenericConnection {
-    fn metadata(&self) -> ConnectionMetadata {
-        ConnectionMetadataBuilder::default()
-            .title(self.title.clone())
-            .build()
-            .unwrap()
+    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+        Box::pin(async {
+            ConnectionMetadataBuilder::default()
+                .title(self.title.clone())
+                .build()
+                .unwrap()
+        })
     }
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
@@ -265,38 +267,42 @@ struct GenericConnectionServer {
 impl Actionable for GenericConnectionServer {}
 
 impl ServerConnection for GenericConnectionServer {
-    fn metadata(&self) -> ServerMetadata {
-        let user_part = self
-            .config
-            .user(&self.key)
-            .map(|u| format!("{u}@"))
-            .unwrap_or_default();
-        ServerMetadataBuilder::default()
-            .title(self.config.title(&self.key).unwrap_or_default())
-            .subtitle(Some(format!(
-                "{}://{}{}:{}",
-                self.config
-                    .server_type(&self.key)
-                    .map(|s| s.protocol())
-                    .unwrap_or_default(),
-                user_part,
-                self.config.host(&self.key).unwrap_or_default(),
-                self.config
-                    .port(&self.key)
-                    .map(u32::from)
-                    .unwrap_or_default()
-            )))
-            .build()
-            .unwrap()
+    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+        Box::pin(async {
+            let user_part = self
+                .config
+                .user(&self.key)
+                .map(|u| format!("{u}@"))
+                .unwrap_or_default();
+            ServerMetadataBuilder::default()
+                .title(self.config.title(&self.key).unwrap_or_default())
+                .subtitle(Some(format!(
+                    "{}://{}{}:{}",
+                    self.config
+                        .server_type(&self.key)
+                        .map(|s| s.protocol())
+                        .unwrap_or_default(),
+                    user_part,
+                    self.config.host(&self.key).unwrap_or_default(),
+                    self.config
+                        .port(&self.key)
+                        .map(u32::from)
+                        .unwrap_or_default()
+                )))
+                .build()
+                .unwrap()
+        })
     }
 
-    fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
-        let server_type = self.config.server_type(&self.key);
-        if let Some(server_type) = server_type {
-            vec![(server_type.tag().into(), server_type.label())]
-        } else {
-            vec![]
-        }
+    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
+        Box::pin(async {
+            let server_type = self.config.server_type(&self.key);
+            if let Some(server_type) = server_type {
+                vec![(server_type.tag().into(), server_type.label())]
+            } else {
+                vec![]
+            }
+        })
     }
 
     fn create_adapter(

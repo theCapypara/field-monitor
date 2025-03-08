@@ -23,6 +23,7 @@ use crate::widget::navbar_row::FieldMonitorNavbarRow;
 use adw::gio;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
+use async_std::task::block_on;
 use libfieldmonitor::connection::*;
 use log::{debug, warn};
 use sorted_vec::SortedSet;
@@ -177,7 +178,8 @@ mod imp {
                         .downcast_ref::<FieldMonitorConnectionInfoPage>()
                         .and_then(FieldMonitorConnectionInfoPage::connection)
                         .as_ref()
-                        .map(ConnectionInstance::metadata);
+                        .map(ConnectionInstance::metadata)
+                        .map(block_on);
                     let icon_spec = conn_meta
                         .as_ref()
                         .map(|m| m.icon.clone())

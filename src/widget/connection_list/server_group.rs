@@ -85,7 +85,8 @@ impl FieldMonitorServerGroup {
             glib::Object::builder().property("application", app).build();
 
         if let Some((title_server, full_path)) = title_server {
-            let metadata = title_server.metadata();
+            // TODO: Reload metadata in background
+            let metadata = title_server.metadata().await;
             slf.set_server_title(metadata.title);
             if let Some(subtitle) = metadata.subtitle {
                 slf.set_server_subtitle(subtitle);

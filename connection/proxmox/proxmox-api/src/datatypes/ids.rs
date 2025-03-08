@@ -23,7 +23,7 @@ use std::str::FromStr;
 use log::warn;
 use serde::Deserialize;
 
-#[derive(Eq, PartialEq, Deserialize, Debug, Clone)]
+#[derive(Eq, PartialEq, Deserialize, Debug, Clone, Hash)]
 #[serde(transparent)]
 pub struct NodeId(String);
 

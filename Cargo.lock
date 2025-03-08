@@ -1041,6 +1041,7 @@ dependencies = [
  "futures",
  "gettext-rs",
  "gtk4",
+ "indexmap 2.7.0",
  "libadwaita",
  "libfieldmonitor",
  "log",
@@ -2369,6 +2370,7 @@ name = "libfieldmonitor"
 version = "0.0.0"
 dependencies = [
  "anyhow",
+ "async-std",
  "derive_builder",
  "field-monitor-vte-driver-lib",
  "futures",

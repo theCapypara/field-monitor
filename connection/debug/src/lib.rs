@@ -1,3 +1,20 @@
+/* Copyright 2024 Marco Köpcke
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::convert::Infallible;
@@ -195,23 +212,25 @@ pub struct DebugConnection {
 }
 
 impl Actionable for DebugConnection {
-    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
-        match self.config.mode() {
-            DebugMode::Complex => {
-                vec![
-                    (
-                        Cow::Borrowed("dialog_persisted"),
-                        Cow::Borrowed("Show dialog: Persisted value"),
-                    ),
-                    (
-                        Cow::Borrowed("dialog_session"),
-                        Cow::Borrowed("Show dialog: Session value"),
-                    ),
-                    (Cow::Borrowed("bazbaz"), Cow::Borrowed("Show toast")),
-                ]
+    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+        Box::pin(async {
+            match self.config.mode() {
+                DebugMode::Complex => {
+                    vec![
+                        (
+                            Cow::Borrowed("dialog_persisted"),
+                            Cow::Borrowed("Show dialog: Persisted value"),
+                        ),
+                        (
+                            Cow::Borrowed("dialog_session"),
+                            Cow::Borrowed("Show dialog: Session value"),
+                        ),
+                        (Cow::Borrowed("bazbaz"), Cow::Borrowed("Show toast")),
+                    ]
+                }
+                _ => vec![],
             }
-            _ => vec![],
-        }
+        })
     }
 
     fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
@@ -225,7 +244,6 @@ impl Actionable for DebugConnection {
                             .body(&*persisted_v)
                             .build()
                             .present(window.as_ref());
-                        true
                     })
                 }),
             )),
@@ -239,7 +257,6 @@ impl Actionable for DebugConnection {
                             .body(&*session_v)
                             .build()
                             .present(window.as_ref());
-                        true
                     })
                 }),
             )),
@@ -253,7 +270,6 @@ impl Actionable for DebugConnection {
                         if let Some(toasts) = toasts {
                             toasts.add_toast(toast);
                         }
-                        false
                     })
                 }),
             )),
@@ -263,13 +279,15 @@ impl Actionable for DebugConnection {
 }
 
 impl Connection for DebugConnection {
-    fn metadata(&self) -> ConnectionMetadata {
-        ConnectionMetadataBuilder::default()
-            .title(self.title.clone())
-            .subtitle(self.subtitle.clone())
-            .icon(IconSpec::Named(ICON.into()))
-            .build()
-            .unwrap()
+    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+        Box::pin(async {
+            ConnectionMetadataBuilder::default()
+                .title(self.title.clone())
+                .subtitle(self.subtitle.clone())
+                .icon(IconSpec::Named(ICON.into()))
+                .build()
+                .unwrap()
+        })
     }
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
@@ -487,11 +505,13 @@ impl DebugConnectionServer {
 }
 
 impl Actionable for DebugConnectionServer {
-    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
-        vec![
-            (Cow::Borrowed("foobar"), Cow::Borrowed("Show dialog")),
-            (Cow::Borrowed("bazbaz"), Cow::Borrowed("Show toast")),
-        ]
+    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+        Box::pin(async {
+            vec![
+                (Cow::Borrowed("foobar"), Cow::Borrowed("Show dialog")),
+                (Cow::Borrowed("bazbaz"), Cow::Borrowed("Show toast")),
+            ]
+        })
     }
 
     fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
@@ -504,7 +524,6 @@ impl Actionable for DebugConnectionServer {
                             .body("Testing! This is from a server.")
                             .build()
                             .present(window.as_ref());
-                        true
                     })
                 }),
             )),
@@ -520,7 +539,6 @@ impl Actionable for DebugConnectionServer {
                         if let Some(toasts) = toasts {
                             toasts.add_toast(toast);
                         }
-                        false
                     })
                 }),
             )),
@@ -530,31 +548,33 @@ impl Actionable for DebugConnectionServer {
 }
 
 impl ServerConnection for DebugConnectionServer {
-    fn metadata(&self) -> ServerMetadata {
-        self.metadata.clone()
+    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+        Box::pin(async { self.metadata.clone() })
     }
 
-    fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
-        if !self.has_adapters {
-            return vec![];
-        }
-        let mut adapters = Vec::with_capacity(4);
-        if self.config.vnc_adapter_enable() {
-            adapters.push((VncAdapter::TAG.into(), VncAdapter::label()));
-        }
-        if self.config.rdp_adapter_enable() {
-            adapters.push((RdpAdapter::TAG.into(), RdpAdapter::label()));
-        }
-        if self.config.spice_adapter_enable() {
-            adapters.push((SpiceAdapter::TAG.into(), SpiceAdapter::label()));
-        }
-        if self.config.vte_adapter_enable() {
-            adapters.push((DebugVteAdapter::TAG.into(), "VTE".into()));
-        }
-        if self.config.custom_adapter_enable() {
-            adapters.push((DebugArbitraryAdapter::TAG.into(), "Arbitrary Widget".into()));
-        }
-        adapters
+    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
+        Box::pin(async {
+            if !self.has_adapters {
+                return vec![];
+            }
+            let mut adapters = Vec::with_capacity(4);
+            if self.config.vnc_adapter_enable() {
+                adapters.push((VncAdapter::TAG.into(), VncAdapter::label()));
+            }
+            if self.config.rdp_adapter_enable() {
+                adapters.push((RdpAdapter::TAG.into(), RdpAdapter::label()));
+            }
+            if self.config.spice_adapter_enable() {
+                adapters.push((SpiceAdapter::TAG.into(), SpiceAdapter::label()));
+            }
+            if self.config.vte_adapter_enable() {
+                adapters.push((DebugVteAdapter::TAG.into(), "VTE".into()));
+            }
+            if self.config.custom_adapter_enable() {
+                adapters.push((DebugArbitraryAdapter::TAG.into(), "Arbitrary Widget".into()));
+            }
+            adapters
+        })
     }
 
     fn create_adapter(

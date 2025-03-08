@@ -51,7 +51,8 @@ impl FieldMonitorServerRow {
         full_path: &[String],
         server: Box<dyn ServerConnection>,
     ) -> ConnectionResult<Self> {
-        let metadata = server.metadata();
+        // TODO: Reload metadata in background
+        let metadata = server.metadata().await;
         let slf: Self = glib::Object::builder()
             .property("title", &metadata.title)
             .property("subtitle", &metadata.subtitle)

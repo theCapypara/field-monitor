@@ -28,6 +28,7 @@ pub use secrets::{ManagesSecrets, NullSecretsManager};
 mod macros;
 pub mod adapter;
 pub mod busy;
+pub mod cache;
 pub mod config;
 pub mod connection;
 pub mod gtk;

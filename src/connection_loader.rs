@@ -257,19 +257,19 @@ impl ConnectionLoader {
     }
 
     /// Gets the name of the server. Panics if this is not for a server.
-    pub fn server_title(&self) -> String {
+    pub async fn server_title(&self) -> String {
         match &self.entity {
-            Entity::Server(server) => server.metadata().title,
+            Entity::Server(server) => server.metadata().await.title,
             _ => panic!("ConnectionLoader is not for server - but server named asked"),
         }
     }
 
     /// Gets the name of the connection.
-    pub fn connection_title(&self) -> String {
-        self.connection.metadata().title
+    pub async fn connection_title(&self) -> String {
+        self.connection.metadata().await.title
     }
 
-    pub fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
+    pub fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
         match &self.entity {
             Entity::Connection(e) => e.actions(),
             Entity::Server(e) => e.actions(),

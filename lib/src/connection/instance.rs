@@ -109,7 +109,7 @@ impl ConnectionInstance {
         let provider = slf_imp.provider.borrow().as_ref().expect(NOT_INIT).clone();
         match provider.load_connection(value.session().clone()).await {
             Ok(implementation) => {
-                self.set_title(implementation.metadata().title.as_str());
+                self.set_title(implementation.metadata().await.title.as_str());
                 slf_imp.implementation.replace(Some(implementation));
             }
             Err(err) => {
@@ -141,13 +141,17 @@ impl ConnectionInstance {
     }
 }
 
+// TODO: This SHOULD be okay, since we will never re-enter these functions during loading servers.
+#[allow(clippy::await_holding_refcell_ref)]
 impl Actionable for ConnectionInstance {
-    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
-        let brw = self.imp().implementation.borrow();
-        match brw.as_ref() {
-            None => vec![],
-            Some(brw) => brw.actions(),
-        }
+    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+        Box::pin(async move {
+            let brw = self.imp().implementation.borrow();
+            match brw.as_ref() {
+                None => vec![],
+                Some(brw) => brw.actions().await,
+            }
+        })
     }
 
     fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
@@ -156,21 +160,23 @@ impl Actionable for ConnectionInstance {
     }
 }
 
+// TODO: This SHOULD be okay, since we will never re-enter these functions during loading servers.
+#[allow(clippy::await_holding_refcell_ref)]
 impl Connection for ConnectionInstance {
-    fn metadata(&self) -> ConnectionMetadata {
-        let brw = self.imp().implementation.borrow();
-        match brw.as_ref() {
-            Some(implementation) => implementation.metadata(),
-            None => ConnectionMetadataBuilder::default()
-                .title(self.title())
-                .icon(IconSpec::Named("dialog-error-symbolic".into()))
-                .build()
-                .unwrap(),
-        }
+    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+        Box::pin(async move {
+            let brw = self.imp().implementation.borrow();
+            match brw.as_ref() {
+                Some(implementation) => implementation.metadata().await,
+                None => ConnectionMetadataBuilder::default()
+                    .title(self.title())
+                    .icon(IconSpec::Named("dialog-error-symbolic".into()))
+                    .build()
+                    .unwrap(),
+            }
+        })
     }
 
-    // TODO: This SHOULD be okay, since we will never re-enter this function during loading servers.
-    #[allow(clippy::await_holding_refcell_ref)]
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move {
             let brw = self.imp().implementation.borrow();

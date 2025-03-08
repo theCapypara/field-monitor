@@ -16,19 +16,18 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::borrow::Cow;
+use std::collections::HashMap;
 use std::future::Future;
 use std::mem;
 use std::num::NonZeroU32;
 use std::str::FromStr;
 use std::sync::Arc;
-use std::time::Duration;
 
 use crate::credential_preferences::ProxmoxCredentialPreferences;
 use crate::preferences::{ProxmoxConfiguration, ProxmoxPreferences};
 use crate::tokiort::{run_on_tokio, tkruntime};
 use adw::prelude::Cast;
 use anyhow::anyhow;
-use async_std::task::sleep;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use gtk::Widget;
@@ -37,12 +36,13 @@ use libfieldmonitor::adapter::spice::{SpiceAdapter, SpiceSessionConfigBuilder};
 use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::adapter::vte_pty::VtePtyAdapter;
+use libfieldmonitor::cache::{Cached, LoadCacheObject};
 use libfieldmonitor::connection::*;
 use libfieldmonitor::libexec_path;
 use log::{error, warn};
 use proxmox_api::{
-    NodeId, NodeStatus, ProxmoxApiClient, Spiceproxy, Termproxy, VmConsoleProxyType, VmId,
-    VmStatus, VmType, Vncproxy,
+    LxcVm, Node, NodeId, NodeStatus, ProxmoxApiClient, QemuVm, Spiceproxy, Termproxy,
+    VmConsoleProxyType, VmId, VmStatus, VmType, Vncproxy,
 };
 use secure_string::SecureString;
 
@@ -160,7 +160,7 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
 struct ProxmoxConnection {
     connection_id: String,
     title: String,
-    client: Arc<ProxmoxApiClient>,
+    info_fetcher: Arc<InfoFetcher>,
 }
 
 impl ProxmoxConnection {
@@ -221,7 +221,7 @@ impl ProxmoxConnection {
         Ok(Self {
             connection_id: config.id().to_string(),
             title: config.title().unwrap_or_default().to_string(),
-            client: Arc::new(client),
+            info_fetcher: Arc::new(InfoFetcher::new(Arc::new(client))),
         })
     }
 }
@@ -229,29 +229,30 @@ impl ProxmoxConnection {
 impl Actionable for ProxmoxConnection {}
 
 impl Connection for ProxmoxConnection {
-    fn metadata(&self) -> ConnectionMetadata {
-        ConnectionMetadataBuilder::default()
-            .title(self.title.clone())
-            .icon(IconSpec::Named("connection-proxmox-symbolic".into()))
-            .build()
-            .unwrap()
+    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+        Box::pin(async move {
+            ConnectionMetadataBuilder::default()
+                .title(self.title.clone())
+                .icon(IconSpec::Named("connection-proxmox-symbolic".into()))
+                .build()
+                .unwrap()
+        })
     }
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move {
             let connection_id = self.connection_id.clone();
-            let client = self.client.clone();
+            let info_fetcher = self.info_fetcher.clone();
             let map = run_on_tokio(async move {
                 let mut server_map = ServerMapSend::default();
 
-                for node in client.nodes().await.map_err(map_proxmox_error)? {
+                for node in info_fetcher.nodes().await? {
                     server_map.insert(
                         node.node.to_string().into(),
                         Box::new(ProxmoxNode {
-                            client: client.clone(),
+                            info_fetcher: info_fetcher.clone(),
                             connection_id: connection_id.clone(),
-                            id: node.node,
-                            status: NodeStatus::Online,
+                            id: node.node.clone(),
                         }),
                     );
                 }
@@ -269,22 +270,33 @@ impl Connection for ProxmoxConnection {
 }
 
 struct ProxmoxNode {
-    client: Arc<ProxmoxApiClient>,
+    info_fetcher: Arc<InfoFetcher>,
     connection_id: String,
     id: NodeId,
-    status: NodeStatus,
+}
+
+impl ProxmoxNode {
+    async fn status(&self) -> NodeStatus {
+        let info_fetcher = self.info_fetcher.clone();
+        let id = self.id.clone();
+        run_on_tokio(async move { Ok(info_fetcher.node_status(&id).await) })
+            .await
+            .unwrap()
+    }
 }
 
 impl Actionable for ProxmoxNode {
-    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
-        if self.status != NodeStatus::Offline {
-            vec![
-                ("nodereboot".into(), gettext("Reboot").into()),
-                ("nodeshutdown".into(), gettext("Shutdown").into()),
-            ]
-        } else {
-            vec![]
-        }
+    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+        Box::pin(async move {
+            if self.status().await != NodeStatus::Offline {
+                vec![
+                    ("nodereboot".into(), gettext("Reboot").into()),
+                    ("nodeshutdown".into(), gettext("Shutdown").into()),
+                ]
+            } else {
+                vec![]
+            }
+        })
     }
 
     fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
@@ -299,7 +311,7 @@ impl Actionable for ProxmoxNode {
 impl ProxmoxNode {
     fn params(&self) -> ExecParams {
         ExecParams {
-            client: self.client.clone(),
+            client: self.info_fetcher.client.clone(),
             node_id: Some(self.id.clone()),
             vm_id: None,
             vm_type: None,
@@ -313,7 +325,7 @@ impl ProxmoxNode {
                 Box::pin(async move {
                     let params = params.downcast::<ExecParams>().unwrap();
 
-                    let (success, force_reload) = exec_cmd(
+                    exec_cmd(
                         params,
                         |params| async move {
                             params.client.node_reboot(&params.node_id.unwrap()).await
@@ -326,7 +338,6 @@ impl ProxmoxNode {
                         toov.as_ref(),
                     )
                     .await;
-                    success || force_reload
                 })
             }),
         )
@@ -339,7 +350,7 @@ impl ProxmoxNode {
                 Box::pin(async move {
                     let params = params.downcast::<ExecParams>().unwrap();
 
-                    let (success, force_reload) = exec_cmd(
+                    exec_cmd(
                         params,
                         |params| async move {
                             params.client.node_shutdown(&params.node_id.unwrap()).await
@@ -352,7 +363,6 @@ impl ProxmoxNode {
                         toov.as_ref(),
                     )
                     .await;
-                    success || force_reload
                 })
             }),
         )
@@ -360,30 +370,34 @@ impl ProxmoxNode {
 }
 
 impl ServerConnection for ProxmoxNode {
-    fn metadata(&self) -> ServerMetadata {
-        let is_online = match self.status {
-            NodeStatus::Online => Some(true),
-            NodeStatus::Offline => Some(false),
-            NodeStatus::Unknown => None,
-        };
-        ServerMetadataBuilder::default()
-            .title(self.id.to_string())
-            .icon(IconSpec::Named("building-symbolic".into()))
-            .is_online(is_online)
-            .build()
-            .unwrap()
+    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+        Box::pin(async move {
+            let is_online = match self.status().await {
+                NodeStatus::Online => Some(true),
+                NodeStatus::Offline => Some(false),
+                NodeStatus::Unknown => None,
+            };
+            ServerMetadataBuilder::default()
+                .title(self.id.to_string())
+                .icon(IconSpec::Named("building-symbolic".into()))
+                .is_online(is_online)
+                .build()
+                .unwrap()
+        })
     }
 
-    fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
-        if self.status == NodeStatus::Offline {
-            vec![]
-        } else {
-            vec![
-                (SpiceAdapter::TAG.into(), gettext("SPICE").into()),
-                (VncAdapter::TAG.into(), gettext("VNC").into()),
-                (VtePtyAdapter::TAG.into(), gettext("Console").into()),
-            ]
-        }
+    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
+        Box::pin(async move {
+            if self.status().await == NodeStatus::Offline {
+                vec![]
+            } else {
+                vec![
+                    (SpiceAdapter::TAG.into(), gettext("SPICE").into()),
+                    (VncAdapter::TAG.into(), gettext("VNC").into()),
+                    (VtePtyAdapter::TAG.into(), gettext("Console").into()),
+                ]
+            }
+        })
     }
 
     fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
@@ -391,50 +405,44 @@ impl ServerConnection for ProxmoxNode {
             tag,
             &self.connection_id,
             self.id.as_ref(),
-            self.client.clone(),
+            self.info_fetcher.client.clone(),
             ProxmoxEntity::Node(self.id.clone()),
         )
     }
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move {
-            let client = self.client.clone();
+            let info_fetcher = self.info_fetcher.clone();
             let connection_id = self.connection_id.clone();
             let node_id = self.id.clone();
 
             let map = run_on_tokio(async move {
                 let mut server_map = ServerMapSend::default();
 
-                for vm in client.node_lxc(&node_id).await.map_err(map_proxmox_error)? {
+                for vm in info_fetcher.lxcs(&node_id).await? {
                     server_map.insert(
                         vm.vmid.to_string().into(),
                         Box::new(ProxmoxVm {
-                            client: client.clone(),
+                            info_fetcher: info_fetcher.clone(),
                             connection_id: connection_id.clone(),
                             node_id: node_id.clone(),
-                            vm_id: vm.vmid,
+                            vm_id: vm.vmid.clone(),
                             vm_type: VmType::Lxc,
                             name: vm.name,
-                            status: vm.status,
                         }),
                     );
                 }
 
-                for vm in client
-                    .node_qemu(&node_id, false)
-                    .await
-                    .map_err(map_proxmox_error)?
-                {
+                for vm in info_fetcher.qemus(&node_id).await? {
                     server_map.insert(
                         vm.vmid.to_string().into(),
                         Box::new(ProxmoxVm {
-                            client: client.clone(),
+                            info_fetcher: info_fetcher.clone(),
                             connection_id: connection_id.clone(),
                             node_id: node_id.clone(),
-                            vm_id: vm.vmid,
+                            vm_id: vm.vmid.clone(),
                             vm_type: VmType::Qemu,
                             name: vm.name,
-                            status: vm.status,
                         }),
                     );
                 }
@@ -452,34 +460,47 @@ impl ServerConnection for ProxmoxNode {
 }
 
 struct ProxmoxVm {
-    client: Arc<ProxmoxApiClient>,
+    info_fetcher: Arc<InfoFetcher>,
     connection_id: String,
     node_id: NodeId,
     vm_id: VmId,
     vm_type: VmType,
     name: Option<String>,
-    status: VmStatus,
+}
+
+impl ProxmoxVm {
+    async fn status(&self) -> VmStatus {
+        let info_fetcher = self.info_fetcher.clone();
+        let node_id = self.node_id.clone();
+        let vm_type = self.vm_type;
+        let vm_id = self.vm_id.clone();
+        run_on_tokio(async move { Ok(info_fetcher.vm_status(&node_id, vm_type, &vm_id).await) })
+            .await
+            .unwrap()
+    }
 }
 
 impl Actionable for ProxmoxVm {
-    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
-        if self.status == VmStatus::Running {
-            match self.vm_type {
-                VmType::Lxc => vec![
-                    ("vmreboot".into(), gettext("Reboot").into()),
-                    ("vmshutdown".into(), gettext("Shutdown").into()),
-                    ("vmstop".into(), gettext("Force Poweroff").into()),
-                ],
-                VmType::Qemu => vec![
-                    ("vmreboot".into(), gettext("Reboot").into()),
-                    ("vmshutdown".into(), gettext("Shutdown").into()),
-                    ("vmreset".into(), gettext("Force Reset").into()),
-                    ("vmstop".into(), gettext("Force Poweroff").into()),
-                ],
+    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+        Box::pin(async move {
+            if self.status().await == VmStatus::Running {
+                match self.vm_type {
+                    VmType::Lxc => vec![
+                        ("vmreboot".into(), gettext("Reboot").into()),
+                        ("vmshutdown".into(), gettext("Shutdown").into()),
+                        ("vmstop".into(), gettext("Force Poweroff").into()),
+                    ],
+                    VmType::Qemu => vec![
+                        ("vmreboot".into(), gettext("Reboot").into()),
+                        ("vmshutdown".into(), gettext("Shutdown").into()),
+                        ("vmreset".into(), gettext("Force Reset").into()),
+                        ("vmstop".into(), gettext("Force Poweroff").into()),
+                    ],
+                }
+            } else {
+                vec![("vmstart".into(), gettext("Start / Resume").into())]
             }
-        } else {
-            vec![("vmstart".into(), gettext("Start / Resume").into())]
-        }
+        })
     }
 
     fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
@@ -497,7 +518,7 @@ impl Actionable for ProxmoxVm {
 impl ProxmoxVm {
     fn params(&self) -> ExecParams {
         ExecParams {
-            client: self.client.clone(),
+            client: self.info_fetcher.client.clone(),
             node_id: Some(self.node_id.clone()),
             vm_id: Some(self.vm_id.clone()),
             vm_type: Some(self.vm_type),
@@ -511,7 +532,7 @@ impl ProxmoxVm {
                 Box::pin(async move {
                     let params = params.downcast::<ExecParams>().unwrap();
 
-                    let (success, force_reload) = exec_cmd(
+                    exec_cmd(
                         params,
                         |params| async move {
                             params
@@ -532,7 +553,6 @@ impl ProxmoxVm {
                         toov.as_ref(),
                     )
                     .await;
-                    success || force_reload
                 })
             }),
         )
@@ -545,7 +565,7 @@ impl ProxmoxVm {
                 Box::pin(async move {
                     let params = params.downcast::<ExecParams>().unwrap();
 
-                    let (success, force_reload) = exec_cmd(
+                    exec_cmd(
                         params,
                         |params| async move {
                             params
@@ -566,7 +586,6 @@ impl ProxmoxVm {
                         toov.as_ref(),
                     )
                     .await;
-                    success || force_reload
                 })
             }),
         )
@@ -579,7 +598,7 @@ impl ProxmoxVm {
                 Box::pin(async move {
                     let params = params.downcast::<ExecParams>().unwrap();
 
-                    let (success, force_reload) = exec_cmd(
+                    exec_cmd(
                         params,
                         |params| async move {
                             params
@@ -599,7 +618,6 @@ impl ProxmoxVm {
                         toov.as_ref(),
                     )
                     .await;
-                    success || force_reload
                 })
             }),
         )
@@ -612,7 +630,7 @@ impl ProxmoxVm {
                 Box::pin(async move {
                     let params = params.downcast::<ExecParams>().unwrap();
 
-                    let (success, force_reload) = exec_cmd(
+                    exec_cmd(
                         params,
                         |params| async move {
                             params
@@ -633,7 +651,6 @@ impl ProxmoxVm {
                         toov.as_ref(),
                     )
                     .await;
-                    success || force_reload
                 })
             }),
         )
@@ -646,7 +663,7 @@ impl ProxmoxVm {
                 Box::pin(async move {
                     let params = params.downcast::<ExecParams>().unwrap();
 
-                    let (success, force_reload) = exec_cmd(
+                    exec_cmd(
                         params,
                         |params| async move {
                             params
@@ -667,7 +684,6 @@ impl ProxmoxVm {
                         toov.as_ref(),
                     )
                     .await;
-                    success || force_reload
                 })
             }),
         )
@@ -675,32 +691,34 @@ impl ProxmoxVm {
 }
 
 impl ServerConnection for ProxmoxVm {
-    fn metadata(&self) -> ServerMetadata {
-        let is_online = match self.status {
-            VmStatus::Running => Some(true),
-            VmStatus::Stopped => Some(false),
-            VmStatus::Unknown => None,
-        };
+    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+        Box::pin(async move {
+            let is_online = match self.status().await {
+                VmStatus::Running => Some(true),
+                VmStatus::Stopped => Some(false),
+                VmStatus::Unknown => None,
+            };
 
-        let title = match &self.name {
-            None => self.vm_id.to_string(),
-            Some(name) => format!("{} ({})", self.vm_id, name),
-        };
+            let title = match &self.name {
+                None => self.vm_id.to_string(),
+                Some(name) => format!("{} ({})", self.vm_id, name),
+            };
 
-        let icon = match self.vm_type {
-            VmType::Lxc => IconSpec::Named("container-symbolic".into()),
-            VmType::Qemu => IconSpec::Default,
-        };
+            let icon = match self.vm_type {
+                VmType::Lxc => IconSpec::Named("container-symbolic".into()),
+                VmType::Qemu => IconSpec::Default,
+            };
 
-        ServerMetadataBuilder::default()
-            .title(title)
-            .icon(icon)
-            .is_online(is_online)
-            .build()
-            .unwrap()
+            ServerMetadataBuilder::default()
+                .title(title)
+                .icon(icon)
+                .is_online(is_online)
+                .build()
+                .unwrap()
+        })
     }
 
-    fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
+    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
         macro_rules! SPICE {
             () => {
                 (SpiceAdapter::TAG.into(), gettext("SPICE").into())
@@ -717,35 +735,42 @@ impl ServerConnection for ProxmoxVm {
             };
         }
 
-        if self.status != VmStatus::Running {
-            vec![]
-        } else {
-            // TODO: Async?
-            let res: proxmox_api::Result<Vec<_>> = tkruntime().block_on(async move {
-                let mut adapters: Vec<(Cow<str>, Cow<str>)> = Vec::with_capacity(3);
-                let supported = self
-                    .client
-                    .vm_available_console_proxies(&self.node_id, &self.vm_id, Some(self.vm_type))
-                    .await?;
+        Box::pin(async move {
+            if self.status().await != VmStatus::Running {
+                vec![]
+            } else {
+                // TODO: Async?
+                let res: proxmox_api::Result<Vec<_>> = tkruntime().block_on(async move {
+                    let mut adapters: Vec<(Cow<str>, Cow<str>)> = Vec::with_capacity(3);
+                    let supported = self
+                        .info_fetcher
+                        .client
+                        .vm_available_console_proxies(
+                            &self.node_id,
+                            &self.vm_id,
+                            Some(self.vm_type),
+                        )
+                        .await?;
 
-                if supported.as_ref().contains(&VmConsoleProxyType::Spice) {
-                    adapters.push(SPICE!());
-                }
-                if supported.as_ref().contains(&VmConsoleProxyType::Vnc) {
-                    adapters.push(VNC!());
-                }
-                if supported.as_ref().contains(&VmConsoleProxyType::Term) {
-                    adapters.push(TERM!());
-                }
+                    if supported.as_ref().contains(&VmConsoleProxyType::Spice) {
+                        adapters.push(SPICE!());
+                    }
+                    if supported.as_ref().contains(&VmConsoleProxyType::Vnc) {
+                        adapters.push(VNC!());
+                    }
+                    if supported.as_ref().contains(&VmConsoleProxyType::Term) {
+                        adapters.push(TERM!());
+                    }
 
-                Ok(adapters)
-            });
+                    Ok(adapters)
+                });
 
-            res.unwrap_or_else(|err| {
-                error!("Failed to load available connectors for a VM: {err:?}. Assume all.");
-                vec![SPICE!(), VNC!(), TERM!()]
-            })
-        }
+                res.unwrap_or_else(|err| {
+                    error!("Failed to load available connectors for a VM: {err:?}. Assume all.");
+                    vec![SPICE!(), VNC!(), TERM!()]
+                })
+            }
+        })
     }
 
     fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
@@ -753,7 +778,7 @@ impl ServerConnection for ProxmoxVm {
             tag,
             &self.connection_id,
             &format!("{}/{}", self.node_id, self.vm_id),
-            self.client.clone(),
+            self.info_fetcher.client.clone(),
             ProxmoxEntity::Vm(self.vm_type, self.node_id.clone(), self.vm_id.clone()),
         )
     }
@@ -763,6 +788,13 @@ fn map_proxmox_error(error: proxmox_api::Error) -> ConnectionError {
     match error {
         proxmox_api::Error::AuthFailed => ConnectionError::AuthFailed(None, error.into()),
         _ => ConnectionError::General(None, error.into()),
+    }
+}
+
+fn map_proxmox_error_ref(error: &proxmox_api::Error) -> ConnectionError {
+    match error {
+        proxmox_api::Error::AuthFailed => ConnectionError::AuthFailed(None, anyhow!("{}", error)),
+        _ => ConnectionError::General(None, anyhow!("{}", error)),
     }
 }
 
@@ -779,40 +811,24 @@ async fn exec_cmd<F, Fut, S>(
     success_msg: impl (Fn() -> String) + Send + 'static,
     err_msg: impl (Fn(proxmox_api::Error) -> String) + Send + 'static,
     toov: Option<&adw::ToastOverlay>,
-) -> (bool, bool)
-where
+) where
     F: (Fn(Box<ExecParams>) -> Fut) + Send + 'static,
     Fut: Future<Output = Result<S, proxmox_api::Error>> + Send + 'static,
     S: Send,
 {
-    let (success, should_reload, text) = run_on_tokio(async move {
+    let text = run_on_tokio(async move {
         let result = cmd(params).await;
-        Ok((
-            result.is_ok(),
-            false,
-            result.map(|_| success_msg()).unwrap_or_else(err_msg),
-        ))
+        Ok(result.map(|_| success_msg()).unwrap_or_else(err_msg))
     })
     .await
     .unwrap_or_else(|e| {
         error!("Internal error running action: {e}");
-        (
-            false,
-            true,
-            gettext("Internal error while trying to execute command."),
-        )
+        gettext("Internal error while trying to execute command.")
     });
-
-    if success {
-        // short sleep to maybe possibly give the chance to already have processed the task.
-        // TODO: We could actually wait for the task to finish.
-        sleep(Duration::from_millis(750)).await;
-    }
 
     if let Some(toov) = toov {
         toov.add_toast(adw::Toast::builder().title(&text).timeout(5).build());
     }
-    (success, should_reload)
 }
 
 enum ProxmoxEntity {
@@ -957,4 +973,142 @@ fn create_proxmox_adapter<'a>(
 
         Ok(adapter)
     }))
+}
+
+struct InfoFetcher {
+    client: Arc<ProxmoxApiClient>,
+    nodes: Cached<NodeCache>,
+    lxc_vms: tokio::sync::Mutex<HashMap<NodeId, Cached<LxcVmsCache>>>,
+    qemu_vms: tokio::sync::Mutex<HashMap<NodeId, Cached<QemuVmsCache>>>,
+}
+
+#[allow(clippy::useless_asref)] // This is a false positive
+impl InfoFetcher {
+    fn new(client: Arc<ProxmoxApiClient>) -> Self {
+        Self {
+            nodes: Cached::new(client.clone()),
+            lxc_vms: Default::default(),
+            qemu_vms: Default::default(),
+            client,
+        }
+    }
+
+    async fn nodes(&self) -> ConnectionResult<Vec<Node>> {
+        self.nodes
+            .get()
+            .await
+            .0
+            .as_ref()
+            .map(Clone::clone)
+            .map_err(map_proxmox_error_ref)
+    }
+
+    async fn lxcs(&self, node_id: &NodeId) -> ConnectionResult<Vec<LxcVm>> {
+        let mut lock = self.lxc_vms.lock().await;
+        let cache = lock
+            .entry(node_id.clone())
+            .or_insert_with(|| Cached::new((self.client.clone(), node_id.clone())));
+        let v = cache
+            .get()
+            .await
+            .0
+            .as_ref()
+            .map(Clone::clone)
+            .map_err(map_proxmox_error_ref);
+        v
+    }
+
+    async fn qemus(&self, node_id: &NodeId) -> ConnectionResult<Vec<QemuVm>> {
+        let mut lock = self.qemu_vms.lock().await;
+        let cache = lock
+            .entry(node_id.clone())
+            .or_insert_with(|| Cached::new((self.client.clone(), node_id.clone())));
+        let v = cache
+            .get()
+            .await
+            .0
+            .as_ref()
+            .map(Clone::clone)
+            .map_err(map_proxmox_error_ref);
+        v
+    }
+
+    async fn node_status(&self, node_id: &NodeId) -> NodeStatus {
+        let Ok(nodes) = &self.nodes.get().await.0 else {
+            return NodeStatus::Unknown;
+        };
+        for node in nodes {
+            if &node.node == node_id {
+                return node.status;
+            }
+        }
+        NodeStatus::Unknown
+    }
+
+    async fn vm_status(&self, node_id: &NodeId, vm_type: VmType, vm_id: &VmId) -> VmStatus {
+        match vm_type {
+            VmType::Lxc => {
+                let Ok(vms) = self.lxcs(node_id).await else {
+                    return VmStatus::Unknown;
+                };
+                for vm in vms {
+                    if &vm.vmid == vm_id {
+                        return vm.status;
+                    }
+                }
+            }
+            VmType::Qemu => {
+                let Ok(vms) = self.qemus(node_id).await else {
+                    return VmStatus::Unknown;
+                };
+                for vm in vms {
+                    if &vm.vmid == vm_id {
+                        return vm.status;
+                    }
+                }
+            }
+        }
+        VmStatus::Unknown
+    }
+}
+
+struct NodeCache(proxmox_api::Result<Vec<Node>>);
+
+impl LoadCacheObject for NodeCache {
+    type Params = Arc<ProxmoxApiClient>;
+
+    async fn construct(_previous_value: Option<Self>, params: &Self::Params) -> Self
+    where
+        Self: Sized,
+    {
+        Self(params.nodes().await)
+    }
+}
+
+struct LxcVmsCache(proxmox_api::Result<Vec<LxcVm>>);
+
+impl LoadCacheObject for LxcVmsCache {
+    type Params = (Arc<ProxmoxApiClient>, NodeId);
+
+    async fn construct(_previous_value: Option<Self>, params: &Self::Params) -> Self
+    where
+        Self: Sized,
+    {
+        let (client, node) = params;
+        Self(client.node_lxc(node).await)
+    }
+}
+
+struct QemuVmsCache(proxmox_api::Result<Vec<QemuVm>>);
+
+impl LoadCacheObject for QemuVmsCache {
+    type Params = (Arc<ProxmoxApiClient>, NodeId);
+
+    async fn construct(_previous_value: Option<Self>, params: &Self::Params) -> Self
+    where
+        Self: Sized,
+    {
+        let (client, node) = params;
+        Self(client.node_qemu(node, false).await)
+    }
 }

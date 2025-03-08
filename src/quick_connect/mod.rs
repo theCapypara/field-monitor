@@ -143,8 +143,8 @@ where
     Ok(RemoteServerInfo::new(
         path.into(),
         adapter.tag().into(),
-        loader.server_title().into(),
-        loader.connection_title().into(),
+        loader.server_title().await.into(),
+        loader.connection_title().await.into(),
         loader,
     ))
 }
@@ -310,11 +310,13 @@ impl QuickConnectServerConnection {
 impl Actionable for QuickConnectServerConnection {}
 
 impl Connection for QuickConnectServerConnection {
-    fn metadata(&self) -> ConnectionMetadata {
-        ConnectionMetadataBuilder::default()
-            .title(gettext("via Quick Connect"))
-            .build()
-            .unwrap()
+    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+        Box::pin(async move {
+            ConnectionMetadataBuilder::default()
+                .title(gettext("via Quick Connect"))
+                .build()
+                .unwrap()
+        })
     }
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
@@ -327,15 +329,17 @@ impl Connection for QuickConnectServerConnection {
 }
 
 impl ServerConnection for QuickConnectServerConnection {
-    fn metadata(&self) -> ServerMetadata {
-        ServerMetadataBuilder::default()
-            .title(self.config.title().to_string())
-            .build()
-            .unwrap()
+    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+        Box::pin(async move {
+            ServerMetadataBuilder::default()
+                .title(self.config.title().to_string())
+                .build()
+                .unwrap()
+        })
     }
 
-    fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
-        vec![(self.adapter_tag(), self.adapter_label())]
+    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
+        Box::pin(async move { vec![(self.adapter_tag(), self.adapter_label())] })
     }
 
     fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {

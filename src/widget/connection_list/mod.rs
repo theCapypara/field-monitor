@@ -31,6 +31,7 @@ use glib::object::Cast;
 use gtk::gio;
 use libfieldmonitor::connection::*;
 use libfieldmonitor::i18n::gettext_f;
+use oo7::zbus::export::futures_util::future::join;
 use std::borrow::Cow;
 
 async fn make_server_prefix_suffix(
@@ -39,7 +40,7 @@ async fn make_server_prefix_suffix(
     row: Option<&impl IsA<adw::ActionRow>>,
 ) -> ConnectionResult<(gtk::Widget, gtk::Widget)> {
     let path = path.join("/");
-    let metadata = server.metadata();
+    let metadata = server.metadata().await;
 
     let prefix = make_icon(&metadata);
 
@@ -47,8 +48,11 @@ async fn make_server_prefix_suffix(
         .spacing(6)
         .orientation(gtk::Orientation::Horizontal)
         .build();
-    maybe_add_connect_button(row, &suffix, server, &path);
-    maybe_add_actions_button(&suffix, ServerOrConnection::Server(server), &path);
+    join(
+        maybe_add_connect_button(row, &suffix, server, &path),
+        maybe_add_actions_button(&suffix, ServerOrConnection::Server(server), &path),
+    )
+    .await;
 
     Ok((prefix, suffix.upcast()))
 }
@@ -107,13 +111,13 @@ fn add_status(child_wdgt: gtk::Widget, metadata: &ServerMetadata) -> gtk::Widget
     parent.upcast()
 }
 
-fn maybe_add_connect_button(
+async fn maybe_add_connect_button(
     row: Option<&impl IsA<adw::ActionRow>>,
     boxx: &gtk::Box,
     server: &dyn ServerConnection,
     path: &str,
 ) {
-    let adapters = server.supported_adapters();
+    let adapters = server.supported_adapters().await;
 
     let connect_button = if adapters.len() == 1 {
         let adapter = adapters.into_iter().next().unwrap();
@@ -132,10 +136,14 @@ fn maybe_add_connect_button(
     }
 }
 
-fn maybe_add_actions_button(boxx: &gtk::Box, server_or_connection: ServerOrConnection, path: &str) {
+async fn maybe_add_actions_button(
+    boxx: &gtk::Box,
+    server_or_connection: ServerOrConnection<'_>,
+    path: &str,
+) {
     let (actions, is_server) = match server_or_connection {
-        ServerOrConnection::Server(server) => (server.actions(), true),
-        ServerOrConnection::Connection(connection) => (connection.actions(), false),
+        ServerOrConnection::Server(server) => (server.actions().await, true),
+        ServerOrConnection::Connection(connection) => (connection.actions().await, false),
     };
 
     if actions.is_empty() {

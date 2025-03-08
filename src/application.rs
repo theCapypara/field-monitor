@@ -45,7 +45,7 @@ use libfieldmonitor::config::{APP_ID, VERSION};
 use libfieldmonitor::connection::ConnectionConfiguration;
 use libfieldmonitor::connection::ConnectionInstance;
 use libfieldmonitor::connection::ConnectionProvider;
-use libfieldmonitor::connection::{Connection, DualScopedConnectionConfiguration};
+use libfieldmonitor::connection::DualScopedConnectionConfiguration;
 use libfieldmonitor::i18n::gettext_f;
 use libfieldmonitor::ManagesSecrets;
 
@@ -133,10 +133,9 @@ mod imp {
                 glib::closure_local!(
                     move |_: super::FieldMonitorApplication, instance: ConnectionInstance| {
                         debug!(
-                            "connection updated: tag: {:?}, id: {:?}, title: {:?}",
+                            "connection updated: tag: {:?}, id: {:?}",
                             instance.provider_tag(),
-                            instance.connection_id(),
-                            &instance.metadata().title
+                            instance.connection_id()
                         );
                     }
                 ),
@@ -780,8 +779,8 @@ impl FieldMonitorApplication {
         window.open_connection_view(RemoteServerInfo::new(
             path.into(),
             adapter_id.into(),
-            Cow::Borrowed(&loader.server_title()),
-            Cow::Borrowed(&loader.connection_title()),
+            Cow::Borrowed(&loader.server_title().await),
+            Cow::Borrowed(&loader.connection_title().await),
             loader,
         ));
 
@@ -811,7 +810,7 @@ impl FieldMonitorApplication {
 
         let action = loader.action(action_id)?;
         debug!("executing action...");
-        let should_reload = action
+        action
             .execute(
                 window.clone().as_ref(),
                 window
@@ -821,10 +820,6 @@ impl FieldMonitorApplication {
             )
             .await;
         debug!("action executed");
-        if should_reload {
-            debug!("action executed: asked to reload");
-            self.reload_connection(&loader.connection_id()).await;
-        }
         Some(())
     }
 

@@ -20,14 +20,13 @@ use std::num::NonZeroU32;
 use std::ops::Deref;
 use std::sync::Arc;
 use std::thread;
-use std::time::Duration;
 
 use anyhow::anyhow;
-use async_std::task::sleep;
 use futures::channel::oneshot;
 use futures::future::LocalBoxFuture;
 use futures::{stream, StreamExt, TryStreamExt};
 use gettextrs::gettext;
+use indexmap::IndexMap;
 use log::{debug, error, warn};
 use quick_xml::de::from_str;
 use quick_xml::impl_deserialize_for_internally_tagged_enum;
@@ -46,6 +45,7 @@ use libfieldmonitor::adapter::spice::SpiceAdapter;
 use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::adapter::vte_pty::VtePtyAdapter;
+use libfieldmonitor::cache::{Cached, LoadCacheObject};
 use libfieldmonitor::connection::*;
 use libfieldmonitor::i18n::gettext_f;
 use libfieldmonitor::libexec_path;
@@ -126,12 +126,14 @@ impl LibvirtConnection {
 impl Actionable for LibvirtConnection {}
 
 impl Connection for LibvirtConnection {
-    fn metadata(&self) -> ConnectionMetadata {
-        ConnectionMetadataBuilder::default()
-            .title(self.title.clone())
-            .icon(IconSpec::Named(self.icon.clone()))
-            .build()
-            .unwrap()
+    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+        Box::pin(async {
+            ConnectionMetadataBuilder::default()
+                .title(self.title.clone())
+                .icon(IconSpec::Named(self.icon.clone()))
+                .build()
+                .unwrap()
+        })
     }
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
@@ -142,41 +144,41 @@ impl Connection for LibvirtConnection {
 
             let hostname = self.hostname.clone();
 
-            let mut servers: ServerMap = stream::iter(domains.into_iter())
-                .then(|domain| {
-                    let hostname_cln = hostname.clone();
-                    async move {
-                        let domain_cln = domain.clone();
-                        let (domain_id, name, is_active) = run_in_thread(move || {
-                            let domain_id = domain_cln.get_uuid()?;
-                            let name = domain_cln
-                                .get_name()
-                                .unwrap_or_else(|_| gettext("(Unable to load server name)"));
-                            let is_active = domain_cln.is_active().ok();
-                            let is_paused = domain_cln
-                                .get_state()
-                                .map(|(s, _)| s == VIR_DOMAIN_PAUSED)
-                                .unwrap_or_default();
-                            Ok((domain_id, name, is_active.map(|ia| ia && !is_paused)))
-                        })
-                        .await?
-                        .map_err(virt_err)?;
-                        let bx: Box<dyn ServerConnection> = Box::new(LibvirtServer::new(
-                            &hostname_cln,
-                            domain,
-                            self.id.clone(),
-                            name,
-                            is_active,
-                        ));
-                        Ok((Cow::Owned(domain_id.to_string()), bx))
-                    }
-                })
-                .try_collect()
-                .await?;
-
-            servers.sort_by_cached_key(|_, srv| srv.metadata().title);
-
-            Ok(servers)
+            // Get the servers and their titles, and then sort by titles. Due to async
+            // this is currently pretty messy (sort_by_cached_key can't take the async metadata).
+            // Should probably be rewritten...
+            let mut servers_and_title: IndexMap<Cow<str>, (Box<dyn ServerConnection>, String)> =
+                stream::iter(domains.into_iter())
+                    .then(|domain| {
+                        let hostname_cln = hostname.clone();
+                        async move {
+                            let domain_cln = domain.clone();
+                            let (domain_id, domain_name) = run_in_thread(move || {
+                                let domain_id = domain_cln.get_uuid()?;
+                                let name = domain_cln
+                                    .get_name()
+                                    .unwrap_or_else(|_| gettext("(Unable to load server name)"));
+                                Ok((domain_id, name))
+                            })
+                            .await?
+                            .map_err(virt_err)?;
+                            let bx: Box<dyn ServerConnection> = Box::new(LibvirtServer::new(
+                                &hostname_cln,
+                                domain,
+                                self.id.clone(),
+                                domain_name,
+                            ));
+                            let title = bx.metadata().await.title;
+                            Ok((Cow::Owned(domain_id.to_string()), (bx, title)))
+                        }
+                    })
+                    .try_collect()
+                    .await?;
+            servers_and_title.sort_by_cached_key(|_, (_, title)| title.clone());
+            Ok(servers_and_title
+                .into_iter()
+                .map(|(k, (v, _))| (k, v))
+                .collect())
         })
     }
 }
@@ -247,10 +249,9 @@ struct LibvirtXmlDomain {
 
 pub struct LibvirtServer {
     domain: VirtArc<Domain>,
-    is_active: Option<bool>,
     connection_name: String,
     name: String,
-    graphics: LibvirtGraphics,
+    state: Cached<LibVirtServerState>,
 }
 
 impl LibvirtServer {
@@ -258,97 +259,31 @@ impl LibvirtServer {
         hostname: &str,
         domain: VirtArc<Domain>,
         connection_name: String,
-        name: String,
-        is_active: Option<bool>,
+        domain_name: String,
     ) -> Self {
         Self {
-            graphics: if is_active.unwrap_or(true) {
-                Self::graphics_for(hostname, &name, &domain)
-            } else {
-                LibvirtGraphics::default()
-            },
-            domain,
+            domain: domain.clone(),
             connection_name,
-            name,
-            is_active,
+            name: domain_name.clone(),
+            state: Cached::new((domain, domain_name, hostname.to_string())),
         }
-    }
-
-    fn graphics_for(hostname: &str, name: &str, domain: &Domain) -> LibvirtGraphics {
-        debug!("loading graphics options for {name}");
-        let xml_str = match domain.get_xml_desc(VIR_DOMAIN_XML_SECURE) {
-            Ok(xml) => xml,
-            Err(err) => {
-                error!("Failed to load XML description for {name}: {err}");
-                return LibvirtGraphics::default();
-            }
-        };
-        let xml: LibvirtXmlDomain = match from_str(&xml_str) {
-            Ok(xml) => {
-                debug!("libvirt xml: {xml:?}");
-                xml
-            }
-            Err(err) => {
-                error!("Failed to deserialize XML description for {name}: {err}");
-                return LibvirtGraphics::default();
-            }
-        };
-        let mut graphics = LibvirtGraphics::default();
-
-        fn map_graphics(
-            host: &str,
-            inp: &LibvirtXmlGraphics,
-            out: &mut LibvirtGraphics,
-        ) -> Result<(), String> {
-            let built = LibvirtGraphicsCreds {
-                host: host.to_string(),
-                port: get_port(inp)?,
-                password: get_passwd(inp)?,
-            };
-            match inp {
-                LibvirtXmlGraphics::Vnc { .. } => {
-                    out.vnc = Some(built);
-                }
-                LibvirtXmlGraphics::Rdp { .. } => {
-                    out.rdp = Some(built);
-                }
-                LibvirtXmlGraphics::Spice { .. } => {
-                    out.spice = Some(built);
-                }
-                LibvirtXmlGraphics::Other => {}
-            }
-            Ok(())
-        }
-
-        // TODO: I guess we COULD try and figure out if the given address on the connection would even
-        //       allow us to connect, but it's pretty complicated with plenty failure / edge cases
-        //       to properly detect, and in most cases would probably just be confusing for the end
-        //       user, if they just see no option to connect.
-        let host = hostname;
-
-        for inp in &xml.devices.graphics {
-            if let Err(err) = map_graphics(host, inp, &mut graphics) {
-                warn!("failed to process graphics entry for {name}: {err}");
-            }
-        }
-
-        debug!("Libvirt server {name} graphics connection info: {graphics:?}");
-        graphics
     }
 }
 
 impl Actionable for LibvirtServer {
-    fn actions(&self) -> Vec<(Cow<'static, str>, Cow<'static, str>)> {
-        if self.is_active.unwrap_or_default() {
-            vec![
-                ("pmreboot".into(), gettext("Reboot").into()),
-                ("pmshutdown".into(), gettext("Shutdown").into()),
-                ("reset".into(), gettext("Force Reset").into()),
-                ("poweroff".into(), gettext("Force Poweroff").into()),
-            ]
-        } else {
-            vec![("start".into(), gettext("Start / Resume").into())]
-        }
+    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+        Box::pin(async move {
+            if self.state.get().await.is_active.unwrap_or_default() {
+                vec![
+                    ("pmreboot".into(), gettext("Reboot").into()),
+                    ("pmshutdown".into(), gettext("Shutdown").into()),
+                    ("reset".into(), gettext("Force Reset").into()),
+                    ("poweroff".into(), gettext("Force Poweroff").into()),
+                ]
+            } else {
+                vec![("start".into(), gettext("Start / Resume").into())]
+            }
+        })
     }
 
     fn action<'a>(&self, action_id: &str) -> Option<ServerAction<'a>> {
@@ -370,7 +305,7 @@ impl LibvirtServer {
             Box::new(|params, _window, toov| {
                 Box::pin(async move {
                     let domain = params.downcast::<VirtArc<Domain>>().unwrap();
-                    let (success, force_reload) = Self::exec_cmd(
+                    Self::exec_cmd(
                         true,
                         &domain,
                         |domain| domain.reboot(VIR_DOMAIN_REBOOT_ACPI_POWER_BTN),
@@ -384,7 +319,6 @@ impl LibvirtServer {
                         toov.as_ref(),
                     )
                     .await;
-                    success || force_reload
                 })
             }),
         )
@@ -395,7 +329,7 @@ impl LibvirtServer {
             Box::new(|params, _window, toov| {
                 Box::pin(async move {
                     let domain = params.downcast::<VirtArc<Domain>>().unwrap();
-                    let (success, force_reload) = Self::exec_cmd(
+                    Self::exec_cmd(
                         true,
                         &domain,
                         |domain| domain.shutdown_flags(VIR_DOMAIN_SHUTDOWN_ACPI_POWER_BTN),
@@ -409,7 +343,6 @@ impl LibvirtServer {
                         toov.as_ref(),
                     )
                     .await;
-                    success || force_reload
                 })
             }),
         )
@@ -420,7 +353,7 @@ impl LibvirtServer {
             Box::new(|params, _window, toov| {
                 Box::pin(async move {
                     let domain = params.downcast::<VirtArc<Domain>>().unwrap();
-                    let (success, force_reload) = Self::exec_cmd(
+                    Self::exec_cmd(
                         true,
                         &domain,
                         |domain| domain.reset(),
@@ -429,13 +362,6 @@ impl LibvirtServer {
                         toov.as_ref(),
                     )
                     .await;
-
-                    if success {
-                        // Sleep shortly to allow hypervisor to (ideally) have restarted the domain.
-                        sleep(Duration::from_millis(500)).await;
-                    }
-
-                    success || force_reload
                 })
             }),
         )
@@ -446,7 +372,7 @@ impl LibvirtServer {
             Box::new(|params, _window, toov| {
                 Box::pin(async move {
                     let domain = params.downcast::<VirtArc<Domain>>().unwrap();
-                    let (success, force_reload) = Self::exec_cmd(
+                    Self::exec_cmd(
                         true,
                         &domain,
                         |domain| domain.destroy_flags(VIR_DOMAIN_DESTROY_GRACEFUL),
@@ -460,13 +386,6 @@ impl LibvirtServer {
                         toov.as_ref(),
                     )
                     .await;
-
-                    if success {
-                        // Sleep shortly to allow hypervisor to (ideally) have shutdown the domain.
-                        sleep(Duration::from_millis(500)).await;
-                    }
-
-                    success || force_reload
                 })
             }),
         )
@@ -477,7 +396,7 @@ impl LibvirtServer {
             Box::new(|params, _window, toov| {
                 Box::pin(async move {
                     let domain = params.downcast::<VirtArc<Domain>>().unwrap();
-                    let (success, force_reload) = Self::exec_cmd(
+                    Self::exec_cmd(
                         false,
                         &domain,
                         |domain| {
@@ -496,13 +415,6 @@ impl LibvirtServer {
                         toov.as_ref(),
                     )
                     .await;
-
-                    if success {
-                        // Sleep shortly to allow hypervisor to (ideally) have started the domain.
-                        sleep(Duration::from_millis(500)).await;
-                    }
-
-                    success || force_reload
                 })
             }),
         )
@@ -515,83 +427,78 @@ impl LibvirtServer {
         success_msg: impl (Fn() -> String) + Send + 'static,
         err_msg: impl (Fn(virt::error::Error) -> String) + Send + 'static,
         toov: Option<&adw::ToastOverlay>,
-    ) -> (bool, bool)
-    where
+    ) where
         F: (Fn(&VirtArc<Domain>) -> Result<S, virt::error::Error>) + Send + 'static,
         S: Send,
     {
         let domain = domain.clone();
-        let (success, should_reload, text) = run_in_thread(move || {
+        let text = run_in_thread(move || {
             let running = domain.is_active().unwrap_or_default();
             if should_be_running && !running {
-                return (false, true, gettext("Domain is not running."));
+                return gettext("Domain is not running.");
             } else if !should_be_running && running {
                 let is_paused = domain
                     .get_state()
                     .map(|(s, _)| s == VIR_DOMAIN_PAUSED)
                     .unwrap_or_default();
                 if !is_paused {
-                    return (false, true, gettext("Domain is already running."));
+                    return gettext("Domain is already running.");
                 }
             }
             let result = cmd(&domain);
-            (
-                result.is_ok(),
-                false,
-                result.map(|_| success_msg()).unwrap_or_else(err_msg),
-            )
+            result.map(|_| success_msg()).unwrap_or_else(err_msg)
         })
         .await
         .unwrap_or_else(|e| {
             error!("Internal error running action: {e}");
-            (
-                false,
-                true,
-                gettext("Internal error while trying to execute command."),
-            )
+            gettext("Internal error while trying to execute command.")
         });
 
         if let Some(toov) = toov {
             toov.add_toast(adw::Toast::builder().title(&text).timeout(5).build());
         }
-        (success, should_reload)
     }
 }
 
 impl ServerConnection for LibvirtServer {
-    fn metadata(&self) -> ServerMetadata {
-        ServerMetadataBuilder::default()
-            .title(self.name.clone())
-            .is_online(self.is_active)
-            .build()
-            .unwrap()
+    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+        Box::pin(async move {
+            ServerMetadataBuilder::default()
+                .title(self.name.clone())
+                .is_online(self.state.get().await.is_active)
+                .build()
+                .unwrap()
+        })
     }
 
-    fn supported_adapters(&self) -> Vec<(Cow<str>, Cow<str>)> {
-        if !self.is_active.unwrap_or(true) {
-            return vec![];
-        }
-        let mut adapters = Vec::with_capacity(4);
-        if self.graphics.spice.is_some() {
-            adapters.push((
-                SpiceAdapter::TAG.into(),
-                gettext("SPICE (Graphical)").into(),
-            ));
-        }
-        if self.graphics.rdp.is_some() {
-            adapters.push((RdpAdapter::TAG.into(), gettext("RDP (Graphical)").into()));
-        }
-        if self.graphics.vnc.is_some() {
-            adapters.push((VncAdapter::TAG.into(), gettext("VNC (Graphical)").into()));
-        }
-        adapters.push((VtePtyAdapter::TAG.into(), gettext("Serial Console").into()));
-        adapters
+    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
+        Box::pin(async move {
+            if !self.state.get().await.is_active.unwrap_or(true) {
+                return vec![];
+            }
+            let mut adapters = Vec::with_capacity(4);
+            let graphics = &self.state.get().await.graphics;
+            if graphics.spice.is_some() {
+                adapters.push((
+                    SpiceAdapter::TAG.into(),
+                    gettext("SPICE (Graphical)").into(),
+                ));
+            }
+            if graphics.rdp.is_some() {
+                adapters.push((RdpAdapter::TAG.into(), gettext("RDP (Graphical)").into()));
+            }
+            if graphics.vnc.is_some() {
+                adapters.push((VncAdapter::TAG.into(), gettext("VNC (Graphical)").into()));
+            }
+            adapters.push((VtePtyAdapter::TAG.into(), gettext("Serial Console").into()));
+            adapters
+        })
     }
 
     fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
         let tag = tag.to_string();
-        let graphics = self.graphics.clone();
         Box::pin(async move {
+            let graphics = self.state.get().await.graphics.clone();
             let bx: Box<dyn Adapter> = match &*tag {
                 SpiceAdapter::TAG => {
                     if let Some(creds) = graphics.spice {
@@ -663,6 +570,114 @@ impl ServerConnection for LibvirtServer {
             };
             Ok(bx)
         })
+    }
+}
+
+struct LibVirtServerState {
+    is_active: Option<bool>,
+    graphics: LibvirtGraphics,
+}
+
+impl LoadCacheObject for LibVirtServerState {
+    type Params = (VirtArc<Domain>, String, String);
+
+    async fn construct(previous_value: Option<Self>, params: &Self::Params) -> Self
+    where
+        Self: Sized,
+    {
+        let (domain, domain_name, hostname) = params;
+        let is_active = domain.is_active().ok();
+        let is_paused = domain
+            .get_state()
+            .map(|(s, _)| s == VIR_DOMAIN_PAUSED)
+            .unwrap_or_default();
+        let is_active = is_active.map(|ia| ia && !is_paused);
+
+        // There is no need to rebuild the graphics information if we already had it and
+        // were online before.
+        let graphics = match previous_value {
+            // We are still (maybe) online and were online before:
+            Some(prev) if is_active != Some(false) && prev.is_active != Some(false) => {
+                prev.graphics
+            }
+            // else:
+            _ => {
+                if is_active != Some(false) {
+                    Self::graphics_for(hostname, domain_name, domain)
+                } else {
+                    LibvirtGraphics::default()
+                }
+            }
+        };
+
+        Self {
+            is_active,
+            graphics,
+        }
+    }
+}
+
+impl LibVirtServerState {
+    fn graphics_for(hostname: &str, name: &str, domain: &Domain) -> LibvirtGraphics {
+        debug!("loading graphics options for {name}");
+        let xml_str = match domain.get_xml_desc(VIR_DOMAIN_XML_SECURE) {
+            Ok(xml) => xml,
+            Err(err) => {
+                error!("Failed to load XML description for {name}: {err}");
+                return LibvirtGraphics::default();
+            }
+        };
+        let xml: LibvirtXmlDomain = match from_str(&xml_str) {
+            Ok(xml) => {
+                debug!("libvirt xml: {xml:?}");
+                xml
+            }
+            Err(err) => {
+                error!("Failed to deserialize XML description for {name}: {err}");
+                return LibvirtGraphics::default();
+            }
+        };
+        let mut graphics = LibvirtGraphics::default();
+
+        fn map_graphics(
+            host: &str,
+            inp: &LibvirtXmlGraphics,
+            out: &mut LibvirtGraphics,
+        ) -> Result<(), String> {
+            let built = LibvirtGraphicsCreds {
+                host: host.to_string(),
+                port: get_port(inp)?,
+                password: get_passwd(inp)?,
+            };
+            match inp {
+                LibvirtXmlGraphics::Vnc { .. } => {
+                    out.vnc = Some(built);
+                }
+                LibvirtXmlGraphics::Rdp { .. } => {
+                    out.rdp = Some(built);
+                }
+                LibvirtXmlGraphics::Spice { .. } => {
+                    out.spice = Some(built);
+                }
+                LibvirtXmlGraphics::Other => {}
+            }
+            Ok(())
+        }
+
+        // TODO: I guess we COULD try and figure out if the given address on the connection would even
+        //       allow us to connect, but it's pretty complicated with plenty failure / edge cases
+        //       to properly detect, and in most cases would probably just be confusing for the end
+        //       user, if they just see no option to connect.
+        let host = hostname;
+
+        for inp in &xml.devices.graphics {
+            if let Err(err) = map_graphics(host, inp, &mut graphics) {
+                warn!("failed to process graphics entry for {name}: {err}");
+            }
+        }
+
+        debug!("Libvirt server {name} graphics connection info: {graphics:?}");
+        graphics
     }
 }
 

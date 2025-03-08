@@ -388,7 +388,7 @@ impl FieldMonitorServerScreen {
             )),
         );
 
-        let actions = loader.actions();
+        let actions = loader.actions().await;
 
         self.add_display(display, actions);
     }
