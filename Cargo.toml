@@ -111,6 +111,7 @@ sorted-vec = "0.8"
 secure-string = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = "0.5"
+num_enum = { workspace = true }
 async-std = { workspace = true }
 glib = { workspace = true }
 gtk = { workspace = true }

@@ -17,11 +17,7 @@ template $FieldMonitorServerGroup: Adw.Bin {
             margin-start: 6;
             margin-end: 6;
 
-            Box prefix_box {
-                orientation: horizontal;
-                spacing: 6;
-                halign: start;
-            }
+            $ServerInfoIcon prefix {}
 
             Box {
                 orientation: horizontal;
@@ -32,11 +28,7 @@ template $FieldMonitorServerGroup: Adw.Bin {
                 Adw.WindowTitle title {}
             }
 
-            Box suffix_box {
-                orientation: horizontal;
-                spacing: 6;
-                halign: end;
-            }
+            Adw.Bin suffix {}
         }
 
         ListBox servers {

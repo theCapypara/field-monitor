@@ -15,17 +15,17 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use std::cell::RefCell;
-
+use crate::application::FieldMonitorApplication;
+use crate::widget::connection_list::server_info::{
+    ServerInfoIcon, ServerInfoUpdater, ServerInfoWidget,
+};
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::object::ObjectExt;
 use gtk::glib;
-
 use libfieldmonitor::connection::*;
-
-use crate::application::FieldMonitorApplication;
-use crate::widget::connection_list::make_server_prefix_suffix;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 mod imp {
     use super::*;
@@ -37,9 +37,9 @@ mod imp {
         #[template_child]
         pub server_title_box: TemplateChild<gtk::Box>,
         #[template_child]
-        pub prefix_box: TemplateChild<gtk::Box>,
+        pub prefix: TemplateChild<ServerInfoIcon>,
         #[template_child]
-        pub suffix_box: TemplateChild<gtk::Box>,
+        pub suffix: TemplateChild<adw::Bin>,
         #[template_child]
         pub servers: TemplateChild<gtk::ListBox>,
         #[property(get, set)]
@@ -77,25 +77,16 @@ glib::wrapper! {
 }
 
 impl FieldMonitorServerGroup {
+    #[allow(clippy::type_complexity)]
     pub async fn new(
         app: &FieldMonitorApplication,
-        title_server: Option<(&dyn ServerConnection, &[String])>,
+        title_server: Option<(Rc<Box<dyn ServerConnection>>, &[String])>,
     ) -> ConnectionResult<Self> {
         let slf: FieldMonitorServerGroup =
             glib::Object::builder().property("application", app).build();
 
         if let Some((title_server, full_path)) = title_server {
-            // TODO: Reload metadata in background
-            let metadata = title_server.metadata().await;
-            slf.set_server_title(metadata.title);
-            if let Some(subtitle) = metadata.subtitle {
-                slf.set_server_subtitle(subtitle);
-            }
-
-            let (prefix, suffix) =
-                make_server_prefix_suffix(title_server, full_path, None::<&adw::ActionRow>).await?;
-            slf.imp().prefix_box.append(&prefix);
-            slf.imp().suffix_box.append(&suffix);
+            ServerInfoUpdater::start(slf.downgrade(), title_server, full_path);
         } else {
             slf.imp().server_title_box.set_visible(false);
         }
@@ -105,5 +96,27 @@ impl FieldMonitorServerGroup {
 
     pub fn add(&self, row: &impl IsA<gtk::Widget>) {
         self.imp().servers.append(row);
+    }
+}
+
+impl ServerInfoWidget for FieldMonitorServerGroup {
+    fn set_server_title(&self, title: &str) {
+        FieldMonitorServerGroup::set_server_title(self, title)
+    }
+
+    fn set_server_subtitle(&self, subtitle: Option<&str>) {
+        FieldMonitorServerGroup::set_server_subtitle(self, subtitle.unwrap_or_default())
+    }
+
+    fn get_icon_container(&self) -> ServerInfoIcon {
+        self.imp().prefix.clone()
+    }
+
+    fn get_actions_container(&self) -> adw::Bin {
+        self.imp().suffix.clone()
+    }
+
+    fn get_row(&self) -> Option<&impl IsA<adw::ActionRow>> {
+        None::<&adw::ActionRow>
     }
 }

@@ -15,17 +15,25 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use crate::widget::connection_list::make_server_prefix_suffix;
+use crate::widget::connection_list::server_info::{
+    ServerInfoIcon, ServerInfoUpdater, ServerInfoWidget,
+};
 use adw::prelude::*;
 use adw::subclass::prelude::*;
+use glib::WeakRef;
 use gtk::glib;
 use libfieldmonitor::connection::*;
+use std::cell::RefCell;
+use std::rc::Rc;
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default)]
-    pub struct FieldMonitorServerRow {}
+    pub struct FieldMonitorServerRow {
+        pub prefix: RefCell<Option<WeakRef<ServerInfoIcon>>>,
+        pub suffix: RefCell<Option<WeakRef<adw::Bin>>>,
+    }
 
     #[glib::object_subclass]
     impl ObjectSubclass for FieldMonitorServerRow {
@@ -49,21 +57,56 @@ glib::wrapper! {
 impl FieldMonitorServerRow {
     pub async fn new(
         full_path: &[String],
-        server: Box<dyn ServerConnection>,
+        server: Rc<Box<dyn ServerConnection>>,
     ) -> ConnectionResult<Self> {
-        // TODO: Reload metadata in background
-        let metadata = server.metadata().await;
         let slf: Self = glib::Object::builder()
-            .property("title", &metadata.title)
-            .property("subtitle", &metadata.subtitle)
             .property("selectable", false)
             .build();
+        let imp = slf.imp();
 
-        let (prefix, suffix) =
-            make_server_prefix_suffix(server.as_ref(), full_path, Some(&slf)).await?;
+        let prefix = ServerInfoIcon::new();
         slf.add_prefix(&prefix);
+        imp.prefix.replace(Some(prefix.downgrade()));
+        let suffix = adw::Bin::new();
         slf.add_suffix(&suffix);
+        imp.suffix.replace(Some(suffix.downgrade()));
+
+        ServerInfoUpdater::start(slf.downgrade(), server, full_path);
 
         Ok(slf)
+    }
+}
+
+impl ServerInfoWidget for FieldMonitorServerRow {
+    fn set_server_title(&self, title: &str) {
+        self.set_title(title)
+    }
+
+    fn set_server_subtitle(&self, subtitle: Option<&str>) {
+        self.set_subtitle(subtitle.unwrap_or_default())
+    }
+
+    fn get_icon_container(&self) -> ServerInfoIcon {
+        self.imp()
+            .prefix
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .upgrade()
+            .unwrap()
+    }
+
+    fn get_actions_container(&self) -> adw::Bin {
+        self.imp()
+            .suffix
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .upgrade()
+            .unwrap()
+    }
+
+    fn get_row(&self) -> Option<&impl IsA<adw::ActionRow>> {
+        Some(self)
     }
 }

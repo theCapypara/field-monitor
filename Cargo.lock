@@ -976,6 +976,7 @@ dependencies = [
  "libadwaita",
  "libfieldmonitor",
  "log",
+ "num_enum",
  "oo7",
  "pretty_env_logger",
  "rdw4",

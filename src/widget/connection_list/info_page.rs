@@ -17,8 +17,9 @@
  */
 use crate::application::FieldMonitorApplication;
 use crate::widget::connection_list::server_group::FieldMonitorServerGroup;
+use crate::widget::connection_list::server_info::maybe_add_actions_button;
 use crate::widget::connection_list::server_row::FieldMonitorServerRow;
-use crate::widget::connection_list::{maybe_add_actions_button, ServerOrConnection};
+use crate::widget::connection_list::ServerOrConnection;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use async_std::task::block_on;
@@ -29,6 +30,7 @@ use libfieldmonitor::connection::*;
 use log::{debug, warn};
 use std::borrow::Cow;
 use std::cell::RefCell;
+use std::rc::Rc;
 
 mod imp {
     use super::*;
@@ -135,6 +137,7 @@ impl FieldMonitorConnectionInfoPage {
         let mut servers_with_children = Vec::with_capacity(servers.len());
 
         for (key, server) in servers {
+            let server = Rc::new(server);
             let subservers = server.servers().await?;
             if subservers.is_empty() {
                 servers_with_no_children.push(Server {
@@ -183,7 +186,7 @@ impl FieldMonitorConnectionInfoPage {
             let group = FieldMonitorServerGroup::new(
                 &self.application().unwrap(),
                 Some((
-                    server.server.as_ref(),
+                    server.server.clone(),
                     &[connection_id.clone(), server.key.to_string()],
                 )),
             )
@@ -196,7 +199,7 @@ impl FieldMonitorConnectionInfoPage {
                             server.key.to_string(),
                             key.to_string(),
                         ],
-                        subserver,
+                        Rc::new(subserver),
                     )
                     .await?,
                 );
@@ -240,6 +243,6 @@ impl FieldMonitorConnectionInfoPage {
 
 struct Server {
     key: Cow<'static, str>,
-    server: Box<dyn ServerConnection>,
+    server: Rc<Box<dyn ServerConnection>>,
     subservers: ServerMap,
 }

@@ -11,6 +11,7 @@
         <file preprocess="xml-stripblanks">widget/connection_list/connection_list_navbar.ui</file>
         <file preprocess="xml-stripblanks">widget/connection_list/info_page.ui</file>
         <file preprocess="xml-stripblanks">widget/connection_list/server_group.ui</file>
+        <file preprocess="xml-stripblanks">widget/connection_list/server_info/icon.ui</file>
         <file preprocess="xml-stripblanks">widget/connection_view/connection_tab_view.ui</file>
         <file preprocess="xml-stripblanks">widget/connection_view/connection_view_navbar.ui</file>
         <file preprocess="xml-stripblanks">widget/connection_view/server_screen.ui</file>
