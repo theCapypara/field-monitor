@@ -56,7 +56,6 @@ mod imp {
         fn constructed(&self) {
             self.parent_constructed();
             let obj = self.obj();
-            obj.set_visible(false);
 
             let controller = gtk::GestureClick::builder()
                 .propagation_phase(gtk::PropagationPhase::Bubble)
@@ -125,7 +124,6 @@ impl FieldMonitorFocusGrabber {
             }
         }
         if let Some(display) = &value {
-            self.set_visible(true);
             imp.display_signal_id
                 .replace(Some(display.connect_property_grabbed_notify(glib::clone!(
                     #[weak(rename_to = slf)]
@@ -134,8 +132,6 @@ impl FieldMonitorFocusGrabber {
                         slf.on_inner_grab_changed();
                     }
                 ))));
-        } else {
-            self.set_visible(false);
         }
         *display_opt = value.map(ObjectExt::downgrade);
     }

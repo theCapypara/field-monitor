@@ -58,7 +58,7 @@ where
         };
 
         slf.run_updater(Self::update_metadata, Duration::from_secs(3));
-        slf.run_updater(Self::update_actions, Duration::from_secs(15));
+        slf.run_updater(Self::update_actions, Duration::from_secs(45));
     }
 
     fn update_metadata(
