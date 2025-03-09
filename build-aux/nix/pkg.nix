@@ -31,21 +31,6 @@
   libGL,
   openssl,
 }:
-let
-  patched-gtk-vnc = (
-    gtk-vnc.dev.overrideAttrs (
-      finalAttrs: previousAttrs: {
-        version = "1.3.1+ca";
-        src = fetchgit {
-          # see note in flatpak sources
-          url = "https://gitlab.gnome.org/theCapypara/gtk-vnc.git";
-          rev = "ad14f260652e07aa2e7fc7481b7d998855160d2d";
-          hash = "sha256-5jXy0YMDrBSwlqMUS9NGDz5QLe2bi1LOUhLAQlTHhCI=";
-        };
-      }
-    )
-  );
-in
 stdenv.mkDerivation rec {
   pname = "field-monitor";
   version = "47.0";
@@ -87,7 +72,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = prodNativeBuildInputs ++ [
     vte-gtk4
-    patched-gtk-vnc
+    gtk-vnc
   ];
 
   mesonBuildType = "release";

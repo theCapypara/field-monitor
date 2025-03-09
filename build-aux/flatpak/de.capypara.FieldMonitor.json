@@ -77,11 +77,9 @@
             ],
             "sources": [
                 {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/theCapypara/gtk-vnc.git",
-                    "branch": "field-monitor",
-                    "commit": "b0880d589d95b3fa74a622e068354ca7ecdf64b9",
-                    "__todo": "This is an unstable release, because we need a way to set CA certs, which is not released. Also includes a patch to fix color map init."
+                    "type": "archive",
+                    "url": "https://download.gnome.org/sources/gtk-vnc/1.5/gtk-vnc-1.5.0.tar.xz",
+                    "sha256": "c0beb4747528ad931da43acc567c6a0190f7fc624465571ed9ccece02c34dd23"
                 }
             ]
         },
