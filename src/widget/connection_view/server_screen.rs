@@ -90,6 +90,9 @@ mod imp {
         pub subtitle: RefCell<String>,
         #[property(get, set, default = true)]
         pub reveal_osd_controls: Cell<bool>,
+        /// Disable the overlay headerbar, no matter the setting. This is used for VTE.
+        #[property(get, set, default = false)]
+        pub force_disable_overlay_headerbar: Cell<bool>,
         #[property(get, set)]
         pub dynamic_resize: Cell<bool>,
         #[property(get, set)]
@@ -461,6 +464,7 @@ impl FieldMonitorServerScreen {
                 display.set_vexpand(true);
                 display.set_hexpand(true);
                 imp.focus_grabber.set_display(Some(display));
+                self.set_force_disable_overlay_headerbar(false);
                 self.add_menu(MenuKind::Rdw, server_actions);
                 self.remove_css_class("connection-view-vte");
                 display.add_css_class("rdw-display");
@@ -490,6 +494,7 @@ impl FieldMonitorServerScreen {
                 self.setup_vte_event_controllers(terminal);
                 self.setup_vte_menu_model(terminal);
                 imp.focus_grabber.set_display(None);
+                self.set_force_disable_overlay_headerbar(true);
                 self.add_menu(MenuKind::Vte, server_actions);
                 self.add_css_class("connection-view-vte");
                 bx.upcast()
@@ -498,6 +503,7 @@ impl FieldMonitorServerScreen {
                 imp.focus_grabber.set_display(None);
                 self.add_menu(MenuKind::Other, server_actions);
                 self.remove_css_class("connection-view-vte");
+                self.set_force_disable_overlay_headerbar(false);
                 widget.clone()
             }
         };
@@ -966,6 +972,11 @@ impl FieldMonitorServerScreen {
     }
 
     #[template_callback]
+    fn on_force_disable_overlay_headerbar_changed(&self) {
+        self.update_header_bar_state();
+    }
+
+    #[template_callback]
     fn on_self_dynamic_resize_changed(&self) {
         let display = self
             .imp()
@@ -1097,6 +1108,13 @@ impl FieldMonitorServerScreen {
             .unwrap_or_default();
 
         let toolbar_view = &self.imp().toolbar_view;
+
+        // If forced: no overlay
+        if self.force_disable_overlay_headerbar() {
+            toolbar_view.set_extend_content_to_top_edge(false);
+            toolbar_view.set_reveal_top_bars(true);
+            return;
+        }
 
         match (header_bar_behavior, reveal_osd_controls, fullscreened) {
             // On top with no-overlay or not in fullscreen: no overlay

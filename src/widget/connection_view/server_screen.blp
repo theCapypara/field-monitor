@@ -7,6 +7,7 @@ template $FieldMonitorServerScreen: Adw.Bin {
     notify::dynamic-resize => $on_self_dynamic_resize_changed() swapped;
     notify::scale-to-window => $on_self_scale_to_window_changed() swapped;
     notify::reveal-osd-controls => $on_self_reveal_osd_controls_changed() swapped;
+    notify::force-disable-overlay-headerbar => $on_force_disable_overlay_headerbar_changed() swapped;
     unrealize => $on_self_unrealize() swapped;
 
     child: Adw.ToolbarView toolbar_view {
