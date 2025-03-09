@@ -39,19 +39,12 @@ let
   patched-gtk-vnc = (
     gtk-vnc.dev.overrideAttrs (
       finalAttrs: previousAttrs: {
-        version = "1.3.1+ca-dbg";
-        dontStrip = true;
-        enableDebugging = true;
+        mesonBuildType = "debug";
         mesonFlags = previousAttrs.mesonFlags ++ [
-          "--buildtype=debug"
           "-Ddebug=true"
         ];
-        src = fetchgit {
-          # see note in flatpak sources
-          url = "https://gitlab.gnome.org/theCapypara/gtk-vnc.git";
-          rev = "c2cbddff5ad62bb3022643edb98eeacee94092ae";
-          hash = "sha256-ITudGW6gx7lyZskUxCOh1K5e58zuQbY2gxlT7BcMYCs=";
-        };
+        dontStrip = true;
+        enableDebugging = true;
       }
     )
   );
