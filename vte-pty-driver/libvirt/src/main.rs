@@ -475,7 +475,7 @@ fn send(stream: &Stream, data: &[u8]) -> Result<Option<usize>, virt::error::Erro
 
 struct StreamReadAdapter<'a>(&'a mut Stream);
 
-impl<'a> Read for StreamReadAdapter<'a> {
+impl Read for StreamReadAdapter<'_> {
     fn read(&mut self, buf: &mut [u8]) -> io::Result<usize> {
         loop {
             let res = recv(self.0, buf);

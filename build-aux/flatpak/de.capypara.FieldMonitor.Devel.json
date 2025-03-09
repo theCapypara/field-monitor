@@ -50,8 +50,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/libusb/libusb/releases/download/v1.0.26/libusb-1.0.26.tar.bz2",
-                    "sha256": "12ce7a61fc9854d1d2a1ffe095f7b5fac19ddba095c259e6067a46500381b5a5"
+                    "url": "https://github.com/libusb/libusb/releases/download/v1.0.27/libusb-1.0.27.tar.bz2",
+                    "sha256": "ffaa41d741a8a3bee244ac8e54a72ea05bf2879663c098c82fc5757853441575"
                 }
             ]
         },
@@ -61,8 +61,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://www.spice-space.org/download/usbredir/usbredir-0.13.0.tar.xz",
-                    "sha256": "4ba6faa02c0ae6deeb4c53883d66ab54b3a5899bead42ce4ded9568b9a7dc46e"
+                    "url": "https://www.spice-space.org/download/usbredir/usbredir-0.15.0.tar.xz",
+                    "sha256": "6dc2a380277688a068191245dac2ab7063a552999d8ac3ad8e841c10ff050961"
                 }
             ]
         },
@@ -210,8 +210,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.gnome.org/sources/vte/0.76/vte-0.76.0.tar.xz",
-                    "sha256": "bbce30b8f504370b12d6439c07a82993e97d7e9afe2dd367817cd58ff029ffda"
+                    "url": "https://download.gnome.org/sources/vte/0.78/vte-0.78.0.tar.xz",
+                    "sha256": "07f09c6228a8bb3c1599dd0f5a6ec797b30d3010c3ac91cf21b69d9635dfaf7c"
                 }
             ]
         },
@@ -249,8 +249,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://download.libvirt.org/libvirt-10.8.0.tar.xz",
-                    "sha256": "57e3e8238d31a197f1b26b958bd2be71f99f271a822132afa66f70b7c2100984"
+                    "url": "https://download.libvirt.org/libvirt-10.10.0.tar.xz",
+                    "sha256": "e1bd7bd31b7c0d0ae073dec050bb5b0232b3e4adebdc58ea82fe8b366c765796"
                 }
             ]
         },

@@ -21,7 +21,7 @@ use async_tungstenite::tungstenite;
 use async_tungstenite::tungstenite::client::IntoClientRequest;
 use async_tungstenite::tungstenite::handshake::client::generate_key;
 use async_tungstenite::tungstenite::http::Uri;
-use async_tungstenite::tungstenite::Message;
+use async_tungstenite::tungstenite::{Bytes, Message};
 use field_monitor_vte_driver_lib::{args, debug, error, setup_driver, PtyClient};
 use futures::prelude::*;
 use http::HeaderValue;
@@ -233,8 +233,8 @@ async fn run_console(client: &Arc<PtyClient>) -> Result<(), anyhow::Error> {
         .await
         .ok_or_else(|| anyhow!("Stream closed after hello"))??;
     match msg {
-        Message::Text(s) if &s == "OK" => {}
-        Message::Binary(s) if &s == b"OK" => {}
+        Message::Text(s) if &*s == "OK" => {}
+        Message::Binary(s) if &*s == b"OK" => {}
         _ => {
             Err(anyhow!("Invalid response to hello"))?;
         }
@@ -284,7 +284,7 @@ where
                     .into_bytes()
                     .into_iter()
                     .chain(data.into_iter())
-                    .collect::<Vec<_>>(),
+                    .collect::<Bytes>(),
             ))
             .await?;
         debug!(&client, "watch_stdin: sent data");
@@ -303,10 +303,7 @@ where
     loop {
         sleep(Duration::from_secs(30)).await;
         debug!(&client, "keep alive");
-        sink.lock()
-            .await
-            .send(Message::Text("2".to_string()))
-            .await?;
+        sink.lock().await.send(Message::Text("2".into())).await?;
     }
 }
 
@@ -328,7 +325,7 @@ where
         debug!(&client, "watch_term_size: {width}x{height}");
         sink.lock()
             .await
-            .send(Message::Text(format!("1:{}:{}:", width, height)))
+            .send(Message::Text(format!("1:{}:{}:", width, height).into()))
             .await?;
         CHANGED_WINSIZE_NOTIFY.notified().await;
     }
@@ -343,7 +340,7 @@ where
     while let Some(msg) = stream.try_next().await? {
         debug!(&client, "watch_ws: got msg");
         let data = match msg {
-            Message::Text(data) => data.into_bytes(),
+            Message::Text(data) => data.into(),
             Message::Binary(data) => data,
             _ => continue,
         };

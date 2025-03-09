@@ -29,6 +29,7 @@ use crate::behaviour_preferences::DebugBehaviour;
 pub struct DebugArbitraryAdapter {
     pub mode: DebugBehaviour,
     // todo: this is no longer used
+    #[allow(unused)]
     pub overlayed: bool,
 }
 

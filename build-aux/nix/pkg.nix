@@ -1,7 +1,6 @@
 {
   stdenv,
   lib,
-  fetchgit,
   cargo,
   meson,
   ninja,
@@ -40,7 +39,7 @@ stdenv.mkDerivation rec {
   cargoDeps = rustPlatform.importCargoLock {
     lockFile = "${src}/Cargo.lock";
     outputHashes = {
-      "cbindgen-0.20.0" = "sha256-ijm2ExZUHG62MU0mr3FXoC35vyRbC33kKEKr7ysk6hQ=";
+      "cbindgen-0.20.0" = "sha256-JaucL/bT9n46QU1LpQxTkF2rMPjmMuRyAE7/GnCbSrI=";
       "freerdp2-0.2.0" = "sha256-e1kb4vFCUs+dKHhSVCt5DMoFqc3fjtgChv+Z/g0ItUE=";
     };
   };

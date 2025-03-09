@@ -2,7 +2,6 @@
   mkShell,
   lib,
   stdenv,
-  fetchgit,
 
   zlib,
   usbredir,

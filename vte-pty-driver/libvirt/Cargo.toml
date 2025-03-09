@@ -5,7 +5,7 @@ rust-version.workspace = true
 
 [dependencies]
 field-monitor-vte-driver-lib = { workspace = true, features = ["client"] }
-tokio = { version = "1.42", features = [
+tokio = { version = "1.44", features = [
     "macros",
     "parking_lot",
     "rt-multi-thread",

@@ -28,7 +28,7 @@ use futures::future::LocalBoxFuture;
 use gtk::prelude::*;
 use indexmap::IndexMap;
 use log::debug;
-use rand::{thread_rng, Rng};
+use rand::{rng, Rng};
 
 use libfieldmonitor::adapter::rdp::RdpAdapter;
 use libfieldmonitor::adapter::spice::SpiceAdapter;
@@ -102,7 +102,7 @@ impl ConnectionProvider for DebugConnectionProvider {
         mut configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async {
-            sleep(Duration::from_millis(thread_rng().gen_range(100..1200))).await;
+            sleep(Duration::from_millis(rng().random_range(100..1200))).await;
 
             let preferences = preferences
                 .downcast::<DebugPreferences>()
@@ -155,7 +155,7 @@ impl ConnectionProvider for DebugConnectionProvider {
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         debug!("store_credentials server_path : {server_path:?}");
         Box::pin(async move {
-            sleep(Duration::from_millis(thread_rng().gen_range(100..400))).await;
+            sleep(Duration::from_millis(rng().random_range(100..400))).await;
 
             let preferences = preferences
                 .downcast::<DebugBehaviourPreferences>()
@@ -186,7 +186,7 @@ impl ConnectionProvider for DebugConnectionProvider {
         configuration: ConnectionConfiguration,
     ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>> {
         Box::pin(async move {
-            sleep(Duration::from_millis(thread_rng().gen_range(100..1200))).await;
+            sleep(Duration::from_millis(rng().random_range(100..1200))).await;
 
             let title = configuration.title().to_string();
 
@@ -292,7 +292,7 @@ impl Connection for DebugConnection {
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move {
-            sleep(Duration::from_millis(thread_rng().gen_range(100..1200))).await;
+            sleep(Duration::from_millis(rng().random_range(100..1200))).await;
 
             match self.config.load_servers_behaviour() {
                 DebugBehaviour::Ok => {
@@ -639,7 +639,7 @@ impl ServerConnection for DebugConnectionServer {
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move {
-            sleep(Duration::from_millis(thread_rng().gen_range(50..200))).await;
+            sleep(Duration::from_millis(rng().random_range(50..200))).await;
 
             let mut hm: IndexMap<Cow<_>, Box<dyn ServerConnection>> = IndexMap::new();
 
