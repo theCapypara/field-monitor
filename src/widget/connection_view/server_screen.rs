@@ -43,7 +43,7 @@ use crate::application::FieldMonitorApplication;
 use crate::connection_loader::ConnectionLoader;
 use crate::settings::{FieldMonitorSettings, SettingHeaderBarBehavior};
 use crate::util::configure_vte_styling;
-use crate::widget::foucs_grabber::FieldMonitorFocusGrabber;
+use crate::widget::focus_grabber::FieldMonitorFocusGrabber;
 use crate::widget::grab_note::FieldMonitorGrabNote;
 use crate::widget::window::FieldMonitorWindow;
 

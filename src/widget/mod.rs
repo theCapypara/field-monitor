@@ -21,7 +21,7 @@ pub mod authenticate_connection_dialog;
 mod close_warning_dialog;
 pub mod connection_list;
 pub mod connection_view;
-mod foucs_grabber;
+mod focus_grabber;
 mod grab_note;
 mod navbar_row;
 pub mod preferences;
