@@ -572,6 +572,8 @@ impl GenericGroupPreferences {
     {
         let title = if !is_new {
             gettext_f(
+                // Translators: Do NOT translate the content between '{' and '}', this is a
+                // variable name.
                 "Edit {title}",
                 &[("title", &config.title(id).unwrap_or_default())],
             )

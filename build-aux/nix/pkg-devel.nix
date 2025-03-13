@@ -33,12 +33,16 @@ in
 
 stdenv.mkDerivation {
   pname = "field-monitor-devel";
-  version = "47.0";
 
   dontStrip = true;
   enableDebugging = true;
 
-  inherit (field-monitor) src cargoDeps buildInputs;
+  inherit (field-monitor)
+    src
+    cargoDeps
+    buildInputs
+    version
+    ;
 
   nativeBuildInputs = field-monitor.prodNativeBuildInputs ++ [
     patched-vte-gtk4
@@ -57,7 +61,7 @@ stdenv.mkDerivation {
   doCheck = true;
 
   meta = with lib; {
-    description = "XXXXXXXXXXXXXXX";
+    description = "Viewer for virtual machines and other external screens";
     homepage = "https://github.com/theCapypara/field-monitor";
     license = licenses.gpl3Plus;
     mainProgram = "de.capypara.FieldMonitor.Devel";

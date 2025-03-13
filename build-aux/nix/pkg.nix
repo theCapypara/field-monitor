@@ -32,7 +32,7 @@
 }:
 stdenv.mkDerivation rec {
   pname = "field-monitor";
-  version = "47.0";
+  version = "48.0";
 
   src = "${../..}";
 
@@ -99,7 +99,7 @@ stdenv.mkDerivation rec {
     ]);
 
   meta = with lib; {
-    description = "XXXXXXXXXXXXXXX";
+    description = "Viewer for virtual machines and other external screens";
     homepage = "https://github.com/theCapypara/field-monitor";
     license = licenses.gpl3Plus;
     mainProgram = "de.capypara.FieldMonitor";

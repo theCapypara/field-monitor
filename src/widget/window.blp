@@ -11,7 +11,7 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
     notify::fullscreened => $on_self_fullscreened_changed() swapped;
 
     Adw.Breakpoint mobile_breakpoint {
-        condition ('max-width: 480sp')
+        condition ("max-width: 480sp")
 
         setters {
             main_split_view.collapsed: true;
@@ -56,8 +56,8 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                             [end]
                             MenuButton {
                                 primary: true;
-                                icon-name: 'menu-symbolic';
-                                tooltip-text: _('Menu');
+                                icon-name: "menu-symbolic";
+                                tooltip-text: _("Menu");
                                 menu-model: primary_menu;
                             }
                         }
@@ -285,30 +285,30 @@ menu primary_menu {
         }
 
         item {
-            label: _('_Reload Connections');
-            action: 'app.reload-connections';
+            label: _("_Reload Connections");
+            action: "app.reload-connections";
         }
     }
 
     section {
         item {
-            label: _('_New Window');
-            action: 'app.new-window';
+            label: _("_New Window");
+            action: "app.new-window";
         }
 
         item {
-            label: _('_Preferences');
-            action: 'app.preferences';
+            label: _("_Preferences");
+            action: "app.preferences";
         }
 
         item {
-            label: _('_Keyboard Shortcuts');
-            action: 'win.show-help-overlay';
+            label: _("_Keyboard Shortcuts");
+            action: "win.show-help-overlay";
         }
 
         item {
-            label: _('_About Field Monitor');
-            action: 'app.about';
+            label: _("_About Field Monitor");
+            action: "app.about";
         }
     }
 }

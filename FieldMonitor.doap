@@ -3,8 +3,8 @@
         xmlns:foaf="http://xmlns.com/foaf/0.1/"
         xmlns="http://usefulinc.com/ns/doap#">
     <name>Field Monitor</name>
-    <shortdesc>XXXXXX</shortdesc>
-    <description>XXXXXX</description>
+    <shortdesc>Access virtual machines and other external screens</shortdesc>
+    <description>XXXXXX</description> <!-- TODO -->
 
     <homepage rdf:resource="https://github.com/theCapypara/field-monitor"/>
     <bug-database rdf:resource="https://github.com/theCapypara/field-monitor/issues"/>

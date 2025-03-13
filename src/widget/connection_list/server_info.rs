@@ -283,6 +283,8 @@ fn make_single_connect_button(
         .action_target(&(path, &*adapter_id).to_variant())
         .icon_name("display-with-window-symbolic")
         .tooltip_text(gettext_f(
+            // Translators: Do NOT translate the content between '{' and '}', this is a
+            // variable name.
             "Connect via {adapter}",
             &[("adapter", &adapter_label)],
         ))

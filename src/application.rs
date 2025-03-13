@@ -541,13 +541,16 @@ impl FieldMonitorApplication {
             .license_type(gtk::License::Gpl30)
             .developer_name("Marco Köpcke")
             .version(VERSION)
-            .developers(vec!["Marco Köpcke"])
+            .developers(vec!["Marco Köpcke <hello@capypara.de>"])
             .artists(vec!["Jakub Steiner"])
             .copyright("© 2024 Marco Köpcke")
             .website("https://github.com/theCapypara/field-monitor")
             .issue_url("https://github.com/theCapypara/field-monitor/issues")
             .support_url("https://matrix.to/#/#fieldmonitor:matrix.org")
-            .translator_credits(gettext("translator-credits"))
+            .translator_credits(gettext(
+                // Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
+                "translator-credits",
+            ))
             .build();
 
         about.present(window.as_ref());
@@ -664,7 +667,12 @@ impl FieldMonitorApplication {
 
         let window = self.active_window();
         let dialog = adw::AlertDialog::builder()
-            .heading(gettext_f("Remove {title}?", &[("title", &title)]))
+            .heading(gettext_f(
+                // Translators: Do NOT translate the content between '{' and '}', this is a
+                // variable name.
+                "Remove {title}?",
+                &[("title", &title)],
+            ))
             .build();
         dialog.add_response("No", &gettext("No"));
         dialog.add_response("Yes", &gettext("Yes"));

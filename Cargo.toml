@@ -89,7 +89,7 @@ clippy.todo = "warn"
 
 [package]
 name = "field-monitor"
-description = "Viewer for virtual machines and external screens"
+description = "Viewer for virtual machines and other external screens"
 edition = { workspace = true }
 rust-version = { workspace = true }
 

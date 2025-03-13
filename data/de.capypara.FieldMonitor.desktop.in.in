@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Field Monitor
 GenericName=Remote Desktop Viewer
-Comment=XXXXXXX
+Comment=Access virtual machines and other external screens
 Exec=@APP_ID@ %U
 Icon=@APP_ID@
 Terminal=false

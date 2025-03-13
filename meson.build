@@ -1,5 +1,5 @@
 project('field-monitor', 'rust',
-          version: '47.0',
+          version: '48.0',
     meson_version: '>= 1.1.0',
   default_options: [ 'warning_level=2', 'werror=false', ],
 )

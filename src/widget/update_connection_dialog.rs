@@ -86,7 +86,15 @@ impl FieldMonitorUpdateConnectionDialog {
         let slf: Self = glib::Object::builder()
             .property("application", app)
             .property("connection", &connection)
-            .property("title", gettext_f("Edit {title}", &[("title", &title)]))
+            .property(
+                "title",
+                gettext_f(
+                    // Translators: Do NOT translate the content between '{' and '}', this is a
+                    // variable name.
+                    "Edit {title}",
+                    &[("title", &title)],
+                ),
+            )
             .build();
         let imp = slf.imp();
 

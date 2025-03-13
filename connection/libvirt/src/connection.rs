@@ -312,6 +312,8 @@ impl LibvirtServer {
                         || gettext("Reboot command successfully sent to domain."),
                         |err| {
                             gettext_f(
+                                // Translators: Do NOT translate the content between '{' and '}', this is a
+                                // variable name.
                                 "Failed to send reboot command: {err}",
                                 &[("err", err.message())],
                             )
@@ -336,6 +338,8 @@ impl LibvirtServer {
                         || gettext("Shutdown command successfully sent to domain."),
                         |err| {
                             gettext_f(
+                                // Translators: Do NOT translate the content between '{' and '}', this is a
+                                // variable name.
                                 "Failed to send shutdown command: {err}",
                                 &[("err", err.message())],
                             )
@@ -358,7 +362,14 @@ impl LibvirtServer {
                         &domain,
                         |domain| domain.reset(),
                         || gettext("Domain successfully reset."),
-                        |err| gettext_f("Failed to reset domain: {err}", &[("err", err.message())]),
+                        |err| {
+                            gettext_f(
+                                // Translators: Do NOT translate the content between '{' and '}', this is a
+                                // variable name.
+                                "Failed to reset domain: {err}",
+                                &[("err", err.message())],
+                            )
+                        },
                         toov.as_ref(),
                     )
                     .await;
@@ -379,6 +390,8 @@ impl LibvirtServer {
                         || gettext("Domain successfully shut down."),
                         |err| {
                             gettext_f(
+                                // Translators: Do NOT translate the content between '{' and '}', this is a
+                                // variable name.
                                 "Failed to send destroy command: {err}",
                                 &[("err", err.message())],
                             )
@@ -408,6 +421,8 @@ impl LibvirtServer {
                         || gettext("Domain successfully started."),
                         |err| {
                             gettext_f(
+                                // Translators: Do NOT translate the content between '{' and '}', this is a
+                                // variable name.
                                 "Failed to send create command: {err}",
                                 &[("err", err.message())],
                             )

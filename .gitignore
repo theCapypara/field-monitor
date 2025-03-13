@@ -6,3 +6,5 @@ target/
 /subprojects/blueprint-compiler
 *.ui
 .envrc
+po/*.pot
+*.mo

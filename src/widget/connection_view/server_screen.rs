@@ -1057,6 +1057,8 @@ impl FieldMonitorServerScreen {
                 let shortcut = shortcut.split(',').next().unwrap();
 
                 self.imp().grab_note.show_note(&gettext_f(
+                    // Translators: Do NOT translate the content between '{' and '}', this is a
+                    // variable name.
                     "Press {keycombo} to ungrab the mouse and keyboard.",
                     &[("keycombo", shortcut)],
                 ));
