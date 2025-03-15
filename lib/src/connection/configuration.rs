@@ -155,10 +155,7 @@ impl ConnectionConfiguration {
         connection_id: String,
         key: impl AsRef<str>,
     ) -> anyhow::Result<()> {
-        secret_manager
-            .clear(&connection_id, key.as_ref())
-            .await
-            .map_err(Into::into)
+        secret_manager.clear(&connection_id, key.as_ref()).await
     }
     async fn do_set_secret(
         secret_manager: Arc<Box<dyn ManagesSecrets>>,
@@ -169,7 +166,6 @@ impl ConnectionConfiguration {
         secret_manager
             .store(&connection_id, key.as_ref(), value)
             .await
-            .map_err(Into::into)
     }
 
     pub fn with_section<'a, 'b, F, T>(&'a self, section_key: &'b str, cb: F) -> T
@@ -322,12 +318,11 @@ impl ConfigAccess for ConnectionConfiguration {
         let key = key.to_string();
         Box::pin(async move {
             match self.pending_secret_changes.get(&key) {
-                None => self
-                    .secret_manager
-                    .lookup(&self.connection_id, key.as_ref())
-                    .await
-                    .map(|gstr| gstr.map(Into::into))
-                    .map_err(Into::into),
+                None => {
+                    self.secret_manager
+                        .lookup(&self.connection_id, key.as_ref())
+                        .await
+                }
                 Some(v) => Ok(v.clone()),
             }
         })
@@ -394,12 +389,7 @@ impl ConfigAccess for ConfigSectionRef<'_> {
         Box::pin(async move {
             let key = format!("{}///{}", self.section_key, &key);
             match self.pending_secret_changes.get(&key) {
-                None => self
-                    .secret_manager
-                    .lookup(self.connection_id, &key)
-                    .await
-                    .map(|gstr| gstr.map(Into::into))
-                    .map_err(Into::into),
+                None => self.secret_manager.lookup(self.connection_id, &key).await,
                 Some(v) => Ok(v.clone()),
             }
         })
@@ -422,12 +412,7 @@ impl ConfigAccess for ConfigSectionMut<'_> {
         Box::pin(async move {
             let key = format!("{}///{}", self.section_key, &key);
             match self.pending_secret_changes.get(&key) {
-                None => self
-                    .secret_manager
-                    .lookup(self.connection_id, &key)
-                    .await
-                    .map(|gstr| gstr.map(Into::into))
-                    .map_err(Into::into),
+                None => self.secret_manager.lookup(self.connection_id, &key).await,
                 Some(v) => Ok(v.clone()),
             }
         })
