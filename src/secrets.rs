@@ -16,8 +16,6 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use std::ops::Deref;
-
 use futures::future::BoxFuture;
 use gettextrs::gettext;
 use log::warn;
@@ -29,12 +27,12 @@ use libfieldmonitor::config::APP_ID;
 
 #[derive(Debug)]
 pub struct SecretManager {
-    keyring: oo7::portal::Keyring,
+    keyring: oo7::file::Keyring,
 }
 
 impl SecretManager {
     pub async fn new() -> anyhow::Result<Self> {
-        let keyring = oo7::portal::Keyring::load_default().await?;
+        let keyring = oo7::file::Keyring::load_default().await?;
         Ok(Self { keyring })
     }
 }
@@ -65,7 +63,7 @@ impl ManagesSecrets for SecretManager {
                 None => Ok(None),
                 Some(item) => {
                     let secret_raw = item.secret();
-                    let secret = String::from_utf8(secret_raw.deref().clone())?.into();
+                    let secret = String::from_utf8(secret_raw.to_vec())?.into();
                     Ok(Some(secret))
                 }
             }
