@@ -184,7 +184,6 @@
             },
             "config-opts": [
                 "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-                "-DWITH_OPENH264=ON",
                 "-DCMAKE_INSTALL_PREFIX=/app",
                 "-DCMAKE_INSTALL_LIBDIR=lib",
                 "-DWITH_WAYLAND:BOOL=ON",

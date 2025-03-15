@@ -1,0 +1,20 @@
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+name: Build
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    container:
+      image: bilelmoussaoui/flatpak-github-actions:gnome-47
+      options: --privileged
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Build
+        uses: flatpak/flatpak-github-actions/flatpak-builder@v6
+        with:
+          manifest-path: build-aux/flatpak/de.capypara.FieldMonitor.json
