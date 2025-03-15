@@ -1,0 +1,31 @@
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+name: Lint
+jobs:
+  format-check:
+    name: Rustfmt Check
+    runs-on: ubuntu-24.04
+    container:
+      image: fedora:42
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run cargo fmt
+        uses: ./.github/action/run-meson
+        with:
+          target: cargo-check-fmt
+
+  clippy:
+    name: Clippy Check
+    runs-on: ubuntu-24.04
+    container:
+      image: fedora:42
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Run cargo clippy
+        uses: ./.github/action/run-meson
+        with:
+          target: cargo-check-clippy

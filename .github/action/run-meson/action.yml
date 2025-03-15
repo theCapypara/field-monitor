@@ -1,0 +1,10 @@
+name: 'Run Meson Target'
+description: "Runs a meson target with all of Field Monitor's dependencies ready"
+inputs:
+  target:
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.target }}

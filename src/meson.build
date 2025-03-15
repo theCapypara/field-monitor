@@ -50,8 +50,8 @@ gnome.compile_resources('field-monitor',
 )
 
 cargo_bin  = find_program('cargo')
-cargo_opt  = [ '--manifest-path', meson.project_source_root() / 'Cargo.toml' ]
-cargo_opt += [ '--target-dir', meson.project_build_root()  / 'src' ]
+cargo_src_opt  = [ '--manifest-path', meson.project_source_root() / 'Cargo.toml' ]
+cargo_opt  = cargo_src_opt + [ '--target-dir', meson.project_build_root()  / 'src' ]
 cargo_env  = [ 'CARGO_HOME=' + meson.project_build_root()  / 'cargo-home' ]
 
 if get_option('buildtype') == 'release'
@@ -72,7 +72,33 @@ cargo_build = custom_target(
   install_dir: get_option('bindir'),
   command: [
     'env', cargo_env,
+
     cargo_bin, 'build',
-    cargo_opt, '&&', 'cp', 'src' / rust_target / meson.project_name(), '@OUTPUT@',
+    cargo_opt,
+    '&&', 'cp', 'src' / rust_target / meson.project_name(), '@OUTPUT@',
+  ]
+)
+
+cargo_check_clippy = run_target(
+  'cargo-check-clippy',
+  command: [
+    'env', cargo_env,
+
+    cargo_bin,
+    'clippy',
+    cargo_opt,
+    '--', '-D', 'warnings'
+  ]
+)
+
+cargo_check_fmt = run_target(
+  'cargo-check-fmt',
+  command: [
+    'env', cargo_env,
+
+    cargo_bin,
+    'fmt', '--verbose',
+    cargo_src_opt,
+    '--', '--check'
   ]
 )
