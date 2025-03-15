@@ -1000,7 +1000,6 @@ dependencies = [
  "anyhow",
  "async-std",
  "futures",
- "gettext-rs",
  "glib",
  "gtk4",
  "indexmap 2.8.0",
@@ -1009,12 +1008,6 @@ dependencies = [
  "log",
  "num_enum",
  "rand 0.9.0",
- "rdw4",
- "rdw4-rdp",
- "rdw4-spice",
- "rdw4-vnc",
- "serde",
- "serde_yaml",
  "vte4",
 ]
 
@@ -1041,7 +1034,6 @@ name = "field-monitor-libvirt"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "async-std",
  "futures",
  "gettext-rs",
  "gtk4",
@@ -1061,7 +1053,6 @@ name = "field-monitor-proxmox"
 version = "0.0.0"
 dependencies = [
  "anyhow",
- "async-std",
  "futures",
  "gettext-rs",
  "gtk4",
@@ -1073,7 +1064,6 @@ dependencies = [
  "secure-string",
  "serde_json",
  "tokio",
- "vte4",
 ]
 
 [[package]]
