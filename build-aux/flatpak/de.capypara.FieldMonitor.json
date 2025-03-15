@@ -6,6 +6,9 @@
     "sdk-extensions": [
         "org.freedesktop.Sdk.Extension.rust-stable"
     ],
+    "add-extensions": [
+        "org.freedesktop.Platform.openh264"
+    ],
     "command": "de.capypara.FieldMonitor",
     "finish-args": [
         "--talk-name=org.freedesktop.secrets",
@@ -183,14 +186,25 @@
                 "cflags": "-Wno-incompatible-pointer-types -Wno-int-conversion"
             },
             "config-opts": [
-                "-DCMAKE_BUILD_TYPE=RelWithDebInfo",
-                "-DCMAKE_INSTALL_PREFIX=/app",
-                "-DCMAKE_INSTALL_LIBDIR=lib",
+                "-DCMAKE_VERBOSE_MAKEFILE=ON",
+                "-DCMAKE_BUILD_TYPE:STRING=Release",
+                "-DCMAKE_INSTALL_LIBDIR:PATH=lib",
                 "-DWITH_WAYLAND:BOOL=ON",
-                "-DCHANNEL_TSMF:BOOL=ON",
-                "-DWITH_FFMPEG:BOOL=OFF",
+                "-DCHANNEL_TSMF:BOOL=OFF",
+                "-DCHANNEL_URBDRC:BOOL=ON",
+                "-DBUILD_TESTING:BOOL=OFF",
                 "-DWITH_MANPAGES:BOOL=OFF",
-                "-DWITH_SERVER:BOOL=OFF"
+                "-DWITH_GSSAPI:BOOL=OFF",
+                "-DWITH_PCSC:BOOL=ON",
+                "-DWITH_SWSCALE:BOOL=ON",
+                "-DWITH_SERVER:BOOL=OFF",
+                "-DWITH_SAMPLE:BOOL=OFF",
+                "-DWITH_CUPS:BOOL=ON",
+                "-DWITH_FFMPEG:BOOL=ON",
+                "-DWITH_OSS:BOOL=OFF",
+                "-DWITH_PULSE:BOOL=ON",
+                "-DWITH_LIBSYSTEMD:BOOL=OFF",
+                "-DALLOW_IN_SOURCE_BUILD=ON"
             ],
             "sources": [
                 {
