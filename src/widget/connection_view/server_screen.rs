@@ -318,6 +318,10 @@ impl FieldMonitorServerScreen {
         self.imp().connection_state.borrow().unwrap_or_default()
     }
 
+    pub fn is_disconnected(&self) -> bool {
+        !self.imp().connection_state.borrow().unwrap_or(true)
+    }
+
     pub fn close(&self) {
         debug!("view.close");
         if let Some(close_cb) = self.imp().close_cb.borrow().as_ref() {
@@ -895,14 +899,10 @@ impl FieldMonitorServerScreen {
         menu.append_section(
             None,
             &build_menu(&[
-                Some(MenuObject::Item(gio::MenuItem::new(
-                    Some(&gettext("_Move to New Window")),
-                    Some("tab.move-to-new-window"),
-                ))),
                 more_actions,
                 Some(MenuObject::Item(gio::MenuItem::new(
                     Some(&gettext("_Close Connection")),
-                    Some("tab.close"),
+                    Some("view.close"),
                 ))),
             ]),
         );

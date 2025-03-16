@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-10 20:16+0100\n"
-"PO-Revision-Date: 2025-03-13 17:47+0100\n"
+"POT-Creation-Date: 2025-03-16 14:21+0100\n"
+"PO-Revision-Date: 2025-03-16 14:22+0100\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #. Translators: The name of the application.
 #: data/de.capypara.FieldMonitor.desktop.in.in:3
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:539
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:543
 #: src/widget/window.blp:9 src/widget/window.blp:47 src/widget/window.blp:157
 #: src/widget/window.blp:163 src/widget/window.rs:305
 msgid "Field Monitor"
@@ -486,7 +486,7 @@ msgstr ""
 "Feldmonitor konnte sich mittels der angegebenen Datei oder URI nicht mit dem "
 "Server verbinden"
 
-#: src/application.rs:204 src/application.rs:275 src/application.rs:561
+#: src/application.rs:204 src/application.rs:300 src/application.rs:565
 #: src/connection_loader.rs:433 src/widget/add_connection_dialog.rs:208
 #: src/widget/authenticate_connection_dialog.rs:177
 #: src/widget/quick_connect_dialog.rs:100
@@ -495,11 +495,11 @@ msgstr ""
 msgid "OK"
 msgstr "OK"
 
-#: src/application.rs:268
+#: src/application.rs:293
 msgid "Failed to initialize"
 msgstr "Fehler beim Initalisieren"
 
-#: src/application.rs:271
+#: src/application.rs:296
 msgid ""
 "Field Monitor could not start, because it could not connect to your system's "
 "secret service for accessing passwords"
@@ -508,37 +508,37 @@ msgstr ""
 "für Geheimnisse verbinden konnte, um auf Passwörter zuzugrifen"
 
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
-#: src/application.rs:552
+#: src/application.rs:556
 msgid "translator-credits"
 msgstr "Marco Köpcke <hello@capypara.de>"
 
-#: src/application.rs:603
+#: src/application.rs:607
 msgid "Connection successfully added."
 msgstr "Verbindung erfolgreich hinzugefügt."
 
-#: src/application.rs:635
+#: src/application.rs:639
 msgid "Connection successfully updated."
 msgstr "Verbindung erfolgreich aktualisiert."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/application.rs:673
+#: src/application.rs:677
 msgid "Remove {title}?"
 msgstr "{title} entfernen?"
 
-#: src/application.rs:677
+#: src/application.rs:681 src/widget/connection_view/connection_tab_view.rs:250
 msgid "No"
 msgstr "Nein"
 
-#: src/application.rs:678
+#: src/application.rs:682 src/widget/connection_view/connection_tab_view.rs:251
 msgid "Yes"
 msgstr "Ja"
 
-#: src/application.rs:683
+#: src/application.rs:687
 msgid "Connection successfully removed."
 msgstr "Verbindung erfolgreich entfernt."
 
-#: src/application.rs:744
+#: src/application.rs:748
 msgid "Authentication successfully updated"
 msgstr "Informationen zur Authentifizierung erfolgreich aktualisiert."
 
@@ -679,7 +679,7 @@ msgstr "Das Dateiformat konnte nicht erkannt werden"
 msgid "Field Monitor was unable to read the file"
 msgstr "Feldmonitor konnte diese Datei nicht lesen"
 
-#: src/secrets.rs:92
+#: src/secrets.rs:90
 msgid "A secret value used by Field Monitor"
 msgstr "Ein geheimer Wert, verwendet von Feldmonitor"
 
@@ -776,6 +776,14 @@ msgstr "Verbinden"
 msgid "Connect via {adapter}"
 msgstr "Verbinden via {adapter}"
 
+#: src/widget/connection_view/connection_tab_view.rs:245
+msgid "Close Connection?"
+msgstr "Verbindung schließen?"
+
+#: src/widget/connection_view/connection_tab_view.rs:247
+msgid "Closing the connection will disconnect from the remote server."
+msgstr "Hierdurch wird die Verbindung zum entfernten Server getrennt."
+
 #: src/widget/connection_view/connection_view_navbar.blp:12
 msgid "Active Connections"
 msgstr "Aktive Verbindungen"
@@ -808,113 +816,109 @@ msgstr "Neu verbinden"
 msgid "Show Output"
 msgstr "Ausgabe anzeigen"
 
-#: src/widget/connection_view/server_screen.rs:578
+#: src/widget/connection_view/server_screen.rs:582
 msgid "Disconnected"
 msgstr "Verbindung getrennt"
 
-#: src/widget/connection_view/server_screen.rs:580
+#: src/widget/connection_view/server_screen.rs:584
 msgid "The connection to the server was closed."
 msgstr "Die Verbindung mit dem Server wurde geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:614
+#: src/widget/connection_view/server_screen.rs:618
 msgid "Connection Failed"
 msgstr "Verbindung fehlgeschlagen"
 
-#: src/widget/connection_view/server_screen.rs:615
+#: src/widget/connection_view/server_screen.rs:619
 msgid "The connection was closed due to an error."
 msgstr "Die Verbindung wurde aufgrund eines Fehlers geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:774
+#: src/widget/connection_view/server_screen.rs:778
 msgid "_Dynamic Resize"
 msgstr "_Dynamische Größenanpassung"
 
-#: src/widget/connection_view/server_screen.rs:778
+#: src/widget/connection_view/server_screen.rs:782
 msgid "_Scale to Window"
 msgstr "Ausgabe an Fenstergröße _anpassen"
 
-#: src/widget/connection_view/server_screen.rs:788
+#: src/widget/connection_view/server_screen.rs:792
 msgid "_Resize Window to Screen"
 msgstr "_Fenstergröße auf Ausgabegröße setzen"
 
-#: src/widget/connection_view/server_screen.rs:792
+#: src/widget/connection_view/server_screen.rs:796
 msgid "Send _Keys"
 msgstr "Tasten _senden"
 
-#: src/widget/connection_view/server_screen.rs:796
+#: src/widget/connection_view/server_screen.rs:800
 msgid "Ctrl+Alt L"
 msgstr "Strg+Alt L"
 
-#: src/widget/connection_view/server_screen.rs:800
+#: src/widget/connection_view/server_screen.rs:804
 msgid "Ctrl+Alt+Backspace"
 msgstr "Strg+Alt+Rücktaste"
 
-#: src/widget/connection_view/server_screen.rs:804
+#: src/widget/connection_view/server_screen.rs:808
 msgid "Ctrl+Alt+Delete"
 msgstr "Strg+Alt+Entf"
 
-#: src/widget/connection_view/server_screen.rs:810
+#: src/widget/connection_view/server_screen.rs:814
 msgid "Ctrl+Alt+F1"
 msgstr "Strg+Alt+F1"
 
-#: src/widget/connection_view/server_screen.rs:814
+#: src/widget/connection_view/server_screen.rs:818
 msgid "Ctrl+Alt+F2"
 msgstr "Strg+Alt+F2"
 
-#: src/widget/connection_view/server_screen.rs:818
+#: src/widget/connection_view/server_screen.rs:822
 msgid "Ctrl+Alt+F3"
 msgstr "Strg+Alt+F3"
 
-#: src/widget/connection_view/server_screen.rs:822
+#: src/widget/connection_view/server_screen.rs:826
 msgid "Ctrl+Alt+F4"
 msgstr "Strg+Alt+F4"
 
-#: src/widget/connection_view/server_screen.rs:826
+#: src/widget/connection_view/server_screen.rs:830
 msgid "Ctrl+Alt+F5"
 msgstr "Strg+Alt+F5"
 
-#: src/widget/connection_view/server_screen.rs:830
+#: src/widget/connection_view/server_screen.rs:834
 msgid "Ctrl+Alt+F6"
 msgstr "Strg+Alt+F6"
 
-#: src/widget/connection_view/server_screen.rs:834
+#: src/widget/connection_view/server_screen.rs:838
 msgid "Ctrl+Alt+F7"
 msgstr "Strg+Alt+F7"
 
-#: src/widget/connection_view/server_screen.rs:838
+#: src/widget/connection_view/server_screen.rs:842
 msgid "Ctrl+Alt+F8"
 msgstr "Strg+Alt+F8"
 
-#: src/widget/connection_view/server_screen.rs:842
+#: src/widget/connection_view/server_screen.rs:846
 msgid "Ctrl+Alt+F9"
 msgstr "Strg+Alt+F9"
 
-#: src/widget/connection_view/server_screen.rs:846
+#: src/widget/connection_view/server_screen.rs:850
 msgid "Ctrl+Alt+F10"
 msgstr "Strg+Alt+F10"
 
-#: src/widget/connection_view/server_screen.rs:850
+#: src/widget/connection_view/server_screen.rs:854
 msgid "Ctrl+Alt+F11"
 msgstr "Strg+Alt+F11"
 
-#: src/widget/connection_view/server_screen.rs:854
+#: src/widget/connection_view/server_screen.rs:858
 msgid "Ctrl+Alt+F12"
 msgstr "Strg+Alt+F12"
 
-#: src/widget/connection_view/server_screen.rs:860
+#: src/widget/connection_view/server_screen.rs:864
 msgid "Print"
 msgstr "Drucken"
 
-#: src/widget/connection_view/server_screen.rs:871
+#: src/widget/connection_view/server_screen.rs:875
 msgid "_Zoom"
 msgstr "_Textgröße"
 
-#: src/widget/connection_view/server_screen.rs:892
+#: src/widget/connection_view/server_screen.rs:896
 msgid "Server _Actions"
 msgstr "Server_aktionen"
-
-#: src/widget/connection_view/server_screen.rs:899
-msgid "_Move to New Window"
-msgstr "In neues _Fenster verschieben"
 
 #: src/widget/connection_view/server_screen.rs:904
 msgid "_Close Connection"
@@ -1157,3 +1161,6 @@ msgstr "_Einstellungen"
 msgid "Connect to your virtual machines and remote servers."
 msgstr ""
 "Verbinden Sie sich mit ihren Virtuellen Maschinen und entfernen Servern."
+
+#~ msgid "_Move to New Window"
+#~ msgstr "In neues _Fenster verschieben"

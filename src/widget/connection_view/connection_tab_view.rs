@@ -22,6 +22,7 @@ use crate::APP;
 use adw::gio;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
+use gettextrs::gettext;
 use itertools::Itertools;
 use std::cell::RefCell;
 
@@ -105,16 +106,13 @@ impl FieldMonitorConnectionTabView {
             info.loader,
         );
 
-        let tab_view = self.imp().tab_view.get();
         let tab = self.add_new_page(&view, &info.server_title, Some(&info.connection_title));
         view.set_close_cb(glib::clone!(
             #[weak]
             tab,
-            #[weak]
-            tab_view,
-            move || {
-                tab_view.close_page(&tab);
-            }
+            #[weak(rename_to=slf)]
+            self,
+            move || slf.close_tab(&tab)
         ));
     }
 
@@ -183,11 +181,9 @@ impl FieldMonitorConnectionTabView {
             view.set_close_cb(glib::clone!(
                 #[weak]
                 page,
-                #[weak]
-                tab_view,
-                move || {
-                    tab_view.imp().tab_view.get().close_page(&page);
-                }
+                #[weak(rename_to=slf)]
+                self,
+                move || slf.close_tab(&page)
             ));
         }
 
@@ -228,11 +224,57 @@ impl FieldMonitorConnectionTabView {
 
     #[template_callback]
     fn on_tab_view_close_page(&self, page: &adw::TabPage) -> glib::Propagation {
-        if self.visible_page().as_ref() == Some(page) {
-            self.set_visible_page(None::<&adw::TabPage>);
+        let is_disconnected = page
+            .child()
+            .downcast::<FieldMonitorServerScreen>()
+            .as_ref()
+            .map(FieldMonitorServerScreen::is_disconnected)
+            .unwrap_or(true);
+
+        if is_disconnected {
+            if self.visible_page().as_ref() == Some(page) {
+                self.set_visible_page(None::<&adw::TabPage>);
+            }
+
+            return glib::Propagation::Proceed;
         }
-        // TODO: confirmation dialog
-        glib::Propagation::Proceed
+
+        // if connected or unknown: confirmation dialog
+        let window = self.root().and_downcast::<gtk::Window>();
+        let dialog = adw::AlertDialog::builder()
+            .heading(gettext("Close Connection?"))
+            .body(gettext(
+                "Closing the connection will disconnect from the remote server.",
+            ))
+            .build();
+        dialog.add_response("No", &gettext("No"));
+        dialog.add_response("Yes", &gettext("Yes"));
+        dialog.set_response_appearance("Yes", adw::ResponseAppearance::Destructive);
+        dialog.set_default_response(Some("No"));
+        dialog.set_close_response("No");
+
+        dialog.connect_closure(
+            "response",
+            false,
+            glib::closure_local!(
+                #[strong]
+                page,
+                #[strong(rename_to = slf)]
+                self,
+                move |_: &adw::AlertDialog, response: &str| {
+                    let close = response == "Yes";
+                    if close && slf.visible_page().as_ref() == Some(&page) {
+                        slf.set_visible_page(None::<&adw::TabPage>);
+                    }
+
+                    slf.imp().tab_view.close_page_finish(&page, close);
+                }
+            ),
+        );
+
+        dialog.present(window.as_ref());
+
+        glib::Propagation::Stop
     }
 
     #[template_callback]
