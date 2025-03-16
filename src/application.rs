@@ -211,6 +211,31 @@ mod imp {
             ));
         }
 
+        fn startup(&self) {
+            self.parent_startup();
+            let obj = self.obj();
+
+            obj.imp().busy_stack.borrow_mut().replace(BusyStack::new(
+                obj.imp().busy.clone(),
+                Box::new(glib::clone!(
+                    #[weak]
+                    obj,
+                    move || obj.notify("busy")
+                )),
+            ));
+
+            // Accelerators. We remove ALL accelerators first and only use custom accelerators
+            // since we remove and re-add them later. Plus some default accelerators are not useful
+            // for us, such an unconditional Control+Q to quit.
+            // TODO: If somebody knows a more elegant way, let me know.
+            obj.remove_accels();
+            obj.add_accels();
+
+            // Prefer dark style by default
+            obj.style_manager()
+                .set_color_scheme(adw::ColorScheme::PreferDark);
+        }
+
         fn handle_local_options(&self, options: &VariantDict) -> ExitCode {
             let obj = self.obj();
 
@@ -337,33 +362,12 @@ glib::wrapper! {
 
 impl FieldMonitorApplication {
     pub fn new(application_id: &str, flags: &gio::ApplicationFlags) -> Self {
-        let app: FieldMonitorApplication = glib::Object::builder()
+        glib::Object::builder()
             .property("application-id", application_id)
             .property("flags", flags)
             .property("settings", FieldMonitorSettings::new(APP_ID))
             .property("starting", true)
-            .build();
-        app.imp().busy_stack.borrow_mut().replace(BusyStack::new(
-            app.imp().busy.clone(),
-            Box::new(glib::clone!(
-                #[weak]
-                app,
-                move || app.notify("busy")
-            )),
-        ));
-
-        // Accelerators. We remove ALL accelerators first and only use custom accelerators
-        // since we remove and re-add them later. Plus some default accelerators are not useful
-        // for us, such an unconditional Control+Q to quit.
-        // TODO: If somebody knows a more elegant way, let me know.
-        app.remove_accels();
-        app.add_accels();
-
-        // Prefer dark style by default
-        app.style_manager()
-            .set_color_scheme(adw::ColorScheme::PreferDark);
-
-        app
+            .build()
     }
 
     pub fn remove_accels(&self) {
