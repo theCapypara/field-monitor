@@ -756,8 +756,10 @@ impl FieldMonitorApplication {
         dialog.present(window.as_ref());
     }
 
-    // TODO: This should be OK here, but we should confirm.
-    #[allow(clippy::await_holding_refcell_ref)]
+    #[expect(
+        clippy::await_holding_refcell_ref,
+        reason = "This SHOULD be okay, since we will never re-enter these functions."
+    )]
     pub async fn connect_to_server(&self, path: &str, adapter_id: &str) -> Option<()> {
         let imp = self.imp();
         let mut window = self
@@ -798,8 +800,10 @@ impl FieldMonitorApplication {
         Some(())
     }
 
-    // TODO: This should be OK here, but we should confirm.
-    #[allow(clippy::await_holding_refcell_ref)]
+    #[expect(
+        clippy::await_holding_refcell_ref,
+        reason = "This SHOULD be okay, since we will never re-enter these functions."
+    )]
     pub async fn perform_connection_action(
         &self,
         is_server: bool,
@@ -894,12 +898,10 @@ impl FieldMonitorApplication {
     /// Updates or adds a new configuration.
     /// When done, the signal connection-updated is emitted.
     /// If the connection provider was not found, the connection is ignored.
-    #[allow(clippy::await_holding_refcell_ref)]
-    /// TODO with Rust 1.81 replace with:
-    //#[expect(
-    //    clippy::await_holding_refcell_ref,
-    //    reason = "OK because we explicitly drop. See known problems of lint."
-    //)]
+    #[expect(
+        clippy::await_holding_refcell_ref,
+        reason = "OK because we explicitly drop. See known problems of lint."
+    )]
     pub async fn update_connection(&self, connection: DualScopedConnectionConfiguration) {
         let _busy = self.be_busy();
         debug!("adding connection {}", connection.session().id());

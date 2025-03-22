@@ -141,8 +141,10 @@ impl ConnectionInstance {
     }
 }
 
-// TODO: This SHOULD be okay, since we will never re-enter these functions during loading servers.
-#[allow(clippy::await_holding_refcell_ref)]
+#[expect(
+    clippy::await_holding_refcell_ref,
+    reason = "This SHOULD be okay, since we will never re-enter these functions during loading servers."
+)]
 impl Actionable for ConnectionInstance {
     fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
         Box::pin(async move {
@@ -160,8 +162,10 @@ impl Actionable for ConnectionInstance {
     }
 }
 
-// TODO: This SHOULD be okay, since we will never re-enter these functions during loading servers.
-#[allow(clippy::await_holding_refcell_ref)]
+#[expect(
+    clippy::await_holding_refcell_ref,
+    reason = "This SHOULD be okay, since we will never re-enter these functions during loading servers."
+)]
 impl Connection for ConnectionInstance {
     fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
         Box::pin(async move {

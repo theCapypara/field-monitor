@@ -140,7 +140,10 @@ impl FieldMonitorAuthenticateConnectionDialog {
 #[gtk::template_callbacks]
 impl FieldMonitorAuthenticateConnectionDialog {
     #[template_callback]
-    #[allow(clippy::await_holding_refcell_ref)] // is dropped before
+    #[expect(
+        clippy::await_holding_refcell_ref,
+        reason = "OK because we explicitly drop. See known problems of lint."
+    )]
     async fn on_connection_update(&self) {
         let imp = self.imp();
         let connection_brw = imp.connection.borrow();
@@ -190,7 +193,9 @@ impl FieldMonitorAuthenticateConnectionDialog {
                         }
                         Ok(None) => {
                             // Not ideal, it seems that the connection could not be reloaded.
-                            warn!("connection was not provided after re-auth. not updating saved connection.");
+                            warn!(
+                                "connection was not provided after re-auth. not updating saved connection."
+                            );
                             self.emit_by_name::<()>("auth-finished", &[]);
                             self.force_close();
                             return;

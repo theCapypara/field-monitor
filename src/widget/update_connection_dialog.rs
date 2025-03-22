@@ -114,7 +114,10 @@ impl FieldMonitorUpdateConnectionDialog {
 #[gtk::template_callbacks]
 impl FieldMonitorUpdateConnectionDialog {
     #[template_callback]
-    #[allow(clippy::await_holding_refcell_ref)] // is dropped before
+    #[expect(
+        clippy::await_holding_refcell_ref,
+        reason = "OK because we explicitly drop. See known problems of lint."
+    )]
     async fn on_connection_update(&self) {
         let imp = self.imp();
         let connection_brw = imp.connection.borrow();

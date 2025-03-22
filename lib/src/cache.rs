@@ -49,8 +49,7 @@ where
     /// Get the cached value. Value may be re-created if the cache expired.
     /// Warning: Other threads may be blocked trying to call `get`,
     /// until the returned reference is dropped.
-    // TODO: Get rid of the `Captures` and use `use<...>` once we have minimum Rust version 1.82.
-    pub async fn get(&self) -> impl Deref<Target = T> + Captures<(&(), T)> {
+    pub async fn get(&self) -> impl Deref<Target = T> + use<'_, T, P> {
         let cur_time_and_v = self.value.upgradable_read().await;
 
         match &*cur_time_and_v {
@@ -81,10 +80,6 @@ where
 }
 
 pub struct CacheRefHolder<'a, T>(RwLockReadGuard<'a, Option<(Instant, T)>>);
-
-#[doc(hidden)]
-pub trait Captures<T: ?Sized> {}
-impl<T: ?Sized, U: ?Sized> Captures<T> for U {}
 
 impl<T> Deref for CacheRefHolder<'_, T> {
     type Target = T;
