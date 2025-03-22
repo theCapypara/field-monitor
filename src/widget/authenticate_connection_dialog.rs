@@ -100,14 +100,6 @@ impl FieldMonitorAuthenticateConnectionDialog {
 
         let provider = connection.provider();
 
-        /*
-           Adw.PreferencesPage preferences_page {
-               description: _("This connection needs additional authentication to proceed.");
-               description-centered: true;
-               icon-name: "key-symbolic";
-           }
-        */
-
         connection.with_configuration(|configuration| {
             let preferences =
                 provider.configure_credentials(server_path, configuration.persistent());

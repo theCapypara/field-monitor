@@ -169,7 +169,7 @@ impl Connection for LibvirtConnection {
                                 domain_name,
                             ));
                             let title = bx.metadata().await.title;
-                            Ok((Cow::Owned(domain_id.to_string()), (bx, title)))
+                            ConnectionResult::Ok((Cow::Owned(domain_id.to_string()), (bx, title)))
                         }
                     })
                     .try_collect()
@@ -281,7 +281,14 @@ impl Actionable for LibvirtServer {
                     ("poweroff".into(), gettext("Force Poweroff").into()),
                 ]
             } else {
-                vec![("start".into(), gettext("Start / Resume").into())]
+                vec![(
+                    "start".into(),
+                    gettext(
+                        // TRANSLATORS: Verb
+                        "Start",
+                    )
+                    .into(),
+                )]
             }
         })
     }

@@ -24,11 +24,10 @@ pub use self::icon::ServerInfoIcon;
 use crate::widget::connection_list::server_info::icon::IsOnline;
 use crate::widget::connection_list::{ServerOrConnection, DEFAULT_GENERIC_ICON};
 use adw::prelude::*;
-use async_std::task::sleep;
-use futures::future::{join, LocalBoxFuture};
+use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use glib::object::{Cast, IsA, ObjectType};
-use glib::{ControlFlow, WeakRef};
+use glib::{timeout_future, ControlFlow, WeakRef};
 use gtk::gio;
 use libfieldmonitor::connection::{IconSpec, ServerConnection, ServerMetadata};
 use libfieldmonitor::i18n::gettext_f;
@@ -104,11 +103,8 @@ where
                 .orientation(gtk::Orientation::Horizontal)
                 .build();
 
-            join(
-                Self::maybe_add_connect_button(target.get_row(), &suffix, &**server, &path),
-                maybe_add_actions_button(&suffix, ServerOrConnection::Server(&**server), &path),
-            )
-            .await;
+            Self::maybe_add_connect_button(target.get_row(), &suffix, &**server, &path).await;
+            maybe_add_actions_button(&suffix, ServerOrConnection::Server(&**server), &path).await;
 
             target.get_actions_container().set_child(Some(&suffix));
         })
@@ -133,7 +129,7 @@ where
                     }
                     Some(target) => {
                         cb(target, server.clone(), full_path.clone()).await;
-                        sleep(duration).await;
+                        timeout_future(duration).await;
                     }
                 }
             }

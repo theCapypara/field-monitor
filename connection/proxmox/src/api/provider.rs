@@ -18,7 +18,6 @@
 use crate::api::connection::ProxmoxConnection;
 use crate::credential_preferences::ProxmoxCredentialPreferences;
 use crate::preferences::{ProxmoxConfiguration, ProxmoxPreferences};
-use crate::tokiort::run_on_tokio;
 use adw::prelude::Cast;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
@@ -27,6 +26,7 @@ use libfieldmonitor::connection::{
     Connection, ConnectionConfiguration, ConnectionProvider, ConnectionProviderConstructor,
     ConnectionResult, DualScopedConnectionConfiguration, IconSpec, PreferencesGroupOrPage,
 };
+use libfieldmonitor::tokiort::run_on_tokio;
 use std::borrow::Cow;
 
 pub struct ProxmoxConnectionProviderConstructor;

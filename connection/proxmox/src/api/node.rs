@@ -19,7 +19,6 @@ use crate::api;
 use crate::api::cache::InfoFetcher;
 use crate::api::vm::ProxmoxVm;
 use crate::api::{ExecParams, ProxmoxEntity};
-use crate::tokiort::run_on_tokio;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use libfieldmonitor::adapter::spice::SpiceAdapter;
@@ -27,9 +26,10 @@ use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::adapter::vte_pty::VtePtyAdapter;
 use libfieldmonitor::connection::{
-    Actionable, ConnectionResult, IconSpec, ServerAction, ServerConnection, ServerMap,
-    ServerMapSend, ServerMetadata, ServerMetadataBuilder,
+    Actionable, ConnectionError, ConnectionResult, IconSpec, ServerAction, ServerConnection,
+    ServerMap, ServerMapSend, ServerMetadata, ServerMetadataBuilder,
 };
+use libfieldmonitor::tokiort::run_on_tokio;
 use log::warn;
 use proxmox_api::{NodeId, NodeStatus, VmType};
 use std::borrow::Cow;
@@ -46,7 +46,7 @@ impl ProxmoxNode {
     async fn status(&self) -> NodeStatus {
         let info_fetcher = self.info_fetcher.clone();
         let id = self.id.clone();
-        run_on_tokio(async move { Ok(info_fetcher.node_status(&id).await) })
+        run_on_tokio::<_, _, anyhow::Error>(async move { Ok(info_fetcher.node_status(&id).await) })
             .await
             .unwrap()
     }
@@ -183,7 +183,7 @@ impl ServerConnection for ProxmoxNode {
             let connection_id = self.connection_id.clone();
             let node_id = self.id.clone();
 
-            let map = run_on_tokio(async move {
+            let map = run_on_tokio::<_, _, ConnectionError>(async move {
                 let mut server_map = ServerMapSend::default();
 
                 for vm in info_fetcher.lxcs(&node_id).await? {

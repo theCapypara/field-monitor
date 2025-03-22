@@ -29,8 +29,8 @@ use crate::widget::connection_view::{
 use crate::widget::quick_connect_dialog::FieldMonitorQuickConnectDialog;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
-use async_std::task::sleep;
 use gettextrs::gettext;
+use glib::timeout_future;
 use gtk::{gdk, gio, glib};
 use log::debug;
 use std::cell::Cell;
@@ -488,7 +488,7 @@ impl FieldMonitorWindow {
                 #[weak(rename_to=slf)]
                 self,
                 async move {
-                    sleep(Duration::from_millis(100)).await;
+                    timeout_future(Duration::from_millis(100)).await;
                     let imp = slf.imp();
                     // just in case the user resizes the window:
                     imp.inner_list_stack.set_visible_child_name("welcome");

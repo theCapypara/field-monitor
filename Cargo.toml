@@ -24,7 +24,6 @@ serde_yaml = "0.9"
 serde_json = "1"
 futures = "0.3"
 log = "0.4"
-async-std = "1.13"
 num_enum = "0.7"
 indexmap = "2.8"
 secure-string = "0.3"
@@ -33,6 +32,7 @@ uuid = { version = "1.16", features = ["v7"] }
 parking_lot = "0.12"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 proxmox-api = { path = "connection/proxmox/proxmox-api" }
+tokio = { version = "1.44", features = ["parking_lot", "rt-multi-thread"] }
 
 [workspace.dependencies.glib]
 features = ["log"]
@@ -114,7 +114,6 @@ secure-string = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = "0.5"
 num_enum = { workspace = true }
-async-std = { workspace = true }
 glib = { workspace = true }
 gtk = { workspace = true }
 adw = { workspace = true }

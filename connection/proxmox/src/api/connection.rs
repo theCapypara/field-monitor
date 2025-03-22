@@ -19,7 +19,6 @@ use crate::api;
 use crate::api::cache::InfoFetcher;
 use crate::api::node::ProxmoxNode;
 use crate::preferences::ProxmoxConfiguration;
-use crate::tokiort::run_on_tokio;
 use anyhow::anyhow;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
@@ -28,6 +27,7 @@ use libfieldmonitor::connection::{
     Actionable, Connection, ConnectionConfiguration, ConnectionError, ConnectionMetadata,
     ConnectionMetadataBuilder, ConnectionResult, IconSpec, ServerMap, ServerMapSend,
 };
+use libfieldmonitor::tokiort::run_on_tokio;
 use proxmox_api::ProxmoxApiClient;
 use secure_string::SecureString;
 use std::mem::transmute;
@@ -121,7 +121,7 @@ impl Connection for ProxmoxConnection {
         Box::pin(async move {
             let connection_id = self.connection_id.clone();
             let info_fetcher = self.info_fetcher.clone();
-            let map = run_on_tokio(async move {
+            let map = run_on_tokio::<_, _, ConnectionError>(async move {
                 let mut server_map = ServerMapSend::default();
 
                 for node in info_fetcher.nodes().await? {

@@ -44,7 +44,6 @@ connection/proxmox/src/credential_preferences.rs
 connection/proxmox/src/lib.rs
 connection/proxmox/src/preferences.blp
 connection/proxmox/src/preferences.rs
-connection/proxmox/src/tokiort.rs
 lib/src/adapter/mod.rs
 lib/src/adapter/rdp.rs
 lib/src/adapter/spice.rs
@@ -66,6 +65,7 @@ lib/src/i18n.rs
 lib/src/lib.rs
 lib/src/macros.rs
 lib/src/secrets.rs
+lib/src/tokiort.rs
 src/application.rs
 src/connection_loader.rs
 src/connection.rs

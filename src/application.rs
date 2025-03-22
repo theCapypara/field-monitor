@@ -19,22 +19,20 @@ use std::borrow::Cow;
 use std::cell::Cell;
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::fs::{create_dir_all, read_dir, read_to_string, remove_file};
 use std::ops::Deref;
 use std::path::PathBuf;
 use std::rc::Rc;
 use std::sync::{Arc, OnceLock};
 
-use adw::gio::File;
+use adw::gio::{File, FileCreateFlags};
 use adw::glib::user_config_dir;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use anyhow::anyhow;
-use async_std::fs::{create_dir_all, read_dir, read_to_string, remove_file, OpenOptions};
-use async_std::io::WriteExt;
-use futures::StreamExt;
 use gettextrs::gettext;
 use glib::subclass::Signal;
-use glib::{ControlFlow, ExitCode, VariantDict};
+use glib::{ControlFlow, ExitCode, Priority, VariantDict};
 use gtk::{gio, glib};
 use log::{debug, error, info, warn};
 use serde::{Deserialize, Serialize};
@@ -407,8 +405,9 @@ impl FieldMonitorApplication {
 
     async fn connections_dir(&self) -> PathBuf {
         let dir = user_config_dir().join("field-monitor").join("connections");
-        create_dir_all(&dir).await.ok();
-        dir
+        let dir_cln = dir.clone();
+        gio::spawn_blocking(move || create_dir_all(&dir)).await.ok();
+        dir_cln
     }
 
     fn setup_gactions(&self) {
@@ -547,7 +546,7 @@ impl FieldMonitorApplication {
             .version(VERSION)
             .developers(vec!["Marco Köpcke <hello@capypara.de>"])
             .artists(vec!["Jakub Steiner"])
-            .copyright("© 2024 Marco Köpcke")
+            .copyright("© 2025 Marco Köpcke")
             .website("https://github.com/theCapypara/field-monitor")
             .issue_url("https://github.com/theCapypara/field-monitor/issues")
             .support_url("https://matrix.to/#/#fieldmonitor:matrix.org")
@@ -940,18 +939,21 @@ impl FieldMonitorApplication {
         self.emit_by_name::<()>("connection-updated", &[&instance]);
     }
 
-    async fn update_connection_by_file(&self, path: &PathBuf) -> anyhow::Result<()> {
+    async fn update_connection_by_file(&self, path: PathBuf) -> anyhow::Result<()> {
         let _busy = self.be_busy();
         let connection_id = path
             .file_stem()
             .ok_or_else(|| anyhow!("Connection file had no filename."))?
-            .to_string_lossy();
-        let content = read_to_string(path).await?;
+            .to_string_lossy()
+            .to_string();
+        let content = gio::spawn_blocking(move || read_to_string(path))
+            .await
+            .unwrap()?;
         let saved_config: SavedConnectionConfiguration = serde_yaml::from_str(&content)?;
         let secret_manager = self.imp().secret_manager.borrow().as_ref().unwrap().clone();
         self.update_connection(DualScopedConnectionConfiguration::new_unified(
             ConnectionConfiguration::new_existing(
-                connection_id.into_owned(),
+                connection_id,
                 saved_config.tag,
                 saved_config.config,
                 secret_manager,
@@ -980,7 +982,9 @@ impl FieldMonitorApplication {
                             info!("Removing connection {connection_id} from disk...");
                             let mut filename = slf.connections_dir().await;
                             filename.push(format!("{}.yaml", connection_id));
-                            remove_file(filename).await.ok();
+                            gio::spawn_blocking(move || remove_file(filename))
+                                .await
+                                .ok();
                         }
                     ));
                 }
@@ -1011,9 +1015,10 @@ impl FieldMonitorApplication {
             self.remove_connection(&connection_id, false);
         }
 
-        match read_dir(self.connections_dir().await).await {
+        let dir = self.connections_dir().await;
+        match gio::spawn_blocking(move || read_dir(dir)).await.unwrap() {
             Ok(dir) => {
-                dir.for_each_concurrent(5, |dir_entry_res| async {
+                for dir_entry_res in dir {
                     match dir_entry_res {
                         Ok(dir_entry) => {
                             let path = dir_entry.path();
@@ -1026,7 +1031,7 @@ impl FieldMonitorApplication {
                                 return;
                             }
                             debug!("processing connection file {}", path.display());
-                            if let Err(err) = self.update_connection_by_file(&path.into()).await {
+                            if let Err(err) = self.update_connection_by_file(path).await {
                                 error!(
                                     "Failed to read connection {}: {}",
                                     dir_entry.file_name().to_string_lossy(),
@@ -1038,8 +1043,7 @@ impl FieldMonitorApplication {
                             error!("Failed to read a connection while iterating: {}", err);
                         }
                     }
-                })
-                .await;
+                }
             }
             Err(err) => {
                 error!("Failed to read connections settings directory: {err}");
@@ -1061,7 +1065,7 @@ impl FieldMonitorApplication {
         }
 
         debug!("processing connection file {}", file_path.display());
-        if let Err(err) = self.update_connection_by_file(&file_path).await {
+        if let Err(err) = self.update_connection_by_file(file_path.clone()).await {
             error!(
                 "Failed to read connection {:?}: {}",
                 file_path.file_name(),
@@ -1090,19 +1094,22 @@ impl FieldMonitorApplication {
         let config = c_persistent.save().await?;
 
         let file_existed_before = filename.exists();
-        let mut file = OpenOptions::new()
-            .write(true)
-            .create(true)
-            .truncate(true)
-            .open(&filename)
-            .await?;
+        let file = File::for_path(&filename);
 
         match serde_yaml::to_string(&SavedConnectionConfiguration {
             tag: c_persistent.tag().to_string(),
             config,
         }) {
-            Ok(value) => match file.write_all(value.as_bytes()).await {
-                Ok(()) => {
+            Ok(value) => match file
+                .replace_contents_future(
+                    value.into_bytes(),
+                    None,
+                    false,
+                    FileCreateFlags::REPLACE_DESTINATION,
+                )
+                .await
+            {
+                Ok(_) => {
                     if save_now {
                         let connection_id = connection.session().id().to_string();
                         self.update_connection(connection).await;
@@ -1118,16 +1125,16 @@ impl FieldMonitorApplication {
                         Ok(None)
                     }
                 }
-                Err(err) => {
+                Err((_, err)) => {
                     if !file_existed_before {
-                        remove_file(filename).await.ok();
+                        file.delete_future(Priority::DEFAULT).await.ok();
                     }
                     Err(err.into())
                 }
             },
             Err(err) => {
                 if !file_existed_before {
-                    remove_file(filename).await.ok();
+                    file.delete_future(Priority::DEFAULT).await.ok();
                 }
                 Err(err.into())
             }

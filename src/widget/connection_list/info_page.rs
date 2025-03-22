@@ -22,7 +22,6 @@ use crate::widget::connection_list::server_row::FieldMonitorServerRow;
 use crate::widget::connection_list::ServerOrConnection;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
-use async_std::task::block_on;
 use futures::lock::Mutex;
 use gettextrs::gettext;
 use gtk::glib;
@@ -102,10 +101,19 @@ impl FieldMonitorConnectionInfoPage {
         imp.settings_button.set_action_target(Some(&connection_id));
         imp.auth_button.set_action_target(Some(&connection_id));
 
-        block_on(maybe_add_actions_button(
-            &slf.imp().box_for_connection_action,
-            ServerOrConnection::Connection(connection),
-            &connection_id,
+        glib::spawn_future_local(glib::clone!(
+            #[strong]
+            slf,
+            #[strong]
+            connection,
+            async move {
+                maybe_add_actions_button(
+                    &slf.imp().box_for_connection_action,
+                    ServerOrConnection::Connection(&connection),
+                    &connection.connection_id(),
+                )
+                .await;
+            }
         ));
 
         slf

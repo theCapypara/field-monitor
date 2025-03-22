@@ -19,10 +19,10 @@ use adw::gdk::{Key, ModifierType};
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use anyhow::anyhow;
-use async_std::task::sleep;
 use futures::lock::Mutex;
 use gettextrs::gettext;
 use glib::object::ObjectExt;
+use glib::timeout_future;
 use gtk::gio;
 use gtk::glib;
 use log::{debug, info, warn};
@@ -541,7 +541,7 @@ impl FieldMonitorServerScreen {
             self,
             async move {
                 // TODO: Figure out why this delay is needed.
-                sleep(Duration::from_millis(75)).await;
+                timeout_future(Duration::from_millis(75)).await;
                 slf.fit_to_screen();
             }
         ));

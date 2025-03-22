@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-    <gresource prefix="/de/capypara/FieldMonitor/lib">
-        <file preprocess="xml-stripblanks">gtk/save_credentials_button.ui</file>
-    </gresource>
+	<gresource prefix="/de/capypara/FieldMonitor/lib">
+		<file preprocess="xml-stripblanks">gtk/save_credentials_button.ui</file>
+	</gresource>
 </gresources>

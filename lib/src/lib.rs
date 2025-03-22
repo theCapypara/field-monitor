@@ -34,6 +34,7 @@ pub mod connection;
 pub mod gtk;
 pub mod i18n;
 mod secrets;
+pub mod tokiort;
 
 pub fn config_error(connection_title: Option<String>) -> ConnectionError {
     ConnectionError::General(

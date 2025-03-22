@@ -25,7 +25,8 @@ uuid = { workspace = true }
 parking_lot = { workspace = true }
 derive_builder = "0.20"
 nix = { version = "0.29", features = ["signal"] }
-async-std = { workspace = true }
+async-rwlock = "1.3"
+tokio = { workspace = true, features = ["fs"] }
 
 [lints]
 workspace = true

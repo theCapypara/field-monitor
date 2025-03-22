@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-    <gresource prefix="/de/capypara/FieldMonitor/connection/debug">
-        <file preprocess="xml-stripblanks">behaviour_preferences.ui</file>
-        <file preprocess="xml-stripblanks">preferences.ui</file>
-    </gresource>
+	<gresource prefix="/de/capypara/FieldMonitor/connection/debug">
+		<file preprocess="xml-stripblanks">behaviour_preferences.ui</file>
+		<file preprocess="xml-stripblanks">preferences.ui</file>
+	</gresource>
 </gresources>

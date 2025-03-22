@@ -20,23 +20,20 @@ use std::sync::OnceLock;
 
 use tokio::runtime::Runtime;
 
-use libfieldmonitor::connection::{ConnectionError, ConnectionResult};
-
 pub fn tkruntime() -> &'static Runtime {
     static RUNTIME: OnceLock<Runtime> = OnceLock::new();
     RUNTIME.get_or_init(|| Runtime::new().expect("failed setting up tokio async runtime"))
 }
 
-pub async fn run_on_tokio<F, T>(fut: F) -> ConnectionResult<T>
+pub async fn run_on_tokio<F, T, E>(fut: F) -> Result<T, E>
 where
-    F: Future<Output = ConnectionResult<T>> + Send + 'static,
+    F: Future<Output = Result<T, E>> + Send + 'static,
     T: Send + 'static,
+    E: From<anyhow::Error> + Send + 'static,
 {
     tkruntime()
         .spawn(fut)
         .await
-        .map_err(|err| {
-            ConnectionError::General(None, anyhow::Error::from(err).context("tokio join failed"))
-        })
+        .map_err(|err| anyhow::Error::from(err).context("tokio join failed").into())
         .and_then(|r| r) // flatten
 }

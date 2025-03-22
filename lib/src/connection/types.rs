@@ -15,16 +15,16 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use anyhow::Error;
+use derive_builder::Builder;
+use futures::future::LocalBoxFuture;
+use gettextrs::gettext;
+use indexmap::IndexMap;
 use std::any::Any;
 use std::borrow::Cow;
 use std::fmt;
 use std::fmt::{Display, Formatter};
 use std::sync::Arc;
-
-use derive_builder::Builder;
-use futures::future::LocalBoxFuture;
-use gettextrs::gettext;
-use indexmap::IndexMap;
 use thiserror::Error;
 
 use crate::adapter::types::Adapter;
@@ -49,6 +49,12 @@ impl Display for ConnectionError {
             ConnectionError::AuthFailed(None, _) => gettext("Authentication failed").fmt(f),
             ConnectionError::General(None, _) => gettext("General Error").fmt(f),
         }
+    }
+}
+
+impl From<anyhow::Error> for ConnectionError {
+    fn from(value: Error) -> Self {
+        ConnectionError::General(None, value)
     }
 }
 

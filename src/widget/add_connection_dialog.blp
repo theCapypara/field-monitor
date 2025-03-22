@@ -1,7 +1,7 @@
 using Gtk 4.0;
 using Adw 1;
 
-template $FieldMonitorAddConnectionDialog : Adw.Dialog {
+template $FieldMonitorAddConnectionDialog: Adw.Dialog {
     content-width: 440;
     content-height: 640;
     title: bind main_navigation_page.title;
@@ -26,7 +26,9 @@ template $FieldMonitorAddConnectionDialog : Adw.Dialog {
                             selection-mode: none;
                             valign: start;
 
-                            styles ["boxed-list"]
+                            styles [
+                                "boxed-list",
+                            ]
                         }
                     }
                 }

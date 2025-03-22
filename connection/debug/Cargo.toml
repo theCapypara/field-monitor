@@ -8,7 +8,6 @@ libfieldmonitor = { path = "../../lib" }
 anyhow = { workspace = true }
 futures = { workspace = true }
 log = { workspace = true }
-async-std = { workspace = true }
 glib = { workspace = true }
 gtk = { workspace = true }
 adw = { workspace = true }

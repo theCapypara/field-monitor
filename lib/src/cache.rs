@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use async_std::sync::{RwLock, RwLockReadGuard, RwLockUpgradableReadGuard};
+use async_rwlock::{RwLock, RwLockReadGuard, RwLockUpgradableReadGuard};
 use std::ops::{Add, Deref};
 use std::time::{Duration, Instant};
 

@@ -18,7 +18,6 @@
 use crate::api;
 use crate::api::cache::InfoFetcher;
 use crate::api::{ExecParams, ProxmoxEntity};
-use crate::tokiort::{run_on_tokio, tkruntime};
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use libfieldmonitor::adapter::spice::SpiceAdapter;
@@ -29,6 +28,7 @@ use libfieldmonitor::connection::{
     Actionable, ConnectionResult, IconSpec, ServerAction, ServerConnection, ServerMetadata,
     ServerMetadataBuilder,
 };
+use libfieldmonitor::tokiort::{run_on_tokio, tkruntime};
 use log::{error, warn};
 use proxmox_api::{NodeId, VmConsoleProxyType, VmId, VmStatus, VmType};
 use std::borrow::Cow;
@@ -49,9 +49,11 @@ impl ProxmoxVm {
         let node_id = self.node_id.clone();
         let vm_type = self.vm_type;
         let vm_id = self.vm_id.clone();
-        run_on_tokio(async move { Ok(info_fetcher.vm_status(&node_id, vm_type, &vm_id).await) })
-            .await
-            .unwrap()
+        run_on_tokio::<_, _, anyhow::Error>(async move {
+            Ok(info_fetcher.vm_status(&node_id, vm_type, &vm_id).await)
+        })
+        .await
+        .unwrap()
     }
 }
 
@@ -73,7 +75,14 @@ impl Actionable for ProxmoxVm {
                     ],
                 }
             } else {
-                vec![("vmstart".into(), gettext("Start / Resume").into())]
+                vec![(
+                    "vmstart".into(),
+                    gettext(
+                        // TRANSLATORS: Verb
+                        "Start",
+                    )
+                    .into(),
+                )]
             }
         })
     }

@@ -15,7 +15,6 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use crate::tokiort::run_on_tokio;
 use anyhow::anyhow;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
@@ -25,6 +24,7 @@ use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::adapter::vte_pty::VtePtyAdapter;
 use libfieldmonitor::connection::{ConnectionError, ConnectionResult};
 use libfieldmonitor::libexec_path;
+use libfieldmonitor::tokiort::run_on_tokio;
 use log::error;
 use proxmox_api::{
     NodeId, ProxmoxApiClient, Spiceproxy, Termproxy, VmConsoleProxyType, VmId, VmType, Vncproxy,
@@ -79,7 +79,7 @@ async fn exec_cmd<F, Fut, S>(
         Ok(result.map(|_| success_msg()).unwrap_or_else(err_msg))
     })
     .await
-    .unwrap_or_else(|e| {
+    .unwrap_or_else(|e: anyhow::Error| {
         error!("Internal error running action: {e}");
         gettext("Internal error while trying to execute command.")
     });

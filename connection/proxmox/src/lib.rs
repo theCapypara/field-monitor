@@ -19,6 +19,5 @@
 mod api;
 mod credential_preferences;
 mod preferences;
-mod tokiort;
 
 pub use api::{ProxmoxConnectionProvider, ProxmoxConnectionProviderConstructor};

@@ -23,7 +23,6 @@ use crate::widget::navbar_row::FieldMonitorNavbarRow;
 use adw::gio;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
-use async_std::task::block_on;
 use libfieldmonitor::connection::*;
 use log::{debug, warn};
 use sorted_vec::SortedSet;
@@ -32,7 +31,10 @@ use std::collections::HashMap;
 
 mod imp {
     use super::*;
+    use futures::future::OptionFuture;
+    use futures::{stream, StreamExt};
     use gtk::pango;
+    use std::sync::Arc;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
     #[properties(wrapper_type = super::FieldMonitorNavbarConnectionList)]
@@ -84,8 +86,15 @@ mod imp {
                         return;
                     }
                     self.unset_stack();
-                    self.do_set_stack(stack);
-                    self.obj().queue_resize();
+                    let obj = self.obj();
+                    glib::spawn_future_local(glib::clone!(
+                        #[strong]
+                        obj,
+                        async move {
+                            obj.imp().do_set_stack(stack).await;
+                            obj.queue_resize();
+                        }
+                    ));
                 }
             }
         }
@@ -106,11 +115,11 @@ mod imp {
             }
         }
 
-        fn do_set_stack(&self, stack: FieldMonitorConnectionStack) {
+        async fn do_set_stack(&self, stack: FieldMonitorConnectionStack) {
             let pages = stack.pages();
             self.stack.replace(Some(stack.clone()));
             self.pages.replace(Some(pages.clone()));
-            self.populate_sidebar();
+            self.populate_sidebar().await;
             self.pages_items_changed_handler_id
                 .replace(Some(pages.connect_items_changed(glib::clone!(
                     #[weak(rename_to=slf)]
@@ -143,71 +152,80 @@ mod imp {
             }
         }
 
-        pub fn populate_sidebar(&self) {
-            let stack_brw = self.stack.borrow();
-            let pages_brw = self.pages.borrow();
-            if let (Some(pages), Some(stack)) = (pages_brw.as_ref(), stack_brw.as_ref()) {
-                let active_connection = stack.visible_connection_id();
-                let mut sorted_rows = SortedSet::with_capacity(pages.n_items() as usize);
+        pub async fn populate_sidebar(&self) {
+            let pages_opt = self.pages.borrow().clone();
+            let stack_opt = self.stack.borrow().clone();
+            if let (Some(pages), Some(stack)) = (pages_opt, stack_opt) {
+                let active_connection = Arc::new(stack.visible_connection_id());
 
-                for page in pages.iter() {
-                    let page: gtk::StackPage = page.unwrap();
-                    let item = gtk::Label::builder()
-                        .label("")
-                        .halign(gtk::Align::Start)
-                        .valign(gtk::Align::Center)
-                        .max_width_chars(20)
-                        .wrap(false)
-                        .ellipsize(pango::EllipsizeMode::End)
-                        .build();
-                    let row: FieldMonitorNavbarRow = glib::Object::builder()
-                        .property(
-                            "child-ref",
-                            gtk::StringObject::new(&page.name().unwrap_or_default()),
-                        )
-                        .property("content", &item)
-                        .property("selectable", false)
-                        .property("activatable", true)
-                        .build();
-                    row.update_relation(&[gtk::accessible::Relation::LabelledBy(&[
-                        item.upcast_ref()
-                    ])]);
+                let sorted_rows = stream::iter(pages.iter())
+                    .then(|page| {
+                        let active_connection = active_connection.clone();
+                        async move {
+                            let page: gtk::StackPage = page.unwrap();
+                            let item = gtk::Label::builder()
+                                .label("")
+                                .halign(gtk::Align::Start)
+                                .valign(gtk::Align::Center)
+                                .max_width_chars(20)
+                                .wrap(false)
+                                .ellipsize(pango::EllipsizeMode::End)
+                                .build();
+                            let row: FieldMonitorNavbarRow = glib::Object::builder()
+                                .property(
+                                    "child-ref",
+                                    gtk::StringObject::new(&page.name().unwrap_or_default()),
+                                )
+                                .property("content", &item)
+                                .property("selectable", false)
+                                .property("activatable", true)
+                                .build();
+                            row.update_relation(&[gtk::accessible::Relation::LabelledBy(&[
+                                item.upcast_ref()
+                            ])]);
 
-                    let conn_meta = page
-                        .child()
-                        .downcast_ref::<FieldMonitorConnectionInfoPage>()
-                        .and_then(FieldMonitorConnectionInfoPage::connection)
-                        .as_ref()
-                        .map(ConnectionInstance::metadata)
-                        .map(block_on);
-                    let icon_spec = conn_meta
-                        .as_ref()
-                        .map(|m| m.icon.clone())
-                        .unwrap_or_else(|| IconSpec::Named("dialog-error-symbolic".into()));
+                            let conn_meta = OptionFuture::from(
+                                page.child()
+                                    .downcast_ref::<FieldMonitorConnectionInfoPage>()
+                                    .and_then(FieldMonitorConnectionInfoPage::connection)
+                                    .as_ref()
+                                    .map(ConnectionInstance::metadata),
+                            )
+                            .await;
+                            let icon_spec = conn_meta
+                                .as_ref()
+                                .map(|m| m.icon.clone())
+                                .unwrap_or_else(|| IconSpec::Named("dialog-error-symbolic".into()));
 
-                    let icon: gtk::Widget = match icon_spec {
-                        IconSpec::Default => gtk::Image::builder()
-                            .icon_name(DEFAULT_GENERIC_ICON)
-                            .build()
-                            .upcast(),
-                        IconSpec::None => gtk::Box::builder().width_request(16).build().upcast(),
-                        IconSpec::Named(name) => {
-                            gtk::Image::builder().icon_name(&*name).build().upcast()
+                            let icon: gtk::Widget = match icon_spec {
+                                IconSpec::Default => gtk::Image::builder()
+                                    .icon_name(DEFAULT_GENERIC_ICON)
+                                    .build()
+                                    .upcast(),
+                                IconSpec::None => {
+                                    gtk::Box::builder().width_request(16).build().upcast()
+                                }
+                                IconSpec::Named(name) => {
+                                    gtk::Image::builder().icon_name(&*name).build().upcast()
+                                }
+                                IconSpec::Custom(factory) => factory(&conn_meta.unwrap()),
+                            };
+
+                            row.add_prefix(&icon);
+
+                            self.update_row(&page, &row);
+
+                            let is_selected =
+                                page.name().as_deref() == active_connection.as_deref();
+
+                            OrdKeyed(
+                                page.title().map(|v| v.to_lowercase()),
+                                (page, row, is_selected),
+                            )
                         }
-                        IconSpec::Custom(factory) => factory(&conn_meta.unwrap()),
-                    };
-
-                    row.add_prefix(&icon);
-
-                    self.update_row(&page, &row);
-
-                    let is_selected = page.name().as_deref() == active_connection.as_deref();
-
-                    sorted_rows.push(OrdKeyed(
-                        page.title().map(|v| v.to_lowercase()),
-                        (page, row, is_selected),
-                    ));
-                }
+                    })
+                    .collect::<SortedSet<_>>()
+                    .await;
 
                 let mut rows_brw = self.rows.borrow_mut();
                 for (i, key) in sorted_rows.into_vec().into_iter().enumerate() {
@@ -279,13 +297,25 @@ impl FieldMonitorNavbarConnectionList {
         _added: u32,
     ) {
         self.imp().clear_sidebar();
-        self.imp().populate_sidebar();
+        glib::spawn_future_local(glib::clone!(
+            #[strong(rename_to=slf)]
+            self,
+            async move {
+                slf.imp().populate_sidebar().await;
+            }
+        ));
     }
 
     fn on_page_updated(&self, _page: &gtk::StackPage) {
         // the title could change :(
         self.imp().clear_sidebar();
-        self.imp().populate_sidebar();
+        glib::spawn_future_local(glib::clone!(
+            #[strong(rename_to=slf)]
+            self,
+            async move {
+                slf.imp().populate_sidebar().await;
+            }
+        ));
     }
 
     fn on_stack_visible_connection_id_changed(&self, connection_id: Option<&str>) {

@@ -23,8 +23,8 @@ use std::time::Duration;
 
 use adw::prelude::AdwDialogExt;
 use anyhow::anyhow;
-use async_std::task::sleep;
 use futures::future::LocalBoxFuture;
+use glib::timeout_future;
 use gtk::prelude::*;
 use indexmap::IndexMap;
 use log::debug;
@@ -102,7 +102,7 @@ impl ConnectionProvider for DebugConnectionProvider {
         mut configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async {
-            sleep(Duration::from_millis(rng().random_range(100..1200))).await;
+            timeout_future(Duration::from_millis(rng().random_range(100..1200))).await;
 
             let preferences = preferences
                 .downcast::<DebugPreferences>()
@@ -155,7 +155,7 @@ impl ConnectionProvider for DebugConnectionProvider {
     ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
         debug!("store_credentials server_path : {server_path:?}");
         Box::pin(async move {
-            sleep(Duration::from_millis(rng().random_range(100..400))).await;
+            timeout_future(Duration::from_millis(rng().random_range(100..400))).await;
 
             let preferences = preferences
                 .downcast::<DebugBehaviourPreferences>()
@@ -186,7 +186,7 @@ impl ConnectionProvider for DebugConnectionProvider {
         configuration: ConnectionConfiguration,
     ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>> {
         Box::pin(async move {
-            sleep(Duration::from_millis(rng().random_range(100..1200))).await;
+            timeout_future(Duration::from_millis(rng().random_range(100..1200))).await;
 
             let title = configuration.title().to_string();
 
@@ -265,7 +265,7 @@ impl Actionable for DebugConnection {
                 Box::new(()),
                 Box::new(|_params, _window, toasts| {
                     Box::pin(async move {
-                        sleep(Duration::from_secs(2)).await;
+                        timeout_future(Duration::from_secs(2)).await;
                         let toast = adw::Toast::builder().title("Foobar").timeout(5).build();
                         if let Some(toasts) = toasts {
                             toasts.add_toast(toast);
@@ -292,7 +292,7 @@ impl Connection for DebugConnection {
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move {
-            sleep(Duration::from_millis(rng().random_range(100..1200))).await;
+            timeout_future(Duration::from_millis(rng().random_range(100..1200))).await;
 
             match self.config.load_servers_behaviour() {
                 DebugBehaviour::Ok => {
@@ -531,7 +531,7 @@ impl Actionable for DebugConnectionServer {
                 Box::new(()),
                 Box::new(|_params, _window, toasts| {
                     Box::pin(async move {
-                        sleep(Duration::from_secs(2)).await;
+                        timeout_future(Duration::from_secs(2)).await;
                         let toast = adw::Toast::builder()
                             .title("Server bazbaz")
                             .timeout(5)
@@ -639,7 +639,7 @@ impl ServerConnection for DebugConnectionServer {
 
     fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
         Box::pin(async move {
-            sleep(Duration::from_millis(rng().random_range(50..200))).await;
+            timeout_future(Duration::from_millis(rng().random_range(50..200))).await;
 
             let mut hm: IndexMap<Cow<_>, Box<dyn ServerConnection>> = IndexMap::new();
 
