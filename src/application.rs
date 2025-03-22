@@ -938,6 +938,7 @@ impl FieldMonitorApplication {
         };
         assert_eq!(&connection_id, instance.connection_id().as_str());
 
+        debug!("connection added");
         self.emit_by_name::<()>("connection-updated", &[&instance]);
     }
 
@@ -1030,7 +1031,7 @@ impl FieldMonitorApplication {
                                     "Skipped file in connections without 'yaml' extension: {}",
                                     path.display()
                                 );
-                                return;
+                                continue;
                             }
                             debug!("processing connection file {}", path.display());
                             if let Err(err) = self.update_connection_by_file(path).await {
@@ -1040,6 +1041,7 @@ impl FieldMonitorApplication {
                                     err
                                 );
                             }
+                            debug!("reloaded a single connection");
                         }
                         Err(err) => {
                             error!("Failed to read a connection while iterating: {}", err);
