@@ -88,30 +88,35 @@
 			<!-- Translators: Caption of the first screenshot in the metainfo -->
 			<caption>A list of servers in a Proxmox cluster to connect to</caption>
 			<image>
-				https://raw.githubusercontent.com/theCapypara/field-monitor/main/data/screenshots/connection-list.png
+				https://raw.githubusercontent.com/theCapypara/field-monitor/refs/heads/main/data/screenshots/connection-list.png
 			</image>
 		</screenshot>
 		<screenshot>
 			<!-- Translators: Caption of the second screenshot in the metainfo -->
 			<caption>Welcome screen</caption>
-			<image>https://raw.githubusercontent.com/theCapypara/field-monitor/main/data/screenshots/welcome.png</image>
+			<image>
+				https://raw.githubusercontent.com/theCapypara/field-monitor/refs/heads/main/data/screenshots/welcome.png
+			</image>
 		</screenshot>
 		<screenshot>
 			<!-- Translators: Caption of the third screenshot in the metainfo -->
 			<caption>Screen of a connected graphical display</caption>
-			<image>https://raw.githubusercontent.com/theCapypara/field-monitor/main/data/screenshots/connected.png
+			<image>
+				https://raw.githubusercontent.com/theCapypara/field-monitor/refs/heads/main/data/screenshots/connected.png
 			</image>
 		</screenshot>
 		<screenshot>
 			<!-- Translators: Caption of the 4th screenshot in the metainfo -->
 			<caption>Screen of a connected console</caption>
-			<image>https://raw.githubusercontent.com/theCapypara/field-monitor/main/data/screenshots/vte.png</image>
+			<image>
+				https://raw.githubusercontent.com/theCapypara/field-monitor/refs/heads/main/data/screenshots/vte.png
+			</image>
 		</screenshot>
 		<screenshot>
 			<!-- Translators: Caption of the 5th screenshot in the metainfo -->
 			<caption>Adding a new Proxmox hypervisor connection</caption>
 			<image>
-				https://raw.githubusercontent.com/theCapypara/field-monitor/main/data/screenshots/adding-proxmox.png
+				https://raw.githubusercontent.com/theCapypara/field-monitor/refs/heads/main/data/screenshots/adding-proxmox.png
 			</image>
 		</screenshot>
 	</screenshots>
