@@ -24,7 +24,7 @@ use std::thread;
 use anyhow::anyhow;
 use futures::channel::oneshot;
 use futures::future::LocalBoxFuture;
-use futures::{stream, StreamExt, TryStreamExt};
+use futures::{StreamExt, TryStreamExt, stream};
 use gettextrs::gettext;
 use indexmap::IndexMap;
 use log::{debug, error, warn};

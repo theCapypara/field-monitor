@@ -21,8 +21,8 @@ use crate::quick_connect::util::{parse_port, parse_query_args};
 use crate::quick_connect::{OptionResult, QuickConnectAdapterType, QuickConnectConfig};
 use crate::remote_server_info::RemoteServerInfo;
 use anyhow::anyhow;
-use fluent_uri::encoding::encoder::Query;
 use fluent_uri::encoding::EStr;
+use fluent_uri::encoding::encoder::Query;
 use gettextrs::gettext;
 use glib::object::IsA;
 use libfieldmonitor::adapter::rdp::RdpAdapter;
@@ -77,7 +77,7 @@ pub async fn try_from_file<T: Read + Seek>(
             return Ok(Err(ConnectionError::General(
                 Some(gettext("Failed to read file")),
                 err.into(),
-            )))
+            )));
         }
     };
     // We do not read files > 128mib. Also, if the file is empty it's obviously not an RDP file.

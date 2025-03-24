@@ -28,7 +28,7 @@ use glib::timeout_future;
 use gtk::prelude::*;
 use indexmap::IndexMap;
 use log::debug;
-use rand::{rng, Rng};
+use rand::{Rng, rng};
 
 use libfieldmonitor::adapter::rdp::RdpAdapter;
 use libfieldmonitor::adapter::spice::SpiceAdapter;
@@ -77,11 +77,7 @@ impl ConnectionProvider for DebugConnectionProvider {
 
     fn title_for<'a>(&self, config: &'a ConnectionConfiguration) -> Option<&'a str> {
         let title = config.title();
-        if title.is_empty() {
-            None
-        } else {
-            Some(title)
-        }
+        if title.is_empty() { None } else { Some(title) }
     }
 
     fn description(&self) -> Cow<str> {

@@ -25,14 +25,14 @@ use anyhow::anyhow;
 use gettextrs::gettext;
 use gtk::glib;
 use log::{debug, warn};
-use nix::sys::signal::{kill, Signal};
+use nix::sys::signal::{Signal, kill};
 use nix::unistd::Pid;
 use parking_lot::Mutex;
 use uuid::Uuid;
 use vte::prelude::*;
 
-use field_monitor_vte_driver_lib::dbus_server::VtePtyProcMon;
 use field_monitor_vte_driver_lib::DBUS_KEY_ENV_VAR;
+use field_monitor_vte_driver_lib::dbus_server::VtePtyProcMon;
 
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
 use crate::config::APP_ID;

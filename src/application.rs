@@ -38,6 +38,7 @@ use log::{debug, error, info, warn};
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
+use libfieldmonitor::ManagesSecrets;
 use libfieldmonitor::busy::{BusyGuard, BusyStack};
 use libfieldmonitor::config::{APP_ID, VERSION};
 use libfieldmonitor::connection::ConnectionConfiguration;
@@ -45,7 +46,6 @@ use libfieldmonitor::connection::ConnectionInstance;
 use libfieldmonitor::connection::ConnectionProvider;
 use libfieldmonitor::connection::DualScopedConnectionConfiguration;
 use libfieldmonitor::i18n::gettext_f;
-use libfieldmonitor::ManagesSecrets;
 
 use crate::connection::CONNECTION_PROVIDERS;
 use crate::connection_loader::ConnectionLoader;

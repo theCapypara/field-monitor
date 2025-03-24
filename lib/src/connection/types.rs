@@ -28,8 +28,8 @@ use std::sync::Arc;
 use thiserror::Error;
 
 use crate::adapter::types::Adapter;
-use crate::connection::configuration::ConnectionConfiguration;
 use crate::connection::DualScopedConnectionConfiguration;
+use crate::connection::configuration::ConnectionConfiguration;
 
 pub type ConnectionResult<T> = Result<T, ConnectionError>;
 

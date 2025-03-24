@@ -16,19 +16,19 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::io;
-use std::io::{stdin, stdout, Read, Write};
+use std::io::{Read, Write, stdin, stdout};
 use std::mem::MaybeUninit;
 use std::os::fd::AsFd;
 use std::process::exit;
 use std::ptr::null_mut;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread::sleep;
 use std::time::Duration;
 
 use nix::libc;
-use nix::sys::signal::{sigaction, SaFlags, SigAction, SigHandler, SigSet, Signal};
-use nix::sys::termios::{cfmakeraw, tcgetattr, tcsetattr, SetArg};
+use nix::sys::signal::{SaFlags, SigAction, SigHandler, SigSet, Signal, sigaction};
+use nix::sys::termios::{SetArg, cfmakeraw, tcgetattr, tcsetattr};
 use parking_lot::Mutex;
 use ringbuf::storage::Heap;
 use ringbuf::traits::*;
@@ -39,13 +39,12 @@ use virt::connect::Connect;
 use virt::domain::Domain;
 use virt::stream::Stream;
 use virt::sys::{
-    virEventAddTimeout, virEventRegisterDefaultImpl, virEventRunDefaultImpl,
-    virStreamEventAddCallback, virStreamFlags, virStreamPtr, virStreamRecv, virStreamSend,
     VIR_DOMAIN_CONSOLE_FORCE, VIR_STREAM_EVENT_READABLE, VIR_STREAM_EVENT_WRITABLE,
-    VIR_STREAM_NONBLOCK,
+    VIR_STREAM_NONBLOCK, virEventAddTimeout, virEventRegisterDefaultImpl, virEventRunDefaultImpl,
+    virStreamEventAddCallback, virStreamFlags, virStreamPtr, virStreamRecv, virStreamSend,
 };
 
-use field_monitor_vte_driver_lib::{args, debug, debug_sync, error, setup_driver, PtyClient};
+use field_monitor_vte_driver_lib::{PtyClient, args, debug, debug_sync, error, setup_driver};
 
 struct ConsoleContext {
     #[allow(unused)]

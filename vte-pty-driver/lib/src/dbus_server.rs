@@ -20,7 +20,7 @@ use std::sync::Arc;
 
 use base64::prelude::*;
 use parking_lot::Mutex;
-use zbus::{connection, interface, Connection};
+use zbus::{Connection, connection, interface};
 
 use crate::DBUS_PATH;
 

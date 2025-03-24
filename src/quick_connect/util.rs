@@ -16,8 +16,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use crate::quick_connect::QuickConnectConfig;
-use fluent_uri::encoding::encoder::{Query, Userinfo};
 use fluent_uri::encoding::EStr;
+use fluent_uri::encoding::encoder::{Query, Userinfo};
 use fluent_uri::{Builder, Uri, UriRef};
 use gettextrs::gettext;
 use libfieldmonitor::connection::{ConnectionConfiguration, ConnectionError};

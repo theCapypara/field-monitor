@@ -16,18 +16,18 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::borrow::Cow;
-use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
 
 pub use crate::datatypes::*;
 use futures::future::BoxFuture;
 use futures::lock::Mutex;
-use http::{header, HeaderMap, HeaderValue, Method, StatusCode, Uri};
+use http::{HeaderMap, HeaderValue, Method, StatusCode, Uri, header};
 use log::{debug, warn};
 use reqwest::{ClientBuilder, RequestBuilder, Response};
 use secure_string::SecureString;
-use serde::de::DeserializeOwned;
 use serde::Serialize;
+use serde::de::DeserializeOwned;
 use thiserror::Error;
 
 mod datatypes;

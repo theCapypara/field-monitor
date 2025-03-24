@@ -22,12 +22,12 @@ mod icon;
 
 pub use self::icon::ServerInfoIcon;
 use crate::widget::connection_list::server_info::icon::IsOnline;
-use crate::widget::connection_list::{ServerOrConnection, DEFAULT_GENERIC_ICON};
+use crate::widget::connection_list::{DEFAULT_GENERIC_ICON, ServerOrConnection};
 use adw::prelude::*;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use glib::object::{Cast, IsA, ObjectType};
-use glib::{timeout_future, ControlFlow, WeakRef};
+use glib::{ControlFlow, WeakRef, timeout_future};
 use gtk::gio;
 use libfieldmonitor::connection::{IconSpec, ServerConnection, ServerMetadata};
 use libfieldmonitor::i18n::gettext_f;

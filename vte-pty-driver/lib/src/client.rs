@@ -18,8 +18,8 @@
 use std::env;
 use std::process::exit;
 
-use crate::dbus_client::{make_dbus_client, VtePtyProcMonProxy};
-use crate::{debug, DBUS_KEY_ENV_VAR};
+use crate::dbus_client::{VtePtyProcMonProxy, make_dbus_client};
+use crate::{DBUS_KEY_ENV_VAR, debug};
 
 pub struct PtyClient {
     extra_args: Vec<String>,

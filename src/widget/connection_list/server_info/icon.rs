@@ -16,8 +16,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use adw::prelude::*;
-use gtk::subclass::prelude::*;
 use gtk::TemplateChild;
+use gtk::subclass::prelude::*;
 use libfieldmonitor::impl_primitive_enum_param_spec;
 use num_enum::TryFromPrimitive;
 use std::cell::RefCell;

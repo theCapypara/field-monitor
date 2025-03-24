@@ -15,10 +15,10 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use crate::APP;
 use crate::application::FieldMonitorApplication;
 use crate::util::ListChange;
 use crate::widget::connection_list::info_page::FieldMonitorConnectionInfoPage;
-use crate::APP;
 use adw::gio;
 use adw::prelude::*;
 use adw::subclass::prelude::*;

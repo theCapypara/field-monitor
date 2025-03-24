@@ -17,17 +17,17 @@
  */
 #![allow(clippy::arc_with_non_send_sync)] // future proofing
 
-use std::collections::hash_map::Entry;
 use std::collections::HashMap;
+use std::collections::hash_map::Entry;
 use std::mem::take;
 use std::sync::Arc;
 
-use futures::future::{try_join_all, BoxFuture, LocalBoxFuture};
+use futures::future::{BoxFuture, LocalBoxFuture, try_join_all};
 use secure_string::SecureString;
 use serde_yaml::{Mapping, Value};
 
-use crate::connection::config_value::{ConfigValue, ConfigValueRef};
 use crate::ManagesSecrets;
+use crate::connection::config_value::{ConfigValue, ConfigValueRef};
 
 pub trait ConfigAccess {
     fn get(&self, key: &str) -> Option<ConfigValueRef>;

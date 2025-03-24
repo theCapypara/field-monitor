@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use zbus::{proxy, Connection, Result};
+use zbus::{Connection, Result, proxy};
 
 #[proxy(
     interface = "de.capypara.FieldMonitor.VtePtyProcMon1",
