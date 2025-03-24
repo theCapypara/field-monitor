@@ -36,6 +36,7 @@
   libGL,
 
   editorconfig-checker,
+  jq,
 }:
 let
   patched-gtk-vnc = (
@@ -128,7 +129,12 @@ mkShell {
       desktop-file-utils
       appstream
     ]
-    ++ (with python312Packages; [ pygobject3 ])
+    ++ (with python312Packages; [
+      pygobject3
+      # Flatpak Builder Tools requirements
+      aiohttp
+      toml
+    ])
     ## RUST
     ++ [
       clang
@@ -140,5 +146,6 @@ mkShell {
     ## UTIL
     ++ [
       editorconfig-checker
+      jq
     ];
 }
