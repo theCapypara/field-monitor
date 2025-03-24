@@ -19,35 +19,74 @@
 		<category>Network</category>
 	</categories>
 
+	<keywords>
+		<!-- Translators: Keyword in the metainfo. -->
+		<keyword>remote desktop</keyword>
+		<!-- Translators: Keyword in the metainfo. -->
+		<keyword>RDP</keyword>
+		<!-- Translators: Keyword in the metainfo. -->
+		<keyword>VNC</keyword>
+		<!-- Translators: Keyword in the metainfo. -->
+		<keyword>SPICE</keyword>
+		<!-- Translators: Keyword in the metainfo. -->
+		<keyword>KVM</keyword>
+		<!-- Translators: Keyword in the metainfo. -->
+		<keyword>QEMU</keyword>
+		<!-- Translators: Keyword in the metainfo. -->
+		<keyword>libvirt</keyword>
+		<!-- Translators: Keyword in the metainfo. -->
+		<keyword>Proxmox</keyword>
+		<!-- Translators: Keyword in the metainfo. -->
+		<keyword>GNOME</keyword>
+	</keywords>
+
 	<url type="homepage">https://github.com/theCapypara/field-monitor</url>
 	<url type="bugtracker">https://github.com/theCapypara/field-monitor/issues</url>
-	<url type="translate">https://hosted.weblate.org/projects/fieldmonitor/</url>
 	<url type="donation">https://ko-fi.com/parakoopa</url>
-	<url type="contact">https://matrix.to/#/#fieldmonitor:matrix.org</url>
 	<url type="vcs-browser">https://github.com/theCapypara/field-monitor</url>
 
 	<description>
 		<!-- Translators: Part of the description of the application in the metainfo. -->
 		<p>
-			Field Monitor lets you connect to the screens of remote computers and virtual machines.
+			Field Monitor is a remote-desktop client designed for the GNOME platform.
 		</p>
 		<!-- Translators: Part of the description of the application in the metainfo. -->
 		<p>
-		    ... <!-- TODO -->
+			It is focused on connecting to virtual machines, but can connect to any server
+			supporting the RDP, SPICE or VNC protocols.
+		</p>
+		<!-- Translators: Part of the description of the application in the metainfo. -->
+		<p>
+			It has support for directly connecting to VMs of the following hypervisors:
+		</p>
+		<ul>
+			<li>Proxmox</li>
+			<li>QEMU/KVM via libvirt</li>
+		</ul>
+		<!-- Translators: Part of the description of the application in the metainfo. -->
+		<p>
+			For supported VM hypervisors Field Monitor also offers options to manage the basic
+			power state of VMs, such as starting, stopping, rebooting, etc.
+		</p>
+		<!-- Translators: Part of the description of the application in the metainfo. -->
+		<p>
+			Additionally, Field Monitor supports opening RDP and Virt Viewer connection files
+			and quickly connecting to RDP, SPICE or VNC servers via URI.
 		</p>
 	</description>
 
 	<releases>
-		<release version="48.0" date="2024-12-31"> <!-- TODO -->
+		<release version="48.0" date="2025-03-23">
 			<description translate="no">
 				<p>Initial Release.</p>
 			</description>
 		</release>
 	</releases>
 
+	<!-- TODO --><!-- TODO --><!-- TODO --><!-- TODO -->
 	<!--<screenshots>
 		<screenshot type="default">
-			<!-XX- Translators: Subtitle of the screenshot in the metainfo -XX->
+			<!-XX- Translators: Caption of the first screenshot in the metainfo -XX->
 			<caption>Application Overview</caption>
 			<image>...</image>
 		</screenshot>
@@ -61,8 +100,8 @@
 	</recommends>
 
 	<branding>
-		<color type="primary" scheme_preference="light">#000000</color> <!-- TODO -->
-		<color type="primary" scheme_preference="dark">#000000</color> <!-- TODO -->
+		<color type="primary" scheme_preference="light">#ff8b24</color>
+		<color type="primary" scheme_preference="dark">#7c438f</color>
 	</branding>
 
 </component>

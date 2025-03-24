@@ -29,6 +29,8 @@
         "--socket=ssh-auth",
         "--device=dri",
         "--socket=wayland",
+        "--socket=pulseaudio",
+        "--filesystem=xdg-run/pipewire-0",
         "--filesystem=~/.ssh/known_hosts:ro",
         "--filesystem=xdg-run/libvirt",
         "--filesystem=/run/libvirt",
@@ -54,6 +56,10 @@
         "/share/pkgconfig",
         "*.la",
         "*.a"
+    ],
+    "cleanup-commands": [
+        "mkdir -p /app/lib/ffmpeg",
+        "mkdir -p /app/lib/openh264"
     ],
     "modules": [
         {
@@ -268,7 +274,8 @@
                 "-Ddriver_remote=enabled",
                 "-Ddriver_libvirtd=enabled",
                 "-Ddriver_qemu=enabled",
-                "-Ddocs=disabled"
+                "-Ddocs=disabled",
+                "-Dtests=disabled"
             ],
             "sources": [
                 {

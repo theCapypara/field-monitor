@@ -5,7 +5,7 @@ set -xe
 
 cd build-aux/flatpak
 
-flatpak run org.flatpak.Builder \
+flatpak-builder \
   --user \
   --force-clean \
   --repo=/tmp/fm-repo \

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-16 14:21+0100\n"
-"PO-Revision-Date: 2025-03-16 14:22+0100\n"
+"POT-Creation-Date: 2025-03-24 15:58+0100\n"
+"PO-Revision-Date: 2025-03-24 16:03+0100\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #. Translators: The name of the application.
 #: data/de.capypara.FieldMonitor.desktop.in.in:3
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:543
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:542
 #: src/widget/window.blp:9 src/widget/window.blp:47 src/widget/window.blp:157
 #: src/widget/window.blp:163 src/widget/window.rs:305
 msgid "Field Monitor"
@@ -46,19 +46,108 @@ msgstr "proxmox;vnc;spice;rdp;kvm;qemu;"
 msgid "New Window"
 msgstr "Neues Fenster"
 
-#. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:31
-msgid ""
-"Field Monitor lets you connect to the screens of remote computers and "
-"virtual machines."
-msgstr ""
-"Feldmonitor ermöglicht es Ihnen auf die Bildschirme entfernter Computer und "
-"Virtueller Maschinen zuzugreifen."
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:24
+msgid "remote desktop"
+msgstr "Entfernter Bildschirm"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
+#: connection/generic-group/src/server_preferences.blp:21
+#: lib/src/adapter/rdp.rs:52
+msgid "RDP"
+msgstr "RDP"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
+#: connection/generic-group/src/server_preferences.blp:23
+#: connection/proxmox/src/api/node.rs:163 connection/proxmox/src/api/vm.rs:313
+#: lib/src/adapter/vnc.rs:71
+msgid "VNC"
+msgstr "VNC"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
+#: connection/generic-group/src/server_preferences.blp:22
+#: connection/proxmox/src/api/node.rs:162 connection/proxmox/src/api/vm.rs:308
+#: lib/src/adapter/spice.rs:124
+msgid "SPICE"
+msgstr "SPICE"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:32
+msgid "KVM"
+msgstr "KVM"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:34
+msgid "QEMU"
+msgstr "QEMU"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:36
+msgid "libvirt"
+msgstr "libvirt"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:63
+#: connection/proxmox/src/api/provider.rs:48
+#: connection/proxmox/src/api/provider.rs:52
+msgid "Proxmox"
+msgstr "Proxmox"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:40
+msgid "GNOME"
+msgstr "GNOME"
 
 #. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:35
-msgid "...  "
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:50
+msgid ""
+"Field Monitor is a remote-desktop client designed for the GNOME platform."
 msgstr ""
+"Feldmonitor ist eine Anwendung zur Steuerung von entfernten Bildschirmen, "
+"entworfen für die GNOME Plattform."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:54
+msgid ""
+"It is focused on connecting to virtual machines, but can connect to any "
+"server supporting the RDP, SPICE or VNC protocols."
+msgstr ""
+"Feldmonitor kann die Verbindung mit beliebigen RDP, SPICE oder VNC Servern "
+"herstellen und bietet zusätzliche Funktionen zur Steuerung von virtuellen "
+"Maschinen."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:59
+msgid ""
+"It has support for directly connecting to VMs of the following hypervisors:"
+msgstr ""
+"Die Anwendung kann sich direkt mit den folgenden VM-Hypervisoren verbinden:"
+
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
+msgid "QEMU/KVM via libvirt"
+msgstr "QEMU/KVM via libvirt"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
+msgid ""
+"For supported VM hypervisors Field Monitor also offers options to manage the "
+"basic power state of VMs, such as starting, stopping, rebooting, etc."
+msgstr ""
+"Für diese unterstützten Hypervisoren bietet Feldmonitor unter anderem die "
+"Möglichkeit VMs zu starten, zu stoppen und neuzustarten."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
+msgid ""
+"Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
+"files and quickly connecting to RDP, SPICE or VNC servers via URI."
+msgstr ""
+"Außerdem kann Feldmonitor RDP und Virt Viewer Verbindungsdateien öffnen und "
+"schnell Verbindungen zu RDP, SPICE und VNC Servern via URI herstellen."
 
 #: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
 msgid "Remote Desktop file"
@@ -145,38 +234,21 @@ msgstr "Hinzufügen"
 msgid "Remove Server"
 msgstr "Entfernter Server"
 
-#: connection/generic-group/src/server_preferences.blp:13
+#: connection/generic-group/src/server_preferences.blp:12
 msgid "Server Name"
 msgstr "Servername"
 
-#: connection/generic-group/src/server_preferences.blp:17
+#: connection/generic-group/src/server_preferences.blp:16
 msgid "Server Type"
 msgstr "Servertyp"
 
-#: connection/generic-group/src/server_preferences.blp:22
-#: lib/src/adapter/rdp.rs:52
-msgid "RDP"
-msgstr "RDP"
-
-#: connection/generic-group/src/server_preferences.blp:23
-#: connection/proxmox/src/api/node.rs:162 connection/proxmox/src/api/vm.rs:299
-#: lib/src/adapter/spice.rs:124
-msgid "SPICE"
-msgstr "SPICE"
-
-#: connection/generic-group/src/server_preferences.blp:24
-#: connection/proxmox/src/api/node.rs:163 connection/proxmox/src/api/vm.rs:304
-#: lib/src/adapter/vnc.rs:71
-msgid "VNC"
-msgstr "VNC"
-
-#: connection/generic-group/src/server_preferences.blp:32
+#: connection/generic-group/src/server_preferences.blp:31
 #: connection/libvirt/src/qemu_preferences.blp:51
 #: connection/proxmox/src/preferences.blp:20
 msgid "Hostname"
 msgstr "Hostname"
 
-#: connection/generic-group/src/server_preferences.blp:36
+#: connection/generic-group/src/server_preferences.blp:35
 #: connection/proxmox/src/preferences.blp:24
 msgid "Port"
 msgstr "Port"
@@ -186,106 +258,107 @@ msgid "(Unable to load server name)"
 msgstr "(Laden des Servernamen fehlgeschlagen)"
 
 #: connection/libvirt/src/connection.rs:278
-#: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:64
-#: connection/proxmox/src/api/vm.rs:69
+#: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:66
+#: connection/proxmox/src/api/vm.rs:71
 msgid "Reboot"
 msgstr "Neu starten"
 
 #: connection/libvirt/src/connection.rs:279
-#: connection/proxmox/src/api/node.rs:61 connection/proxmox/src/api/vm.rs:65
-#: connection/proxmox/src/api/vm.rs:70
+#: connection/proxmox/src/api/node.rs:61 connection/proxmox/src/api/vm.rs:67
+#: connection/proxmox/src/api/vm.rs:72
 msgid "Shutdown"
 msgstr "Herunterfahren"
 
-#: connection/libvirt/src/connection.rs:280 connection/proxmox/src/api/vm.rs:71
+#: connection/libvirt/src/connection.rs:280 connection/proxmox/src/api/vm.rs:73
 msgid "Force Reset"
 msgstr "Zurücksetzen erzwingen"
 
-#: connection/libvirt/src/connection.rs:281 connection/proxmox/src/api/vm.rs:66
-#: connection/proxmox/src/api/vm.rs:72
+#: connection/libvirt/src/connection.rs:281 connection/proxmox/src/api/vm.rs:68
+#: connection/proxmox/src/api/vm.rs:74
 msgid "Force Poweroff"
 msgstr "Ausschalten erzwingen"
 
-#: connection/libvirt/src/connection.rs:284 connection/proxmox/src/api/vm.rs:76
-msgid "Start / Resume"
-msgstr "Starten / Fortsetzen"
+#. TRANSLATORS: Verb
+#: connection/libvirt/src/connection.rs:288 connection/proxmox/src/api/vm.rs:82
+msgid "Start"
+msgstr "Starten"
 
-#: connection/libvirt/src/connection.rs:312
+#: connection/libvirt/src/connection.rs:319
 msgid "Reboot command successfully sent to domain."
 msgstr "Befehl zum Neustart an Domäne gesendet."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/libvirt/src/connection.rs:317
+#: connection/libvirt/src/connection.rs:324
 msgid "Failed to send reboot command: {err}"
 msgstr "Neustart fehlgeschlagen: {err}"
 
-#: connection/libvirt/src/connection.rs:338
+#: connection/libvirt/src/connection.rs:345
 msgid "Shutdown command successfully sent to domain."
 msgstr "Befehl zum Herunterfahren an Domäne gesendet."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/libvirt/src/connection.rs:343
+#: connection/libvirt/src/connection.rs:350
 msgid "Failed to send shutdown command: {err}"
 msgstr "Herunterfahren fehlgeschlagen: {err}"
 
-#: connection/libvirt/src/connection.rs:364
+#: connection/libvirt/src/connection.rs:371
 msgid "Domain successfully reset."
 msgstr "Befehl zum Zurücksetzen an Domnäne gesendet."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/libvirt/src/connection.rs:369
+#: connection/libvirt/src/connection.rs:376
 msgid "Failed to reset domain: {err}"
 msgstr "Zurücksetzen fehlgeschlagen: {err}"
 
-#: connection/libvirt/src/connection.rs:390
+#: connection/libvirt/src/connection.rs:397
 msgid "Domain successfully shut down."
 msgstr "Domäne erfolgreich heruntergefahren."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/libvirt/src/connection.rs:395
+#: connection/libvirt/src/connection.rs:402
 msgid "Failed to send destroy command: {err}"
 msgstr "Zerstören fehlgeschlagen: {err}"
 
-#: connection/libvirt/src/connection.rs:421
+#: connection/libvirt/src/connection.rs:428
 msgid "Domain successfully started."
 msgstr "Domäne erfolgreich gestartet."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/libvirt/src/connection.rs:426
+#: connection/libvirt/src/connection.rs:433
 msgid "Failed to send create command: {err}"
 msgstr "Erstellen fehlgeschlagen: {err}"
 
-#: connection/libvirt/src/connection.rs:453
+#: connection/libvirt/src/connection.rs:460
 msgid "Domain is not running."
 msgstr "Diese Domäne ist nicht aktiv."
 
-#: connection/libvirt/src/connection.rs:460
+#: connection/libvirt/src/connection.rs:467
 msgid "Domain is already running."
 msgstr "Diese Domäne ist bereits aktiv."
 
-#: connection/libvirt/src/connection.rs:469
+#: connection/libvirt/src/connection.rs:476
 #: connection/proxmox/src/api/mod.rs:84
 msgid "Internal error while trying to execute command."
 msgstr "Beim Ausführen des Befehls ist ein interner Fehler aufgetreten."
 
-#: connection/libvirt/src/connection.rs:499
+#: connection/libvirt/src/connection.rs:506
 msgid "SPICE (Graphical)"
 msgstr "SPICE (graphisch)"
 
-#: connection/libvirt/src/connection.rs:503
+#: connection/libvirt/src/connection.rs:510
 msgid "RDP (Graphical)"
 msgstr "RDP (graphisch)"
 
-#: connection/libvirt/src/connection.rs:506
+#: connection/libvirt/src/connection.rs:513
 msgid "VNC (Graphical)"
 msgstr "VNC (graphisch)"
 
-#: connection/libvirt/src/connection.rs:508
+#: connection/libvirt/src/connection.rs:515
 msgid "Serial Console"
 msgstr "Serielle Konsole"
 
@@ -347,7 +420,7 @@ msgstr ""
 msgid "Reboot command successfully sent to server."
 msgstr "Befehl zum Neustart an Server gesendet."
 
-#: connection/proxmox/src/api/node.rs:103 connection/proxmox/src/api/vm.rs:126
+#: connection/proxmox/src/api/node.rs:103 connection/proxmox/src/api/vm.rs:135
 msgid "Failed to send reboot command."
 msgstr "Neustart der VM fehlgeschlagen."
 
@@ -355,18 +428,13 @@ msgstr "Neustart der VM fehlgeschlagen."
 msgid "Shutdown command successfully sent to server."
 msgstr "Befehl zum Herunterfahren an Server gesendet."
 
-#: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:159
+#: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:168
 msgid "Failed to send shutdown command."
 msgstr "Herunterfahren der VM fehlgeschlagen."
 
-#: connection/proxmox/src/api/node.rs:164 connection/proxmox/src/api/vm.rs:309
+#: connection/proxmox/src/api/node.rs:164 connection/proxmox/src/api/vm.rs:318
 msgid "Console"
 msgstr "Konsole"
-
-#: connection/proxmox/src/api/provider.rs:48
-#: connection/proxmox/src/api/provider.rs:52
-msgid "Proxmox"
-msgstr "Proxmox"
 
 #: connection/proxmox/src/api/provider.rs:56
 msgid "Add Proxmox Connection"
@@ -376,35 +444,35 @@ msgstr "Proxmox Verbindung hinzufügen"
 msgid "Proxmox hypervisor connection"
 msgstr "Proxmox Hypervisorverbindung"
 
-#: connection/proxmox/src/api/vm.rs:123
+#: connection/proxmox/src/api/vm.rs:132
 msgid "Reboot command successfully sent to VM."
 msgstr "Befehl zum Neustart an VM gesendet."
 
-#: connection/proxmox/src/api/vm.rs:156
+#: connection/proxmox/src/api/vm.rs:165
 msgid "Shutdown command successfully sent to VM."
 msgstr "Befehl zum Herunterfahren an VM gesendet."
 
-#: connection/proxmox/src/api/vm.rs:188
+#: connection/proxmox/src/api/vm.rs:197
 msgid "VM was successfully reset."
 msgstr "VM wurde erfolgreich zurückgesetzt."
 
-#: connection/proxmox/src/api/vm.rs:191
+#: connection/proxmox/src/api/vm.rs:200
 msgid "Failed to send reset command."
 msgstr "Zurücksetzen der VM fehgeschlagen."
 
-#: connection/proxmox/src/api/vm.rs:221
+#: connection/proxmox/src/api/vm.rs:230
 msgid "VM is now stopping."
 msgstr "Die VM stoppt..."
 
-#: connection/proxmox/src/api/vm.rs:224
+#: connection/proxmox/src/api/vm.rs:233
 msgid "Failed to send stop command."
 msgstr "Stoppen der VM fehlgeschlagen."
 
-#: connection/proxmox/src/api/vm.rs:254
+#: connection/proxmox/src/api/vm.rs:263
 msgid "VM is now starting."
 msgstr "Die VM startet..."
 
-#: connection/proxmox/src/api/vm.rs:257
+#: connection/proxmox/src/api/vm.rs:266
 msgid "Failed to send start command."
 msgstr "Starten der VM fehlgeschlagen."
 
@@ -446,7 +514,7 @@ msgstr "Die RDP Verbindungseinstellungen konnten nicht verarbeitet werden"
 msgid "Internal error while trying to build terminal."
 msgstr "Es ist ein interner Fehler aufgetreten beim Aufbau des Terminals."
 
-#: lib/src/connection/instance.rs:187
+#: lib/src/connection/instance.rs:191
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
 
@@ -466,40 +534,40 @@ msgstr "Speichern und merken"
 msgid "Ask for this every time"
 msgstr "Jedes Mal nachfragen"
 
-#: lib/src/lib.rs:41
+#: lib/src/lib.rs:42
 msgid "The connection configuration is invalid"
 msgstr "Die Verbindungskonfiguration ist ungültig"
 
-#: src/application.rs:125
+#: src/application.rs:123
 msgid "Open the app with a new window"
 msgstr "Anwendung mit einem neuen Fenster starten"
 
-#: src/application.rs:197 src/widget/quick_connect_dialog.rs:93
+#: src/application.rs:195 src/widget/quick_connect_dialog.rs:93
 #: src/widget/quick_connect_dialog.rs:155
 msgid "Failed to open"
 msgstr "Öffnen fehlgeschlagen"
 
-#: src/application.rs:200 src/widget/quick_connect_dialog.rs:96
+#: src/application.rs:198 src/widget/quick_connect_dialog.rs:96
 msgid ""
 "Field Monitor could not connect to the server using the specified file or URI"
 msgstr ""
 "Feldmonitor konnte sich mittels der angegebenen Datei oder URI nicht mit dem "
 "Server verbinden"
 
-#: src/application.rs:204 src/application.rs:300 src/application.rs:565
+#: src/application.rs:202 src/application.rs:298 src/application.rs:564
 #: src/connection_loader.rs:433 src/widget/add_connection_dialog.rs:208
-#: src/widget/authenticate_connection_dialog.rs:177
+#: src/widget/authenticate_connection_dialog.rs:172
 #: src/widget/quick_connect_dialog.rs:100
 #: src/widget/quick_connect_dialog.rs:160
-#: src/widget/update_connection_dialog.rs:150
+#: src/widget/update_connection_dialog.rs:153
 msgid "OK"
 msgstr "OK"
 
-#: src/application.rs:293
+#: src/application.rs:291
 msgid "Failed to initialize"
 msgstr "Fehler beim Initalisieren"
 
-#: src/application.rs:296
+#: src/application.rs:294
 msgid ""
 "Field Monitor could not start, because it could not connect to your system's "
 "secret service for accessing passwords"
@@ -508,39 +576,39 @@ msgstr ""
 "für Geheimnisse verbinden konnte, um auf Passwörter zuzugrifen"
 
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
-#: src/application.rs:556
+#: src/application.rs:555
 msgid "translator-credits"
 msgstr "Marco Köpcke <hello@capypara.de>"
 
-#: src/application.rs:607
+#: src/application.rs:606
 msgid "Connection successfully added."
 msgstr "Verbindung erfolgreich hinzugefügt."
 
-#: src/application.rs:639
+#: src/application.rs:638
 msgid "Connection successfully updated."
 msgstr "Verbindung erfolgreich aktualisiert."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/application.rs:677
+#: src/application.rs:676
 msgid "Remove {title}?"
 msgstr "{title} entfernen?"
 
-#: src/application.rs:681 src/widget/connection_view/connection_tab_view.rs:250
+#: src/application.rs:680 src/widget/connection_view/connection_tab_view.rs:250
 msgid "No"
 msgstr "Nein"
 
-#: src/application.rs:682 src/widget/connection_view/connection_tab_view.rs:251
+#: src/application.rs:681 src/widget/connection_view/connection_tab_view.rs:251
 msgid "Yes"
 msgstr "Ja"
 
-#: src/application.rs:687
+#: src/application.rs:686
 msgid "Connection successfully removed."
 msgstr "Verbindung erfolgreich entfernt."
 
-#: src/application.rs:748
+#: src/application.rs:747
 msgid "Authentication successfully updated"
-msgstr "Informationen zur Authentifizierung erfolgreich aktualisiert."
+msgstr "Informationen zur Authentifizierung erfolgreich aktualisiert"
 
 #: src/connection_loader.rs:83 src/connection_loader.rs:93
 msgid "Connection not found."
@@ -688,14 +756,14 @@ msgid "Add New Connection"
 msgstr "Neue Verbindung hinzufügen"
 
 #: src/widget/add_connection_dialog.rs:201
-#: src/widget/authenticate_connection_dialog.rs:170
-#: src/widget/update_connection_dialog.rs:143
+#: src/widget/authenticate_connection_dialog.rs:165
+#: src/widget/update_connection_dialog.rs:146
 msgid "Failed to save connection"
 msgstr "Fehler beim Speichern der Verbindung"
 
 #: src/widget/add_connection_dialog.rs:204
-#: src/widget/authenticate_connection_dialog.rs:173
-#: src/widget/update_connection_dialog.rs:146
+#: src/widget/authenticate_connection_dialog.rs:168
+#: src/widget/update_connection_dialog.rs:149
 msgid "An error occurred, while trying to save the connection"
 msgstr "Beim Speichern der Verbindung ist ein Fehler aufgetreten"
 
@@ -708,7 +776,7 @@ msgstr "Authentifizierung erforderlich"
 msgid "Apply"
 msgstr "Anwenden"
 
-#: src/widget/authenticate_connection_dialog.rs:115
+#: src/widget/authenticate_connection_dialog.rs:107
 msgid "This connection needs additional authentication to proceed."
 msgstr ""
 "Diese Verbindung benötigt zusätzliche Informationen zur Authentifizierung."
@@ -757,22 +825,22 @@ msgstr ""
 msgid "Authenticate"
 msgstr "Authentifizieren"
 
-#: src/widget/connection_list/info_page.rs:175
+#: src/widget/connection_list/info_page.rs:183
 msgid "No servers available"
 msgstr "Keine Server verfügbar"
 
-#: src/widget/connection_list/server_info.rs:246
+#: src/widget/connection_list/server_info.rs:242
 msgid "Actions"
 msgstr "Aktionen"
 
-#: src/widget/connection_list/server_info.rs:270
+#: src/widget/connection_list/server_info.rs:266
 #: src/widget/quick_connect_dialog.blp:37
 msgid "Connect"
 msgstr "Verbinden"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/widget/connection_list/server_info.rs:288
+#: src/widget/connection_list/server_info.rs:284
 msgid "Connect via {adapter}"
 msgstr "Verbinden via {adapter}"
 
@@ -1043,7 +1111,7 @@ msgid ""
 "grabbed."
 msgstr ""
 "Spitze Fensterkanten verwenden, wenn die Eingabe gefangen ist, ansonsten "
-"Standardradius verwenden"
+"Standardradius verwenden."
 
 #: src/widget/preferences.rs:207
 msgid "Always use sharp window corners."
@@ -1161,6 +1229,13 @@ msgstr "_Einstellungen"
 msgid "Connect to your virtual machines and remote servers."
 msgstr ""
 "Verbinden Sie sich mit ihren Virtuellen Maschinen und entfernen Servern."
+
+#~ msgid ""
+#~ "Field Monitor lets you connect to the screens of remote computers and "
+#~ "virtual machines."
+#~ msgstr ""
+#~ "Feldmonitor ermöglicht es Ihnen auf die Bildschirme entfernter Computer "
+#~ "und Virtueller Maschinen zuzugreifen."
 
 #~ msgid "_Move to New Window"
 #~ msgstr "In neues _Fenster verschieben"

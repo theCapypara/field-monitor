@@ -34,6 +34,8 @@
   pkg-config,
   python312Packages,
   libGL,
+
+  editorconfig-checker,
 }:
 let
   patched-gtk-vnc = (
@@ -134,5 +136,9 @@ mkShell {
       rustup
       openssl
       pkg-config
+    ]
+    ## UTIL
+    ++ [
+      editorconfig-checker
     ];
 }

@@ -1,29 +1,29 @@
 <Project
-        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-        xmlns:foaf="http://xmlns.com/foaf/0.1/"
-        xmlns="http://usefulinc.com/ns/doap#">
-    <name>Field Monitor</name>
-    <shortdesc>Access virtual machines and other external screens</shortdesc>
-    <description>XXXXXX</description> <!-- TODO -->
+		xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+		xmlns:foaf="http://xmlns.com/foaf/0.1/"
+		xmlns="http://usefulinc.com/ns/doap#">
+	<name>Field Monitor</name>
+	<shortdesc>Access virtual machines and other external screens</shortdesc>
+	<description>Field Monitor is a remote-desktop client designed for the GNOME platform.</description>
 
-    <homepage rdf:resource="https://github.com/theCapypara/field-monitor"/>
-    <bug-database rdf:resource="https://github.com/theCapypara/field-monitor/issues"/>
+	<homepage rdf:resource="https://github.com/theCapypara/field-monitor"/>
+	<bug-database rdf:resource="https://github.com/theCapypara/field-monitor/issues"/>
 
-    <programming-language>Rust</programming-language>
+	<programming-language>Rust</programming-language>
 
-    <platform>GTK 4</platform>
-    <platform>Libadwaita</platform>
+	<platform>GTK 4</platform>
+	<platform>Libadwaita</platform>
 
-    <maintainer>
-        <foaf:Person>
-            <foaf:name>Marco Köpcke</foaf:name>
-            <foaf:mbox rdf:resource="mailto:hello@capypara.de"/>
-            <foaf:account>
-                <foaf:OnlineAccount>
-                    <foaf:accountServiceHomepage rdf:resource="https://github.com/"/>
-                    <foaf:accountName>theCapypara</foaf:accountName>
-                </foaf:OnlineAccount>
-            </foaf:account>
-        </foaf:Person>
-    </maintainer>
+	<maintainer>
+		<foaf:Person>
+			<foaf:name>Marco Köpcke</foaf:name>
+			<foaf:mbox rdf:resource="mailto:hello@capypara.de"/>
+			<foaf:account>
+				<foaf:OnlineAccount>
+					<foaf:accountServiceHomepage rdf:resource="https://github.com/"/>
+					<foaf:accountName>theCapypara</foaf:accountName>
+				</foaf:OnlineAccount>
+			</foaf:account>
+		</foaf:Person>
+	</maintainer>
 </Project>

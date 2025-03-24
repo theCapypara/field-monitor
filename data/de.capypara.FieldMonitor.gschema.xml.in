@@ -1,54 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schemalist gettext-domain="@APP_ID@">
-    <schema id="@APP_ID@" path=@APP_ID_SLASHED@>
-        <key name="sharp-window-corners" type="s">
-            <default>"auto"</default>
-            <summary>
-                Specifies the behavior of window corners.
-                Allowed values: "auto" (default, fallback), "always", "never"
-            </summary>
-            <description>
-                Whether and when the window border radius will be changed to 0 (90 degrees).
+	<schema id="@APP_ID@" path=@APP_ID_SLASHED@>
+		<key name="sharp-window-corners" type="s">
+			<default>"auto"</default>
+			<summary>
+				Specifies the behavior of window corners.
+				Allowed values: "auto" (default, fallback), "always", "never"
+			</summary>
+			<description>
+				Whether and when the window border radius will be changed to 0 (90 degrees).
 
-                auto: The border radius is only set to 0 if a connection view is currently capturing input;
-                always: The border radius set always set to 0;
-                never: The border radius is not changed.
-            </description>
-        </key>
-        <key name="header-bar-behavior" type="s">
-            <default>"default"</default>
-            <summary>
-                Specifies the behavior of the header bar for active connection views.
-                Allowed values: "default" (default, fallback), "overlay", "no-overlay"
-            </summary>
-            <description>
-                How the header bar is presented for active connection views.
+				auto: The border radius is only set to 0 if a connection view is currently capturing input;
+				always: The border radius set always set to 0;
+				never: The border radius is not changed.
+			</description>
+		</key>
+		<key name="header-bar-behavior" type="s">
+			<default>"default"</default>
+			<summary>
+				Specifies the behavior of the header bar for active connection views.
+				Allowed values: "default" (default, fallback), "overlay", "no-overlay"
+			</summary>
+			<description>
+				How the header bar is presented for active connection views.
 
-                default: The header bar is only overlayed when the window is fullscreened;
-                overlay: The header bar is always overlayed;
-                no-overlay: The header bar is never overlayed.
+				default: The header bar is only overlayed when the window is fullscreened;
+				overlay: The header bar is always overlayed;
+				no-overlay: The header bar is never overlayed.
 
-                If the header bar is overlayed, it is hidden when the connection view is currently capturing input.
-            </description>
-        </key>
-        <key name="open-in-new-window" type="b">
-            <default>false</default>
-            <summary>
-                Specifies whether new connections are opened in new windows.
-            </summary>
-            <description>
-                If enabled, connecting to a server will result in a new window being opened.
-            </description>
-        </key>
-        <key name="show-grab-note" type="b">
-            <default>true</default>
-            <summary>
-                Enables the note text explaining how to ungrab mouse and keyboard.
-            </summary>
-            <description>
-                If enabled, a note is shown explaining how to ungrab mouse and keyboard, every time mouse and/or keyboard
-                input is grabbed.
-            </description>
-        </key>
-    </schema>
+				If the header bar is overlayed, it is hidden when the connection view is currently capturing input.
+			</description>
+		</key>
+		<key name="open-in-new-window" type="b">
+			<default>false</default>
+			<summary>
+				Specifies whether new connections are opened in new windows.
+			</summary>
+			<description>
+				If enabled, connecting to a server will result in a new window being opened.
+			</description>
+		</key>
+		<key name="show-grab-note" type="b">
+			<default>true</default>
+			<summary>
+				Enables the note text explaining how to ungrab mouse and keyboard.
+			</summary>
+			<description>
+				If enabled, a note is shown explaining how to ungrab mouse and keyboard, every time mouse and/or keyboard
+				input is grabbed.
+			</description>
+		</key>
+	</schema>
 </schemalist>
