@@ -4,7 +4,7 @@
 
 Access virtual machines and other external screens
 
-![](data/field-monitor.gif) TODO XXX
+![](data/field-monitor.gif)
 
 Field Monitor is a remote-desktop client designed for the GNOME platform.
 

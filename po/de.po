@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-24 15:58+0100\n"
-"PO-Revision-Date: 2025-03-24 16:03+0100\n"
+"POT-Creation-Date: 2025-03-24 16:54+0100\n"
+"PO-Revision-Date: 2025-03-24 16:56+0100\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -148,6 +148,33 @@ msgid ""
 msgstr ""
 "Außerdem kann Feldmonitor RDP und Virt Viewer Verbindungsdateien öffnen und "
 "schnell Verbindungen zu RDP, SPICE und VNC Servern via URI herstellen."
+
+#. Translators: Caption of the first screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:89
+msgid "A list of servers in a Proxmox cluster to connect to"
+msgstr ""
+"Eine Liste von Servern in einem Proxmox Cluster, mit denen sich verbunden "
+"werden kann"
+
+#. Translators: Caption of the second screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:96
+msgid "Welcome screen"
+msgstr "Willkommen-Fenster"
+
+#. Translators: Caption of the third screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:101
+msgid "Screen of a connected graphical display"
+msgstr "Bildschirm einer verbundenen graphischen Anzeige"
+
+#. Translators: Caption of the 4th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:107
+msgid "Screen of a connected console"
+msgstr "Bildschirm einer verbundenen Konsole"
+
+#. Translators: Caption of the 5th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:112
+msgid "Adding a new Proxmox hypervisor connection"
+msgstr "Hinzufügen einer neuen Proxmox Hypervisor-Verbindung"
 
 #: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
 msgid "Remote Desktop file"
