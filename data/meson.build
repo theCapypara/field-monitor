@@ -44,7 +44,7 @@ appstream_file = i18n.merge_file(
             output: 'de.capypara.FieldMonitor.metainfo.xml.in',
             configuration: conf,
         ),
-       output: get_option('app-id') + '.xml',
+       output: get_option('app-id') + '.metainfo.xml',
        po_dir: podir,
       install: true,
   install_dir: get_option('datadir') / 'metainfo'
