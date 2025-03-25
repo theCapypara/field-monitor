@@ -44,13 +44,20 @@ stdenv.mkDerivation rec {
     };
   };
 
+  mesonBuildType = "release";
+
+  postInstall = ''
+    wrapProgram $out/bin/de.capypara.FieldMonitor --prefix PATH ':' "$out/libexec" --set RUST_LOG 'field_monitor=info,libfieldmonitor=info,GLib=info,warning'
+  '';
+
+  doCheck = true;
+
   prodNativeBuildInputs = [
     glib
     gtk4
     meson
     ninja
     pkg-config
-    rustPlatform.bindgenHook
     rustPlatform.cargoSetupHook
     cargo
     rustc
@@ -73,14 +80,6 @@ stdenv.mkDerivation rec {
     vte-gtk4
     gtk-vnc
   ];
-
-  mesonBuildType = "release";
-
-  postInstall = ''
-    wrapProgram $out/bin/de.capypara.FieldMonitor --prefix PATH ':' "$out/libexec" --set RUST_LOG 'field_monitor=info,libfieldmonitor=info,GLib=info,warning'
-  '';
-
-  doCheck = true;
 
   buildInputs =
     [
