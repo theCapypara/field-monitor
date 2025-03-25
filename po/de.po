@@ -33,9 +33,9 @@ msgstr "Betrachter für entfernte Bildschirme"
 #. Translators: The summary of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.desktop.in.in:5
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
-msgid "Access virtual machines and other external screens"
+msgid "Access VMs and external screens"
 msgstr ""
-"Greifen Sie auf Virtuelle Maschinen und andere entfernte Bildschirme zu"
+"Greifen Sie auf VMs und entfernte Bildschirme zu"
 
 #. Translators: The keywords from the desktop file.
 #: data/de.capypara.FieldMonitor.desktop.in.in:13

@@ -6,7 +6,7 @@
 	<!-- Translators: The name of the application. -->
 	<name>Field Monitor</name>
 	<!-- Translators: The summary of the application in the metainfo. -->
-	<summary>Access virtual machines and other external screens</summary>
+	<summary>Access VMs and external screens</summary>
 	<launchable type="desktop-id">@APP_ID@.desktop</launchable>
 	<content_rating type="oars-1.1"/>
 	<developer id="de.capypara">
