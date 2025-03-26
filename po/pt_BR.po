@@ -1,0 +1,1251 @@
+# Brazilian-Portuguese translations for Field Monitor
+# Copyright (C) 2015 Field Monitor authors
+# This file is distributed under the same license as the Field Monitor package.
+# Marco Köpcke <hello@capypara.de>, 2025.
+# Cybercountry <translation@dukcab.com>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: de.capypara.FieldMonitor\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-03-24 16:54+0100\n"
+"PO-Revision-Date: 2025-03-26 16:18-0300\n"
+"Last-Translator: Cybercountry <translation@dukcab.com>\n"
+"Language-Team: Brazilian Portuguese\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Generator: Gtranslator 48.0\n"
+
+#. Translators: The name of the application.
+#: data/de.capypara.FieldMonitor.desktop.in.in:3
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:542
+#: src/widget/window.blp:9 src/widget/window.blp:47 src/widget/window.blp:157
+#: src/widget/window.blp:163 src/widget/window.rs:305
+msgid "Field Monitor"
+msgstr "Field Monitor"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:4
+msgid "Remote Desktop Viewer"
+msgstr "Visualizador de Área de Trabalho Remota"
+
+#. Translators: The summary of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.desktop.in.in:5
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
+msgid "Access VMs and external screens"
+msgstr "Acesse VMs e telas externas"
+
+#. Translators: The keywords from the desktop file.
+#: data/de.capypara.FieldMonitor.desktop.in.in:13
+msgid "proxmox;vnc;spice;rdp;kvm;qemu;"
+msgstr "proxmox;vnc;spice;rdp;kvm;qemu;"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:18
+msgid "New Window"
+msgstr "Nova Janela"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:24
+msgid "remote desktop"
+msgstr "área de trabalho remota"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
+#: connection/generic-group/src/server_preferences.blp:21
+#: lib/src/adapter/rdp.rs:52
+msgid "RDP"
+msgstr "RDP"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
+#: connection/generic-group/src/server_preferences.blp:23
+#: connection/proxmox/src/api/node.rs:163 connection/proxmox/src/api/vm.rs:313
+#: lib/src/adapter/vnc.rs:71
+msgid "VNC"
+msgstr "VNC"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
+#: connection/generic-group/src/server_preferences.blp:22
+#: connection/proxmox/src/api/node.rs:162 connection/proxmox/src/api/vm.rs:308
+#: lib/src/adapter/spice.rs:124
+msgid "SPICE"
+msgstr "SPICE"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:32
+msgid "KVM"
+msgstr "KVM"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:34
+msgid "QEMU"
+msgstr "QEMU"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:36
+msgid "libvirt"
+msgstr "libvirt"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:63
+#: connection/proxmox/src/api/provider.rs:48
+#: connection/proxmox/src/api/provider.rs:52
+msgid "Proxmox"
+msgstr "Proxmox"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:40
+msgid "GNOME"
+msgstr "GNOME"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:50
+msgid ""
+"Field Monitor is a remote-desktop client designed for the GNOME platform."
+msgstr ""
+"Field Monitor é um cliente de área de trabalho remota projetado para a "
+"plataforma GNOME."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:54
+msgid ""
+"It is focused on connecting to virtual machines, but can connect to any "
+"server supporting the RDP, SPICE or VNC protocols."
+msgstr ""
+"Ele é focado em conectar-se a máquinas virtuais, mas pode se conectar a "
+"qualquer servidor que ofereça suporte aos protocolos RDP, SPICE ou VNC"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:59
+msgid ""
+"It has support for directly connecting to VMs of the following hypervisors:"
+msgstr ""
+"Ele tem suporte para conexão direta com VMs dos seguintes hipervisores:"
+
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
+msgid "QEMU/KVM via libvirt"
+msgstr "QEMU/KVM via libvirt"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
+msgid ""
+"For supported VM hypervisors Field Monitor also offers options to manage the "
+"basic power state of VMs, such as starting, stopping, rebooting, etc."
+msgstr ""
+"Para hipervisores de VM compatíveis, o Field Monitor também oferece opções "
+"para gerenciar o estado básico de energia das VMs, como iniciar, parar, "
+"reinicializar, etc."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
+msgid ""
+"Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
+"files and quickly connecting to RDP, SPICE or VNC servers via URI."
+msgstr ""
+"Além disso, o Field Monitor suporta a abertura de arquivos de conexão RDP e "
+"Virt Viewer e a conexão rápida com servidores RDP, SPICE ou VNC via URI."
+
+#. Translators: Caption of the first screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:89
+msgid "A list of servers in a Proxmox cluster to connect to"
+msgstr "Uma lista de servidores em um cluster do Proxmox aos quais se conectar"
+
+#. Translators: Caption of the second screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:96
+msgid "Welcome screen"
+msgstr "Tela de boas-vindas"
+
+#. Translators: Caption of the third screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:101
+msgid "Screen of a connected graphical display"
+msgstr "Tela do monitor gráfico conectado"
+
+#. Translators: Caption of the 4th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:107
+msgid "Screen of a connected console"
+msgstr "Tela do console conectado"
+
+#. Translators: Caption of the 5th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:112
+msgid "Adding a new Proxmox hypervisor connection"
+msgstr "Adicionando uma nova conexão do hipervisor Proxmox"
+
+#: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
+msgid "Remote Desktop file"
+msgstr "Arquivo RDP"
+
+#: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
+msgid "Virt-Viewer connection file"
+msgstr "Arquivo de conexão Virt-Viewer"
+
+#: connection/generic-group/src/credential_preferences.blp:5
+#: connection/proxmox/src/credential_preferences.blp:5
+msgid "Credentials"
+msgstr "Credenciais"
+
+#: connection/generic-group/src/credential_preferences.blp:10
+#: connection/libvirt/src/qemu_preferences.blp:55
+#: connection/proxmox/src/credential_preferences.blp:29
+#: src/quick_connect/preferences.blp:9
+msgid "Username"
+msgstr "Usuário"
+
+#: connection/generic-group/src/credential_preferences.blp:17
+#: connection/proxmox/src/credential_preferences.blp:17
+#: connection/proxmox/src/credential_preferences.blp:33
+#: connection/proxmox/src/credential_preferences.rs:196
+#: src/quick_connect/preferences.blp:13
+msgid "Password"
+msgstr "Senha"
+
+#: connection/generic-group/src/lib.rs:57
+msgid "Generic Connection Group"
+msgstr "Grupo de conexão genérico "
+
+#: connection/generic-group/src/lib.rs:61
+msgid "Generic Connection Groups"
+msgstr "Grupos de conexão genéricos"
+
+#: connection/generic-group/src/lib.rs:65
+msgid "Add Generic Connection Group"
+msgstr "Adicionar grupo de conexão genérico"
+
+#: connection/generic-group/src/lib.rs:73
+msgid "Connection to one or more RDP, SPICE and VNC servers"
+msgstr "Conexão com um ou mais servidores RDP, SPICE e VNC"
+
+#: connection/generic-group/src/lib.rs:325
+msgid "Failed to load password."
+msgstr "Falha ao carregar a senha"
+
+#: connection/generic-group/src/preferences.blp:20
+msgid "Group Name"
+msgstr "Nome do grupo"
+
+#: connection/generic-group/src/preferences.blp:25
+msgid "Servers"
+msgstr "Servidores"
+
+#: connection/generic-group/src/preferences.blp:31
+#: connection/generic-group/src/preferences.rs:581
+msgid "Add Server"
+msgstr "Adicionar servidor"
+
+#: connection/generic-group/src/preferences.rs:468
+msgid "No servers added yet."
+msgstr "Nenhum servidor foi adicionado ainda."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/generic-group/src/preferences.rs:577
+#: src/widget/update_connection_dialog.rs:94
+msgid "Edit {title}"
+msgstr "Editar {title}"
+
+#: connection/generic-group/src/preferences.rs:589
+msgid "Update"
+msgstr "Atualizar"
+
+#: connection/generic-group/src/preferences.rs:591
+#: src/widget/add_connection_dialog.rs:132
+msgid "Add"
+msgstr "Adicionar"
+
+#: connection/generic-group/src/preferences.rs:611
+msgid "Remove Server"
+msgstr "Remover servidor"
+
+#: connection/generic-group/src/server_preferences.blp:12
+msgid "Server Name"
+msgstr "Nome do servidor"
+
+#: connection/generic-group/src/server_preferences.blp:16
+msgid "Server Type"
+msgstr "Tipo de servidor"
+
+#: connection/generic-group/src/server_preferences.blp:31
+#: connection/libvirt/src/qemu_preferences.blp:51
+#: connection/proxmox/src/preferences.blp:20
+msgid "Hostname"
+msgstr "Hostname"
+
+#: connection/generic-group/src/server_preferences.blp:35
+#: connection/proxmox/src/preferences.blp:24
+msgid "Port"
+msgstr "Porta"
+
+#: connection/libvirt/src/connection.rs:160
+msgid "(Unable to load server name)"
+msgstr "(Não foi possível carregar o nome do servidor)"
+
+#: connection/libvirt/src/connection.rs:278
+#: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:66
+#: connection/proxmox/src/api/vm.rs:71
+msgid "Reboot"
+msgstr "Reiniciar "
+
+#: connection/libvirt/src/connection.rs:279
+#: connection/proxmox/src/api/node.rs:61 connection/proxmox/src/api/vm.rs:67
+#: connection/proxmox/src/api/vm.rs:72
+msgid "Shutdown"
+msgstr "Desligar"
+
+#: connection/libvirt/src/connection.rs:280 connection/proxmox/src/api/vm.rs:73
+msgid "Force Reset"
+msgstr "Forçar reinicialização "
+
+#: connection/libvirt/src/connection.rs:281 connection/proxmox/src/api/vm.rs:68
+#: connection/proxmox/src/api/vm.rs:74
+msgid "Force Poweroff"
+msgstr "Forçar desligamento "
+
+#. TRANSLATORS: Verb
+#: connection/libvirt/src/connection.rs:288 connection/proxmox/src/api/vm.rs:82
+msgid "Start"
+msgstr "Iniciar "
+
+#: connection/libvirt/src/connection.rs:319
+msgid "Reboot command successfully sent to domain."
+msgstr "Reinicialização feita com sucesso."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection.rs:324
+msgid "Failed to send reboot command: {err}"
+msgstr "Falha ao reiniciar: {err}"
+
+#: connection/libvirt/src/connection.rs:345
+msgid "Shutdown command successfully sent to domain."
+msgstr "Desligado com sucesso."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection.rs:350
+msgid "Failed to send shutdown command: {err}"
+msgstr "Falha ao desligar: {err}"
+
+#: connection/libvirt/src/connection.rs:371
+msgid "Domain successfully reset."
+msgstr "Domínio reiniciado com sucesso."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection.rs:376
+msgid "Failed to reset domain: {err}"
+msgstr "Falha ao reiniciar o domínio: {err}"
+
+#: connection/libvirt/src/connection.rs:397
+msgid "Domain successfully shut down."
+msgstr "O domínio foi desligado com sucesso."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection.rs:402
+msgid "Failed to send destroy command: {err}"
+msgstr "Falha ao interromper o domínio: {err}"
+
+#: connection/libvirt/src/connection.rs:428
+msgid "Domain successfully started."
+msgstr "O domínio foi iniciado com sucesso."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection.rs:433
+msgid "Failed to send create command: {err}"
+msgstr "Falha ao criar: {err}"
+
+#: connection/libvirt/src/connection.rs:460
+msgid "Domain is not running."
+msgstr "O domínio não está sendo executado. "
+
+#: connection/libvirt/src/connection.rs:467
+msgid "Domain is already running."
+msgstr "O domínio já está sendo executado. "
+
+#: connection/libvirt/src/connection.rs:476
+#: connection/proxmox/src/api/mod.rs:84
+msgid "Internal error while trying to execute command."
+msgstr "Erro interno ao tentar executar o comando. "
+
+#: connection/libvirt/src/connection.rs:506
+msgid "SPICE (Graphical)"
+msgstr "SPICE (Gráfico)"
+
+#: connection/libvirt/src/connection.rs:510
+msgid "RDP (Graphical)"
+msgstr "RDP (Gráfico)"
+
+#: connection/libvirt/src/connection.rs:513
+msgid "VNC (Graphical)"
+msgstr "VNC (Gráfico)"
+
+#: connection/libvirt/src/connection.rs:515
+msgid "Serial Console"
+msgstr "Console serial"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:45
+#: connection/libvirt/src/hypervisor/qemu.rs:49
+msgid "QEMU/KVM"
+msgstr "QEMU/KVM"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:53
+msgid "Add QEMU/KVM Connection"
+msgstr "Adicionar conexão QEMU/KVM"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:61
+msgid "QEMU/KVM hypervisor connection via libvirt"
+msgstr "Conexão do hipervisor QEMU/KVM via libvirt"
+
+#: connection/libvirt/src/qemu_preferences.blp:13
+#: connection/proxmox/src/preferences.blp:12
+msgid "Connection Name"
+msgstr "Nome da conexão"
+
+#: connection/libvirt/src/qemu_preferences.blp:18
+msgid "Session Type"
+msgstr "Tipo de sessão"
+
+#: connection/libvirt/src/qemu_preferences.blp:21
+msgid "System Session"
+msgstr "Sessão do sistema"
+
+#: connection/libvirt/src/qemu_preferences.blp:22
+msgid "This is the QEMU/KVM default."
+msgstr "Esse é o padrão para o QEMU/KVM. "
+
+#: connection/libvirt/src/qemu_preferences.blp:32
+msgid "User Session"
+msgstr "Sessão de usuário"
+
+#: connection/libvirt/src/qemu_preferences.blp:43
+msgid "Remote Connection"
+msgstr "Conexão remota"
+
+#: connection/libvirt/src/qemu_preferences.blp:46
+msgid "Connect via SSH"
+msgstr "Conectar via SSH"
+
+#: connection/proxmox/src/api/connection.rs:60
+msgid "Was unable to build a valid URL to connect to. Check your settings."
+msgstr ""
+"Não foi possível criar um URL válido para conexão. Verifique suas "
+"configurações. "
+
+#: connection/proxmox/src/api/connection.rs:72
+msgid "Failed to retrieve API Key or Password from secrets service."
+msgstr ""
+"Não foi possível recuperar a senha ou a chave de API do serviço de segredos."
+
+#: connection/proxmox/src/api/node.rs:100
+msgid "Reboot command successfully sent to server."
+msgstr "Servidor reiniciado com sucesso."
+
+#: connection/proxmox/src/api/node.rs:103 connection/proxmox/src/api/vm.rs:135
+msgid "Failed to send reboot command."
+msgstr "Falha ao reiniciar o servidor."
+
+#: connection/proxmox/src/api/node.rs:125
+msgid "Shutdown command successfully sent to server."
+msgstr "Servidor desligado com sucesso."
+
+#: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:168
+msgid "Failed to send shutdown command."
+msgstr "Falha ao desligar o servidor."
+
+#: connection/proxmox/src/api/node.rs:164 connection/proxmox/src/api/vm.rs:318
+msgid "Console"
+msgstr "Console"
+
+#: connection/proxmox/src/api/provider.rs:56
+msgid "Add Proxmox Connection"
+msgstr "Adicionar conexão Proxmox"
+
+#: connection/proxmox/src/api/provider.rs:64
+msgid "Proxmox hypervisor connection"
+msgstr "Conexão do hipervisor Proxmox"
+
+#: connection/proxmox/src/api/vm.rs:132
+msgid "Reboot command successfully sent to VM."
+msgstr "VM reiniciada com sucesso."
+
+#: connection/proxmox/src/api/vm.rs:165
+msgid "Shutdown command successfully sent to VM."
+msgstr "VM desligada com sucesso."
+
+#: connection/proxmox/src/api/vm.rs:197
+msgid "VM was successfully reset."
+msgstr "A VM foi reiniciada com sucesso."
+
+#: connection/proxmox/src/api/vm.rs:200
+msgid "Failed to send reset command."
+msgstr "Falha ao reiniciar a VM."
+
+#: connection/proxmox/src/api/vm.rs:230
+msgid "VM is now stopping."
+msgstr "A VM está parando..."
+
+#: connection/proxmox/src/api/vm.rs:233
+msgid "Failed to send stop command."
+msgstr "Falha ao parar a VM."
+
+#: connection/proxmox/src/api/vm.rs:263
+msgid "VM is now starting."
+msgstr "A VM está iniciando..."
+
+#: connection/proxmox/src/api/vm.rs:266
+msgid "Failed to send start command."
+msgstr "Falha ao iniciar a VM."
+
+#: connection/proxmox/src/credential_preferences.blp:12
+msgid "Authentication Mode"
+msgstr "Modo de autenticação"
+
+#: connection/proxmox/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.rs:194
+msgid "API Key"
+msgstr "Chave de API"
+
+# The same name is used in Proxmox's localization
+#: connection/proxmox/src/credential_preferences.blp:25
+msgid "Token ID"
+msgstr "Token ID"
+
+#: connection/proxmox/src/preferences.blp:17
+msgid "Connection"
+msgstr "Conexão"
+
+#: connection/proxmox/src/preferences.blp:30
+msgid "Trust Any SSL Certificate"
+msgstr "Confiar em qualquer certificado SSL"
+
+#: connection/proxmox/src/preferences.blp:31
+msgid ""
+"Allows connecting to servers with self-signed and otherwise invalid SSL "
+"certificates. Be careful, as this is a potential security risk."
+msgstr ""
+"Permitir a conexão com servidores com certificados SSL autoassinados e "
+"inválidos. Tenha cuidado, pois este é um risco de segurança potencial."
+
+#: lib/src/adapter/rdp.rs:78
+msgid "Failed to process RDP connection configuration"
+msgstr "Falha ao processar a configuração da conexão RDP"
+
+#: lib/src/adapter/vte_pty.rs:110 lib/src/adapter/vte_pty.rs:183
+msgid "Internal error while trying to build terminal."
+msgstr "Ocorreu um erro interno durante a configuração do terminal."
+
+#: lib/src/connection/instance.rs:191
+msgid "Unknown error"
+msgstr "Erro desconhecido"
+
+#: lib/src/connection/types.rs:49
+msgid "Authentication failed"
+msgstr "Falha na autenticação"
+
+#: lib/src/connection/types.rs:50
+msgid "General Error"
+msgstr "Erro geral"
+
+#: lib/src/gtk/save_credentials_button.blp:22
+msgid "Save and remember"
+msgstr "Salvar e lembrar"
+
+#: lib/src/gtk/save_credentials_button.blp:28
+msgid "Ask for this every time"
+msgstr "Pergunte sempre"
+
+#: lib/src/lib.rs:42
+msgid "The connection configuration is invalid"
+msgstr "A configuração de conexão é inválida"
+
+#: src/application.rs:123
+msgid "Open the app with a new window"
+msgstr "Abrir o aplicativo em uma nova janela"
+
+#: src/application.rs:195 src/widget/quick_connect_dialog.rs:93
+#: src/widget/quick_connect_dialog.rs:155
+msgid "Failed to open"
+msgstr "Falha ao abrir "
+
+#: src/application.rs:198 src/widget/quick_connect_dialog.rs:96
+msgid ""
+"Field Monitor could not connect to the server using the specified file or URI"
+msgstr ""
+"O Field Monitor não pôde se conectar ao servidor usando o arquivo ou URI "
+"especificado"
+
+#: src/application.rs:202 src/application.rs:298 src/application.rs:564
+#: src/connection_loader.rs:433 src/widget/add_connection_dialog.rs:208
+#: src/widget/authenticate_connection_dialog.rs:172
+#: src/widget/quick_connect_dialog.rs:100
+#: src/widget/quick_connect_dialog.rs:160
+#: src/widget/update_connection_dialog.rs:153
+msgid "OK"
+msgstr "OK"
+
+#: src/application.rs:291
+msgid "Failed to initialize"
+msgstr "Falha ao inicializar "
+
+#: src/application.rs:294
+msgid ""
+"Field Monitor could not start, because it could not connect to your system's "
+"secret service for accessing passwords"
+msgstr ""
+"O Field Monitor não pôde ser iniciado porque não conseguiu se conectar ao "
+"servidor de segredos para acessar as senhas"
+
+#. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
+#: src/application.rs:555
+msgid "translator-credits"
+msgstr "Cybercountry <translation@dukcab.com>"
+
+#: src/application.rs:606
+msgid "Connection successfully added."
+msgstr "Conexão adicionada com sucesso."
+
+#: src/application.rs:638
+msgid "Connection successfully updated."
+msgstr "Conexão atualizada com sucesso."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/application.rs:676
+msgid "Remove {title}?"
+msgstr "Remover {title}?"
+
+#: src/application.rs:680 src/widget/connection_view/connection_tab_view.rs:250
+msgid "No"
+msgstr "Não"
+
+#: src/application.rs:681 src/widget/connection_view/connection_tab_view.rs:251
+msgid "Yes"
+msgstr "Sim"
+
+#: src/application.rs:686
+msgid "Connection successfully removed."
+msgstr "Conexão removida com sucesso."
+
+#: src/application.rs:747
+msgid "Authentication successfully updated"
+msgstr "Informações de autenticação atualizadas com sucesso"
+
+#: src/connection_loader.rs:83 src/connection_loader.rs:93
+msgid "Connection not found."
+msgstr "Conexão não encontrada. "
+
+#: src/connection_loader.rs:193 src/connection_loader.rs:204
+msgid "Server not found."
+msgstr "Servidor não encontrado."
+
+#: src/connection_loader.rs:246 src/connection_loader.rs:364
+msgid "Failed to load or connect to server"
+msgstr "Falha ao carregar ou se conectar ao servidor"
+
+#: src/gtk/help-overlay.blp:10
+msgctxt "shortcut window"
+msgid "Window"
+msgstr "Janela"
+
+#: src/gtk/help-overlay.blp:13
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "Nova janela"
+
+#: src/gtk/help-overlay.blp:18
+msgctxt "shortcut window"
+msgid "Toggle Fullscreen"
+msgstr "Alternar tela cheia"
+
+#: src/gtk/help-overlay.blp:23
+msgctxt "shortcut window"
+msgid "Show Navigation"
+msgstr "Exibir navegação"
+
+#: src/gtk/help-overlay.blp:29
+msgctxt "shortcut window"
+msgid "Connection"
+msgstr "Conexão"
+
+#: src/gtk/help-overlay.blp:32
+msgctxt "shortcut window"
+msgid "Close Connection"
+msgstr "Fechar conexão"
+
+#: src/gtk/help-overlay.blp:38
+msgctxt "shortcut window"
+msgid "Terminal"
+msgstr "Terminal"
+
+#: src/gtk/help-overlay.blp:41
+msgctxt "shortcut window"
+msgid "Copy"
+msgstr "Copiar"
+
+#: src/gtk/help-overlay.blp:46
+msgctxt "shortcut window"
+msgid "Paste"
+msgstr "Colar"
+
+#: src/gtk/help-overlay.blp:51
+msgctxt "shortcut window"
+msgid "Select All"
+msgstr "Selecionar todos"
+
+#: src/gtk/help-overlay.blp:56
+msgctxt "shortcut window"
+msgid "Zoom In"
+msgstr "Ampliar"
+
+#: src/gtk/help-overlay.blp:61
+msgctxt "shortcut window"
+msgid "Zoom Out"
+msgstr "Reduzir"
+
+#: src/gtk/help-overlay.blp:66
+msgctxt "shortcut window"
+msgid "Reset Zoom"
+msgstr "Redefinir zoom"
+
+#: src/gtk/help-overlay.blp:72
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Geral"
+
+#: src/gtk/help-overlay.blp:75
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "Preferências"
+
+#: src/gtk/help-overlay.blp:80
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Atalhos de teclado"
+
+#: src/quick_connect/mod.rs:118
+msgid "Untitled Server"
+msgstr "Servidor sem título"
+
+#: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
+#: src/widget/window.blp:129 src/widget/window.blp:190
+msgid "Quick Connect"
+msgstr "Conexão rápida"
+
+#: src/quick_connect/mod.rs:316
+msgid "via Quick Connect"
+msgstr "via conexão rápida"
+
+#: src/quick_connect/rdp.rs:78
+msgid "Failed to read file"
+msgstr "Falha ao ler o arquivo"
+
+#: src/quick_connect/rdp.rs:169
+msgid "Invalid RDP parameters"
+msgstr "Parâmetros RDP inválidos"
+
+#: src/quick_connect/spice.rs:207
+msgid "Invalid SPICE URI"
+msgstr "URI do SPICE inválido"
+
+#: src/quick_connect/util.rs:60 src/quick_connect/util.rs:65
+msgid "Invalid port in URI"
+msgstr "Porta inválida na URI"
+
+#: src/quick_connect/vnc.rs:111
+msgid "Invalid VNC URI"
+msgstr "URI inválida da VNC"
+
+#: src/remote_server_info.rs:47
+msgid "Field Monitor does not support this URI scheme"
+msgstr "Field Monitor não é compatível com esse esquema de URI"
+
+#: src/remote_server_info.rs:61
+msgid "Unable to detect supported file format"
+msgstr "O formato do arquivo não pôde ser reconhecido"
+
+#: src/remote_server_info.rs:69
+msgid "Field Monitor was unable to read the file"
+msgstr "O Field Monitor não pôde ler o arquivo"
+
+#: src/secrets.rs:90
+msgid "A secret value used by Field Monitor"
+msgstr "Valor secreto usado pelo Field Monitor"
+
+#: src/widget/add_connection_dialog.blp:11 src/widget/window.blp:283
+msgid "Add New Connection"
+msgstr "Adicionar uma nova conexão"
+
+#: src/widget/add_connection_dialog.rs:201
+#: src/widget/authenticate_connection_dialog.rs:165
+#: src/widget/update_connection_dialog.rs:146
+msgid "Failed to save connection"
+msgstr "Falha ao salvar a conexão"
+
+#: src/widget/add_connection_dialog.rs:204
+#: src/widget/authenticate_connection_dialog.rs:168
+#: src/widget/update_connection_dialog.rs:149
+msgid "An error occurred, while trying to save the connection"
+msgstr "Ocorreu um erro ao tentar salvar a conexão "
+
+#: src/widget/authenticate_connection_dialog.blp:6
+#: src/widget/connection_list/info_page.blp:70
+msgid "Authentication required"
+msgstr "Autenticação necessária"
+
+#: src/widget/authenticate_connection_dialog.blp:18
+msgid "Apply"
+msgstr "Aplicar"
+
+#: src/widget/authenticate_connection_dialog.rs:107
+msgid "This connection needs additional authentication to proceed."
+msgstr "Essa conexão precisa de informações adicionais para autenticação."
+
+#: src/widget/close_warning_dialog.rs:53
+msgid "Close Window?"
+msgstr "Fechar janela?"
+
+#: src/widget/close_warning_dialog.rs:54
+msgid ""
+"The app is still connected to one or more servers. Closing the window will "
+"disconnect from all servers."
+msgstr ""
+"O aplicativo ainda está conectado a um ou mais servidores. Ao fechar a "
+"janela, o aplicativo se desconectará de todos os servidores."
+
+#: src/widget/close_warning_dialog.rs:77
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/widget/close_warning_dialog.rs:78
+#: src/widget/connection_view/connection_view_navbar.rs:174
+#: src/widget/connection_view/server_screen.blp:111
+msgid "Close"
+msgstr "Fechar"
+
+#: src/widget/connection_list/connection_list_navbar.blp:9
+#: src/widget/connection_view/connection_view_navbar.blp:23
+msgid "Sidebar"
+msgstr "Barra lateral"
+
+#: src/widget/connection_list/info_page.blp:17
+msgid "Settings"
+msgstr "Configurações"
+
+#: src/widget/connection_list/info_page.blp:61
+msgid "Failed to load connection"
+msgstr "Falha ao carregar a conexão"
+
+#: src/widget/connection_list/info_page.blp:71
+msgid "This connection requires additional authentication."
+msgstr "Essa conexão requer informações adicionais para autenticação."
+
+#: src/widget/connection_list/info_page.blp:74
+msgid "Authenticate"
+msgstr "Autenticar "
+
+#: src/widget/connection_list/info_page.rs:183
+msgid "No servers available"
+msgstr "Nenhum servidor disponível"
+
+#: src/widget/connection_list/server_info.rs:242
+msgid "Actions"
+msgstr "Ações"
+
+#: src/widget/connection_list/server_info.rs:266
+#: src/widget/quick_connect_dialog.blp:37
+msgid "Connect"
+msgstr "Conectar"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/server_info.rs:284
+msgid "Connect via {adapter}"
+msgstr "Conectar-se via {adapter}"
+
+#: src/widget/connection_view/connection_tab_view.rs:245
+msgid "Close Connection?"
+msgstr "Fechar conexão?"
+
+#: src/widget/connection_view/connection_tab_view.rs:247
+msgid "Closing the connection will disconnect from the remote server."
+msgstr "Fechar a conexão desconectará o servidor remoto."
+
+#: src/widget/connection_view/connection_view_navbar.blp:12
+msgid "Active Connections"
+msgstr "Conexões ativas"
+
+#: src/widget/connection_view/connection_view_navbar.rs:187
+msgid "Move to New Window"
+msgstr "Mover para uma nova janela"
+
+#: src/widget/connection_view/server_screen.blp:30 src/widget/window.blp:52
+msgid "Toggle Fullscreen"
+msgstr "Alternar tela cheia"
+
+#: src/widget/connection_view/server_screen.blp:40
+msgid "Show Navigation"
+msgstr "Barra lateral"
+
+#: src/widget/connection_view/server_screen.blp:52 src/widget/window.blp:60
+msgid "Menu"
+msgstr "Menu"
+
+#: src/widget/connection_view/server_screen.blp:90
+msgid "Connecting..."
+msgstr "Conectando..."
+
+#: src/widget/connection_view/server_screen.blp:121
+msgid "Reconnect"
+msgstr "Reconectar"
+
+#: src/widget/connection_view/server_screen.blp:128
+msgid "Show Output"
+msgstr "Exibir saída"
+
+#: src/widget/connection_view/server_screen.rs:582
+msgid "Disconnected"
+msgstr "Desconectado"
+
+#: src/widget/connection_view/server_screen.rs:584
+msgid "The connection to the server was closed."
+msgstr "A conexão com o servidor foi fechada."
+
+#: src/widget/connection_view/server_screen.rs:618
+msgid "Connection Failed"
+msgstr "Falha na conexão"
+
+#: src/widget/connection_view/server_screen.rs:619
+msgid "The connection was closed due to an error."
+msgstr "A conexão foi fechada devido a um erro."
+
+#: src/widget/connection_view/server_screen.rs:778
+msgid "_Dynamic Resize"
+msgstr "Ajuste _dinâmico do tamanho"
+
+#: src/widget/connection_view/server_screen.rs:782
+msgid "_Scale to Window"
+msgstr "Ajuste a saída ao _tamanho da janela"
+
+#: src/widget/connection_view/server_screen.rs:792
+msgid "_Resize Window to Screen"
+msgstr "_Redimensionar a janela para a tela"
+
+#: src/widget/connection_view/server_screen.rs:796
+msgid "Send _Keys"
+msgstr "Enviar _teclas"
+
+#: src/widget/connection_view/server_screen.rs:800
+msgid "Ctrl+Alt L"
+msgstr "Ctrl+Alt L"
+
+#: src/widget/connection_view/server_screen.rs:804
+msgid "Ctrl+Alt+Backspace"
+msgstr "Ctrl+Alt+Backspace"
+
+#: src/widget/connection_view/server_screen.rs:808
+msgid "Ctrl+Alt+Delete"
+msgstr "Ctrl+Alt+Delete"
+
+#: src/widget/connection_view/server_screen.rs:814
+msgid "Ctrl+Alt+F1"
+msgstr "Ctrl+Alt+F1"
+
+#: src/widget/connection_view/server_screen.rs:818
+msgid "Ctrl+Alt+F2"
+msgstr "Ctrl+Alt+F2"
+
+#: src/widget/connection_view/server_screen.rs:822
+msgid "Ctrl+Alt+F3"
+msgstr "Ctrl+Alt+F3"
+
+#: src/widget/connection_view/server_screen.rs:826
+msgid "Ctrl+Alt+F4"
+msgstr "Ctrl+Alt+F4"
+
+#: src/widget/connection_view/server_screen.rs:830
+msgid "Ctrl+Alt+F5"
+msgstr "Ctrl+Alt+F5"
+
+#: src/widget/connection_view/server_screen.rs:834
+msgid "Ctrl+Alt+F6"
+msgstr "Ctrl+Alt+F6"
+
+#: src/widget/connection_view/server_screen.rs:838
+msgid "Ctrl+Alt+F7"
+msgstr "Ctrl+Alt+F7"
+
+#: src/widget/connection_view/server_screen.rs:842
+msgid "Ctrl+Alt+F8"
+msgstr "Ctrl+Alt+F8"
+
+#: src/widget/connection_view/server_screen.rs:846
+msgid "Ctrl+Alt+F9"
+msgstr "Ctrl+Alt+F9"
+
+#: src/widget/connection_view/server_screen.rs:850
+msgid "Ctrl+Alt+F10"
+msgstr "Ctrl+Alt+F10"
+
+#: src/widget/connection_view/server_screen.rs:854
+msgid "Ctrl+Alt+F11"
+msgstr "Ctrl+Alt+F11"
+
+#: src/widget/connection_view/server_screen.rs:858
+msgid "Ctrl+Alt+F12"
+msgstr "Ctrl+Alt+F12"
+
+#: src/widget/connection_view/server_screen.rs:864
+msgid "Print"
+msgstr "Print"
+
+#: src/widget/connection_view/server_screen.rs:875
+msgid "_Zoom"
+msgstr "_Zoom"
+
+#: src/widget/connection_view/server_screen.rs:896
+msgid "Server _Actions"
+msgstr "_Ações do servidor"
+
+#: src/widget/connection_view/server_screen.rs:904
+msgid "_Close Connection"
+msgstr "_Fechar conexão"
+
+#: src/widget/connection_view/server_screen.rs:914 src/widget/window.blp:295
+msgid "_New Window"
+msgstr "_Nova janela"
+
+#: src/widget/connection_view/server_screen.rs:918 src/widget/window.blp:305
+msgid "_Keyboard Shortcuts"
+msgstr "Atalhos de _Teclado"
+
+#: src/widget/connection_view/server_screen.rs:922 src/widget/window.blp:310
+msgid "_About Field Monitor"
+msgstr "_Sobre o Field Monitor"
+
+#: src/widget/connection_view/server_screen.rs:935
+msgid "_Copy"
+msgstr "_Copiar"
+
+#: src/widget/connection_view/server_screen.rs:939
+msgid "_Paste"
+msgstr "_Colar"
+
+#: src/widget/connection_view/server_screen.rs:943
+msgid "Select _All"
+msgstr "Selecionar _Todos"
+
+#: src/widget/connection_view/server_screen.rs:952
+msgid "Zoom In"
+msgstr "Ampliar"
+
+#: src/widget/connection_view/server_screen.rs:956
+msgid "Zoom Out"
+msgstr "Reduzir"
+
+#: src/widget/connection_view/server_screen.rs:960
+msgid "Reset Zoom"
+msgstr "Redefinir zoom"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:1062
+msgid "Press {keycombo} to ungrab the mouse and keyboard."
+msgstr "Pressione {keycombo} para soltar o mouse e o teclado."
+
+#: src/widget/preferences.blp:12
+msgid "Preferences"
+msgstr "Preferências"
+
+#: src/widget/preferences.blp:15
+msgid "Behavior"
+msgstr "Comportamento"
+
+#: src/widget/preferences.blp:18
+msgid "Open connections in new windows"
+msgstr "Abrir conexões em novas janelas"
+
+#: src/widget/preferences.blp:23
+msgid "Appearance"
+msgstr "Aparência"
+
+#: src/widget/preferences.blp:26 src/widget/preferences.rs:203
+msgid "Sharp window corners"
+msgstr "Cantos de janela não arredondados"
+
+#: src/widget/preferences.blp:46 src/widget/preferences.rs:233
+msgid "Header bars for active connections"
+msgstr "Barra de título para conexões ativas"
+
+#: src/widget/preferences.blp:66
+msgid "Show keyboard shortcut for how to ungrab"
+msgstr "Exibir a combinação de teclas para soltar o teclado"
+
+#: src/widget/preferences.blp:67
+msgid ""
+"Show a message on what key combination can be used to ungrab mouse and "
+"keyboard from an active connection, every time this input is grabbed."
+msgstr ""
+"Exibir uma mensagem explicando como soltar o mouse e o teclado assim que "
+"eles forem capturados."
+
+#: src/widget/preferences.rs:179 src/widget/preferences.rs:206
+msgid "Automatic"
+msgstr "Automático"
+
+#: src/widget/preferences.rs:180 src/widget/preferences.rs:207
+msgid "Always"
+msgstr "Sempre"
+
+#: src/widget/preferences.rs:181 src/widget/preferences.rs:208
+msgid "Never"
+msgstr "Nunca"
+
+#: src/widget/preferences.rs:189 src/widget/preferences.rs:236
+msgid "Default"
+msgstr "Padrão"
+
+#: src/widget/preferences.rs:190 src/widget/preferences.rs:237
+msgid "Show Above"
+msgstr "Exibir acima"
+
+#: src/widget/preferences.rs:191 src/widget/preferences.rs:238
+msgid "Overlay and Hide"
+msgstr "Sobrepor e ocultar"
+
+#: src/widget/preferences.rs:204
+msgid ""
+"Configure whether and when Field Monitor will use sharp, right angle, window "
+"corners instead of the default corner radius. This is useful to make sure "
+"the corners of connected screens are not cut off."
+msgstr ""
+"Essa configuração determina se e quando o Field Monitor utilizará cantos de "
+"janela não arredondados, em vez dos cantos de janela padrão. Isso pode ser "
+"útil para garantir que os cantos das telas conectadas não sejam cortados."
+
+#: src/widget/preferences.rs:206
+msgid ""
+"Use default corner radius, but make window corners sharp whenever input is "
+"grabbed."
+msgstr ""
+"Utilize os cantos de janela padrão, mas exiba cantos de janela não "
+"arredondados sempre que a entrada for capturada."
+
+#: src/widget/preferences.rs:207
+msgid "Always use sharp window corners."
+msgstr "Sempre utilize cantos de janela não arredondados."
+
+#: src/widget/preferences.rs:208
+msgid "Never use sharp window corners."
+msgstr "Nunca utilize cantos de janela não arredondados."
+
+#: src/widget/preferences.rs:234
+msgid "Change how the header bar is presented for active connection screens."
+msgstr ""
+"Essa configuração controla como a barra de título da janela para conexões "
+"ativas é apresentada. "
+
+#: src/widget/preferences.rs:236
+msgid ""
+"The header bar is shown above the connection screen. In fullscreen mode the "
+"header bar is instead overlayed and hides whenever input is grabbed."
+msgstr ""
+"A barra de título é exibida acima da tela remota. No modo de tela cheia, a "
+"barra de título é colocada sobre o conteúdo da tela e desaparece assim que a "
+"entrada é capturada."
+
+#: src/widget/preferences.rs:237
+msgid ""
+"The header bar is always shown above the connection screen, even in "
+"fullscreen mode."
+msgstr ""
+"A barra de título é sempre exibida acima da tela remota, mesmo no modo de "
+"tela cheia."
+
+#: src/widget/preferences.rs:238
+msgid ""
+"The header bar is always shown as an overlay on top of the connection "
+"screen, it is hidden whenever input is grabbed."
+msgstr ""
+"A barra de título é sobreposta ao conteúdo da tela remota e é ocultada assim "
+"que a entrada é capturada."
+
+#: src/widget/quick_connect_dialog.blp:18
+#, c-format
+msgid ""
+"Enter the URL of the server you want to connect to.\n"
+"Supported protocols are: RDP, SPICE, VNC.\n"
+"\n"
+"<b>Examples:</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://server:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://user@server?VncPassword=password123</i>"
+msgstr ""
+"Digite a URL do servidor ao qual deseja se conectar.\n"
+"Protocolos suportados: RDP, SPICE, VNC.\n"
+"\n"
+"<b>Exemplos:</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://server:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://user@server?VncPassword=password123</i>"
+
+#: src/widget/quick_connect_dialog.blp:21
+msgid "Connection URL"
+msgstr "URL da conexão"
+
+#: src/widget/quick_connect_dialog.blp:31
+msgid "Open File..."
+msgstr "Abrir o arquivo..."
+
+#: src/widget/quick_connect_dialog.rs:118
+msgid "Supported files"
+msgstr "Arquivos suportados"
+
+#: src/widget/quick_connect_dialog.rs:125
+msgid "RDP file"
+msgstr "Arquivo RDP"
+
+#: src/widget/quick_connect_dialog.rs:132
+msgid "Virt Viewer file"
+msgstr "Arquivo do Virt Viewer"
+
+#: src/widget/quick_connect_dialog.rs:136
+msgid "Any file"
+msgstr "Qualquer arquivo"
+
+#: src/widget/quick_connect_dialog.rs:144
+msgid "Open Connection from file..."
+msgstr "Abrir conexão a partir do arquivo..."
+
+#: src/widget/quick_connect_dialog.rs:157
+msgid "Field Monitor was unable to open the provided file."
+msgstr "O Field Monitor não conseguiu abrir o arquivo fornecido."
+
+#: src/widget/update_connection_dialog.blp:20
+msgid "Remove Connection"
+msgstr "Remover conexão"
+
+#: src/widget/update_connection_dialog.blp:29
+msgid "Save"
+msgstr "Salvar"
+
+#: src/widget/window.blp:114 src/widget/window.blp:176
+msgid "Add Connection"
+msgstr "Adicionar conexão"
+
+#: src/widget/window.blp:288
+msgid "_Reload Connections"
+msgstr "_Recarregar conexões"
+
+#: src/widget/window.blp:300
+msgid "_Preferences"
+msgstr "_Preferências"
+
+#: src/widget/window.rs:525
+msgid "Connect to your virtual machines and remote servers."
+msgstr "Conecte-se a suas máquinas virtuais (VMs) e servidores remotos."
