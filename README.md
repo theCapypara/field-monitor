@@ -28,15 +28,12 @@ and quickly connecting to RDP, SPICE or VNC servers via URI.
 
 Field Monitor can be downloaded via Flathub.
 
-> [!IMPORTANT]
-> TODO! As of writing Field Monitor is not yet published.
-
 [![Download on Flathub](https://flathub.org/api/badge?svg&locale=en)](https://flathub.org/apps/de.capypara.FieldMonitor)
 
 ### For NixOS
 
-> [!IMPORTANT]
-> TODO! As of writing Field Monitor is not yet published.
+> [!NOTE]
+> A Nixpkgs submission is currently pending: https://github.com/NixOS/nixpkgs/pull/392984
 
 ### From Source
 
