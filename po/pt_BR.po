@@ -588,16 +588,16 @@ msgid "OK"
 msgstr "OK"
 
 #: src/application.rs:291
-msgid "Failed to initialize"
-msgstr "Falha ao inicializar "
+msgid "Failed to Initialize"
+msgstr "Falha ao inicializar"
 
 #: src/application.rs:294
 msgid ""
 "Field Monitor could not start, because it could not connect to your system's "
-"secret service for accessing passwords"
+"secret service for accessing passwords."
 msgstr ""
 "O Field Monitor não pôde ser iniciado porque não conseguiu se conectar ao "
-"servidor de segredos para acessar as senhas"
+"servidor de segredos para acessar as senhas."
 
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
 #: src/application.rs:555

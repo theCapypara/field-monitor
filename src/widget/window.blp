@@ -28,7 +28,19 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                 name: "starting";
 
                 child: WindowHandle {
-                    child: Adw.Spinner {};
+                    child: Adw.ToolbarView {
+                        [top]
+                        Adw.HeaderBar {
+                            [end]
+                            Button {
+                                action-name: "app.about";
+                                tooltip-text: _("About Field Monitor");
+                                icon-name: "info-outline-symbolic";
+                            }
+                        }
+
+                        content: $FieldMonitorAppStatus app_status {};
+                    };
                 };
             }
 
@@ -117,7 +129,7 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
 
                                 styles [
                                     "flat",
-                                    "body-label"
+                                    "body-label",
                                 ]
                             }
 
@@ -132,7 +144,7 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
 
                                 styles [
                                     "flat",
-                                    "body-label"
+                                    "body-label",
                                 ]
                             }
                         }
@@ -178,7 +190,7 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
 
                                                     styles [
                                                         "suggested-action",
-                                                        "pill"
+                                                        "pill",
                                                     ]
                                                 }
 
@@ -191,7 +203,7 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                                                     };
 
                                                     styles [
-                                                        "pill"
+                                                        "pill",
                                                     ]
                                                 }
                                             }

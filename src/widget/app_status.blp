@@ -1,0 +1,95 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorAppStatus: Adw.Bin {
+    notify::state => $on_self_state_changed() swapped;
+
+    child: Stack stack {
+        transition-type: crossfade;
+        transition-duration: 150;
+
+        StackPage {
+            name: "initializing";
+
+            child: Box {
+                orientation: vertical;
+                valign: center;
+                vexpand: true;
+                spacing: 24;
+
+                Adw.Spinner {
+                    height-request: 64;
+                    width-request: 64;
+                }
+
+                Label {
+                    halign: center;
+                    justify: center;
+                    wrap: true;
+                    wrap-mode: word_char;
+                    label: _("Field Monitor is starting...");
+
+                    styles [
+                        "title-2",
+                    ]
+                }
+            };
+        }
+
+        StackPage {
+            name: "error-secrets-general";
+
+            child: Box {
+                orientation: vertical;
+                valign: center;
+                vexpand: true;
+                spacing: 24;
+
+                Adw.StatusPage {
+                    icon-name: "key-off-symbolic";
+                    title: _("Failed to Initialize");
+                    description: _("Field Monitor could not start, because it could not connect to your system's secret service for accessing passwords.");
+
+                    Button {
+                        halign: center;
+                        action-name: "app.quit";
+                        label: _("Quit");
+
+                        styles [
+                            "pill",
+                            "destructive-action",
+                        ]
+                    }
+                }
+            };
+        }
+
+        StackPage {
+            name: "error-secrets-invalid";
+
+            child: Box {
+                orientation: vertical;
+                valign: center;
+                vexpand: true;
+                spacing: 24;
+
+                Adw.StatusPage {
+                    icon-name: "key-off-symbolic";
+                    title: _("Failed to Initialize - Secrets Invalid");
+                    description: _("Field Monitor could not start, because the secrets backend reports that the system secrets are invalid or corrupted.\n\nThis can happen if you moved your HOME directory to another system.\n\nYou may be able to resolve this with <a href='https://github.com/theCapypara/field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>.");
+
+                    Button {
+                        halign: center;
+                        action-name: "app.quit";
+                        label: _("Quit");
+
+                        styles [
+                            "pill",
+                            "destructive-action",
+                        ]
+                    }
+                }
+            };
+        }
+    };
+}

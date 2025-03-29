@@ -31,7 +31,7 @@ pub struct SecretManager {
 }
 
 impl SecretManager {
-    pub async fn new() -> anyhow::Result<Self> {
+    pub async fn new() -> oo7::Result<Self> {
         let keyring = oo7::file::Keyring::load_default().await?;
         Ok(Self { keyring })
     }

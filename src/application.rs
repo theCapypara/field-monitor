@@ -32,13 +32,13 @@ use adw::subclass::prelude::*;
 use anyhow::anyhow;
 use gettextrs::gettext;
 use glib::subclass::Signal;
-use glib::{ControlFlow, ExitCode, Priority, VariantDict};
+use glib::{ExitCode, Priority, VariantDict};
 use gtk::{gio, glib};
 use log::{debug, error, info, warn};
+use num_enum::TryFromPrimitive;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use libfieldmonitor::ManagesSecrets;
 use libfieldmonitor::busy::{BusyGuard, BusyStack};
 use libfieldmonitor::config::{APP_ID, VERSION};
 use libfieldmonitor::connection::ConnectionConfiguration;
@@ -46,6 +46,7 @@ use libfieldmonitor::connection::ConnectionInstance;
 use libfieldmonitor::connection::ConnectionProvider;
 use libfieldmonitor::connection::DualScopedConnectionConfiguration;
 use libfieldmonitor::i18n::gettext_f;
+use libfieldmonitor::{impl_primitive_enum_param_spec, ManagesSecrets};
 
 use crate::connection::CONNECTION_PROVIDERS;
 use crate::connection_loader::ConnectionLoader;
@@ -69,9 +70,9 @@ mod imp {
         pub providers: RefCell<HashMap<String, Rc<Box<dyn ConnectionProvider>>>>,
         /// Manages a stack for `pending_server_action`. If stack size is zero, sets to false.
         pub busy_stack: RefCell<Option<BusyStack>>,
-        /// Whether Field Monitor is currently loading all connections for the first time.
+        /// Current overall state of the application (if it has finished loading)
         #[property(get, construct_only)]
-        pub starting: Cell<bool>,
+        pub state: RefCell<AppState>,
         /// Whether Field Monitor is currently (re-)loading all connections.
         #[property(get)]
         pub loading_connections: Cell<bool>,
@@ -158,9 +159,7 @@ mod imp {
                 async move {
                     let slf = obj.imp();
                     let _hold = hold;
-                    if let ControlFlow::Continue = slf.init().await {
-                        slf.finish_activate(false);
-                    }
+                    slf.init().await;
                 }
             ));
         }
@@ -181,14 +180,8 @@ mod imp {
                 async move {
                     let slf = obj.imp();
                     let _hold = hold;
-                    if let ControlFlow::Continue = slf.init().await {
-                        let force_new_window = obj
-                            .settings()
-                            .as_ref()
-                            .map(FieldMonitorSettings::open_in_new_window)
-                            .unwrap_or_default();
-                        let window = slf.finish_activate(force_new_window);
 
+                    if let Some(window) = slf.init().await {
                         match RemoteServerInfo::try_from_file(file, &obj, Some(&window)).await {
                             Err(err) => {
                                 let alert = adw::AlertDialog::builder()
@@ -260,7 +253,27 @@ mod imp {
     impl AdwApplicationImpl for FieldMonitorApplication {}
 
     impl FieldMonitorApplication {
-        async fn init(&self) -> ControlFlow {
+        async fn init(&self) -> Option<FieldMonitorWindow> {
+            let obj = self.obj();
+            let mut state_error = None;
+
+            // Create window if none exists or forced
+            let force_new_window = obj
+                .settings()
+                .as_ref()
+                .map(FieldMonitorSettings::open_in_new_window)
+                .unwrap_or_default();
+            let window = if force_new_window {
+                FieldMonitorWindow::new(&obj)
+            } else {
+                obj.active_window()
+                    .and_downcast::<FieldMonitorWindow>()
+                    .unwrap_or_else(|| FieldMonitorWindow::new(&obj))
+            };
+
+            // Ask the window manager/compositor to present the window
+            window.present();
+
             // Init providers if not done already.
             if self.providers.borrow().is_empty() {
                 self.providers.replace(
@@ -273,6 +286,7 @@ mod imp {
                         .collect(),
                 );
             }
+
             // Init secret service if not done already.
             if self.secret_manager.borrow().is_none() {
                 info!("Initializing secrets provider...");
@@ -282,67 +296,49 @@ mod imp {
                     Ok(secrets) => {
                         slf.secret_manager
                             .replace(Some(Arc::new(Box::new(secrets))));
-
-                        ControlFlow::Continue
                     }
                     Err(err) => {
                         error!("Failed to initialize secrets provider: {err}");
-                        let alert = adw::AlertDialog::builder()
-                                    .title(gettext("Failed to initialize"))
-                                    .body(format!(
-                                        "{}:\n{}",
-                                        gettext("Field Monitor could not start, because it could not connect to your system's secret service for accessing passwords"),
-                                        err
-                                    ))
-                                    .build();
-                        alert.add_response("ok", &gettext("OK"));
-                        alert.present(None::<&gtk::Window>);
-
-                        ControlFlow::Break
+                        state_error = Some(match err {
+                            oo7::Error::File(oo7::file::Error::IncorrectSecret) => {
+                                AppState::ErrSecretsInvalid
+                            }
+                            _ => AppState::ErrSecretsGeneral,
+                        });
                     }
                 }
-            } else {
-                ControlFlow::Continue
-            }
-        }
-
-        fn finish_activate(&self, force_new_window: bool) -> FieldMonitorWindow {
-            // Init connections if not done already.
-            if self.connections.borrow().is_none() {
-                self.connections.borrow_mut().replace(HashMap::new());
-                let slf = self;
-                glib::spawn_future_local(glib::clone!(
-                    #[weak]
-                    slf,
-                    async move {
-                        slf.obj().reload_connections().await;
-                    }
-                ));
             }
 
-            let application = self.obj();
-
-            // Get the current window or create one if necessary
-            let window = if force_new_window {
-                FieldMonitorWindow::new(&application)
+            // If no error happened, continue app initialization, otherwise show an error by
+            // setting the app state.
+            if let Some(err) = state_error {
+                self.state.replace(err);
+                self.obj().notify_state();
+                None
             } else {
-                application
-                    .active_window()
-                    .and_downcast::<FieldMonitorWindow>()
-                    .unwrap_or_else(|| FieldMonitorWindow::new(&application))
-            };
+                // Init connections if not done already.
+                if self.connections.borrow().is_none() {
+                    self.connections.borrow_mut().replace(HashMap::new());
+                    let slf = self;
+                    glib::spawn_future_local(glib::clone!(
+                        #[weak]
+                        slf,
+                        async move {
+                            slf.obj().reload_connections().await;
+                        }
+                    ));
+                }
 
-            // Ask the window manager/compositor to present the window
-            window.present();
-            window
+                Some(window)
+            }
         }
 
         pub fn set_loading_connection(&self, value: bool) {
             self.loading_connections.replace(value);
             self.obj().notify_loading_connections();
-            if !value && self.starting.get() {
-                self.starting.replace(value);
-                self.obj().notify_starting();
+            if !value && *self.state.borrow() == AppState::Initializing {
+                self.state.replace(AppState::Ready);
+                self.obj().notify_state();
             }
         }
 
@@ -364,7 +360,6 @@ impl FieldMonitorApplication {
             .property("application-id", application_id)
             .property("flags", flags)
             .property("settings", FieldMonitorSettings::new(APP_ID))
-            .property("starting", true)
             .build()
     }
 
@@ -1151,3 +1146,17 @@ struct SavedConnectionConfiguration {
     tag: String,
     config: HashMap<String, serde_yaml::Value>,
 }
+
+#[derive(Copy, Clone, Debug, Default, PartialEq, Eq, TryFromPrimitive)]
+#[repr(i32)]
+pub enum AppState {
+    #[default]
+    Initializing = 0,
+
+    Ready = -1,
+
+    ErrSecretsGeneral = 1,
+    ErrSecretsInvalid = 2,
+}
+
+impl_primitive_enum_param_spec!(AppState, i32);
