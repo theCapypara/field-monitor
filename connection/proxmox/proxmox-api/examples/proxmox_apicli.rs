@@ -260,12 +260,10 @@ async fn process_cmd(client: &ProxmoxApiClient, cmd: &Command) -> proxmox_api::R
             vmid,
             vm_type,
         } => {
+            let node_id = NodeId::from_str(node)?;
+            let vm_id = VmId::from(*vmid);
             let adapters = client
-                .vm_available_console_proxies(
-                    &NodeId::from_str(node)?,
-                    &VmId::from(*vmid),
-                    (*vm_type).into(),
-                )
+                .vm_available_console_proxies(&node_id, &vm_id, (*vm_type).into())
                 .await?;
             println!("adapters = {:?}", adapters.as_ref());
         }
