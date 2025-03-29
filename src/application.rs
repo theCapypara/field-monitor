@@ -46,7 +46,7 @@ use libfieldmonitor::connection::ConnectionInstance;
 use libfieldmonitor::connection::ConnectionProvider;
 use libfieldmonitor::connection::DualScopedConnectionConfiguration;
 use libfieldmonitor::i18n::gettext_f;
-use libfieldmonitor::{impl_primitive_enum_param_spec, ManagesSecrets};
+use libfieldmonitor::{ManagesSecrets, impl_primitive_enum_param_spec};
 
 use crate::connection::CONNECTION_PROVIDERS;
 use crate::connection_loader::ConnectionLoader;
