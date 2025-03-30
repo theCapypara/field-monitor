@@ -85,6 +85,8 @@ src/settings.rs
 src/util.rs
 src/widget/add_connection_dialog.blp
 src/widget/add_connection_dialog.rs
+src/widget/app_status.blp
+src/widget/app_status.rs
 src/widget/authenticate_connection_dialog.blp
 src/widget/authenticate_connection_dialog.rs
 src/widget/close_warning_dialog.rs

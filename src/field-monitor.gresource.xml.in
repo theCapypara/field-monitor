@@ -16,6 +16,7 @@
 		<file preprocess="xml-stripblanks">widget/connection_view/connection_view_navbar.ui</file>
 		<file preprocess="xml-stripblanks">widget/connection_view/server_screen.ui</file>
 		<file preprocess="xml-stripblanks">widget/add_connection_dialog.ui</file>
+		<file preprocess="xml-stripblanks">widget/app_status.ui</file>
 		<file preprocess="xml-stripblanks">widget/authenticate_connection_dialog.ui</file>
 		<file preprocess="xml-stripblanks">widget/update_connection_dialog.ui</file>
 		<file preprocess="xml-stripblanks">widget/quick_connect_dialog.ui</file>
@@ -44,6 +45,7 @@
 		<file preprocess="xml-stripblanks">icons/scalable/actions/edit-find-symbolic.svg</file>
 		<file preprocess="xml-stripblanks">icons/scalable/actions/edit-symbolic.svg</file>
 		<file preprocess="xml-stripblanks">icons/scalable/actions/external-display-nointernal-symbolic.svg</file>
+		<file preprocess="xml-stripblanks">icons/scalable/actions/info-outline-symbolic.svg</file>
 		<file preprocess="xml-stripblanks">icons/scalable/actions/key-off-symbolic.svg</file>
 		<file preprocess="xml-stripblanks">icons/scalable/actions/key-symbolic.svg</file>
 		<file preprocess="xml-stripblanks">icons/scalable/actions/list-add-symbolic.svg</file>

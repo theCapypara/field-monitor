@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-24 16:54+0100\n"
-"PO-Revision-Date: 2025-03-24 16:56+0100\n"
+"POT-Creation-Date: 2025-03-29 22:50+0100\n"
+"PO-Revision-Date: 2025-03-29 22:55+0100\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -20,9 +20,9 @@ msgstr ""
 
 #. Translators: The name of the application.
 #: data/de.capypara.FieldMonitor.desktop.in.in:3
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:542
-#: src/widget/window.blp:9 src/widget/window.blp:47 src/widget/window.blp:157
-#: src/widget/window.blp:163 src/widget/window.rs:305
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:540
+#: src/widget/window.blp:9 src/widget/window.blp:59 src/widget/window.blp:169
+#: src/widget/window.blp:175 src/widget/window.rs:313
 msgid "Field Monitor"
 msgstr "Feldmonitor"
 
@@ -34,8 +34,7 @@ msgstr "Betrachter für entfernte Bildschirme"
 #: data/de.capypara.FieldMonitor.desktop.in.in:5
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
 msgid "Access VMs and external screens"
-msgstr ""
-"Greifen Sie auf VMs und entfernte Bildschirme zu"
+msgstr "Greifen Sie auf VMs und entfernte Bildschirme zu"
 
 #. Translators: The keywords from the desktop file.
 #: data/de.capypara.FieldMonitor.desktop.in.in:13
@@ -151,10 +150,8 @@ msgstr ""
 
 #. Translators: Caption of the first screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:89
-msgid "A list of servers in a Proxmox cluster to connect to"
-msgstr ""
-"Eine Liste von Servern in einem Proxmox Cluster, mit denen sich verbunden "
-"werden kann"
+msgid "Screen of a connected graphical display"
+msgstr "Bildschirm einer verbundenen graphischen Anzeige"
 
 #. Translators: Caption of the second screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:96
@@ -162,17 +159,19 @@ msgid "Welcome screen"
 msgstr "Willkommen-Fenster"
 
 #. Translators: Caption of the third screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:101
-msgid "Screen of a connected graphical display"
-msgstr "Bildschirm einer verbundenen graphischen Anzeige"
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:103
+msgid "A list of servers in a Proxmox cluster to connect to"
+msgstr ""
+"Eine Liste von Servern in einem Proxmox Cluster, mit denen sich verbunden "
+"werden kann"
 
 #. Translators: Caption of the 4th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:107
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:110
 msgid "Screen of a connected console"
 msgstr "Bildschirm einer verbundenen Konsole"
 
 #. Translators: Caption of the 5th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:112
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:117
 msgid "Adding a new Proxmox hypervisor connection"
 msgstr "Hinzufügen einer neuen Proxmox Hypervisor-Verbindung"
 
@@ -565,24 +564,24 @@ msgstr "Jedes Mal nachfragen"
 msgid "The connection configuration is invalid"
 msgstr "Die Verbindungskonfiguration ist ungültig"
 
-#: src/application.rs:123
+#: src/application.rs:124
 msgid "Open the app with a new window"
 msgstr "Anwendung mit einem neuen Fenster starten"
 
-#: src/application.rs:195 src/widget/quick_connect_dialog.rs:93
+#: src/application.rs:188 src/widget/quick_connect_dialog.rs:93
 #: src/widget/quick_connect_dialog.rs:155
 msgid "Failed to open"
 msgstr "Öffnen fehlgeschlagen"
 
-#: src/application.rs:198 src/widget/quick_connect_dialog.rs:96
+#: src/application.rs:191 src/widget/quick_connect_dialog.rs:96
 msgid ""
 "Field Monitor could not connect to the server using the specified file or URI"
 msgstr ""
 "Feldmonitor konnte sich mittels der angegebenen Datei oder URI nicht mit dem "
 "Server verbinden"
 
-#: src/application.rs:202 src/application.rs:298 src/application.rs:564
-#: src/connection_loader.rs:433 src/widget/add_connection_dialog.rs:208
+#: src/application.rs:195 src/application.rs:562 src/connection_loader.rs:433
+#: src/widget/add_connection_dialog.rs:208
 #: src/widget/authenticate_connection_dialog.rs:172
 #: src/widget/quick_connect_dialog.rs:100
 #: src/widget/quick_connect_dialog.rs:160
@@ -590,50 +589,38 @@ msgstr ""
 msgid "OK"
 msgstr "OK"
 
-#: src/application.rs:291
-msgid "Failed to initialize"
-msgstr "Fehler beim Initalisieren"
-
-#: src/application.rs:294
-msgid ""
-"Field Monitor could not start, because it could not connect to your system's "
-"secret service for accessing passwords"
-msgstr ""
-"Feldmonitor konnte nicht gestartet werden, da es sich nicht mit dem Dienst "
-"für Geheimnisse verbinden konnte, um auf Passwörter zuzugrifen"
-
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
-#: src/application.rs:555
+#: src/application.rs:553
 msgid "translator-credits"
 msgstr "Marco Köpcke <hello@capypara.de>"
 
-#: src/application.rs:606
+#: src/application.rs:604
 msgid "Connection successfully added."
 msgstr "Verbindung erfolgreich hinzugefügt."
 
-#: src/application.rs:638
+#: src/application.rs:636
 msgid "Connection successfully updated."
 msgstr "Verbindung erfolgreich aktualisiert."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/application.rs:676
+#: src/application.rs:674
 msgid "Remove {title}?"
 msgstr "{title} entfernen?"
 
-#: src/application.rs:680 src/widget/connection_view/connection_tab_view.rs:250
+#: src/application.rs:678 src/widget/connection_view/connection_tab_view.rs:250
 msgid "No"
 msgstr "Nein"
 
-#: src/application.rs:681 src/widget/connection_view/connection_tab_view.rs:251
+#: src/application.rs:679 src/widget/connection_view/connection_tab_view.rs:251
 msgid "Yes"
 msgstr "Ja"
 
-#: src/application.rs:686
+#: src/application.rs:684
 msgid "Connection successfully removed."
 msgstr "Verbindung erfolgreich entfernt."
 
-#: src/application.rs:747
+#: src/application.rs:745
 msgid "Authentication successfully updated"
 msgstr "Informationen zur Authentifizierung erfolgreich aktualisiert"
 
@@ -734,7 +721,7 @@ msgid "Untitled Server"
 msgstr "Unbenannter Server"
 
 #: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
-#: src/widget/window.blp:129 src/widget/window.blp:190
+#: src/widget/window.blp:141 src/widget/window.blp:202
 msgid "Quick Connect"
 msgstr "Schnellverbindung"
 
@@ -778,7 +765,7 @@ msgstr "Feldmonitor konnte diese Datei nicht lesen"
 msgid "A secret value used by Field Monitor"
 msgstr "Ein geheimer Wert, verwendet von Feldmonitor"
 
-#: src/widget/add_connection_dialog.blp:11 src/widget/window.blp:283
+#: src/widget/add_connection_dialog.blp:11 src/widget/window.blp:295
 msgid "Add New Connection"
 msgstr "Neue Verbindung hinzufügen"
 
@@ -793,6 +780,50 @@ msgstr "Fehler beim Speichern der Verbindung"
 #: src/widget/update_connection_dialog.rs:149
 msgid "An error occurred, while trying to save the connection"
 msgstr "Beim Speichern der Verbindung ist ein Fehler aufgetreten"
+
+#: src/widget/app_status.blp:30
+msgid "Field Monitor is starting..."
+msgstr "Feldmonitor startet..."
+
+#: src/widget/app_status.blp:50
+msgid "Failed to Initialize"
+msgstr "Fehler beim Initalisieren"
+
+#: src/widget/app_status.blp:51
+msgid ""
+"Field Monitor could not start, because it could not connect to your system's "
+"secret service for accessing passwords."
+msgstr ""
+"Feldmonitor konnte nicht gestartet werden, da es sich nicht mit dem Dienst "
+"für Geheimnisse verbinden konnte, um auf Passwörter zuzugrifen."
+
+#: src/widget/app_status.blp:56 src/widget/app_status.blp:84
+msgid "Quit"
+msgstr "Anwendung beenden"
+
+#: src/widget/app_status.blp:78
+msgid "Failed to Initialize - Secrets Invalid"
+msgstr "Fehler beim Initalisieren - Ungültige Schlüssel"
+
+#: src/widget/app_status.blp:79
+msgid ""
+"Field Monitor could not start, because the secrets backend reports that the "
+"system secrets are invalid or corrupted.\n"
+"\n"
+"This can happen if you moved your HOME directory to another system.\n"
+"\n"
+"You may be able to resolve this with <a href='https://github.com/theCapypara/"
+"field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
+msgstr ""
+"Feldmonitor konnte nicht starten, da der Systemdienst für Geheimnisse "
+"meldet, dass System-Schlüssel ungültig oder beschädigt sind.\n"
+"\n"
+"Dies kann passieren, falls sie Ihr HOME Verzeichnis auf ein anderes System "
+"verschoben haben.\n"
+"\n"
+"Sie können diese Situation möglicherweise mit  <a href='https://github.com/"
+"theCapypara/field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a> "
+"lösen."
 
 #: src/widget/authenticate_connection_dialog.blp:6
 #: src/widget/connection_list/info_page.blp:70
@@ -887,7 +918,7 @@ msgstr "Aktive Verbindungen"
 msgid "Move to New Window"
 msgstr "In neues Fenster verschieben"
 
-#: src/widget/connection_view/server_screen.blp:30 src/widget/window.blp:52
+#: src/widget/connection_view/server_screen.blp:30 src/widget/window.blp:64
 msgid "Toggle Fullscreen"
 msgstr "Vollbild umschalten"
 
@@ -895,7 +926,7 @@ msgstr "Vollbild umschalten"
 msgid "Show Navigation"
 msgstr "Navigation anzeigen"
 
-#: src/widget/connection_view/server_screen.blp:52 src/widget/window.blp:60
+#: src/widget/connection_view/server_screen.blp:52 src/widget/window.blp:72
 msgid "Menu"
 msgstr "Menü"
 
@@ -1019,15 +1050,15 @@ msgstr "Server_aktionen"
 msgid "_Close Connection"
 msgstr "Verbindung _schließen"
 
-#: src/widget/connection_view/server_screen.rs:914 src/widget/window.blp:295
+#: src/widget/connection_view/server_screen.rs:914 src/widget/window.blp:307
 msgid "_New Window"
 msgstr "_Neues Fenster"
 
-#: src/widget/connection_view/server_screen.rs:918 src/widget/window.blp:305
+#: src/widget/connection_view/server_screen.rs:918 src/widget/window.blp:317
 msgid "_Keyboard Shortcuts"
 msgstr "_Tastenkombinationen"
 
-#: src/widget/connection_view/server_screen.rs:922 src/widget/window.blp:310
+#: src/widget/connection_view/server_screen.rs:922 src/widget/window.blp:322
 msgid "_About Field Monitor"
 msgstr "_Über Feldmonitor"
 
@@ -1240,29 +1271,23 @@ msgstr "Verbindung entfernen"
 msgid "Save"
 msgstr "Speichern"
 
-#: src/widget/window.blp:114 src/widget/window.blp:176
+#: src/widget/window.blp:37
+msgid "About Field Monitor"
+msgstr "Über Feldmonitor"
+
+#: src/widget/window.blp:126 src/widget/window.blp:188
 msgid "Add Connection"
 msgstr "Verbindung hinzufügen"
 
-#: src/widget/window.blp:288
+#: src/widget/window.blp:300
 msgid "_Reload Connections"
 msgstr "Verbindungen neu_laden"
 
-#: src/widget/window.blp:300
+#: src/widget/window.blp:312
 msgid "_Preferences"
 msgstr "_Einstellungen"
 
-#: src/widget/window.rs:525
+#: src/widget/window.rs:533
 msgid "Connect to your virtual machines and remote servers."
 msgstr ""
 "Verbinden Sie sich mit ihren Virtuellen Maschinen und entfernen Servern."
-
-#~ msgid ""
-#~ "Field Monitor lets you connect to the screens of remote computers and "
-#~ "virtual machines."
-#~ msgstr ""
-#~ "Feldmonitor ermöglicht es Ihnen auf die Bildschirme entfernter Computer "
-#~ "und Virtueller Maschinen zuzugreifen."
-
-#~ msgid "_Move to New Window"
-#~ msgstr "In neues _Fenster verschieben"

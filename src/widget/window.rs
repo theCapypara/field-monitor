@@ -16,9 +16,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use crate::application::FieldMonitorApplication;
+use crate::application::{AppState, FieldMonitorApplication};
 use crate::remote_server_info::RemoteServerInfo;
 use crate::settings::{SettingHeaderBarBehavior, SettingSharpWindowCorners};
+use crate::widget::app_status::FieldMonitorAppStatus;
 use crate::widget::close_warning_dialog::FieldMonitorCloseWarningDialog;
 use crate::widget::connection_list::{
     FieldMonitorConnectionStack, FieldMonitorNavbarConnectionList,
@@ -43,6 +44,8 @@ mod imp {
     #[derive(Debug, Default, gtk::CompositeTemplate)]
     #[template(resource = "/de/capypara/FieldMonitor/widget/window.ui")]
     pub struct FieldMonitorWindow {
+        #[template_child]
+        pub app_status: TemplateChild<FieldMonitorAppStatus>,
         #[template_child]
         pub outer_stack: TemplateChild<gtk::Stack>,
         #[template_child]
@@ -130,6 +133,11 @@ impl FieldMonitorWindow {
                 .set_icon_name(Some("de.capypara.FieldMonitor.Devel"));
         }
 
+        // Connect app state with the status widget
+        application
+            .bind_property("state", &*slf.imp().app_status, "state")
+            .build();
+
         application.connect_notify_local(
             Some("busy"),
             glib::clone!(
@@ -171,16 +179,16 @@ impl FieldMonitorWindow {
         );
 
         application.connect_notify_local(
-            Some("starting"),
+            Some("state"),
             glib::clone!(
                 #[weak]
                 slf,
-                move |app, _| slf.on_app_starting_changed(app)
+                move |app, _| slf.on_app_state_changed(app)
             ),
         );
 
         slf.on_app_loading_connections_changed(application);
-        slf.on_app_starting_changed(application);
+        slf.on_app_state_changed(application);
 
         if let Some(settings) = application.settings() {
             slf.on_settings_sharp_window_corners_changed(settings.sharp_window_corners());
@@ -531,13 +539,11 @@ impl FieldMonitorWindow {
         }
     }
 
-    fn on_app_starting_changed(&self, app: &FieldMonitorApplication) {
-        if app.starting() {
-            debug!("app is starting");
-            self.imp().outer_stack.set_visible_child_name("starting");
-        } else {
-            debug!("app is not starting");
+    fn on_app_state_changed(&self, app: &FieldMonitorApplication) {
+        if app.state() == AppState::Ready {
             self.imp().outer_stack.set_visible_child_name("app");
+        } else {
+            self.imp().outer_stack.set_visible_child_name("starting");
         }
     }
 

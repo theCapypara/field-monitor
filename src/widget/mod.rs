@@ -17,6 +17,7 @@
  */
 
 pub mod add_connection_dialog;
+pub mod app_status;
 pub mod authenticate_connection_dialog;
 mod close_warning_dialog;
 pub mod connection_list;

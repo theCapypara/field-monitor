@@ -5,6 +5,7 @@ blueprints = custom_target('blueprints',
   input: files(
     'gtk/help-overlay.blp',
     'widget/add_connection_dialog.blp',
+    'widget/app_status.blp',
     'widget/authenticate_connection_dialog.blp',
     'widget/preferences.blp',
     'widget/quick_connect_dialog.blp',
