@@ -76,6 +76,12 @@
 	</description>
 
 	<releases>
+		<!-- TODO
+		<release version="48.1" date="2025-04-XX">
+			<description translate="no">
+				<p>TODO</p>
+			</description>
+		</release> -->
 		<release version="48.0" date="2025-03-24">
 			<description translate="no">
 				<p>Initial Release.</p>

@@ -25,7 +25,7 @@ serde_json = "1"
 futures = "0.3"
 log = "0.4"
 num_enum = "0.7"
-indexmap = "2.8"
+indexmap = "2.9"
 secure-string = "0.3"
 http = "1.3"
 uuid = { version = "1.16", features = ["v7"] }
@@ -52,27 +52,27 @@ version = "0.7"
 package = "rdw4"
 git = "https://gitlab.gnome.org/malureau/rdw.git"
 #branch = "master"
-rev = "bd8658f67fc6d6831565bbcbedb7a0c44d9778c0"
+rev = "76829dc29610d53a3cd06cb41eb4405f7071fe48"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/malureau/rdw.git"
 #branch = "master"
-rev = "bd8658f67fc6d6831565bbcbedb7a0c44d9778c0"
+rev = "76829dc29610d53a3cd06cb41eb4405f7071fe48"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/malureau/rdw.git"
 #branch = "master"
-rev = "bd8658f67fc6d6831565bbcbedb7a0c44d9778c0"
+rev = "76829dc29610d53a3cd06cb41eb4405f7071fe48"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/malureau/rdw.git"
 #branch = "master"
-rev = "bd8658f67fc6d6831565bbcbedb7a0c44d9778c0"
+rev = "76829dc29610d53a3cd06cb41eb4405f7071fe48"
 default-features = false
 
 [workspace.dependencies.vte]
@@ -129,3 +129,10 @@ field-monitor-debug = { path = "./connection/debug", optional = true }
 
 [lints]
 workspace = true
+
+# See:
+# - https://gitlab.gnome.org/malureau/rdw/-/blob/0ea3a4e4d1cf3ab106dcca13486b354e836b6809/.cargo/config.toml
+# - https://gitlab.gnome.org/malureau/rdw/-/blob/0ea3a4e4d1cf3ab106dcca13486b354e836b6809/Cargo.lock
+[patch.crates-io]
+ironrdp = { git = "https://github.com/Devolutions/IronRDP.git", rev = "0ff1ed8de5a22ffe34a6a492425dc74728202fbe" }
+ironrdp-tokio = { git = "https://github.com/Devolutions/IronRDP.git", rev = "0ff1ed8de5a22ffe34a6a492425dc74728202fbe" }

@@ -7,7 +7,6 @@
   usbredir,
   gst_all_1,
   gtk-vnc,
-  freerdp,
   spice-protocol,
   spice-gtk,
   libepoxy,
@@ -61,7 +60,6 @@ let
     gst_all_1.gst-plugins-base
     gst_all_1.gst-plugins-good
     patched-gtk-vnc
-    freerdp
     spice-protocol
     spice-gtk
     libepoxy
@@ -118,7 +116,6 @@ mkShell {
       gst_all_1.gst-plugins-base
       gst_all_1.gst-plugins-good
       patched-gtk-vnc
-      freerdp
       spice-protocol
       spice-gtk
       libepoxy

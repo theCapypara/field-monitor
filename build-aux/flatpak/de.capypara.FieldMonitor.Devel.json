@@ -188,41 +188,6 @@
             ]
         },
         {
-            "name": "freerdp",
-            "buildsystem": "cmake-ninja",
-            "builddir": true,
-            "build-options": {
-                "cflags": "-Wno-incompatible-pointer-types -Wno-int-conversion"
-            },
-            "config-opts": [
-                "-DCMAKE_VERBOSE_MAKEFILE=ON",
-                "-DCMAKE_BUILD_TYPE:STRING=Release",
-                "-DWITH_WAYLAND:BOOL=ON",
-                "-DCHANNEL_TSMF:BOOL=OFF",
-                "-DCHANNEL_URBDRC:BOOL=ON",
-                "-DBUILD_TESTING:BOOL=OFF",
-                "-DWITH_MANPAGES:BOOL=OFF",
-                "-DWITH_GSSAPI:BOOL=OFF",
-                "-DWITH_PCSC:BOOL=ON",
-                "-DWITH_SWSCALE:BOOL=ON",
-                "-DWITH_SERVER:BOOL=OFF",
-                "-DWITH_SAMPLE:BOOL=OFF",
-                "-DWITH_CUPS:BOOL=ON",
-                "-DWITH_FFMPEG:BOOL=ON",
-                "-DWITH_OSS:BOOL=OFF",
-                "-DWITH_PULSE:BOOL=ON",
-                "-DWITH_LIBSYSTEMD:BOOL=OFF",
-                "-DALLOW_IN_SOURCE_BUILD=ON"
-            ],
-            "sources": [
-                {
-                    "type": "archive",
-                    "url": "https://pub.freerdp.com/releases/freerdp-2.11.7.tar.gz",
-                    "sha256": "5a2d54e1ca0f1facd1632bcc94c73b9f071a80c5fdbbb3f26e79f02aaa586ca3"
-                }
-            ]
-        },
-        {
             "name": "vte",
             "buildsystem": "meson",
             "config-opts": [
