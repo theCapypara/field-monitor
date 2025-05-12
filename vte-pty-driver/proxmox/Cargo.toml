@@ -6,7 +6,7 @@ rust-version.workspace = true
 [dependencies]
 field-monitor-vte-driver-lib = { workspace = true, features = ["client"] }
 proxmox-api = { workspace = true }
-tokio = { version = "1.44", features = [
+tokio = { version = "1.45", features = [
     "macros",
     "parking_lot",
     "rt-multi-thread",
