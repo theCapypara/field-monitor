@@ -9,7 +9,7 @@ client = []
 
 [dependencies]
 log = { workspace = true, optional = true }
-zbus = "5.5"
+zbus = "5.7"
 parking_lot = { workspace = true, optional = true }
 base64 = { version = "0.22", optional = true }
 
