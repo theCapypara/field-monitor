@@ -17,7 +17,7 @@ urlencoding = "2.1"
 [dev-dependencies]
 simple_logger = "5"
 clap = { version = "4.5", features = ["derive", "env"] }
-tokio = { version = "1.44", features = ["rt-multi-thread", "macros"] }
+tokio = { version = "1.45", features = ["rt-multi-thread", "macros"] }
 
 [lints]
 workspace = true
