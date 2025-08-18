@@ -32,7 +32,7 @@ uuid = { version = "1.16", features = ["v7"] }
 parking_lot = "0.12"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 proxmox-api = { path = "connection/proxmox/proxmox-api" }
-tokio = { version = "1.44", features = ["parking_lot", "rt-multi-thread"] }
+tokio = { version = "1.47", features = ["parking_lot", "rt-multi-thread"] }
 
 [workspace.dependencies.glib]
 features = ["log"]
