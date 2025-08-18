@@ -10,7 +10,7 @@ jobs:
     container:
       image: fedora:42
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Run cargo fmt
         uses: ./.github/action/run-meson
@@ -23,7 +23,7 @@ jobs:
     container:
       image: fedora:42
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Run cargo clippy
         uses: ./.github/action/run-meson
