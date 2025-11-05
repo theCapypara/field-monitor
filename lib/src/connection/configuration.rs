@@ -30,7 +30,7 @@ use crate::ManagesSecrets;
 use crate::connection::config_value::{ConfigValue, ConfigValueRef};
 
 pub trait ConfigAccess {
-    fn get(&self, key: &str) -> Option<ConfigValueRef>;
+    fn get(&self, key: &str) -> Option<ConfigValueRef<'_>>;
     fn get_try_as_str(&self, key: &str) -> Option<&str> {
         self.get(key)
             .and_then(|v| v.as_serde_value().and_then(Value::as_str))
@@ -59,7 +59,8 @@ pub trait ConfigAccess {
         self.get(key)
             .and_then(|v| v.as_serde_value().and_then(Value::as_bool))
     }
-    fn get_secret(&self, key: impl ToString) -> BoxFuture<anyhow::Result<Option<SecureString>>>;
+    fn get_secret(&self, key: impl ToString)
+    -> BoxFuture<'_, anyhow::Result<Option<SecureString>>>;
 }
 
 pub trait ConfigAccessMut {
@@ -306,7 +307,7 @@ impl ConnectionConfiguration {
 }
 
 impl ConfigAccess for ConnectionConfiguration {
-    fn get(&self, key: &str) -> Option<ConfigValueRef> {
+    fn get(&self, key: &str) -> Option<ConfigValueRef<'_>> {
         if key.starts_with("__") {
             self.config_not_persisted.get(key).map(Into::into)
         } else {
@@ -314,7 +315,10 @@ impl ConfigAccess for ConnectionConfiguration {
         }
     }
 
-    fn get_secret(&self, key: impl ToString) -> BoxFuture<anyhow::Result<Option<SecureString>>> {
+    fn get_secret(
+        &self,
+        key: impl ToString,
+    ) -> BoxFuture<'_, anyhow::Result<Option<SecureString>>> {
         let key = key.to_string();
         Box::pin(async move {
             match self.pending_secret_changes.get(&key) {
@@ -373,7 +377,7 @@ pub struct ConfigSectionMut<'a> {
 }
 
 impl ConfigAccess for ConfigSectionRef<'_> {
-    fn get(&self, key: &str) -> Option<ConfigValueRef> {
+    fn get(&self, key: &str) -> Option<ConfigValueRef<'_>> {
         if key.starts_with("__") {
             self.config_not_persisted
                 .get(&format!("{}///{}", self.section_key, key))
@@ -384,7 +388,10 @@ impl ConfigAccess for ConfigSectionRef<'_> {
         }
     }
 
-    fn get_secret(&self, key: impl ToString) -> BoxFuture<anyhow::Result<Option<SecureString>>> {
+    fn get_secret(
+        &self,
+        key: impl ToString,
+    ) -> BoxFuture<'_, anyhow::Result<Option<SecureString>>> {
         let key = key.to_string();
         Box::pin(async move {
             let key = format!("{}///{}", self.section_key, &key);
@@ -397,7 +404,7 @@ impl ConfigAccess for ConfigSectionRef<'_> {
 }
 
 impl ConfigAccess for ConfigSectionMut<'_> {
-    fn get(&self, key: &str) -> Option<ConfigValueRef> {
+    fn get(&self, key: &str) -> Option<ConfigValueRef<'_>> {
         if key.starts_with("__") {
             self.config_not_persisted
                 .get(&format!("{}///{}", self.section_key, key))
@@ -407,7 +414,10 @@ impl ConfigAccess for ConfigSectionMut<'_> {
         }
     }
 
-    fn get_secret(&self, key: impl ToString) -> BoxFuture<anyhow::Result<Option<SecureString>>> {
+    fn get_secret(
+        &self,
+        key: impl ToString,
+    ) -> BoxFuture<'_, anyhow::Result<Option<SecureString>>> {
         let key = key.to_string();
         Box::pin(async move {
             let key = format!("{}///{}", self.section_key, &key);

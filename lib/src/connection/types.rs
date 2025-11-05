@@ -179,16 +179,16 @@ pub trait ConnectionProvider {
 
     /// Plural title of the provider. This may describe a group of multiple connections created
     /// by the provider.
-    fn title_plural(&self) -> Cow<str>;
+    fn title_plural(&self) -> Cow<'_, str>;
 
     /// Title to display when showing the dialog to add a new connection of this type.
-    fn add_title(&self) -> Cow<str>;
+    fn add_title(&self) -> Cow<'_, str>;
 
     /// Title for a connection given it's config, or None if the config can not be resolved to a title.
     fn title_for<'a>(&self, config: &'a ConnectionConfiguration) -> Option<&'a str>;
 
     /// Returns a description to be shown in the "add new connection" dialog.
-    fn description(&self) -> Cow<str>;
+    fn description(&self) -> Cow<'_, str>;
 
     /// The icon to represent this provider.
     fn icon(&self) -> IconSpec<()>;
@@ -208,7 +208,7 @@ pub trait ConnectionProvider {
         &self,
         preferences: gtk::Widget,
         configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>>;
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>>;
 
     /// Creates a preference group or page for configuring credentials.
     ///
@@ -239,7 +239,7 @@ pub trait ConnectionProvider {
         server_path: &[String],
         preferences: gtk::Widget,
         configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>>;
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>>;
 
     /// Try to load a connection configuration into a connection.
     /// The tag inside the configuration must match [`Self::tag`], otherwise the method
@@ -249,7 +249,7 @@ pub trait ConnectionProvider {
     fn load_connection(
         &self,
         configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>>;
+    ) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Connection>>>;
 }
 
 /// Parameters for an action. Can be downcast to expected type.
@@ -294,7 +294,7 @@ impl<'a> ServerAction<'a> {
 /// Not to be confused with GTK's Actionable, although the concepts and purpose are similar.
 pub trait Actionable {
     /// Get the list of supported action IDs and titles.
-    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+    fn actions(&self) -> LocalBoxFuture<'_, Vec<(Cow<'static, str>, Cow<'static, str>)>> {
         Box::pin(async { vec![] })
     }
 
@@ -310,28 +310,28 @@ pub trait Actionable {
 /// It manages zero, one or multiple servers.
 pub trait Connection: Actionable {
     /// Metadata about the connection.
-    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata>;
+    fn metadata(&self) -> LocalBoxFuture<'_, ConnectionMetadata>;
 
     /// Returns the servers managed by this connection.
-    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>>;
+    fn servers(&self) -> LocalBoxFuture<'_, ConnectionResult<ServerMap>>;
 }
 
 /// A single instance of a server to connect to.
 /// It may contain sub-servers.
 pub trait ServerConnection: Actionable {
     /// Metadata about the server.
-    fn metadata(&self) -> LocalBoxFuture<ServerMetadata>;
+    fn metadata(&self) -> LocalBoxFuture<'_, ServerMetadata>;
 
     /// List of supported adapters that can be used to connect to the server as tuples (tag, human-readable name)
-    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>>;
+    fn supported_adapters(&self) -> LocalBoxFuture<'_, Vec<(Cow<'_, str>, Cow<'_, str>)>>;
 
     /// Create an adapter of the given type, if supported (see `supported_adapters`).
     /// If not supported, may fail or panic (panic only if `supported_adapters` can never return
     /// that adapter).
-    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>>;
+    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Adapter>>>;
 
     /// Returns the sub-servers grouped under this server (if any).
-    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+    fn servers(&self) -> LocalBoxFuture<'_, ConnectionResult<ServerMap>> {
         Box::pin(async move { Ok(IndexMap::new()) })
     }
 }

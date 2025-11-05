@@ -63,7 +63,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct GenericGroupServerPreferences(ObjectSubclass<imp::GenericGroupServerPreferences>)
-        @extends gtk::Widget, adw::PreferencesPage;
+        @extends gtk::Widget, adw::PreferencesPage,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl GenericGroupServerPreferences {

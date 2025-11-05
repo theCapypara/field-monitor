@@ -112,7 +112,7 @@ impl ConnectionLoader {
         path_parts: Vec<String>,
         app: Option<FieldMonitorApplication>,
         try_reauth: bool,
-    ) -> LocalBoxFuture<Option<Self>> {
+    ) -> LocalBoxFuture<'_, Option<Self>> {
         Box::pin(async move {
             let path_parts_orig = path_parts;
             let path_parts = path_parts_orig.iter();
@@ -269,14 +269,14 @@ impl ConnectionLoader {
         self.connection.metadata().await.title
     }
 
-    pub fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+    pub fn actions(&self) -> LocalBoxFuture<'_, Vec<(Cow<'static, str>, Cow<'static, str>)>> {
         match &self.entity {
             Entity::Connection(e) => e.actions(),
             Entity::Server(e) => e.actions(),
         }
     }
 
-    pub fn action(&self, action_id: &str) -> Option<ServerAction> {
+    pub fn action(&self, action_id: &str) -> Option<ServerAction<'_>> {
         match &self.entity {
             Entity::Connection(e) => e.action(action_id),
             Entity::Server(e) => e.action(action_id),

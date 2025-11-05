@@ -116,7 +116,7 @@ mod imp {
 glib::wrapper! {
     pub struct FieldMonitorWindow(ObjectSubclass<imp::FieldMonitorWindow>)
         @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow,
-        @implements gtk::Root, gtk::Native, gio::ActionGroup, gio::ActionMap;
+        @implements gtk::Root, gtk::Native, gio::ActionGroup, gio::ActionMap, gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible, gtk::ShortcutManager;
 }
 
 impl FieldMonitorWindow {

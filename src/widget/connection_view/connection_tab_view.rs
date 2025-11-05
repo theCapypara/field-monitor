@@ -68,7 +68,7 @@ mod imp {
 glib::wrapper! {
     pub struct FieldMonitorConnectionTabView(ObjectSubclass<imp::FieldMonitorConnectionTabView>)
         @extends gtk::Widget, adw::Bin,
-        @implements gio::ActionGroup, gio::ActionMap;
+        @implements gio::ActionGroup, gio::ActionMap, gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl FieldMonitorConnectionTabView {

@@ -16,26 +16,24 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use crate::quick_connect::QuickConnectConfig;
-use fluent_uri::encoding::EStr;
-use fluent_uri::encoding::encoder::{Query, Userinfo};
-use fluent_uri::{Builder, Uri, UriRef};
+use fluent_uri::build::Builder;
+use fluent_uri::pct_enc::EStr;
+use fluent_uri::pct_enc::encoder::{Query, Userinfo};
+use fluent_uri::{Uri, UriRef};
 use gettextrs::gettext;
 use libfieldmonitor::connection::{ConnectionConfiguration, ConnectionError};
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::num::NonZeroU32;
 
-pub(super) fn parse_query_args(query: Option<&EStr<Query>>) -> Option<HashMap<Cow<str>, Cow<str>>> {
+pub(super) fn parse_query_args(
+    query: Option<&EStr<Query>>,
+) -> Option<HashMap<Cow<'_, str>, Cow<'_, str>>> {
     query.map(|query| {
         query
             .split('&')
             .map(|s| s.split_once('=').unwrap_or((s, EStr::EMPTY)))
-            .map(|(k, v)| {
-                (
-                    k.decode().into_string_lossy(),
-                    v.decode().into_string_lossy(),
-                )
-            })
+            .map(|(k, v)| (k.decode().to_string_lossy(), v.decode().to_string_lossy()))
             .collect()
     })
 }

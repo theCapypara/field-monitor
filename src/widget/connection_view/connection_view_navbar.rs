@@ -227,7 +227,7 @@ mod imp {
 glib::wrapper! {
     pub struct FieldMonitorNavbarConnectionView(ObjectSubclass<imp::FieldMonitorNavbarConnectionView>)
         @extends gtk::Widget, adw::Bin,
-        @implements gio::ActionGroup, gio::ActionMap;
+        @implements gio::ActionGroup, gio::ActionMap, gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 #[gtk::template_callbacks]

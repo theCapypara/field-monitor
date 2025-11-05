@@ -126,7 +126,7 @@ impl LibvirtConnection {
 impl Actionable for LibvirtConnection {}
 
 impl Connection for LibvirtConnection {
-    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ConnectionMetadata> {
         Box::pin(async {
             ConnectionMetadataBuilder::default()
                 .title(self.title.clone())
@@ -136,7 +136,7 @@ impl Connection for LibvirtConnection {
         })
     }
 
-    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+    fn servers(&self) -> LocalBoxFuture<'_, ConnectionResult<ServerMap>> {
         Box::pin(async move {
             let connection = self.connection.clone();
             let domains =
@@ -271,7 +271,7 @@ impl LibvirtServer {
 }
 
 impl Actionable for LibvirtServer {
-    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+    fn actions(&self) -> LocalBoxFuture<'_, Vec<(Cow<'static, str>, Cow<'static, str>)>> {
         Box::pin(async move {
             if self.state.get().await.is_active.unwrap_or_default() {
                 vec![
@@ -483,7 +483,7 @@ impl LibvirtServer {
 }
 
 impl ServerConnection for LibvirtServer {
-    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ServerMetadata> {
         Box::pin(async move {
             ServerMetadataBuilder::default()
                 .title(self.name.clone())
@@ -493,7 +493,7 @@ impl ServerConnection for LibvirtServer {
         })
     }
 
-    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
+    fn supported_adapters(&self) -> LocalBoxFuture<'_, Vec<(Cow<'_, str>, Cow<'_, str>)>> {
         Box::pin(async move {
             if !self.state.get().await.is_active.unwrap_or(true) {
                 return vec![];
@@ -517,7 +517,7 @@ impl ServerConnection for LibvirtServer {
         })
     }
 
-    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
+    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Adapter>>> {
         let tag = tag.to_string();
         Box::pin(async move {
             let graphics = self.state.get().await.graphics.clone();

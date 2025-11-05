@@ -46,7 +46,7 @@ pub(super) trait ProxmoxConfiguration {
     fn set_username(&mut self, value: &str);
     fn tokenid(&self) -> Option<&str>;
     fn set_tokenid(&mut self, value: &str);
-    fn password_or_apikey(&self) -> BoxFuture<anyhow::Result<Option<SecureString>>>;
+    fn password_or_apikey(&self) -> BoxFuture<'_, anyhow::Result<Option<SecureString>>>;
     fn set_password_or_apikey(&mut self, value: Option<SecureString>);
     fn set_password_or_apikey_session(&mut self, value: Option<SecureString>);
 }
@@ -115,7 +115,7 @@ impl ProxmoxConfiguration for ConnectionConfiguration {
         self.set_value("tokenid", value);
     }
 
-    fn password_or_apikey(&self) -> BoxFuture<anyhow::Result<Option<SecureString>>> {
+    fn password_or_apikey(&self) -> BoxFuture<'_, anyhow::Result<Option<SecureString>>> {
         Box::pin(async move {
             if let Some(pw) = self.get_try_as_sec_string("__session__password-or-apikey") {
                 return Ok(Some(pw));
@@ -188,7 +188,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct ProxmoxPreferences(ObjectSubclass<imp::ProxmoxPreferences>)
-        @extends gtk::Widget, adw::PreferencesPage;
+        @extends gtk::Widget, adw::PreferencesPage,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl ProxmoxPreferences {

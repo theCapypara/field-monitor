@@ -481,7 +481,7 @@ impl Read for StreamReadAdapter<'_> {
             match res {
                 Ok(None) => sleep(Duration::from_millis(5)),
                 Ok(Some(v)) => return Ok(v),
-                Err(err) => return Err(io::Error::new(io::ErrorKind::Other, Box::new(err))),
+                Err(err) => return Err(io::Error::other(Box::new(err))),
             }
         }
     }

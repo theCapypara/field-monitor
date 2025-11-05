@@ -53,7 +53,7 @@ impl ProxmoxNode {
 }
 
 impl Actionable for ProxmoxNode {
-    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+    fn actions(&self) -> LocalBoxFuture<'_, Vec<(Cow<'static, str>, Cow<'static, str>)>> {
         Box::pin(async move {
             if self.status().await != NodeStatus::Offline {
                 vec![
@@ -137,7 +137,7 @@ impl ProxmoxNode {
 }
 
 impl ServerConnection for ProxmoxNode {
-    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ServerMetadata> {
         Box::pin(async move {
             let is_online = match self.status().await {
                 NodeStatus::Online => Some(true),
@@ -153,7 +153,7 @@ impl ServerConnection for ProxmoxNode {
         })
     }
 
-    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
+    fn supported_adapters(&self) -> LocalBoxFuture<'_, Vec<(Cow<'_, str>, Cow<'_, str>)>> {
         Box::pin(async move {
             if self.status().await == NodeStatus::Offline {
                 vec![]
@@ -167,7 +167,7 @@ impl ServerConnection for ProxmoxNode {
         })
     }
 
-    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
+    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Adapter>>> {
         api::create_proxmox_adapter(
             tag,
             &self.connection_id,
@@ -177,7 +177,7 @@ impl ServerConnection for ProxmoxNode {
         )
     }
 
-    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+    fn servers(&self) -> LocalBoxFuture<'_, ConnectionResult<ServerMap>> {
         Box::pin(async move {
             let info_fetcher = self.info_fetcher.clone();
             let connection_id = self.connection_id.clone();

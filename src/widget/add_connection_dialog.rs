@@ -81,7 +81,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorAddConnectionDialog(ObjectSubclass<imp::FieldMonitorAddConnectionDialog>)
-        @extends gtk::Widget, adw::Dialog;
+        @extends gtk::Widget, adw::Dialog,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl FieldMonitorAddConnectionDialog {

@@ -14,7 +14,7 @@ members = [
 
 [workspace.package]
 edition = "2024"
-rust-version = "1.85"
+rust-version = "1.87"
 
 [workspace.dependencies]
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
@@ -25,63 +25,63 @@ serde_json = "1"
 futures = "0.3"
 log = "0.4"
 num_enum = "0.7"
-indexmap = "2.9"
+indexmap = "2.12"
 secure-string = "0.3"
 http = "1.3"
-uuid = { version = "1.16", features = ["v7"] }
+uuid = { version = "1.18", features = ["v7"] }
 parking_lot = "0.12"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 proxmox-api = { path = "connection/proxmox/proxmox-api" }
-tokio = { version = "1.44", features = ["parking_lot", "rt-multi-thread"] }
+tokio = { version = "1.48", features = ["parking_lot", "rt-multi-thread"] }
 
 [workspace.dependencies.glib]
 features = ["log"]
-version = "0.20"
+version = "0.21"
 
 [workspace.dependencies.gtk]
 package = "gtk4"
 features = ["v4_14"]
-version = "0.9"
+version = "0.10"
 
 [workspace.dependencies.adw]
 package = "libadwaita"
 features = ["v1_6"]
-version = "0.7"
+version = "0.8"
 
 [workspace.dependencies.rdw]
 package = "rdw4"
-git = "https://gitlab.gnome.org/malureau/rdw.git"
+git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "76829dc29610d53a3cd06cb41eb4405f7071fe48"
+rev = "b6d330cc4b68f2dbb9f62e0b7f7c5f1a5fb08bd5"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
-git = "https://gitlab.gnome.org/malureau/rdw.git"
+git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "76829dc29610d53a3cd06cb41eb4405f7071fe48"
+rev = "b6d330cc4b68f2dbb9f62e0b7f7c5f1a5fb08bd5"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
-git = "https://gitlab.gnome.org/malureau/rdw.git"
+git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "76829dc29610d53a3cd06cb41eb4405f7071fe48"
+rev = "b6d330cc4b68f2dbb9f62e0b7f7c5f1a5fb08bd5"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
-git = "https://gitlab.gnome.org/malureau/rdw.git"
+git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "76829dc29610d53a3cd06cb41eb4405f7071fe48"
+rev = "b6d330cc4b68f2dbb9f62e0b7f7c5f1a5fb08bd5"
 default-features = false
 
 [workspace.dependencies.vte]
 package = "vte4"
-version = "0.8"
+version = "0.9"
 features = ["v0_76"]
 
 [workspace.dependencies.oo7]
-version = "0.4"
+version = "0.5"
 default-features = false
 features = ["async-std", "native_crypto"]
 
@@ -107,7 +107,7 @@ serde_yaml = { workspace = true }
 serde_ini = "0.2"
 futures = { workspace = true }
 uuid = { workspace = true }
-fluent-uri = "0.3"
+fluent-uri = "0.4"
 itertools = "0.14"
 sorted-vec = "0.8"
 secure-string = { workspace = true }
@@ -129,10 +129,3 @@ field-monitor-debug = { path = "./connection/debug", optional = true }
 
 [lints]
 workspace = true
-
-# See:
-# - https://gitlab.gnome.org/malureau/rdw/-/blob/0ea3a4e4d1cf3ab106dcca13486b354e836b6809/.cargo/config.toml
-# - https://gitlab.gnome.org/malureau/rdw/-/blob/0ea3a4e4d1cf3ab106dcca13486b354e836b6809/Cargo.lock
-[patch.crates-io]
-ironrdp = { git = "https://github.com/Devolutions/IronRDP.git", rev = "0ff1ed8de5a22ffe34a6a492425dc74728202fbe" }
-ironrdp-tokio = { git = "https://github.com/Devolutions/IronRDP.git", rev = "0ff1ed8de5a22ffe34a6a492425dc74728202fbe" }

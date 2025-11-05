@@ -51,7 +51,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorServerRow(ObjectSubclass<imp::FieldMonitorServerRow>)
-        @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow;
+        @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible, gtk::Actionable;
 }
 
 impl FieldMonitorServerRow {

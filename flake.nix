@@ -2,7 +2,7 @@
   description = "Field Monitor";
 
   inputs = {
-    nixpkgs.url = "github:theCapypara/nixpkgs/field-monitor-gnome";
+    nixpkgs.url = "github:NixOS/nixpkgs/staging-next";
     flake-utils.url = "github:numtide/flake-utils";
     systems.url = "github:nix-systems/default";
   };

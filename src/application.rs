@@ -61,6 +61,7 @@ use crate::widget::window::FieldMonitorWindow;
 
 mod imp {
     use super::*;
+    use std::ops::ControlFlow;
 
     #[derive(Default, glib::Properties)]
     #[properties(wrapper_type = super::FieldMonitorApplication)]
@@ -227,24 +228,24 @@ mod imp {
                 .set_color_scheme(adw::ColorScheme::PreferDark);
         }
 
-        fn handle_local_options(&self, options: &VariantDict) -> ExitCode {
+        fn handle_local_options(&self, options: &VariantDict) -> ControlFlow<ExitCode> {
             let obj = self.obj();
 
             if let Err(err) = obj.register(None::<&gio::Cancellable>) {
                 error!("failed to register application: {err}");
-                1.into()
+                ControlFlow::Break(1.into())
             } else if obj.is_remote() {
                 if options.contains("new-window") {
                     info!("opening new window");
                     obj.activate_action("new-window", None);
-                    0.into()
+                    ControlFlow::Break(0.into())
                 } else {
                     info!("focusing current window");
-                    (-1).into()
+                    ControlFlow::Continue(())
                 }
             } else {
                 info!("starting Field Monitor...");
-                (-1).into()
+                ControlFlow::Continue(())
             }
         }
     }

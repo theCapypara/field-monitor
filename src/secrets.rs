@@ -42,7 +42,7 @@ impl ManagesSecrets for SecretManager {
         &self,
         connection_id: &str,
         field: &str,
-    ) -> BoxFuture<anyhow::Result<Option<SecureString>>> {
+    ) -> BoxFuture<'_, anyhow::Result<Option<SecureString>>> {
         let connection_id = connection_id.to_string();
         let field = field.to_string();
         Box::pin(async move {
@@ -75,7 +75,7 @@ impl ManagesSecrets for SecretManager {
         connection_id: &str,
         field: &str,
         password: SecureString,
-    ) -> BoxFuture<anyhow::Result<()>> {
+    ) -> BoxFuture<'_, anyhow::Result<()>> {
         let connection_id = connection_id.to_string();
         let field = field.to_string();
         let password = SecureVec::from(password.unsecure().as_bytes());
@@ -101,7 +101,7 @@ impl ManagesSecrets for SecretManager {
         })
     }
 
-    fn clear(&self, connection_id: &str, field: &str) -> BoxFuture<anyhow::Result<()>> {
+    fn clear(&self, connection_id: &str, field: &str) -> BoxFuture<'_, anyhow::Result<()>> {
         let connection_id = connection_id.to_string();
         let field = field.to_string();
         Box::pin(async move {

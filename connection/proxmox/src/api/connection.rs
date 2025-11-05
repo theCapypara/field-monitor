@@ -107,7 +107,7 @@ impl ProxmoxConnection {
 impl Actionable for ProxmoxConnection {}
 
 impl Connection for ProxmoxConnection {
-    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ConnectionMetadata> {
         Box::pin(async move {
             ConnectionMetadataBuilder::default()
                 .title(self.title.clone())
@@ -117,7 +117,7 @@ impl Connection for ProxmoxConnection {
         })
     }
 
-    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+    fn servers(&self) -> LocalBoxFuture<'_, ConnectionResult<ServerMap>> {
         Box::pin(async move {
             let connection_id = self.connection_id.clone();
             let info_fetcher = self.info_fetcher.clone();
