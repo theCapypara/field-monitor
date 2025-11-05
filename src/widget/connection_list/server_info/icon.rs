@@ -78,7 +78,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct ServerInfoIcon(ObjectSubclass<imp::ServerInfoIcon>)
-        @extends gtk::Widget, gtk::Box;
+        @extends gtk::Widget, gtk::Box,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl Default for ServerInfoIcon {

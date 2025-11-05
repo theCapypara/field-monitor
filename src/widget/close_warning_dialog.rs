@@ -42,7 +42,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorCloseWarningDialog(ObjectSubclass<imp::FieldMonitorCloseWarningDialog>)
-        @extends gtk::Widget, adw::Dialog, adw::AlertDialog;
+        @extends gtk::Widget, adw::Dialog, adw::AlertDialog,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl FieldMonitorCloseWarningDialog {

@@ -46,7 +46,7 @@ pub trait GenericGroupConfiguration {
     fn host(&self, server: &str) -> Option<String>;
     fn port(&self, server: &str) -> Option<NonZeroU32>;
     fn user(&self, server: &str) -> Option<String>;
-    fn password(&self, server: &str) -> LocalBoxFuture<anyhow::Result<Option<SecureString>>>;
+    fn password(&self, server: &str) -> LocalBoxFuture<'_, anyhow::Result<Option<SecureString>>>;
     fn set_connection_title(&mut self, value: &str);
     fn set_server_type(&mut self, server: &str, value: Option<ServerType>);
     fn set_title(&mut self, server: &str, value: &str);
@@ -95,7 +95,7 @@ impl GenericGroupConfiguration for ConnectionConfiguration {
         self.with_section(server, |section| section.get_try_as_string("user"))
     }
 
-    fn password(&self, server: &str) -> LocalBoxFuture<anyhow::Result<Option<SecureString>>> {
+    fn password(&self, server: &str) -> LocalBoxFuture<'_, anyhow::Result<Option<SecureString>>> {
         let server = server.to_string();
         Box::pin(async move {
             self.with_section_async(&server, |section| {
@@ -194,7 +194,7 @@ impl<T: GenericGroupConfiguration + ?Sized> GenericGroupConfiguration for Box<T>
         self.deref().user(server)
     }
 
-    fn password(&self, server: &str) -> LocalBoxFuture<anyhow::Result<Option<SecureString>>> {
+    fn password(&self, server: &str) -> LocalBoxFuture<'_, anyhow::Result<Option<SecureString>>> {
         self.deref().password(server)
     }
 
@@ -348,7 +348,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct GenericGroupPreferences(ObjectSubclass<imp::GenericGroupPreferences>)
-        @extends gtk::Widget, adw::PreferencesPage;
+        @extends gtk::Widget, adw::PreferencesPage,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl GenericGroupPreferences {

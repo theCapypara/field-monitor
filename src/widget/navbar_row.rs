@@ -127,7 +127,7 @@ mod imp {
 glib::wrapper! {
     pub struct FieldMonitorNavbarRow(ObjectSubclass<imp::FieldMonitorNavbarRow>)
         @extends gtk::Widget, gtk::ListBoxRow,
-        @implements gtk::Accessible;
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible, gtk::Actionable;
 }
 
 impl FieldMonitorNavbarRow {

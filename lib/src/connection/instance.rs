@@ -146,7 +146,7 @@ impl ConnectionInstance {
     reason = "This SHOULD be okay, since we will never re-enter these functions during loading servers."
 )]
 impl Actionable for ConnectionInstance {
-    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+    fn actions(&self) -> LocalBoxFuture<'_, Vec<(Cow<'static, str>, Cow<'static, str>)>> {
         Box::pin(async move {
             let brw = self.imp().implementation.borrow();
             match brw.as_ref() {
@@ -167,7 +167,7 @@ impl Actionable for ConnectionInstance {
     reason = "This SHOULD be okay, since we will never re-enter these functions during loading servers."
 )]
 impl Connection for ConnectionInstance {
-    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ConnectionMetadata> {
         Box::pin(async move {
             let brw = self.imp().implementation.borrow();
             match brw.as_ref() {
@@ -181,7 +181,7 @@ impl Connection for ConnectionInstance {
         })
     }
 
-    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+    fn servers(&self) -> LocalBoxFuture<'_, ConnectionResult<ServerMap>> {
         Box::pin(async move {
             let brw = self.imp().implementation.borrow();
             match brw.as_ref() {

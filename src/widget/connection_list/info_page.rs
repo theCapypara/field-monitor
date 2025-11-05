@@ -85,7 +85,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorConnectionInfoPage(ObjectSubclass<imp::FieldMonitorConnectionInfoPage>)
-        @extends gtk::Widget, adw::Bin;
+        @extends gtk::Widget, adw::Bin,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl FieldMonitorConnectionInfoPage {

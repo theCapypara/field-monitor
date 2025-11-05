@@ -109,7 +109,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct ProxmoxCredentialPreferences(ObjectSubclass<imp::ProxmoxCredentialPreferences>)
-        @extends gtk::Widget, adw::PreferencesGroup;
+        @extends gtk::Widget, adw::PreferencesGroup,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl ProxmoxCredentialPreferences {

@@ -57,14 +57,14 @@ impl InfoFetcher {
         let cache = lock
             .entry(node_id.clone())
             .or_insert_with(|| Cached::new((self.client.clone(), node_id.clone())));
-        let v = cache
+
+        cache
             .get()
             .await
             .0
             .as_ref()
             .map(Clone::clone)
-            .map_err(api::map_proxmox_error_ref);
-        v
+            .map_err(api::map_proxmox_error_ref)
     }
 
     pub async fn qemus(&self, node_id: &NodeId) -> ConnectionResult<Vec<QemuVm>> {
@@ -72,14 +72,14 @@ impl InfoFetcher {
         let cache = lock
             .entry(node_id.clone())
             .or_insert_with(|| Cached::new((self.client.clone(), node_id.clone())));
-        let v = cache
+
+        cache
             .get()
             .await
             .0
             .as_ref()
             .map(Clone::clone)
-            .map_err(api::map_proxmox_error_ref);
-        v
+            .map_err(api::map_proxmox_error_ref)
     }
 
     pub async fn node_status(&self, node_id: &NodeId) -> NodeStatus {

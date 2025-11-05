@@ -73,7 +73,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorSaveCredentialsButton(ObjectSubclass<imp::FieldMonitorSaveCredentialsButton>)
-        @extends gtk::Widget, gtk::Box;
+        @extends gtk::Widget, gtk::Box,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl Default for FieldMonitorSaveCredentialsButton {

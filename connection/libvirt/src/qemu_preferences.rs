@@ -141,7 +141,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct LibvirtQemuPreferences(ObjectSubclass<imp::LibvirtQemuPreferences>)
-        @extends gtk::Widget, adw::PreferencesPage;
+        @extends gtk::Widget, adw::PreferencesPage,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl LibvirtQemuPreferences {

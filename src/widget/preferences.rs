@@ -75,7 +75,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorPreferencesDialog(ObjectSubclass<imp::FieldMonitorPreferencesDialog>)
-        @extends gtk::Widget, adw::Dialog, adw::PreferencesDialog;
+        @extends gtk::Widget, adw::Dialog, adw::PreferencesDialog,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl FieldMonitorPreferencesDialog {

@@ -73,7 +73,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorServerGroup(ObjectSubclass<imp::FieldMonitorServerGroup>)
-        @extends gtk::Widget, adw::Bin;
+        @extends gtk::Widget, adw::Bin,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl FieldMonitorServerGroup {

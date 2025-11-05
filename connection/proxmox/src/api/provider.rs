@@ -48,11 +48,11 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
         gettext("Proxmox").into()
     }
 
-    fn title_plural(&self) -> Cow<str> {
+    fn title_plural(&self) -> Cow<'_, str> {
         gettext("Proxmox").into()
     }
 
-    fn add_title(&self) -> Cow<str> {
+    fn add_title(&self) -> Cow<'_, str> {
         gettext("Add Proxmox Connection").into()
     }
 
@@ -60,7 +60,7 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
         config.title()
     }
 
-    fn description(&self) -> Cow<str> {
+    fn description(&self) -> Cow<'_, str> {
         gettext("Proxmox hypervisor connection").into()
     }
 
@@ -76,7 +76,7 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
         &self,
         preferences: Widget,
         mut configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async {
             let preferences = preferences
                 .downcast::<ProxmoxPreferences>()
@@ -108,7 +108,7 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
         _server_path: &[String],
         preferences: Widget,
         configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async move {
             let preferences = preferences
                 .downcast::<ProxmoxCredentialPreferences>()
@@ -124,7 +124,7 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
     fn load_connection(
         &self,
         configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>> {
+    ) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Connection>>> {
         Box::pin(async move {
             let con: ProxmoxConnection =
                 run_on_tokio(ProxmoxConnection::connect(configuration)).await?;

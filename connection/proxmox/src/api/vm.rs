@@ -58,7 +58,7 @@ impl ProxmoxVm {
 }
 
 impl Actionable for ProxmoxVm {
-    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+    fn actions(&self) -> LocalBoxFuture<'_, Vec<(Cow<'static, str>, Cow<'static, str>)>> {
         Box::pin(async move {
             if self.status().await == VmStatus::Running {
                 match self.vm_type {
@@ -275,7 +275,7 @@ impl ProxmoxVm {
 }
 
 impl ServerConnection for ProxmoxVm {
-    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ServerMetadata> {
         Box::pin(async move {
             let is_online = match self.status().await {
                 VmStatus::Running => Some(true),
@@ -302,7 +302,7 @@ impl ServerConnection for ProxmoxVm {
         })
     }
 
-    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
+    fn supported_adapters(&self) -> LocalBoxFuture<'_, Vec<(Cow<'_, str>, Cow<'_, str>)>> {
         macro_rules! SPICE {
             () => {
                 (SpiceAdapter::TAG.into(), gettext("SPICE").into())
@@ -357,7 +357,7 @@ impl ServerConnection for ProxmoxVm {
         })
     }
 
-    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
+    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Adapter>>> {
         api::create_proxmox_adapter(
             tag,
             &self.connection_id,

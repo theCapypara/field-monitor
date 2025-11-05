@@ -197,11 +197,11 @@ impl ConnectionProvider for QuickConnectConnectionProvider {
         gettext("Quick Connect").into()
     }
 
-    fn title_plural(&self) -> Cow<str> {
+    fn title_plural(&self) -> Cow<'_, str> {
         Cow::Borrowed("")
     }
 
-    fn add_title(&self) -> Cow<str> {
+    fn add_title(&self) -> Cow<'_, str> {
         Cow::Borrowed("")
     }
 
@@ -209,7 +209,7 @@ impl ConnectionProvider for QuickConnectConnectionProvider {
         Some(config.title())
     }
 
-    fn description(&self) -> Cow<str> {
+    fn description(&self) -> Cow<'_, str> {
         Cow::Borrowed("")
     }
 
@@ -227,7 +227,7 @@ impl ConnectionProvider for QuickConnectConnectionProvider {
         &self,
         _preferences: Widget,
         configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async move { Ok(configuration) })
     }
 
@@ -246,7 +246,7 @@ impl ConnectionProvider for QuickConnectConnectionProvider {
         _server_path: &[String],
         preferences: Widget,
         mut configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async move {
             let preferences = preferences
                 .downcast::<QuickConnectPreferences>()
@@ -271,7 +271,7 @@ impl ConnectionProvider for QuickConnectConnectionProvider {
     fn load_connection(
         &self,
         configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>> {
+    ) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Connection>>> {
         Box::pin(async move {
             let con = QuickConnectServerConnection::new(configuration);
             let conbx: Box<dyn Connection> = Box::new(con);
@@ -310,7 +310,7 @@ impl QuickConnectServerConnection {
 impl Actionable for QuickConnectServerConnection {}
 
 impl Connection for QuickConnectServerConnection {
-    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ConnectionMetadata> {
         Box::pin(async move {
             ConnectionMetadataBuilder::default()
                 .title(gettext("via Quick Connect"))
@@ -319,7 +319,7 @@ impl Connection for QuickConnectServerConnection {
         })
     }
 
-    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+    fn servers(&self) -> LocalBoxFuture<'_, ConnectionResult<ServerMap>> {
         Box::pin(async move {
             let mut map = ServerMap::new();
             map.insert(QUICK_CONNECT_SERVER_TAG.into(), Box::new(self.clone()));
@@ -329,7 +329,7 @@ impl Connection for QuickConnectServerConnection {
 }
 
 impl ServerConnection for QuickConnectServerConnection {
-    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ServerMetadata> {
         Box::pin(async move {
             ServerMetadataBuilder::default()
                 .title(self.config.title().to_string())
@@ -338,11 +338,11 @@ impl ServerConnection for QuickConnectServerConnection {
         })
     }
 
-    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
+    fn supported_adapters(&self) -> LocalBoxFuture<'_, Vec<(Cow<'_, str>, Cow<'_, str>)>> {
         Box::pin(async move { vec![(self.adapter_tag(), self.adapter_label())] })
     }
 
-    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<ConnectionResult<Box<dyn Adapter>>> {
+    fn create_adapter(&self, tag: &str) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Adapter>>> {
         let tag = tag.to_string();
         Box::pin(async move {
             if tag != self.adapter_tag() {

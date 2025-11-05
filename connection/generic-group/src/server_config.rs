@@ -164,7 +164,7 @@ impl GenericGroupConfiguration for ServerUpdateMap {
         })
     }
 
-    fn password(&self, server: &str) -> LocalBoxFuture<anyhow::Result<Option<SecureString>>> {
+    fn password(&self, server: &str) -> LocalBoxFuture<'_, anyhow::Result<Option<SecureString>>> {
         let server = server.to_string();
         Box::pin(async move {
             Ok(self.0.get(&server).and_then(|s| {
@@ -255,7 +255,7 @@ where
         self.0.user(server).or(self.1.user(server))
     }
 
-    fn password(&self, server: &str) -> LocalBoxFuture<anyhow::Result<Option<SecureString>>> {
+    fn password(&self, server: &str) -> LocalBoxFuture<'_, anyhow::Result<Option<SecureString>>> {
         let server = server.to_string();
         Box::pin(async move {
             let a_opt = self.0.password(&server).await?;

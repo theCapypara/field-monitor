@@ -67,11 +67,11 @@ impl ConnectionProvider for DebugConnectionProvider {
         Cow::Borrowed("Debug")
     }
 
-    fn title_plural(&self) -> Cow<str> {
+    fn title_plural(&self) -> Cow<'_, str> {
         Cow::Borrowed("Debug Connections")
     }
 
-    fn add_title(&self) -> Cow<str> {
+    fn add_title(&self) -> Cow<'_, str> {
         Cow::Borrowed("Add Debug Connection")
     }
 
@@ -80,7 +80,7 @@ impl ConnectionProvider for DebugConnectionProvider {
         if title.is_empty() { None } else { Some(title) }
     }
 
-    fn description(&self) -> Cow<str> {
+    fn description(&self) -> Cow<'_, str> {
         Cow::Borrowed("Debug Connection")
     }
 
@@ -96,7 +96,7 @@ impl ConnectionProvider for DebugConnectionProvider {
         &self,
         preferences: gtk::Widget,
         mut configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async {
             timeout_future(Duration::from_millis(rng().random_range(100..1200))).await;
 
@@ -148,7 +148,7 @@ impl ConnectionProvider for DebugConnectionProvider {
         server_path: &[String],
         preferences: gtk::Widget,
         mut configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>> {
         debug!("store_credentials server_path : {server_path:?}");
         Box::pin(async move {
             timeout_future(Duration::from_millis(rng().random_range(100..400))).await;
@@ -180,7 +180,7 @@ impl ConnectionProvider for DebugConnectionProvider {
     fn load_connection(
         &self,
         configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>> {
+    ) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Connection>>> {
         Box::pin(async move {
             timeout_future(Duration::from_millis(rng().random_range(100..1200))).await;
 
@@ -208,7 +208,7 @@ pub struct DebugConnection {
 }
 
 impl Actionable for DebugConnection {
-    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+    fn actions(&self) -> LocalBoxFuture<'_, Vec<(Cow<'static, str>, Cow<'static, str>)>> {
         Box::pin(async {
             match self.config.mode() {
                 DebugMode::Complex => {
@@ -275,7 +275,7 @@ impl Actionable for DebugConnection {
 }
 
 impl Connection for DebugConnection {
-    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ConnectionMetadata> {
         Box::pin(async {
             ConnectionMetadataBuilder::default()
                 .title(self.title.clone())
@@ -286,7 +286,7 @@ impl Connection for DebugConnection {
         })
     }
 
-    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+    fn servers(&self) -> LocalBoxFuture<'_, ConnectionResult<ServerMap>> {
         Box::pin(async move {
             timeout_future(Duration::from_millis(rng().random_range(100..1200))).await;
 
@@ -501,7 +501,7 @@ impl DebugConnectionServer {
 }
 
 impl Actionable for DebugConnectionServer {
-    fn actions(&self) -> LocalBoxFuture<Vec<(Cow<'static, str>, Cow<'static, str>)>> {
+    fn actions(&self) -> LocalBoxFuture<'_, Vec<(Cow<'static, str>, Cow<'static, str>)>> {
         Box::pin(async {
             vec![
                 (Cow::Borrowed("foobar"), Cow::Borrowed("Show dialog")),
@@ -544,11 +544,11 @@ impl Actionable for DebugConnectionServer {
 }
 
 impl ServerConnection for DebugConnectionServer {
-    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ServerMetadata> {
         Box::pin(async { self.metadata.clone() })
     }
 
-    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
+    fn supported_adapters(&self) -> LocalBoxFuture<'_, Vec<(Cow<'_, str>, Cow<'_, str>)>> {
         Box::pin(async {
             if !self.has_adapters {
                 return vec![];
@@ -576,7 +576,7 @@ impl ServerConnection for DebugConnectionServer {
     fn create_adapter(
         &self,
         tag: &str,
-    ) -> LocalBoxFuture<Result<Box<dyn Adapter>, ConnectionError>> {
+    ) -> LocalBoxFuture<'_, Result<Box<dyn Adapter>, ConnectionError>> {
         let tag = tag.to_string();
         Box::pin(async move {
             match self.config.connect_behaviour() {
@@ -633,7 +633,7 @@ impl ServerConnection for DebugConnectionServer {
         })
     }
 
-    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+    fn servers(&self) -> LocalBoxFuture<'_, ConnectionResult<ServerMap>> {
         Box::pin(async move {
             timeout_future(Duration::from_millis(rng().random_range(50..200))).await;
 

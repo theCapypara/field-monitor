@@ -130,7 +130,7 @@ pub async fn try_from_uri(
             if uri.path().is_empty() {
                 invalid_uri()?;
             }
-            config.set_spice_unix_path(&uri.path().decode().into_string_lossy());
+            config.set_spice_unix_path(&uri.path().decode().to_string_lossy());
 
             // non-standard ?title=
             set_title_in(uri, parse_query_args(uri.query()), config);
@@ -162,12 +162,12 @@ pub async fn try_from_uri(
                     let (user, pass) = parse_userinfo(authority.userinfo());
                     if let Some(user) = user {
                         if !user.is_empty() {
-                            config.set_user(&user.decode().into_string_lossy());
+                            config.set_user(&user.decode().to_string_lossy());
                         }
                     }
                     if let Some(pass) = pass {
                         config.set_password(
-                            SecureString::from_str(&pass.decode().into_string_lossy()).unwrap(),
+                            SecureString::from_str(&pass.decode().to_string_lossy()).unwrap(),
                         );
                     }
                 }

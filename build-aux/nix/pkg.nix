@@ -31,15 +31,14 @@
 }:
 stdenv.mkDerivation rec {
   pname = "field-monitor";
-  version = "48.1";
+  version = "49.0";
 
   src = "${../..}";
 
   cargoDeps = rustPlatform.importCargoLock {
     lockFile = "${src}/Cargo.lock";
     outputHashes = {
-      "cbindgen-0.28.0" = "sha256-hSNu91if//1e5YFDdr5wzACeKkGMxx042C5L8adalWg=";
-      "ironrdp-0.9.1" = "sha256-TK2/Pjnui12yWaHYD5VGooJ0fC6YAY8W4n3ZrJVaQMs=";
+      "cbindgen-0.28.0" = "sha256-qQ1yyzMOVjhsf9rHP8JxMT4mDRjPQZH8+SVN/T+2TOc=";
     };
   };
 

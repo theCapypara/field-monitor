@@ -20,16 +20,16 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1742649699,
-        "narHash": "sha256-e0B8tEY46pU/ZS9wVd3lH0ODdKDEV53pzOW5o/g0u3w=",
-        "owner": "theCapypara",
+        "lastModified": 1762365953,
+        "narHash": "sha256-7i5nXyi57VF+gFIecJCfBgPz5uA3Cx9aYVYAEtSa34I=",
+        "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "fea2d054fff52fcc6d90c0e858252c6d961dbf6d",
+        "rev": "32f4d4f61d027fb2298973b376b8d3c0e6ccbea3",
         "type": "github"
       },
       "original": {
-        "owner": "theCapypara",
-        "ref": "field-monitor-gnome",
+        "owner": "NixOS",
+        "ref": "staging-next",
         "repo": "nixpkgs",
         "type": "github"
       }

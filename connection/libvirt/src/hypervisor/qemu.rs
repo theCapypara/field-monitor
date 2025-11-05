@@ -45,11 +45,11 @@ impl ConnectionProvider for LibvirtQemuConnectionProvider {
         gettext("QEMU/KVM").into()
     }
 
-    fn title_plural(&self) -> Cow<str> {
+    fn title_plural(&self) -> Cow<'_, str> {
         gettext("QEMU/KVM").into()
     }
 
-    fn add_title(&self) -> Cow<str> {
+    fn add_title(&self) -> Cow<'_, str> {
         gettext("Add QEMU/KVM Connection").into()
     }
 
@@ -57,7 +57,7 @@ impl ConnectionProvider for LibvirtQemuConnectionProvider {
         config.title()
     }
 
-    fn description(&self) -> Cow<str> {
+    fn description(&self) -> Cow<'_, str> {
         gettext("QEMU/KVM hypervisor connection via libvirt").into()
     }
 
@@ -73,7 +73,7 @@ impl ConnectionProvider for LibvirtQemuConnectionProvider {
         &self,
         preferences: gtk::Widget,
         configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>> {
         self.store_credentials(&[], preferences, configuration)
     }
 
@@ -90,7 +90,7 @@ impl ConnectionProvider for LibvirtQemuConnectionProvider {
         _server_path: &[String],
         preferences: gtk::Widget,
         mut configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async move {
             let preferences = preferences
                 .downcast::<LibvirtQemuPreferences>()
@@ -111,7 +111,7 @@ impl ConnectionProvider for LibvirtQemuConnectionProvider {
     fn load_connection(
         &self,
         configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>> {
+    ) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Connection>>> {
         let hostname: Cow<str> = if configuration.use_ssh() {
             configuration.ssh_hostname().to_string().into()
         } else {

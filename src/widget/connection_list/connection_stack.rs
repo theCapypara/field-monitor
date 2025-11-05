@@ -151,7 +151,7 @@ mod imp {
 glib::wrapper! {
     pub struct FieldMonitorConnectionStack(ObjectSubclass<imp::FieldMonitorConnectionStack>)
         @extends gtk::Widget, adw::Bin,
-        @implements gio::ActionGroup, gio::ActionMap;
+        @implements gio::ActionGroup, gio::ActionMap, gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl FieldMonitorConnectionStack {

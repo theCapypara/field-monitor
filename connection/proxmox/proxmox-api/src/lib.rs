@@ -133,9 +133,9 @@ trait ApiAccessProvider {
     fn tag(&self) -> &'static str;
     fn user_or_tokenid(&self) -> &str;
     fn password_or_apikey(&self) -> &SecureString;
-    fn provide_auth_headers(&self) -> BoxFuture<Result<AuthHeaders>>;
+    fn provide_auth_headers(&self) -> BoxFuture<'_, Result<AuthHeaders<'_>>>;
     fn auth_success(&self) {}
-    fn failed_auth(&self) -> BoxFuture<DoAfterAuthRetry>;
+    fn failed_auth(&self) -> BoxFuture<'_, DoAfterAuthRetry>;
 }
 
 impl ApiAccessProvider for ApikeyProvider {
@@ -151,7 +151,7 @@ impl ApiAccessProvider for ApikeyProvider {
         &self.apikey
     }
 
-    fn provide_auth_headers(&self) -> BoxFuture<Result<AuthHeaders>> {
+    fn provide_auth_headers(&self) -> BoxFuture<'_, Result<AuthHeaders<'_>>> {
         Box::pin(async move {
             Ok(AuthHeaders {
                 auth_header: format!("PVEAPIToken={}={}", self.tokenid, self.apikey.unsecure())
@@ -161,7 +161,7 @@ impl ApiAccessProvider for ApikeyProvider {
         })
     }
 
-    fn failed_auth(&self) -> BoxFuture<DoAfterAuthRetry> {
+    fn failed_auth(&self) -> BoxFuture<'_, DoAfterAuthRetry> {
         Box::pin(async move { DoAfterAuthRetry::Fail })
     }
 }
@@ -179,7 +179,7 @@ impl ApiAccessProvider for TicketProvider {
         &self.password
     }
 
-    fn provide_auth_headers(&self) -> BoxFuture<Result<AuthHeaders>> {
+    fn provide_auth_headers(&self) -> BoxFuture<'_, Result<AuthHeaders<'_>>> {
         let current_ticket = self.current_ticket.clone();
         Box::pin(async move {
             let lock = current_ticket.lock().await;
@@ -205,7 +205,7 @@ impl ApiAccessProvider for TicketProvider {
         self.just_reauth.store(false, Ordering::Release)
     }
 
-    fn failed_auth(&self) -> BoxFuture<DoAfterAuthRetry> {
+    fn failed_auth(&self) -> BoxFuture<'_, DoAfterAuthRetry> {
         Box::pin(async move {
             if self.just_reauth.load(Ordering::Acquire) {
                 DoAfterAuthRetry::Fail

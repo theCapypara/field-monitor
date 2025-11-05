@@ -99,7 +99,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct GenericGroupCredentialPreferences(ObjectSubclass<imp::GenericGroupCredentialPreferences>)
-        @extends gtk::Widget, adw::PreferencesGroup;
+        @extends gtk::Widget, adw::PreferencesGroup,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl GenericGroupCredentialPreferences {

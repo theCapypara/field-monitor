@@ -57,11 +57,11 @@ impl ConnectionProvider for GenericConnectionProvider {
         gettext("Generic Connection Group").into()
     }
 
-    fn title_plural(&self) -> Cow<str> {
+    fn title_plural(&self) -> Cow<'_, str> {
         gettext("Generic Connection Groups").into()
     }
 
-    fn add_title(&self) -> Cow<str> {
+    fn add_title(&self) -> Cow<'_, str> {
         gettext("Add Generic Connection Group").into()
     }
 
@@ -69,7 +69,7 @@ impl ConnectionProvider for GenericConnectionProvider {
         config.connection_title()
     }
 
-    fn description(&self) -> Cow<str> {
+    fn description(&self) -> Cow<'_, str> {
         gettext("Connection to one or more RDP, SPICE and VNC servers").into()
     }
 
@@ -85,7 +85,7 @@ impl ConnectionProvider for GenericConnectionProvider {
         &self,
         preferences: gtk::Widget,
         configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>> {
         Box::pin(async {
             let preferences = preferences
                 .downcast::<GenericGroupPreferences>()
@@ -146,7 +146,7 @@ impl ConnectionProvider for GenericConnectionProvider {
         server: &[String],
         preferences: gtk::Widget,
         configuration: DualScopedConnectionConfiguration,
-    ) -> LocalBoxFuture<anyhow::Result<DualScopedConnectionConfiguration>> {
+    ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>> {
         let server = server.to_vec();
         Box::pin(async move {
             let server = server.join("/");
@@ -176,7 +176,7 @@ impl ConnectionProvider for GenericConnectionProvider {
     fn load_connection(
         &self,
         configuration: ConnectionConfiguration,
-    ) -> LocalBoxFuture<ConnectionResult<Box<dyn Connection>>> {
+    ) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Connection>>> {
         Box::pin(async move {
             let title = configuration
                 .connection_title()
@@ -219,7 +219,7 @@ pub struct GenericConnection {
 impl Actionable for GenericConnection {}
 
 impl Connection for GenericConnection {
-    fn metadata(&self) -> LocalBoxFuture<ConnectionMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ConnectionMetadata> {
         Box::pin(async {
             ConnectionMetadataBuilder::default()
                 .title(self.title.clone())
@@ -228,7 +228,7 @@ impl Connection for GenericConnection {
         })
     }
 
-    fn servers(&self) -> LocalBoxFuture<ConnectionResult<ServerMap>> {
+    fn servers(&self) -> LocalBoxFuture<'_, ConnectionResult<ServerMap>> {
         Box::pin(async move {
             let mut hm: IndexMap<_, Box<dyn ServerConnection>> = IndexMap::with_capacity(1);
 
@@ -267,7 +267,7 @@ struct GenericConnectionServer {
 impl Actionable for GenericConnectionServer {}
 
 impl ServerConnection for GenericConnectionServer {
-    fn metadata(&self) -> LocalBoxFuture<ServerMetadata> {
+    fn metadata(&self) -> LocalBoxFuture<'_, ServerMetadata> {
         Box::pin(async {
             let user_part = self
                 .config
@@ -294,7 +294,7 @@ impl ServerConnection for GenericConnectionServer {
         })
     }
 
-    fn supported_adapters(&self) -> LocalBoxFuture<Vec<(Cow<str>, Cow<str>)>> {
+    fn supported_adapters(&self) -> LocalBoxFuture<'_, Vec<(Cow<'_, str>, Cow<'_, str>)>> {
         Box::pin(async {
             let server_type = self.config.server_type(&self.key);
             if let Some(server_type) = server_type {
@@ -308,7 +308,7 @@ impl ServerConnection for GenericConnectionServer {
     fn create_adapter(
         &self,
         tag: &str,
-    ) -> LocalBoxFuture<Result<Box<dyn Adapter>, ConnectionError>> {
+    ) -> LocalBoxFuture<'_, Result<Box<dyn Adapter>, ConnectionError>> {
         let server_type = self.config.server_type(&self.key);
         assert_eq!(
             tag,

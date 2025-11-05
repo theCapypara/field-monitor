@@ -87,7 +87,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct DebugBehaviourPreferences(ObjectSubclass<imp::DebugBehaviourPreferences>)
-        @extends gtk::Widget, adw::PreferencesGroup;
+        @extends gtk::Widget, adw::PreferencesGroup,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl DebugBehaviourPreferences {

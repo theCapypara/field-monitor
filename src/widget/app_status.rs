@@ -59,7 +59,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorAppStatus(ObjectSubclass<imp::FieldMonitorAppStatus>)
-        @extends gtk::Widget, adw::Bin;
+        @extends gtk::Widget, adw::Bin,
+        @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 #[gtk::template_callbacks]
