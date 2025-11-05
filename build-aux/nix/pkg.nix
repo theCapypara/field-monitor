@@ -20,7 +20,6 @@
   xdg-desktop-portal,
   blueprint-compiler,
   libxml2,
-  freerdp,
   spice-protocol,
   spice-gtk,
   vte-gtk4,
@@ -32,15 +31,15 @@
 }:
 stdenv.mkDerivation rec {
   pname = "field-monitor";
-  version = "48.0";
+  version = "48.1";
 
   src = "${../..}";
 
   cargoDeps = rustPlatform.importCargoLock {
     lockFile = "${src}/Cargo.lock";
     outputHashes = {
-      "cbindgen-0.20.0" = "sha256-6gBhf4MOgPvS/XokMmssEgXWQ9CTd848ms6H3DS3K70=";
-      "freerdp2-0.2.0" = "sha256-LYDLaEzRGlEADTo1lRD8ArR1MrHhGHE4rRWjFURxggo=";
+      "cbindgen-0.28.0" = "sha256-hSNu91if//1e5YFDdr5wzACeKkGMxx042C5L8adalWg=";
+      "ironrdp-0.9.1" = "sha256-TK2/Pjnui12yWaHYD5VGooJ0fC6YAY8W4n3ZrJVaQMs=";
     };
   };
 
@@ -67,7 +66,6 @@ stdenv.mkDerivation rec {
     wrapGAppsHook4
     blueprint-compiler
     libxml2
-    freerdp
     spice-protocol
     spice-gtk
     usbredir
