@@ -31,7 +31,7 @@
 }:
 stdenv.mkDerivation rec {
   pname = "field-monitor";
-  version = "40.1";
+  version = "48.1";
 
   src = "${../..}";
 
