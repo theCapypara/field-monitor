@@ -90,7 +90,7 @@
 					<li>Changed the icon for the main menu to be the same as other GNOME apps (thanks to rdbende).</li>
 					<li>Added Brazilian Portuguese translations (thanks to Cybercountry).</li>
 					<li>Added Russian translations (thanks to vmkspv).</li>
-					<li>Minor design changes to the navbar.</li>
+					<li>Minor design changes to the navbar and adapted new shortcut dialog.</li>
 					<li>Improved app startup performance and error handling.</li>
 				</ul>
 			</description>
