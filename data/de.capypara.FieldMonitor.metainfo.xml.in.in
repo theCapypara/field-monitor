@@ -76,12 +76,25 @@
 	</description>
 
 	<releases>
-		<!-- TODO
-		<release version="48.1" date="2025-04-XX">
+		<release version="49.0" date="2025-11-06">
 			<description translate="no">
-				<p>TODO</p>
+				<p>This release updates Field Monitor for GNOME 49.</p>
+				<ul>
+				  <li>All libraries used by Field Monitor have been updated to the latest version.</li>
+				  <li>
+				      RDP connections are now handled with IronRDP instead of FreeRDP 1.
+				      This is a more secure and modern implementation and should fix some issues, however IronRDP
+				      is still overall less compatible with some RDP server implementations.
+				  </li>
+				  <li>Fixed the cursor sometimes disappearing on SPICE connections.</li>
+				  <li>Changed the icon for the main menu to be the same as other GNOME apps (thanks to rdbende).</li>
+				  <li>Added Brazilian Portuguese translations (thanks to Cybercountry).</li>
+				  <li>Added Russian translations (thanks to vmkspv).</li>
+				  <li>Minor design changes to the navbar.</li>
+				  <li>Improved app startup performance and error handling.</li>
+				</ul>
 			</description>
-		</release> -->
+		</release>
 		<release version="48.0" date="2025-03-24">
 			<description translate="no">
 				<p>Initial Release.</p>
