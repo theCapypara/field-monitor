@@ -33,7 +33,7 @@ window {
 
 .connection-view-navbar {
     border-radius: var(--box-border-radius);
-    /* colors are same as Adwaita's banner > revealer > widget */
+    /* colors are same as Adwaita's (old) banner > revealer > widget */
     background-color: color-mix(in srgb, var(--accent-bg-color) 30%, var(--sidebar-bg-color));
     color: var(--sidebar-fg-color);
     margin-top: 12px;
@@ -45,12 +45,6 @@ window {
     background-color: color-mix(in srgb, var(--accent-bg-color) 15%, var(--sidebar-bg-color));
 }
 
-
-window.connection-view-active .connection-view-navbar, window.connection-view-active .connection-view-navbar row {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    margin-right: 0;
-}
 
 .compact-button {
     padding: 3px;
