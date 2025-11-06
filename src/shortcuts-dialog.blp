@@ -1,0 +1,80 @@
+using Gtk 4.0;
+using Adw 1;
+
+Adw.ShortcutsDialog shortcuts_dialog {
+    Adw.ShortcutsSection {
+        title: C_("shortcut window", "Window");
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "New Window");
+            action-name: "app.new-window";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Toggle Fullscreen");
+            action-name: "win.fullscreen";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Show Navigation");
+            action-name: "win.show-sidebar";
+        }
+    }
+
+    Adw.ShortcutsSection {
+        title: C_("shortcut window", "Connection");
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Close Connection");
+            action-name: "view.close";
+        }
+    }
+
+    Adw.ShortcutsSection {
+        title: C_("shortcut window", "Terminal");
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Copy");
+            action-name: "view.term-copy";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Paste");
+            action-name: "view.term-paste";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Select All");
+            action-name: "view.term-select-all";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Zoom In");
+            action-name: "view.term-zoom-in";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Zoom Out");
+            action-name: "view.term-zoom-out";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Reset Zoom");
+            action-name: "view.term-zoom-reset";
+        }
+    }
+
+    Adw.ShortcutsSection {
+        title: C_("shortcut window", "General");
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Preferences");
+            action-name: "app.preferences";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Show Shortcuts");
+            action-name: "app.shortcuts";
+        }
+    }
+}

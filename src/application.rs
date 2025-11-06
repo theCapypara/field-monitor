@@ -375,7 +375,7 @@ impl FieldMonitorApplication {
         self.set_accels_for_action("app.new-window", &["<Primary>N"]);
         self.set_accels_for_action("app.preferences", &["<Primary>comma"]);
         self.set_accels_for_action("app.reload-connections", &["<Primary>R"]);
-        self.set_accels_for_action("win.show-help-overlay", &["<Primary>question"]);
+        self.set_accels_for_action("app.shortcuts", &["<Primary>question"]);
         self.set_accels_for_action("win.fullscreen", &["F11"]);
         self.set_accels_for_action("win.show-sidebar", &["<Primary>E"]);
         self.set_accels_for_action("view.close", &["<Shift><Primary>W"]);
