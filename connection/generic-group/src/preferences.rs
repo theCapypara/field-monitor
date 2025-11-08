@@ -605,6 +605,7 @@ impl GenericGroupPreferences {
                 };
             }
         ));
+        dialog.set_default_widget(Some(&save_button));
         bottom_bar.pack_end(&save_button);
         if !is_new {
             let remove_button = gtk::Button::builder()

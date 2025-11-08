@@ -4,6 +4,7 @@ using Adw 1;
 template $FieldMonitorQuickConnectDialog: Adw.Dialog {
     content-width: 420;
     title: _("Quick Connect");
+    default-widget: connect_button;
 
     Adw.ToolbarView {
         [top]
@@ -19,6 +20,7 @@ template $FieldMonitorQuickConnectDialog: Adw.Dialog {
 
                     Adw.EntryRow url_entry {
                         title: _("Connection URL");
+                        activates-default: true;
                     }
                 }
             }
@@ -29,13 +31,13 @@ template $FieldMonitorQuickConnectDialog: Adw.Dialog {
             [start]
             Button {
                 label: _("Open File...");
-                clicked => $on_open_file() swapped;
+                activate => $on_open_file() swapped;
             }
 
             [end]
-            Button {
+            Button connect_button {
                 label: _("Connect");
-                clicked => $on_connect() swapped;
+                activate => $on_connect() swapped;
 
                 styles [
                     "suggested-action"
