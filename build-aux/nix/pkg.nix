@@ -86,7 +86,6 @@ stdenv.mkDerivation rec {
       libadwaita
       libvirt
       xdg-desktop-portal
-      openssl
     ]
     ++ (with gst_all_1; [
       gstreamer
