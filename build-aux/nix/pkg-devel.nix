@@ -1,36 +1,24 @@
 {
+  enableDebugging,
   stdenv,
   field-monitor,
   lib,
-  vte-gtk4,
+  glib,
+  gsettings-desktop-schemas,
+  gtk4,
   gtk-vnc,
+  vte-gtk4,
+  libadwaita,
+  libepoxy,
+  libGL,
+  libvirt,
+  openssl,
+  spice-gtk,
+  spice-protocol,
+  usbredir,
+  xdg-desktop-portal,
+  gst_all_1
 }:
-
-let
-  patched-gtk-vnc = (
-    gtk-vnc.dev.overrideAttrs (
-      finalAttrs: previousAttrs: {
-        mesonBuildType = "debug";
-        mesonFlags = previousAttrs.mesonFlags ++ [
-          "-Ddebug=true"
-        ];
-        dontStrip = true;
-        enableDebugging = true;
-      }
-    )
-  );
-  patched-vte-gtk4 = vte-gtk4.dev.overrideAttrs (
-    finalAttrs: previousAttrs: {
-      mesonBuildType = "debug";
-      mesonFlags = previousAttrs.mesonFlags ++ [
-        "-Ddebug=true"
-      ];
-      dontStrip = true;
-      enableDebugging = true;
-    }
-  );
-in
-
 stdenv.mkDerivation {
   pname = "field-monitor-devel";
 
@@ -45,10 +33,28 @@ stdenv.mkDerivation {
     version
     ;
 
-  buildInputs = field-monitor.prodBuildInputs ++ [
-    patched-vte-gtk4
-    patched-gtk-vnc
-  ];
+  # To actually get all debug symbols for some libs, nixseparatedebuginfod2 is needed!
+  buildInputs = [
+    (enableDebugging glib)
+    gsettings-desktop-schemas
+    (enableDebugging gtk4)
+    (enableDebugging gtk-vnc)
+    (enableDebugging vte-gtk4)
+    (enableDebugging libadwaita)
+    libepoxy
+    libGL
+    libvirt
+    openssl
+    (enableDebugging spice-gtk)
+    (enableDebugging spice-protocol)
+    usbredir
+    xdg-desktop-portal
+  ]
+  ++ (with gst_all_1; [
+    gstreamer
+    gst-plugins-base
+    gst-plugins-good
+  ]);
 
   mesonBuildType = "debug";
   mesonFlags = [

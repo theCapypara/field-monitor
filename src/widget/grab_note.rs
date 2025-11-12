@@ -24,6 +24,7 @@ use crate::settings::FieldMonitorSettings;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gtk::glib;
+use log::trace;
 
 mod imp {
     use super::*;
@@ -80,11 +81,13 @@ impl FieldMonitorGrabNote {
             return;
         }
 
+        trace!("timeout lock: locking...");
         let mut timeout = self
             .imp()
             .timeout
             .lock()
             .unwrap_or_else(PoisonError::into_inner);
+        trace!("timeout lock: locked!");
         if let Some(timeout) = timeout.take() {
             timeout.remove();
         }
@@ -102,11 +105,13 @@ impl FieldMonitorGrabNote {
                 self,
                 move || {
                     if let Some(slf) = slf {
+                        trace!("timeout lock: locking...");
                         let mut lock = slf
                             .imp()
                             .timeout
                             .lock()
                             .unwrap_or_else(PoisonError::into_inner);
+                        trace!("timeout lock: locked!");
 
                         slf.hide_note();
 

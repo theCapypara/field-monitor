@@ -67,10 +67,12 @@ stdenv.mkDerivation rec {
     wrapGAppsHook4
   ];
 
-  prodBuildInputs = [
+  buildInputs = [
     glib
     gsettings-desktop-schemas
     gtk4
+    gtk-vnc
+    vte-gtk4
     libadwaita
     libepoxy
     libGL
@@ -86,11 +88,6 @@ stdenv.mkDerivation rec {
     gst-plugins-base
     gst-plugins-good
   ]);
-
-  buildInputs = prodBuildInputs ++ [
-    gtk-vnc
-    vte-gtk4
-  ];
 
   meta = with lib; {
     description = "Viewer for virtual machines and other external screens";

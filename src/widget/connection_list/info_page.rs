@@ -16,17 +16,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use crate::application::FieldMonitorApplication;
-use crate::widget::connection_list::ServerOrConnection;
 use crate::widget::connection_list::server_group::FieldMonitorServerGroup;
 use crate::widget::connection_list::server_info::maybe_add_actions_button;
 use crate::widget::connection_list::server_row::FieldMonitorServerRow;
+use crate::widget::connection_list::ServerOrConnection;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use futures::lock::Mutex;
 use gettextrs::gettext;
 use gtk::glib;
 use libfieldmonitor::connection::*;
-use log::{debug, warn};
+use log::{debug, trace, warn};
 use std::borrow::Cow;
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -128,7 +128,9 @@ impl FieldMonitorConnectionInfoPage {
 
     async fn try_reload_connection(&self) -> ConnectionResult<()> {
         let imp = self.imp();
+        trace!("reentry lock: locking...");
         let _ = imp.reload_connections_reentry_lock.lock().await;
+        trace!("timeout lock: locked!");
         imp.status_stack.set_visible_child_name("loading");
         let connection = imp.connection.borrow().clone().unwrap();
         let connection_id = connection.connection_id();

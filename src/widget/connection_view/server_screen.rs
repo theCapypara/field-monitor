@@ -25,7 +25,7 @@ use glib::object::ObjectExt;
 use glib::timeout_future;
 use gtk::gio;
 use gtk::glib;
-use log::{debug, info, warn};
+use log::{debug, info, trace, warn};
 use rdw::DisplayExt;
 use std::borrow::Cow;
 use std::cell::Cell;
@@ -335,7 +335,9 @@ impl FieldMonitorServerScreen {
         imp.status_stack.set_visible_child_name("loading");
         imp.outer_stack.set_visible_child_name("status");
 
+        trace!("connection loader lock: locking...");
         let mut loader_brw = imp.connection_loader.lock().await;
+        trace!("connection loader lock: locked!");
         let loader = loader_brw.as_mut().unwrap();
         imp.connection_state.replace(None);
 
@@ -589,7 +591,9 @@ impl FieldMonitorServerScreen {
                     #[strong(rename_to = slf)]
                     self,
                     async move {
+                        trace!("connection loader lock: locking...");
                         let mut loader_brw = slf.imp().connection_loader.lock().await;
+                        trace!("connection loader lock: locked!");
                         match loader_brw.as_mut().unwrap().reauth().await {
                             Some(()) => {
                                 drop(loader_brw);
