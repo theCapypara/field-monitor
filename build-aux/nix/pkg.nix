@@ -33,6 +33,8 @@ stdenv.mkDerivation rec {
   pname = "field-monitor";
   version = "49.0";
 
+  strictDeps = true;
+
   src = "${../..}";
 
   cargoDeps = rustPlatform.importCargoLock {
@@ -50,48 +52,45 @@ stdenv.mkDerivation rec {
 
   doCheck = true;
 
-  prodNativeBuildInputs = [
-    glib
-    gtk4
+  nativeBuildInputs = [
+    appstream
+    appstream-glib
+    blueprint-compiler
+    cargo
+    desktop-file-utils
+    libxml2
     meson
     ninja
     pkg-config
-    rustPlatform.cargoSetupHook
-    cargo
     rustc
-    desktop-file-utils
-    appstream
-    appstream-glib
+    rustPlatform.cargoSetupHook
     wrapGAppsHook4
-    blueprint-compiler
-    libxml2
-    spice-protocol
-    spice-gtk
-    usbredir
+  ];
+
+  prodBuildInputs = [
+    glib
+    gsettings-desktop-schemas
+    gtk4
+    libadwaita
     libepoxy
     libGL
+    libvirt
     openssl
-  ];
+    spice-gtk
+    spice-protocol
+    usbredir
+    xdg-desktop-portal
+  ]
+  ++ (with gst_all_1; [
+    gstreamer
+    gst-plugins-base
+    gst-plugins-good
+  ]);
 
-  nativeBuildInputs = prodNativeBuildInputs ++ [
-    vte-gtk4
+  buildInputs = prodBuildInputs ++ [
     gtk-vnc
+    vte-gtk4
   ];
-
-  buildInputs =
-    [
-      glib
-      gtk4
-      gsettings-desktop-schemas
-      libadwaita
-      libvirt
-      xdg-desktop-portal
-    ]
-    ++ (with gst_all_1; [
-      gstreamer
-      gst-plugins-base
-      gst-plugins-good
-    ]);
 
   meta = with lib; {
     description = "Viewer for virtual machines and other external screens";

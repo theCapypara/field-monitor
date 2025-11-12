@@ -34,17 +34,18 @@ in
 stdenv.mkDerivation {
   pname = "field-monitor-devel";
 
+  strictDeps = true;
   dontStrip = true;
   enableDebugging = true;
 
   inherit (field-monitor)
     src
     cargoDeps
-    buildInputs
+    nativeBuildInputs
     version
     ;
 
-  nativeBuildInputs = field-monitor.prodNativeBuildInputs ++ [
+  buildInputs = field-monitor.prodBuildInputs ++ [
     patched-vte-gtk4
     patched-gtk-vnc
   ];
