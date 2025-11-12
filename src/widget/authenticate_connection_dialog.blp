@@ -4,6 +4,7 @@ using Adw 1;
 template $FieldMonitorAuthenticateConnectionDialog: Adw.Dialog {
     content-width: 420;
     title: _("Authentication required");
+    default-widget: apply_button;
 
     Adw.ToolbarView {
         [top]
@@ -14,7 +15,7 @@ template $FieldMonitorAuthenticateConnectionDialog: Adw.Dialog {
         [bottom]
         ActionBar {
             [end]
-            Button {
+            Button apply_button {
                 label: _("Apply");
                 clicked => $on_connection_update() swapped;
 

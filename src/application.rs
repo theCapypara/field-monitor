@@ -540,7 +540,10 @@ impl FieldMonitorApplication {
             .license_type(gtk::License::Gpl30)
             .developer_name("Marco Köpcke")
             .version(VERSION)
-            .developers(vec!["Marco Köpcke <hello@capypara.de>"])
+            .developers(vec![
+                "Marco Köpcke <hello@capypara.de>",
+                "Florian Richter <florian@richter-es.de>",
+            ])
             .artists(vec!["Jakub Steiner"])
             .copyright("© 2025 Marco Köpcke")
             .website("https://github.com/theCapypara/field-monitor")

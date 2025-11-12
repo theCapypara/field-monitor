@@ -1,4 +1,6 @@
 .idea/
+.flatpak/
+.vscode/
 lib/src/config.rs
 src/field-monitor.gresource.xml
 data/de.capypara.FieldMonitor.gschema.xml
