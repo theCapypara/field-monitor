@@ -2,7 +2,7 @@
   description = "Field Monitor";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/staging-next";
+    nixpkgs.url = "github:NixOS/nixpkgs/master"; # TODO: Switch to nixos-25.11
     flake-utils.url = "github:numtide/flake-utils";
     systems.url = "github:nix-systems/default";
   };
