@@ -16,10 +16,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use crate::application::FieldMonitorApplication;
+use crate::widget::connection_list::ServerOrConnection;
 use crate::widget::connection_list::server_group::FieldMonitorServerGroup;
 use crate::widget::connection_list::server_info::maybe_add_actions_button;
 use crate::widget::connection_list::server_row::FieldMonitorServerRow;
-use crate::widget::connection_list::ServerOrConnection;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use futures::lock::Mutex;

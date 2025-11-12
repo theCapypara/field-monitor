@@ -548,7 +548,6 @@ impl FieldMonitorApplication {
             .copyright("© 2025 Marco Köpcke")
             .website("https://github.com/theCapypara/field-monitor")
             .issue_url("https://github.com/theCapypara/field-monitor/issues")
-            .support_url("https://matrix.to/#/#fieldmonitor:matrix.org")
             .translator_credits(gettext(
                 // Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
                 "translator-credits",
