@@ -427,6 +427,8 @@ impl GenericGroupPreferences {
                     let config: &ServerConfigForRow = obj.downcast_ref().unwrap();
                     let edit = gtk::Button::builder()
                         .icon_name("edit-symbolic")
+                        .tooltip_text(gettext("Edit Server"))
+                        .valign(gtk::Align::Center)
                         .css_classes(["flat"])
                         .build();
                     let cb_key = config.key();
@@ -575,7 +577,7 @@ impl GenericGroupPreferences {
             gettext_f(
                 // Translators: Do NOT translate the content between '{' and '}', this is a
                 // variable name.
-                "Edit {title}",
+                "Edit “{title}”",
                 &[("title", &config.title(id).unwrap_or_default())],
             )
         } else {

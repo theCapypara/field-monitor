@@ -22,6 +22,8 @@ use vte::prelude::*;
 const BLACK: gdk::RGBA = gdk::RGBA::new(0.0, 0.0, 0.0, 1.0);
 const WHITE: gdk::RGBA = gdk::RGBA::new(1.0, 1.0, 1.0, 1.0);
 
+pub const MOUSE_RIGHT_BUTTON: u32 = 3;
+
 pub fn configure_vte_styling(terminal: &vte::Terminal, style_manager: &adw::StyleManager) {
     if style_manager.is_dark() {
         terminal.set_color_foreground(&WHITE);

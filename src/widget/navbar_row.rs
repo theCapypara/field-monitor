@@ -15,6 +15,8 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use crate::util::MOUSE_RIGHT_BUTTON;
+use adw::{gdk, gio};
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use std::cell::RefCell;
@@ -32,6 +34,7 @@ mod imp {
         pub slot_left: RefCell<Option<gtk::Box>>,
         pub slot_middle: RefCell<Option<gtk::Box>>,
         pub slot_right: RefCell<Option<gtk::Box>>,
+        pub action_group: RefCell<Option<gio::SimpleActionGroup>>,
     }
 
     #[glib::object_subclass]
@@ -39,6 +42,11 @@ mod imp {
         const NAME: &'static str = "FieldMonitorNavbarRow";
         type Type = super::FieldMonitorNavbarRow;
         type ParentType = gtk::ListBoxRow;
+
+        fn class_init(klass: &mut Self::Class) {
+            klass.add_binding_action(gdk::Key::F10, gdk::ModifierType::SHIFT_MASK, "menu.popup");
+            klass.add_binding_action(gdk::Key::Menu, gdk::ModifierType::empty(), "menu.popup");
+        }
     }
 
     #[glib::derived_properties]
@@ -141,5 +149,78 @@ impl FieldMonitorNavbarRow {
         let slt_brw = self.imp().slot_right.borrow();
         let slt_ref = slt_brw.as_ref().unwrap();
         slt_ref.append(widget);
+    }
+
+    pub fn add_row_action(&self, action_name: &str, cb: impl Fn(Self) + 'static) {
+        let mut action_group_brw = self.imp().action_group.borrow_mut();
+        let action_group = action_group_brw.get_or_insert_with(|| {
+            let group = gio::SimpleActionGroup::new();
+            self.insert_action_group("row", Some(&group));
+            group
+        });
+
+        let action = gio::SimpleAction::new(action_name, None);
+        action.connect_activate(glib::clone!(
+            #[weak(rename_to=slf)]
+            self,
+            move |_, _| cb(slf)
+        ));
+
+        action_group.add_action(&action)
+    }
+
+    // This is all not great 🥲
+    pub fn add_context_menu(&self, build_menu: fn() -> gio::Menu) {
+        self.update_property(&[gtk::accessible::Property::HasPopup(true)]);
+
+        let show_context_menu = move |row: &Self, x, y| {
+            let popover = gtk::PopoverMenu::builder()
+                .menu_model(&build_menu())
+                .has_arrow(false)
+                .pointing_to(&gdk::Rectangle::new(x, y, 0, 0))
+                .position(gtk::PositionType::Bottom)
+                .halign(gtk::Align::Start)
+                .build();
+            popover.set_parent(row);
+            popover.popup();
+
+            row.add_css_class("has-open-popup");
+            popover.connect_closed(glib::clone!(
+                #[weak]
+                row,
+                move |_popover| {
+                    row.remove_css_class("has-open-popup");
+                    // LEAK
+                    // XXX: We can't unparent here, because that would immediately cause the
+                    //      actions to not fire anymore. But waiting and then unparenting somehow
+                    //      crashes, with `Finalizing FieldMonitorNavbarRow 0x55bb9275a1d0, but it still has children left`
+                    //      This leak is realistically not a huge issue, but it's still bad,
+                    //      if anyone knows a solution (that ideally doesn't require big refactoring), let me know.
+                    //_popover.unparent();
+                }
+            ));
+        };
+
+        let gesture_ctrl = gtk::GestureClick::builder()
+            .button(MOUSE_RIGHT_BUTTON)
+            .build();
+        gesture_ctrl.connect_released(glib::clone!(
+            #[weak(rename_to=slf)]
+            self,
+            move |_, _, x, y| show_context_menu(&slf, x as _, y as _)
+        ));
+        self.add_controller(gesture_ctrl);
+
+        let group = gio::SimpleActionGroup::new();
+        let action = gio::SimpleAction::new("popup", None);
+        action.connect_activate(glib::clone!(
+            #[weak(rename_to=slf)]
+            self,
+            move |_, _| {
+                show_context_menu(&slf, slf.width() / 2, ((slf.height() as f64) * 0.75) as _);
+            }
+        ));
+        group.add_action(&action);
+        self.insert_action_group("menu", Some(&group));
     }
 }

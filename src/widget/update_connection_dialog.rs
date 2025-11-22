@@ -40,6 +40,8 @@ mod imp {
     pub struct FieldMonitorUpdateConnectionDialog {
         #[template_child]
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
+        pub delete_button: TemplateChild<gtk::Button>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
@@ -81,28 +83,52 @@ glib::wrapper! {
 }
 
 impl FieldMonitorUpdateConnectionDialog {
-    pub fn new(app: &FieldMonitorApplication, connection: ConnectionInstance) -> Self {
-        let title = connection.title();
+    pub fn new(
+        app: &FieldMonitorApplication,
+        connection: ConnectionInstance,
+        // If a server path is given, this dialog instead edits a single server,
+        // not the entire connection.
+        server_path: Option<&[String]>,
+    ) -> Self {
+        // If we are editing a server, we'd ideally show the server's name, otherwise we show
+        // the connection name.
+        let title = if server_path.is_some() {
+            // TODO: Getting the server name here isn't really easy...
+            gettext("Edit Server")
+        } else {
+            gettext_f(
+                // Translators: Do NOT translate the content between '{' and '}', this is a
+                // variable name.
+                "Edit “{title}”",
+                &[("title", &connection.title())],
+            )
+        };
 
         let slf: Self = glib::Object::builder()
             .property("application", app)
             .property("connection", &connection)
-            .property(
-                "title",
-                gettext_f(
-                    // Translators: Do NOT translate the content between '{' and '}', this is a
-                    // variable name.
-                    "Edit {title}",
-                    &[("title", &title)],
-                ),
-            )
+            .property("title", title)
             .build();
         let imp = slf.imp();
 
         let provider = connection.provider();
 
+        // If we are editing a single server, hide the delete icon, we don't want to be able to
+        // delete the connection then.
+        // This isn't the most amazing piece of UX, since (at least for the generic group) this
+        // means that the edit button that triggers this dialog (the one inside server_row) can't
+        // be used to delete the server but when you  edit the entire connection, navigate to the
+        // edit of the server there, you suddenly can even though the UI looks identical...?
+        //
+        // But also, if we were to add an option here to delete a single server this would
+        // need so much spaghetti code to support something that isn't even Field Monitor's
+        // primary designed use-case, so we just don't.
+        if server_path.is_some() {
+            imp.delete_button.set_visible(false);
+        }
+
         connection.with_configuration(|configuration| {
-            let preferences = provider.preferences(Some(configuration.persistent()));
+            let preferences = provider.preferences(Some(configuration.persistent()), server_path);
 
             imp.toast_overlay.set_child(Some(&preferences));
             imp.preferences.replace(Some(preferences));

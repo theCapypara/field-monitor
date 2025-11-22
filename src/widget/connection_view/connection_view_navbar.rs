@@ -175,29 +175,42 @@ mod imp {
                         .valign(gtk::Align::Center)
                         .css_classes(["flat", "compact-button"])
                         .build();
-                    close_button.connect_clicked(glib::clone!(
-                        #[weak]
-                        tab_view,
-                        #[weak]
-                        page,
-                        move |_| tab_view.close_tab(&page)
-                    ));
-                    let new_window_button = gtk::Button::builder()
-                        .icon_name("multitasking-windows-symbolic")
-                        .tooltip_text(gettext("Move to New Window"))
-                        .valign(gtk::Align::Center)
-                        .css_classes(["flat", "compact-button"])
-                        .build();
-                    new_window_button.connect_clicked(glib::clone!(
-                        #[weak]
-                        tab_view,
-                        #[weak]
-                        page,
-                        move |_| tab_view.move_page_to_new_window(&page)
-                    ));
-
+                    close_button.set_action_name(Some("row.view-close"));
                     row.add_suffix(&close_button);
-                    row.add_suffix(&new_window_button);
+
+                    row.add_context_menu(|| {
+                        let menu = gio::Menu::new();
+
+                        menu.append_item(&gio::MenuItem::new(
+                            Some(&gettext("Move to New Window")),
+                            Some("row.view-move-to-new-window"),
+                        ));
+                        let close_item =
+                            gio::MenuItem::new(Some(&gettext("Close")), Some("row.view-close"));
+                        menu.append_item(&close_item);
+                        menu
+                    });
+
+                    row.add_row_action(
+                        "view-move-to-new-window",
+                        glib::clone!(
+                            #[weak]
+                            tab_view,
+                            #[weak]
+                            page,
+                            move |_| tab_view.move_page_to_new_window(&page)
+                        ),
+                    );
+                    row.add_row_action(
+                        "view-close",
+                        glib::clone!(
+                            #[weak]
+                            tab_view,
+                            #[weak]
+                            page,
+                            move |_| tab_view.close_tab(&page)
+                        ),
+                    );
 
                     page.bind_property("title", &item, "label")
                         .sync_create()

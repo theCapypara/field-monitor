@@ -920,7 +920,7 @@ impl FieldMonitorServerScreen {
                 ))),
                 Some(MenuObject::Item(gio::MenuItem::new(
                     Some(&gettext("_Keyboard Shortcuts")),
-                    Some("win.show-help-overlay"),
+                    Some("app.shortcuts"),
                 ))),
                 Some(MenuObject::Item(gio::MenuItem::new(
                     Some(&gettext("_About Field Monitor")),

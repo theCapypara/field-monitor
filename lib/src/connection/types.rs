@@ -196,7 +196,17 @@ pub trait ConnectionProvider {
     /// Creates a preference page (or other applicable widget) for configuring a new connection.
     ///
     /// If this is for modifying an existing configuration, the current configuration is set.
-    fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget;
+    ///
+    /// The `server_path` argument is usually `None`, in that case the preferences for the
+    /// entire configuration are requested to be edited. However, if `server_path` is set, then
+    /// the UI requests to edit only a particular server identified by a specific path into
+    /// the connection's server map. If editing that server individually is not supported, or
+    /// the server can not be found, the behaviour is if as `None` was given instead.
+    fn preferences(
+        &self,
+        configuration: Option<&ConnectionConfiguration>,
+        server_path: Option<&[String]>,
+    ) -> gtk::Widget;
 
     /// Update a connection configuration from a configured preference page.
     /// It may be asserted that the  passed `preferences` are a widget returned from `preferences`.
@@ -321,6 +331,13 @@ pub trait Connection: Actionable {
 pub trait ServerConnection: Actionable {
     /// Metadata about the server.
     fn metadata(&self) -> LocalBoxFuture<'_, ServerMetadata>;
+
+    /// Whether this server can be edited individually in a meaningful way. If true, the UI will
+    /// show a button to edit the server information, which calls `ConnectionProvider::preferences`
+    /// with the path of this server.
+    fn editable(&self) -> bool {
+        false
+    }
 
     /// List of supported adapters that can be used to connect to the server as tuples (tag, human-readable name)
     fn supported_adapters(&self) -> LocalBoxFuture<'_, Vec<(Cow<'_, str>, Cow<'_, str>)>>;

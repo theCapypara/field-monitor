@@ -68,7 +68,11 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
         IconSpec::Named("connection-proxmox-symbolic".into())
     }
 
-    fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> Widget {
+    fn preferences(
+        &self,
+        configuration: Option<&ConnectionConfiguration>,
+        _server_path: Option<&[String]>,
+    ) -> Widget {
         ProxmoxPreferences::new(configuration).upcast()
     }
 

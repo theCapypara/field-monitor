@@ -217,7 +217,11 @@ impl ConnectionProvider for QuickConnectConnectionProvider {
         IconSpec::Default
     }
 
-    fn preferences(&self, _configuration: Option<&ConnectionConfiguration>) -> Widget {
+    fn preferences(
+        &self,
+        _configuration: Option<&ConnectionConfiguration>,
+        _server_path: Option<&[String]>,
+    ) -> Widget {
         // This should never be called, this kind of connection is never actually added to the app,
         // only used transiently.
         gtk::Label::new(Some("This connection can not be configured.")).upcast()
