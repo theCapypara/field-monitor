@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-03-29 22:50+0100\n"
-"PO-Revision-Date: 2025-03-29 22:55+0100\n"
+"POT-Creation-Date: 2025-11-22 17:15+0100\n"
+"PO-Revision-Date: 2025-11-22 17:18+0100\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -16,32 +16,32 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 47.1\n"
+"X-Generator: Gtranslator 48.0\n"
 
 #. Translators: The name of the application.
-#: data/de.capypara.FieldMonitor.desktop.in.in:3
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:540
+#: data/de.capypara.FieldMonitor.desktop.in.in:2
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:538
 #: src/widget/window.blp:9 src/widget/window.blp:59 src/widget/window.blp:169
 #: src/widget/window.blp:175 src/widget/window.rs:313
 msgid "Field Monitor"
 msgstr "Feldmonitor"
 
-#: data/de.capypara.FieldMonitor.desktop.in.in:4
+#: data/de.capypara.FieldMonitor.desktop.in.in:3
 msgid "Remote Desktop Viewer"
 msgstr "Betrachter für entfernte Bildschirme"
 
 #. Translators: The summary of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.desktop.in.in:5
+#: data/de.capypara.FieldMonitor.desktop.in.in:4
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
 msgid "Access VMs and external screens"
 msgstr "Greifen Sie auf VMs und entfernte Bildschirme zu"
 
 #. Translators: The keywords from the desktop file.
-#: data/de.capypara.FieldMonitor.desktop.in.in:13
+#: data/de.capypara.FieldMonitor.desktop.in.in:12
 msgid "proxmox;vnc;spice;rdp;kvm;qemu;"
 msgstr "proxmox;vnc;spice;rdp;kvm;qemu;"
 
-#: data/de.capypara.FieldMonitor.desktop.in.in:18
+#: data/de.capypara.FieldMonitor.desktop.in.in:17
 msgid "New Window"
 msgstr "Neues Fenster"
 
@@ -53,23 +53,21 @@ msgstr "Entfernter Bildschirm"
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
 #: connection/generic-group/src/server_preferences.blp:21
-#: lib/src/adapter/rdp.rs:52
+#: lib/src/adapter/rdp.rs:51
 msgid "RDP"
 msgstr "RDP"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
 #: connection/generic-group/src/server_preferences.blp:23
-#: connection/proxmox/src/api/node.rs:163 connection/proxmox/src/api/vm.rs:313
-#: lib/src/adapter/vnc.rs:71
+#: connection/proxmox/src/api/node.rs:163 lib/src/adapter/vnc.rs:71
 msgid "VNC"
 msgstr "VNC"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
 #: connection/generic-group/src/server_preferences.blp:22
-#: connection/proxmox/src/api/node.rs:162 connection/proxmox/src/api/vm.rs:308
-#: lib/src/adapter/spice.rs:124
+#: connection/proxmox/src/api/node.rs:162 lib/src/adapter/spice.rs:124
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -90,7 +88,7 @@ msgstr "libvirt"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:63
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
 #: connection/proxmox/src/api/provider.rs:48
 #: connection/proxmox/src/api/provider.rs:52
 msgid "Proxmox"
@@ -102,7 +100,7 @@ msgid "GNOME"
 msgstr "GNOME"
 
 #. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:50
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:49
 msgid ""
 "Field Monitor is a remote-desktop client designed for the GNOME platform."
 msgstr ""
@@ -110,7 +108,7 @@ msgstr ""
 "entworfen für die GNOME Plattform."
 
 #. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:54
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
 msgid ""
 "It is focused on connecting to virtual machines, but can connect to any "
 "server supporting the RDP, SPICE or VNC protocols."
@@ -120,18 +118,18 @@ msgstr ""
 "Maschinen."
 
 #. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:59
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
 msgid ""
 "It has support for directly connecting to VMs of the following hypervisors:"
 msgstr ""
 "Die Anwendung kann sich direkt mit den folgenden VM-Hypervisoren verbinden:"
 
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:63
 msgid "QEMU/KVM via libvirt"
 msgstr "QEMU/KVM via libvirt"
 
 #. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:66
 msgid ""
 "For supported VM hypervisors Field Monitor also offers options to manage the "
 "basic power state of VMs, such as starting, stopping, rebooting, etc."
@@ -140,7 +138,7 @@ msgstr ""
 "Möglichkeit VMs zu starten, zu stoppen und neuzustarten."
 
 #. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:71
 msgid ""
 "Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
@@ -149,29 +147,29 @@ msgstr ""
 "schnell Verbindungen zu RDP, SPICE und VNC Servern via URI herstellen."
 
 #. Translators: Caption of the first screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:89
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:107
 msgid "Screen of a connected graphical display"
 msgstr "Bildschirm einer verbundenen graphischen Anzeige"
 
 #. Translators: Caption of the second screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:96
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:114
 msgid "Welcome screen"
 msgstr "Willkommen-Fenster"
 
 #. Translators: Caption of the third screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:103
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:121
 msgid "A list of servers in a Proxmox cluster to connect to"
 msgstr ""
 "Eine Liste von Servern in einem Proxmox Cluster, mit denen sich verbunden "
 "werden kann"
 
 #. Translators: Caption of the 4th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:110
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:128
 msgid "Screen of a connected console"
 msgstr "Bildschirm einer verbundenen Konsole"
 
 #. Translators: Caption of the 5th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:117
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:135
 msgid "Adding a new Proxmox hypervisor connection"
 msgstr "Hinzufügen einer neuen Proxmox Hypervisor-Verbindung"
 
@@ -195,11 +193,11 @@ msgstr "Zugangsdaten"
 msgid "Username"
 msgstr "Benutzername"
 
-#: connection/generic-group/src/credential_preferences.blp:17
+#: connection/generic-group/src/credential_preferences.blp:18
 #: connection/proxmox/src/credential_preferences.blp:17
 #: connection/proxmox/src/credential_preferences.blp:33
-#: connection/proxmox/src/credential_preferences.rs:196
-#: src/quick_connect/preferences.blp:13
+#: connection/proxmox/src/credential_preferences.rs:197
+#: src/quick_connect/preferences.blp:14
 msgid "Password"
 msgstr "Passwort"
 
@@ -232,31 +230,32 @@ msgid "Servers"
 msgstr "Server"
 
 #: connection/generic-group/src/preferences.blp:31
-#: connection/generic-group/src/preferences.rs:581
+#: connection/generic-group/src/preferences.rs:582
 msgid "Add Server"
 msgstr "Server hinzufügen"
 
-#: connection/generic-group/src/preferences.rs:468
+#: connection/generic-group/src/preferences.rs:469
 msgid "No servers added yet."
 msgstr "Es wurde noch kein Server hinzugefügt."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/generic-group/src/preferences.rs:577
-#: src/widget/update_connection_dialog.rs:94
+#: connection/generic-group/src/preferences.rs:578
+#: src/widget/update_connection_dialog.rs:95
+#, rust-format
 msgid "Edit {title}"
 msgstr "Bearbeite {title}"
 
-#: connection/generic-group/src/preferences.rs:589
+#: connection/generic-group/src/preferences.rs:590
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: connection/generic-group/src/preferences.rs:591
-#: src/widget/add_connection_dialog.rs:132
+#: connection/generic-group/src/preferences.rs:592
+#: src/widget/add_connection_dialog.rs:133
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: connection/generic-group/src/preferences.rs:611
+#: connection/generic-group/src/preferences.rs:613
 msgid "Remove Server"
 msgstr "Entfernter Server"
 
@@ -316,6 +315,7 @@ msgstr "Befehl zum Neustart an Domäne gesendet."
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection.rs:324
+#, rust-format
 msgid "Failed to send reboot command: {err}"
 msgstr "Neustart fehlgeschlagen: {err}"
 
@@ -326,6 +326,7 @@ msgstr "Befehl zum Herunterfahren an Domäne gesendet."
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection.rs:350
+#, rust-format
 msgid "Failed to send shutdown command: {err}"
 msgstr "Herunterfahren fehlgeschlagen: {err}"
 
@@ -336,6 +337,7 @@ msgstr "Befehl zum Zurücksetzen an Domnäne gesendet."
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection.rs:376
+#, rust-format
 msgid "Failed to reset domain: {err}"
 msgstr "Zurücksetzen fehlgeschlagen: {err}"
 
@@ -346,6 +348,7 @@ msgstr "Domäne erfolgreich heruntergefahren."
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection.rs:402
+#, rust-format
 msgid "Failed to send destroy command: {err}"
 msgstr "Zerstören fehlgeschlagen: {err}"
 
@@ -356,6 +359,7 @@ msgstr "Domäne erfolgreich gestartet."
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection.rs:433
+#, rust-format
 msgid "Failed to send create command: {err}"
 msgstr "Erstellen fehlgeschlagen: {err}"
 
@@ -458,7 +462,7 @@ msgstr "Befehl zum Herunterfahren an Server gesendet."
 msgid "Failed to send shutdown command."
 msgstr "Herunterfahren der VM fehlgeschlagen."
 
-#: connection/proxmox/src/api/node.rs:164 connection/proxmox/src/api/vm.rs:318
+#: connection/proxmox/src/api/node.rs:164
 msgid "Console"
 msgstr "Konsole"
 
@@ -507,7 +511,7 @@ msgid "Authentication Mode"
 msgstr "Authentifizierungsmodus"
 
 #: connection/proxmox/src/credential_preferences.blp:18
-#: connection/proxmox/src/credential_preferences.rs:194
+#: connection/proxmox/src/credential_preferences.rs:195
 msgid "API Key"
 msgstr "API-Schlüssel"
 
@@ -531,14 +535,6 @@ msgid ""
 msgstr ""
 "Ermöglicht die Verbindung zu Servern mit selbst-signierten SSL Zertifikaten. "
 "Achtung, dies ist ein mögliches Sicherheitsrisiko."
-
-#: lib/src/adapter/rdp.rs:78
-msgid "Failed to process RDP connection configuration"
-msgstr "Die RDP Verbindungseinstellungen konnten nicht verarbeitet werden"
-
-#: lib/src/adapter/vte_pty.rs:110 lib/src/adapter/vte_pty.rs:183
-msgid "Internal error while trying to build terminal."
-msgstr "Es ist ein interner Fehler aufgetreten beim Aufbau des Terminals."
 
 #: lib/src/connection/instance.rs:191
 msgid "Unknown error"
@@ -564,35 +560,23 @@ msgstr "Jedes Mal nachfragen"
 msgid "The connection configuration is invalid"
 msgstr "Die Verbindungskonfiguration ist ungültig"
 
-#: src/application.rs:124
+#: src/application.rs:125
 msgid "Open the app with a new window"
 msgstr "Anwendung mit einem neuen Fenster starten"
-
-#: src/application.rs:188 src/widget/quick_connect_dialog.rs:93
-#: src/widget/quick_connect_dialog.rs:155
-msgid "Failed to open"
-msgstr "Öffnen fehlgeschlagen"
-
-#: src/application.rs:191 src/widget/quick_connect_dialog.rs:96
-msgid ""
-"Field Monitor could not connect to the server using the specified file or URI"
-msgstr ""
-"Feldmonitor konnte sich mittels der angegebenen Datei oder URI nicht mit dem "
-"Server verbinden"
-
-#: src/application.rs:195 src/application.rs:562 src/connection_loader.rs:433
-#: src/widget/add_connection_dialog.rs:208
-#: src/widget/authenticate_connection_dialog.rs:172
-#: src/widget/quick_connect_dialog.rs:100
-#: src/widget/quick_connect_dialog.rs:160
-#: src/widget/update_connection_dialog.rs:153
-msgid "OK"
-msgstr "OK"
 
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
 #: src/application.rs:553
 msgid "translator-credits"
 msgstr "Marco Köpcke <hello@capypara.de>"
+
+#: src/application.rs:562 src/connection_loader.rs:433
+#: src/widget/add_connection_dialog.rs:209
+#: src/widget/authenticate_connection_dialog.rs:173
+#: src/widget/quick_connect_dialog.rs:101
+#: src/widget/quick_connect_dialog.rs:161
+#: src/widget/update_connection_dialog.rs:154
+msgid "OK"
+msgstr "OK"
 
 #: src/application.rs:604
 msgid "Connection successfully added."
@@ -605,6 +589,7 @@ msgstr "Verbindung erfolgreich aktualisiert."
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/application.rs:674
+#, rust-format
 msgid "Remove {title}?"
 msgstr "{title} entfernen?"
 
@@ -636,82 +621,82 @@ msgstr "Server nicht gefunden."
 msgid "Failed to load or connect to server"
 msgstr "Fehler beim Laden oder Verbinden mit Server"
 
-#: src/gtk/help-overlay.blp:10
+#: src/shortcuts-dialog.blp:6
 msgctxt "shortcut window"
 msgid "Window"
 msgstr "Fenster"
 
-#: src/gtk/help-overlay.blp:13
+#: src/shortcuts-dialog.blp:9
 msgctxt "shortcut window"
 msgid "New Window"
 msgstr "Neues Fenster"
 
-#: src/gtk/help-overlay.blp:18
+#: src/shortcuts-dialog.blp:14
 msgctxt "shortcut window"
 msgid "Toggle Fullscreen"
 msgstr "Vollbild umschalten"
 
-#: src/gtk/help-overlay.blp:23
+#: src/shortcuts-dialog.blp:19
 msgctxt "shortcut window"
 msgid "Show Navigation"
 msgstr "Navigation anzeigen"
 
-#: src/gtk/help-overlay.blp:29
+#: src/shortcuts-dialog.blp:25
 msgctxt "shortcut window"
 msgid "Connection"
 msgstr "Verbindung"
 
-#: src/gtk/help-overlay.blp:32
+#: src/shortcuts-dialog.blp:28
 msgctxt "shortcut window"
 msgid "Close Connection"
 msgstr "Verbindung schließen"
 
-#: src/gtk/help-overlay.blp:38
+#: src/shortcuts-dialog.blp:34
 msgctxt "shortcut window"
 msgid "Terminal"
 msgstr "Terminal"
 
-#: src/gtk/help-overlay.blp:41
+#: src/shortcuts-dialog.blp:37
 msgctxt "shortcut window"
 msgid "Copy"
 msgstr "Kopieren"
 
-#: src/gtk/help-overlay.blp:46
+#: src/shortcuts-dialog.blp:42
 msgctxt "shortcut window"
 msgid "Paste"
 msgstr "Einfügen"
 
-#: src/gtk/help-overlay.blp:51
+#: src/shortcuts-dialog.blp:47
 msgctxt "shortcut window"
 msgid "Select All"
 msgstr "Alles auswählen"
 
-#: src/gtk/help-overlay.blp:56
+#: src/shortcuts-dialog.blp:52
 msgctxt "shortcut window"
 msgid "Zoom In"
 msgstr "Text vergrößern"
 
-#: src/gtk/help-overlay.blp:61
+#: src/shortcuts-dialog.blp:57
 msgctxt "shortcut window"
 msgid "Zoom Out"
 msgstr "Text verkleinern"
 
-#: src/gtk/help-overlay.blp:66
+#: src/shortcuts-dialog.blp:62
 msgctxt "shortcut window"
 msgid "Reset Zoom"
 msgstr "Textgröße zurücksetzen"
 
-#: src/gtk/help-overlay.blp:72
+#: src/shortcuts-dialog.blp:68
 msgctxt "shortcut window"
 msgid "General"
 msgstr "Allgemein"
 
-#: src/gtk/help-overlay.blp:75
+#: src/shortcuts-dialog.blp:71
 msgctxt "shortcut window"
 msgid "Preferences"
 msgstr "Einstellungen"
 
-#: src/gtk/help-overlay.blp:80
+#: src/shortcuts-dialog.blp:76
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Tastenkombinationen anzeigen"
@@ -741,7 +726,7 @@ msgstr "Ungültige RDP Parameter"
 msgid "Invalid SPICE URI"
 msgstr "Ungültige SPICE URI"
 
-#: src/quick_connect/util.rs:60 src/quick_connect/util.rs:65
+#: src/quick_connect/util.rs:58 src/quick_connect/util.rs:63
 msgid "Invalid port in URI"
 msgstr "Ungültiger Port in URI"
 
@@ -769,15 +754,15 @@ msgstr "Ein geheimer Wert, verwendet von Feldmonitor"
 msgid "Add New Connection"
 msgstr "Neue Verbindung hinzufügen"
 
-#: src/widget/add_connection_dialog.rs:201
-#: src/widget/authenticate_connection_dialog.rs:165
-#: src/widget/update_connection_dialog.rs:146
+#: src/widget/add_connection_dialog.rs:202
+#: src/widget/authenticate_connection_dialog.rs:166
+#: src/widget/update_connection_dialog.rs:147
 msgid "Failed to save connection"
 msgstr "Fehler beim Speichern der Verbindung"
 
-#: src/widget/add_connection_dialog.rs:204
-#: src/widget/authenticate_connection_dialog.rs:168
-#: src/widget/update_connection_dialog.rs:149
+#: src/widget/add_connection_dialog.rs:205
+#: src/widget/authenticate_connection_dialog.rs:169
+#: src/widget/update_connection_dialog.rs:150
 msgid "An error occurred, while trying to save the connection"
 msgstr "Beim Speichern der Verbindung ist ein Fehler aufgetreten"
 
@@ -830,20 +815,20 @@ msgstr ""
 msgid "Authentication required"
 msgstr "Authentifizierung erforderlich"
 
-#: src/widget/authenticate_connection_dialog.blp:18
+#: src/widget/authenticate_connection_dialog.blp:19
 msgid "Apply"
 msgstr "Anwenden"
 
-#: src/widget/authenticate_connection_dialog.rs:107
+#: src/widget/authenticate_connection_dialog.rs:108
 msgid "This connection needs additional authentication to proceed."
 msgstr ""
 "Diese Verbindung benötigt zusätzliche Informationen zur Authentifizierung."
 
-#: src/widget/close_warning_dialog.rs:53
+#: src/widget/close_warning_dialog.rs:54
 msgid "Close Window?"
 msgstr "Fenster schließen?"
 
-#: src/widget/close_warning_dialog.rs:54
+#: src/widget/close_warning_dialog.rs:55
 msgid ""
 "The app is still connected to one or more servers. Closing the window will "
 "disconnect from all servers."
@@ -851,12 +836,13 @@ msgstr ""
 "Die Anwendung ist noch mit einem oder mehreren Servern verbunden. Wird "
 "dieses Fenster geschlossen, wird die Verbindung zu allen Servern geschlossen."
 
-#: src/widget/close_warning_dialog.rs:77
+#: src/widget/close_warning_dialog.rs:78
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/widget/close_warning_dialog.rs:78
+#: src/widget/close_warning_dialog.rs:79
 #: src/widget/connection_view/connection_view_navbar.rs:174
+#: src/widget/connection_view/connection_view_navbar.rs:189
 #: src/widget/connection_view/server_screen.blp:111
 msgid "Close"
 msgstr "Schließen"
@@ -866,9 +852,15 @@ msgstr "Schließen"
 msgid "Sidebar"
 msgstr "Seitenleiste"
 
+#: src/widget/connection_list/connection_list_navbar.rs:194
 #: src/widget/connection_list/info_page.blp:17
-msgid "Settings"
-msgstr "Einstellungen"
+msgid "Edit Connection"
+msgstr "Verbindung bearbeiten"
+
+#: src/widget/connection_list/connection_list_navbar.rs:199
+#: src/widget/update_connection_dialog.blp:20
+msgid "Remove Connection"
+msgstr "Verbindung entfernen"
 
 #: src/widget/connection_list/info_page.blp:61
 msgid "Failed to load connection"
@@ -883,7 +875,7 @@ msgstr ""
 msgid "Authenticate"
 msgstr "Authentifizieren"
 
-#: src/widget/connection_list/info_page.rs:183
+#: src/widget/connection_list/info_page.rs:186
 msgid "No servers available"
 msgstr "Keine Server verfügbar"
 
@@ -892,13 +884,14 @@ msgid "Actions"
 msgstr "Aktionen"
 
 #: src/widget/connection_list/server_info.rs:266
-#: src/widget/quick_connect_dialog.blp:37
+#: src/widget/quick_connect_dialog.blp:39
 msgid "Connect"
 msgstr "Verbinden"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/widget/connection_list/server_info.rs:284
+#, rust-format
 msgid "Connect via {adapter}"
 msgstr "Verbinden via {adapter}"
 
@@ -914,7 +907,7 @@ msgstr "Hierdurch wird die Verbindung zum entfernten Server getrennt."
 msgid "Active Connections"
 msgstr "Aktive Verbindungen"
 
-#: src/widget/connection_view/connection_view_navbar.rs:187
+#: src/widget/connection_view/connection_view_navbar.rs:185
 msgid "Move to New Window"
 msgstr "In neues Fenster verschieben"
 
@@ -942,153 +935,154 @@ msgstr "Neu verbinden"
 msgid "Show Output"
 msgstr "Ausgabe anzeigen"
 
-#: src/widget/connection_view/server_screen.rs:582
+#: src/widget/connection_view/server_screen.rs:584
 msgid "Disconnected"
 msgstr "Verbindung getrennt"
 
-#: src/widget/connection_view/server_screen.rs:584
+#: src/widget/connection_view/server_screen.rs:586
 msgid "The connection to the server was closed."
 msgstr "Die Verbindung mit dem Server wurde geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:618
+#: src/widget/connection_view/server_screen.rs:622
 msgid "Connection Failed"
 msgstr "Verbindung fehlgeschlagen"
 
-#: src/widget/connection_view/server_screen.rs:619
+#: src/widget/connection_view/server_screen.rs:623
 msgid "The connection was closed due to an error."
 msgstr "Die Verbindung wurde aufgrund eines Fehlers geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:778
+#: src/widget/connection_view/server_screen.rs:782
 msgid "_Dynamic Resize"
 msgstr "_Dynamische Größenanpassung"
 
-#: src/widget/connection_view/server_screen.rs:782
+#: src/widget/connection_view/server_screen.rs:786
 msgid "_Scale to Window"
 msgstr "Ausgabe an Fenstergröße _anpassen"
 
-#: src/widget/connection_view/server_screen.rs:792
+#: src/widget/connection_view/server_screen.rs:796
 msgid "_Resize Window to Screen"
 msgstr "_Fenstergröße auf Ausgabegröße setzen"
 
-#: src/widget/connection_view/server_screen.rs:796
+#: src/widget/connection_view/server_screen.rs:800
 msgid "Send _Keys"
 msgstr "Tasten _senden"
 
-#: src/widget/connection_view/server_screen.rs:800
+#: src/widget/connection_view/server_screen.rs:804
 msgid "Ctrl+Alt L"
 msgstr "Strg+Alt L"
 
-#: src/widget/connection_view/server_screen.rs:804
+#: src/widget/connection_view/server_screen.rs:808
 msgid "Ctrl+Alt+Backspace"
 msgstr "Strg+Alt+Rücktaste"
 
-#: src/widget/connection_view/server_screen.rs:808
+#: src/widget/connection_view/server_screen.rs:812
 msgid "Ctrl+Alt+Delete"
 msgstr "Strg+Alt+Entf"
 
-#: src/widget/connection_view/server_screen.rs:814
+#: src/widget/connection_view/server_screen.rs:818
 msgid "Ctrl+Alt+F1"
 msgstr "Strg+Alt+F1"
 
-#: src/widget/connection_view/server_screen.rs:818
+#: src/widget/connection_view/server_screen.rs:822
 msgid "Ctrl+Alt+F2"
 msgstr "Strg+Alt+F2"
 
-#: src/widget/connection_view/server_screen.rs:822
+#: src/widget/connection_view/server_screen.rs:826
 msgid "Ctrl+Alt+F3"
 msgstr "Strg+Alt+F3"
 
-#: src/widget/connection_view/server_screen.rs:826
+#: src/widget/connection_view/server_screen.rs:830
 msgid "Ctrl+Alt+F4"
 msgstr "Strg+Alt+F4"
 
-#: src/widget/connection_view/server_screen.rs:830
+#: src/widget/connection_view/server_screen.rs:834
 msgid "Ctrl+Alt+F5"
 msgstr "Strg+Alt+F5"
 
-#: src/widget/connection_view/server_screen.rs:834
+#: src/widget/connection_view/server_screen.rs:838
 msgid "Ctrl+Alt+F6"
 msgstr "Strg+Alt+F6"
 
-#: src/widget/connection_view/server_screen.rs:838
+#: src/widget/connection_view/server_screen.rs:842
 msgid "Ctrl+Alt+F7"
 msgstr "Strg+Alt+F7"
 
-#: src/widget/connection_view/server_screen.rs:842
+#: src/widget/connection_view/server_screen.rs:846
 msgid "Ctrl+Alt+F8"
 msgstr "Strg+Alt+F8"
 
-#: src/widget/connection_view/server_screen.rs:846
+#: src/widget/connection_view/server_screen.rs:850
 msgid "Ctrl+Alt+F9"
 msgstr "Strg+Alt+F9"
 
-#: src/widget/connection_view/server_screen.rs:850
+#: src/widget/connection_view/server_screen.rs:854
 msgid "Ctrl+Alt+F10"
 msgstr "Strg+Alt+F10"
 
-#: src/widget/connection_view/server_screen.rs:854
+#: src/widget/connection_view/server_screen.rs:858
 msgid "Ctrl+Alt+F11"
 msgstr "Strg+Alt+F11"
 
-#: src/widget/connection_view/server_screen.rs:858
+#: src/widget/connection_view/server_screen.rs:862
 msgid "Ctrl+Alt+F12"
 msgstr "Strg+Alt+F12"
 
-#: src/widget/connection_view/server_screen.rs:864
+#: src/widget/connection_view/server_screen.rs:868
 msgid "Print"
 msgstr "Drucken"
 
-#: src/widget/connection_view/server_screen.rs:875
+#: src/widget/connection_view/server_screen.rs:879
 msgid "_Zoom"
 msgstr "_Textgröße"
 
-#: src/widget/connection_view/server_screen.rs:896
+#: src/widget/connection_view/server_screen.rs:900
 msgid "Server _Actions"
 msgstr "Server_aktionen"
 
-#: src/widget/connection_view/server_screen.rs:904
+#: src/widget/connection_view/server_screen.rs:908
 msgid "_Close Connection"
 msgstr "Verbindung _schließen"
 
-#: src/widget/connection_view/server_screen.rs:914 src/widget/window.blp:307
+#: src/widget/connection_view/server_screen.rs:918 src/widget/window.blp:307
 msgid "_New Window"
 msgstr "_Neues Fenster"
 
-#: src/widget/connection_view/server_screen.rs:918 src/widget/window.blp:317
+#: src/widget/connection_view/server_screen.rs:922 src/widget/window.blp:317
 msgid "_Keyboard Shortcuts"
 msgstr "_Tastenkombinationen"
 
-#: src/widget/connection_view/server_screen.rs:922 src/widget/window.blp:322
+#: src/widget/connection_view/server_screen.rs:926 src/widget/window.blp:322
 msgid "_About Field Monitor"
 msgstr "_Über Feldmonitor"
 
-#: src/widget/connection_view/server_screen.rs:935
+#: src/widget/connection_view/server_screen.rs:939
 msgid "_Copy"
 msgstr "_Kopieren"
 
-#: src/widget/connection_view/server_screen.rs:939
+#: src/widget/connection_view/server_screen.rs:943
 msgid "_Paste"
 msgstr "_Einfügen"
 
-#: src/widget/connection_view/server_screen.rs:943
+#: src/widget/connection_view/server_screen.rs:947
 msgid "Select _All"
 msgstr "_Alles auswählen"
 
-#: src/widget/connection_view/server_screen.rs:952
+#: src/widget/connection_view/server_screen.rs:956
 msgid "Zoom In"
 msgstr "Text vergrößern"
 
-#: src/widget/connection_view/server_screen.rs:956
+#: src/widget/connection_view/server_screen.rs:960
 msgid "Zoom Out"
 msgstr "Text verkleinern"
 
-#: src/widget/connection_view/server_screen.rs:960
+#: src/widget/connection_view/server_screen.rs:964
 msgid "Reset Zoom"
 msgstr "Textgröße zurücksetzen"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/widget/connection_view/server_screen.rs:1062
+#: src/widget/connection_view/server_screen.rs:1066
+#, rust-format
 msgid "Press {keycombo} to ungrab the mouse and keyboard."
 msgstr "Drücken Sie {keycombo} um Maus und Tastatur freizugeben."
 
@@ -1108,11 +1102,11 @@ msgstr "Verbindungen in neuem Fenster öffnen"
 msgid "Appearance"
 msgstr "Darstellung"
 
-#: src/widget/preferences.blp:26 src/widget/preferences.rs:203
+#: src/widget/preferences.blp:26 src/widget/preferences.rs:204
 msgid "Sharp window corners"
 msgstr "Spitze Fensterkanten"
 
-#: src/widget/preferences.blp:46 src/widget/preferences.rs:233
+#: src/widget/preferences.blp:46 src/widget/preferences.rs:234
 msgid "Header bars for active connections"
 msgstr "Titelleiste für aktive Verbindungen"
 
@@ -1129,31 +1123,31 @@ msgstr ""
 "wie die Maus und Tastatur freigegeben werden kann, sobald diese gefangen "
 "werden."
 
-#: src/widget/preferences.rs:179 src/widget/preferences.rs:206
+#: src/widget/preferences.rs:180 src/widget/preferences.rs:207
 msgid "Automatic"
 msgstr "Automatisch"
 
-#: src/widget/preferences.rs:180 src/widget/preferences.rs:207
+#: src/widget/preferences.rs:181 src/widget/preferences.rs:208
 msgid "Always"
 msgstr "Immer"
 
-#: src/widget/preferences.rs:181 src/widget/preferences.rs:208
+#: src/widget/preferences.rs:182 src/widget/preferences.rs:209
 msgid "Never"
 msgstr "Niemals"
 
-#: src/widget/preferences.rs:189 src/widget/preferences.rs:236
+#: src/widget/preferences.rs:190 src/widget/preferences.rs:237
 msgid "Default"
 msgstr "Standard"
 
-#: src/widget/preferences.rs:190 src/widget/preferences.rs:237
+#: src/widget/preferences.rs:191 src/widget/preferences.rs:238
 msgid "Show Above"
 msgstr "Oberhalb anzeigen"
 
-#: src/widget/preferences.rs:191 src/widget/preferences.rs:238
+#: src/widget/preferences.rs:192 src/widget/preferences.rs:239
 msgid "Overlay and Hide"
 msgstr "Überlagern und Ausblenden"
 
-#: src/widget/preferences.rs:204
+#: src/widget/preferences.rs:205
 msgid ""
 "Configure whether and when Field Monitor will use sharp, right angle, window "
 "corners instead of the default corner radius. This is useful to make sure "
@@ -1163,7 +1157,7 @@ msgstr ""
 "verwendet, anstatt den Standardradius zu verwenden. Dies kann nützlich sein, "
 "um die Ecken der verbundenen Bildschirme nicht abzuschneiden."
 
-#: src/widget/preferences.rs:206
+#: src/widget/preferences.rs:207
 msgid ""
 "Use default corner radius, but make window corners sharp whenever input is "
 "grabbed."
@@ -1171,21 +1165,21 @@ msgstr ""
 "Spitze Fensterkanten verwenden, wenn die Eingabe gefangen ist, ansonsten "
 "Standardradius verwenden."
 
-#: src/widget/preferences.rs:207
+#: src/widget/preferences.rs:208
 msgid "Always use sharp window corners."
 msgstr "Immer spitze Fensterkanten verwenden."
 
-#: src/widget/preferences.rs:208
+#: src/widget/preferences.rs:209
 msgid "Never use sharp window corners."
 msgstr "Niemals spitze Fensterkanten verwenden."
 
-#: src/widget/preferences.rs:234
+#: src/widget/preferences.rs:235
 msgid "Change how the header bar is presented for active connection screens."
 msgstr ""
 "Diese Einstellung steuert, wie die Titelleiste des Fensters für aktive "
 "Verbindungen präsentiert wird."
 
-#: src/widget/preferences.rs:236
+#: src/widget/preferences.rs:237
 msgid ""
 "The header bar is shown above the connection screen. In fullscreen mode the "
 "header bar is instead overlayed and hides whenever input is grabbed."
@@ -1194,7 +1188,7 @@ msgstr ""
 "Vollbildmodus wird die Titelleiste stattdessen über den Inhalt des "
 "Bildschirms gelegt und ausblendet, sobald die Eingabe gefangen ist."
 
-#: src/widget/preferences.rs:237
+#: src/widget/preferences.rs:238
 msgid ""
 "The header bar is always shown above the connection screen, even in "
 "fullscreen mode."
@@ -1202,7 +1196,7 @@ msgstr ""
 "Die Titelleiste wird immer oberhalb des entfernten Bildschirms angezeigt, "
 "auch im Vollbildmodus."
 
-#: src/widget/preferences.rs:238
+#: src/widget/preferences.rs:239
 msgid ""
 "The header bar is always shown as an overlay on top of the connection "
 "screen, it is hidden whenever input is grabbed."
@@ -1210,7 +1204,7 @@ msgstr ""
 "Die Titelleiste wird über den Inhalt des entfernten Bildschirms gelegt und "
 "ausblendet, sobald die Eingabe gefangen ist."
 
-#: src/widget/quick_connect_dialog.blp:18
+#: src/widget/quick_connect_dialog.blp:19
 #, c-format
 msgid ""
 "Enter the URL of the server you want to connect to.\n"
@@ -1231,41 +1225,48 @@ msgstr ""
 "<i>spice://me@localhost:999?password=1234</i>\n"
 "<i>vnc://user@server?VncPassword=password123</i>"
 
-#: src/widget/quick_connect_dialog.blp:21
+#: src/widget/quick_connect_dialog.blp:22
 msgid "Connection URL"
 msgstr "URL der Verbindung"
 
-#: src/widget/quick_connect_dialog.blp:31
+#: src/widget/quick_connect_dialog.blp:33
 msgid "Open File..."
 msgstr "Datei öffnen..."
 
-#: src/widget/quick_connect_dialog.rs:118
+#: src/widget/quick_connect_dialog.rs:94 src/widget/quick_connect_dialog.rs:156
+msgid "Failed to open"
+msgstr "Öffnen fehlgeschlagen"
+
+#: src/widget/quick_connect_dialog.rs:97
+msgid ""
+"Field Monitor could not connect to the server using the specified file or URI"
+msgstr ""
+"Feldmonitor konnte sich mittels der angegebenen Datei oder URI nicht mit dem "
+"Server verbinden"
+
+#: src/widget/quick_connect_dialog.rs:119
 msgid "Supported files"
 msgstr "Unterstützte Dateien"
 
-#: src/widget/quick_connect_dialog.rs:125
+#: src/widget/quick_connect_dialog.rs:126
 msgid "RDP file"
 msgstr "RDP-Datei"
 
-#: src/widget/quick_connect_dialog.rs:132
+#: src/widget/quick_connect_dialog.rs:133
 msgid "Virt Viewer file"
 msgstr "Virt Viewer-Datei"
 
-#: src/widget/quick_connect_dialog.rs:136
+#: src/widget/quick_connect_dialog.rs:137
 msgid "Any file"
 msgstr "Alle Dateien"
 
-#: src/widget/quick_connect_dialog.rs:144
+#: src/widget/quick_connect_dialog.rs:145
 msgid "Open Connection from file..."
 msgstr "Verbindung via URL öffnen..."
 
-#: src/widget/quick_connect_dialog.rs:157
+#: src/widget/quick_connect_dialog.rs:158
 msgid "Field Monitor was unable to open the provided file."
 msgstr "Feldmonitor konnte die angegebene Datei nicht öffnen."
-
-#: src/widget/update_connection_dialog.blp:20
-msgid "Remove Connection"
-msgstr "Verbindung entfernen"
 
 #: src/widget/update_connection_dialog.blp:29
 msgid "Save"
@@ -1291,3 +1292,12 @@ msgstr "_Einstellungen"
 msgid "Connect to your virtual machines and remote servers."
 msgstr ""
 "Verbinden Sie sich mit ihren Virtuellen Maschinen und entfernen Servern."
+
+#~ msgid "Failed to process RDP connection configuration"
+#~ msgstr "Die RDP Verbindungseinstellungen konnten nicht verarbeitet werden"
+
+#~ msgid "Internal error while trying to build terminal."
+#~ msgstr "Es ist ein interner Fehler aufgetreten beim Aufbau des Terminals."
+
+#~ msgid "Settings"
+#~ msgstr "Einstellungen"

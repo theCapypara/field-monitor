@@ -16,9 +16,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use crate::util::OrdKeyed;
-use crate::widget::connection_list::info_page::FieldMonitorConnectionInfoPage;
-use crate::widget::connection_list::FieldMonitorConnectionStack;
 use crate::widget::connection_list::DEFAULT_GENERIC_ICON;
+use crate::widget::connection_list::FieldMonitorConnectionStack;
+use crate::widget::connection_list::info_page::FieldMonitorConnectionInfoPage;
 use crate::widget::navbar_row::FieldMonitorNavbarRow;
 use adw::gio;
 use adw::prelude::*;
@@ -32,7 +32,7 @@ use std::collections::HashMap;
 mod imp {
     use super::*;
     use futures::future::OptionFuture;
-    use futures::{stream, StreamExt};
+    use futures::{StreamExt, stream};
     use gettextrs::gettext;
     use gtk::pango;
     use std::sync::Arc;
