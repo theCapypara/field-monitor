@@ -16,9 +16,9 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use crate::util::OrdKeyed;
-use crate::widget::connection_list::DEFAULT_GENERIC_ICON;
-use crate::widget::connection_list::FieldMonitorConnectionStack;
 use crate::widget::connection_list::info_page::FieldMonitorConnectionInfoPage;
+use crate::widget::connection_list::FieldMonitorConnectionStack;
+use crate::widget::connection_list::DEFAULT_GENERIC_ICON;
 use crate::widget::navbar_row::FieldMonitorNavbarRow;
 use adw::gio;
 use adw::prelude::*;
@@ -32,7 +32,8 @@ use std::collections::HashMap;
 mod imp {
     use super::*;
     use futures::future::OptionFuture;
-    use futures::{StreamExt, stream};
+    use futures::{stream, StreamExt};
+    use gettextrs::gettext;
     use gtk::pango;
     use std::sync::Arc;
 
@@ -183,6 +184,57 @@ mod imp {
                             row.update_relation(&[gtk::accessible::Relation::LabelledBy(&[
                                 item.upcast_ref()
                             ])]);
+
+                            row.add_context_menu(|| {
+                                let menu = gio::Menu::new();
+                                let main_section = gio::Menu::new();
+                                let close_section = gio::Menu::new();
+
+                                main_section.append_item(&gio::MenuItem::new(
+                                    Some(&gettext("Edit Connection")),
+                                    Some("row.connection-edit"),
+                                ));
+
+                                let close_item = gio::MenuItem::new(
+                                    Some(&gettext("Remove Connection")),
+                                    Some("row.connection-remove"),
+                                );
+                                close_section.append_item(&close_item);
+
+                                menu.append_section(None, &main_section);
+                                menu.append_section(None, &close_section);
+
+                                menu
+                            });
+
+                            row.add_row_action(
+                                "connection-edit",
+                                glib::clone!(
+                                    #[weak]
+                                    page,
+                                    move |row| {
+                                        row.activate_action(
+                                            "app.edit-connection",
+                                            Some(&page.name().unwrap_or_default().to_variant()),
+                                        )
+                                        .ok();
+                                    }
+                                ),
+                            );
+                            row.add_row_action(
+                                "connection-remove",
+                                glib::clone!(
+                                    #[weak]
+                                    page,
+                                    move |row| {
+                                        row.activate_action(
+                                            "app.remove-connection",
+                                            Some(&page.name().unwrap_or_default().to_variant()),
+                                        )
+                                        .ok();
+                                    }
+                                ),
+                            );
 
                             let conn_meta = OptionFuture::from(
                                 page.child()
