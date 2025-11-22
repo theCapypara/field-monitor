@@ -6,18 +6,8 @@
   "sdk-extensions": [
     "org.freedesktop.Sdk.Extension.rust-stable"
   ],
-  "add-extensions": {
-    "org.freedesktop.Platform.ffmpeg-full": {
-      "directory": "lib/ffmpeg",
-      "version": "24.08",
-      "add-ld-path": ".",
-      "no-autodownload": false,
-      "autodelete": false
-    }
-  },
   "command": "de.capypara.FieldMonitor.Devel",
   "finish-args": [
-    "--talk-name=org.freedesktop.secrets",
     "--share=network",
     "--share=ipc",
     "--socket=fallback-x11",
@@ -25,7 +15,6 @@
     "--device=dri",
     "--socket=wayland",
     "--socket=pulseaudio",
-    "--filesystem=xdg-run/pipewire-0",
     "--filesystem=~/.ssh/known_hosts:ro",
     "--filesystem=xdg-run/libvirt",
     "--filesystem=/run/libvirt",
@@ -53,24 +42,10 @@
     "*.a"
   ],
   "cleanup-commands": [
-    "mkdir -p /app/lib/ffmpeg",
     "rm -rf /app/var/run/libvirt",
     "ln -s /var/run/libvirt /app/var/run/libvirt"
   ],
   "modules": [
-    {
-      "name": "libusb",
-      "config-opts": [
-        "--disable-udev"
-      ],
-      "sources": [
-        {
-          "type": "archive",
-          "url": "https://github.com/libusb/libusb/releases/download/v1.0.29/libusb-1.0.29.tar.bz2",
-          "sha256": "5977fc950f8d1395ccea9bd48c06b3f808fd3c2c961b44b0c2e6e29fc3a70a85"
-        }
-      ]
-    },
     {
       "name": "usbredir",
       "buildsystem": "meson",

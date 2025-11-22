@@ -46,12 +46,6 @@ stdenv.mkDerivation rec {
 
   mesonBuildType = "release";
 
-  postInstall = ''
-    wrapProgram $out/bin/de.capypara.FieldMonitor --prefix PATH ':' "$out/libexec" --set RUST_LOG 'field_monitor=info,libfieldmonitor=info,GLib=info,warning'
-  '';
-
-  doCheck = true;
-
   nativeBuildInputs = [
     appstream
     appstream-glib
@@ -88,6 +82,12 @@ stdenv.mkDerivation rec {
     gst-plugins-base
     gst-plugins-good
   ]);
+
+  postInstall = ''
+    wrapProgram $out/bin/de.capypara.FieldMonitor --prefix PATH ':' "$out/libexec" --set RUST_LOG 'field_monitor=info,libfieldmonitor=info,GLib=info,warning'
+  '';
+
+  doCheck = true;
 
   meta = with lib; {
     description = "Viewer for virtual machines and other external screens";
