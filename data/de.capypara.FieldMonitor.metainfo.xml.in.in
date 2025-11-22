@@ -75,6 +75,11 @@
 	</description>
 
 	<releases>
+		<release version="49.1" date="2025-11-XX">
+			<description translate="no">
+				TODO!!!
+			</description>
+		</release>
 		<release version="49.0" date="2025-11-06">
 			<description translate="no">
 				<p>This release updates Field Monitor for GNOME 49.</p>
