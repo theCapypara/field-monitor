@@ -22,18 +22,19 @@ mod server_preferences;
 mod util;
 
 use adw::prelude::*;
-use std::borrow::Cow;
-use std::num::NonZeroU32;
-use std::rc::Rc;
-
+use anyhow::anyhow;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use indexmap::IndexMap;
 use secure_string::SecureString;
+use std::borrow::Cow;
+use std::num::NonZeroU32;
+use std::rc::Rc;
 
 use crate::credential_preferences::GenericGroupCredentialPreferences;
 use crate::preferences::{GenericGroupConfiguration, GenericGroupPreferences};
 use crate::server_config::FinalizedServerConfig;
+use crate::server_preferences::GenericGroupServerPreferences;
 use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::config_error;
 use libfieldmonitor::connection::*;
@@ -77,8 +78,21 @@ impl ConnectionProvider for GenericConnectionProvider {
         IconSpec::Default
     }
 
-    fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget {
-        GenericGroupPreferences::new(configuration).upcast()
+    fn preferences(
+        &self,
+        configuration: Option<&ConnectionConfiguration>,
+        server_path: Option<&[String]>,
+    ) -> gtk::Widget {
+        match server_path {
+            // Edit a single server
+            Some(server_path) if server_path.len() == 1 && configuration.is_some() => {
+                let server_id = &server_path[0];
+                let config = configuration.unwrap();
+                GenericGroupServerPreferences::new(server_id, Some(config.clone())).upcast()
+            }
+            // Edit the entire connection
+            _ => GenericGroupPreferences::new(configuration).upcast(),
+        }
     }
 
     fn update_connection(
@@ -86,47 +100,75 @@ impl ConnectionProvider for GenericConnectionProvider {
         preferences: gtk::Widget,
         configuration: DualScopedConnectionConfiguration,
     ) -> LocalBoxFuture<'_, anyhow::Result<DualScopedConnectionConfiguration>> {
-        Box::pin(async {
-            let preferences = preferences
-                .downcast::<GenericGroupPreferences>()
-                .expect("update_connection got invalid widget type");
+        Box::pin(async move {
+            if let Some(preferences) = preferences.downcast_ref::<GenericGroupPreferences>() {
+                // We edited the entire connection.
+                let server_changes = &*preferences.servers();
 
-            let server_changes = &*preferences.servers();
+                configuration.transform_update_separate(
+                    |c_session| {
+                        c_session.set_connection_title(&preferences.title());
 
-            configuration.transform_update_separate(
-                |c_session| {
-                    c_session.set_connection_title(&preferences.title());
+                        for server in server_changes.updates.values() {
+                            c_session.set_server_type(&server.key, server.server_type);
+                            c_session.set_title(&server.key, &server.title);
+                            c_session.set_host(&server.key, &server.host);
+                            c_session.set_port(&server.key, server.port);
+                            store_credentials_session(&server.key, server, c_session)?
+                        }
 
-                    for server in server_changes.updates.values() {
+                        for removal in &server_changes.removes {
+                            c_session.remove_server(removal);
+                        }
+                        Ok(())
+                    },
+                    |c_persistent| {
+                        c_persistent.set_connection_title(&preferences.title());
+
+                        for server in server_changes.updates.values() {
+                            c_persistent.set_server_type(&server.key, server.server_type);
+                            c_persistent.set_title(&server.key, &server.title);
+                            c_persistent.set_host(&server.key, &server.host);
+                            c_persistent.set_port(&server.key, server.port);
+                            store_credentials_persistent(&server.key, server, c_persistent)?
+                        }
+
+                        for removal in &server_changes.removes {
+                            c_persistent.remove_server(removal);
+                        }
+                        Ok(())
+                    },
+                )
+            } else if let Some(server_prefs) =
+                preferences.downcast_ref::<GenericGroupServerPreferences>()
+            {
+                // We edited a single server.
+                let Some(server) = server_prefs.make_config() else {
+                    return Err(anyhow!(gettext(
+                        "One or more field(s) contain invalid values."
+                    )));
+                };
+                configuration.transform_update_separate(
+                    |c_session| {
                         c_session.set_server_type(&server.key, server.server_type);
                         c_session.set_title(&server.key, &server.title);
                         c_session.set_host(&server.key, &server.host);
                         c_session.set_port(&server.key, server.port);
-                        store_credentials_session(&server.key, server, c_session)?
-                    }
-
-                    for removal in &server_changes.removes {
-                        c_session.remove_server(removal);
-                    }
-                    Ok(())
-                },
-                |c_persistent| {
-                    c_persistent.set_connection_title(&preferences.title());
-
-                    for server in server_changes.updates.values() {
+                        store_credentials_session(&server.key, &server, c_session)?;
+                        Ok(())
+                    },
+                    |c_persistent| {
                         c_persistent.set_server_type(&server.key, server.server_type);
                         c_persistent.set_title(&server.key, &server.title);
                         c_persistent.set_host(&server.key, &server.host);
                         c_persistent.set_port(&server.key, server.port);
-                        store_credentials_persistent(&server.key, server, c_persistent)?
-                    }
-
-                    for removal in &server_changes.removes {
-                        c_persistent.remove_server(removal);
-                    }
-                    Ok(())
-                },
-            )
+                        store_credentials_persistent(&server.key, &server, c_persistent)?;
+                        Ok(())
+                    },
+                )
+            } else {
+                panic!("update_connection got invalid widget type");
+            }
         })
     }
 
@@ -292,6 +334,10 @@ impl ServerConnection for GenericConnectionServer {
                 .build()
                 .unwrap()
         })
+    }
+
+    fn editable(&self) -> bool {
+        true
     }
 
     fn supported_adapters(&self) -> LocalBoxFuture<'_, Vec<(Cow<'_, str>, Cow<'_, str>)>> {

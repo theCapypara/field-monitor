@@ -136,7 +136,7 @@ impl FieldMonitorAddConnectionDialog {
         let action_bar = gtk::ActionBar::new();
         action_bar.pack_end(&add_button);
 
-        let preferences = provider.preferences(None);
+        let preferences = provider.preferences(None, None);
 
         let toast_overlay = adw::ToastOverlay::new();
         toast_overlay.set_child(Some(&preferences));

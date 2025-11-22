@@ -88,7 +88,11 @@ impl ConnectionProvider for DebugConnectionProvider {
         IconSpec::Named(ICON.into())
     }
 
-    fn preferences(&self, configuration: Option<&ConnectionConfiguration>) -> gtk::Widget {
+    fn preferences(
+        &self,
+        configuration: Option<&ConnectionConfiguration>,
+        _server_path: Option<&[String]>,
+    ) -> gtk::Widget {
         DebugPreferences::new(configuration).upcast()
     }
 

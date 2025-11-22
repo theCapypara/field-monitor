@@ -103,6 +103,7 @@ where
                 .orientation(gtk::Orientation::Horizontal)
                 .build();
 
+            Self::maybe_add_edit_button(&suffix, &**server, &path).await;
             Self::maybe_add_connect_button(target.get_row(), &suffix, &**server, &path).await;
             maybe_add_actions_button(&suffix, ServerOrConnection::Server(&**server), &path).await;
 
@@ -195,6 +196,21 @@ where
             if let Some(row) = row {
                 row.set_activatable_widget(Some(&button));
             }
+            boxx.append(&button);
+        }
+    }
+
+    async fn maybe_add_edit_button(boxx: &gtk::Box, server: &dyn ServerConnection, path: &str) {
+        if server.editable() {
+            let button = gtk::Button::builder()
+                .action_name("app.edit-connection-server")
+                .action_target(&path.to_variant())
+                .icon_name("edit-symbolic")
+                .tooltip_text(gettext("Edit Server"))
+                .valign(gtk::Align::Center)
+                .css_classes(["flat"])
+                .build();
+
             boxx.append(&button);
         }
     }

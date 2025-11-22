@@ -237,8 +237,8 @@ msgstr "Серверы ещё не добавлены."
 #. variable name.
 #: connection/generic-group/src/preferences.rs:577
 #: src/widget/update_connection_dialog.rs:94
-msgid "Edit {title}"
-msgstr "Редактировать {title}"
+msgid "Edit “{title}”"
+msgstr "Редактировать «{title}»"
 
 #: connection/generic-group/src/preferences.rs:589
 msgid "Update"

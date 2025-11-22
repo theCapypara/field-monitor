@@ -243,8 +243,8 @@ msgstr "Nenhum servidor foi adicionado ainda."
 #. variable name.
 #: connection/generic-group/src/preferences.rs:577
 #: src/widget/update_connection_dialog.rs:94
-msgid "Edit {title}"
-msgstr "Editar {title}"
+msgid "Edit “{title}”"
+msgstr "Editar “{title}”"
 
 #: connection/generic-group/src/preferences.rs:589
 msgid "Update"

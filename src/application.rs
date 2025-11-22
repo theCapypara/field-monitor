@@ -410,9 +410,11 @@ impl FieldMonitorApplication {
         let quit_action = gio::ActionEntry::builder("quit")
             .activate(move |app: &Self, _, _| app.quit())
             .build();
+
         let about_action = gio::ActionEntry::builder("about")
             .activate(move |app: &Self, _, _| app.show_about())
             .build();
+
         let reload_connections_action = gio::ActionEntry::builder("reload-connections")
             .activate(move |app: &Self, _, _| {
                 glib::spawn_future_local(glib::clone!(
@@ -424,27 +426,41 @@ impl FieldMonitorApplication {
                 ));
             })
             .build();
+
         let add_connection_action = gio::ActionEntry::builder("add-connection")
             .activate(move |app: &Self, _, _| app.add_connection_via_dialog())
             .build();
+
+        // Edit an entire connection
         let edit_connection_action = gio::ActionEntry::builder("edit-connection")
             .parameter_type(Some(&String::static_variant_type()))
             .activate(move |app: &Self, _, connection_id| {
-                app.edit_connection_via_dialog(connection_id)
+                app.edit_connection_via_dialog(connection_id, false)
             })
             .build();
+
+        // Edit a single server inside a connection, fallback to editing the entire connection.
+        let edit_connection_server_action = gio::ActionEntry::builder("edit-connection-server")
+            .parameter_type(Some(&String::static_variant_type()))
+            .activate(move |app: &Self, _, server_path| {
+                app.edit_connection_via_dialog(server_path, true)
+            })
+            .build();
+
         let remove_connection_action = gio::ActionEntry::builder("remove-connection")
             .parameter_type(Some(&String::static_variant_type()))
             .activate(move |app: &Self, _, connection_id| {
                 app.remove_connection_via_dialog(connection_id)
             })
             .build();
+
         let auth_connection_action = gio::ActionEntry::builder("auth-connection")
             .parameter_type(Some(&String::static_variant_type()))
             .activate(move |app: &Self, _, connection_id| {
                 app.auth_connection_via_dialog(connection_id)
             })
             .build();
+
         let connect_to_server_action = gio::ActionEntry::builder("connect-to-server")
             .parameter_type(Some(&*<(String, String)>::static_variant_type()))
             .activate(move |app: &Self, _, connection_id| {
@@ -469,6 +485,7 @@ impl FieldMonitorApplication {
                 ));
             })
             .build();
+
         let perform_connection_action_action =
             gio::ActionEntry::builder("perform-connection-action")
                 .parameter_type(Some(&*<(bool, String, String)>::static_variant_type()))
@@ -497,11 +514,13 @@ impl FieldMonitorApplication {
                     ));
                 })
                 .build();
+
         let new_window_action = gio::ActionEntry::builder("new-window")
             .activate(move |app: &Self, _, _| {
                 app.open_new_window();
             })
             .build();
+
         let preferences_action = gio::ActionEntry::builder("preferences")
             .activate(move |app: &Self, _, _| {
                 app.open_preferences();
@@ -514,6 +533,7 @@ impl FieldMonitorApplication {
             reload_connections_action,
             add_connection_action,
             edit_connection_action,
+            edit_connection_server_action,
             remove_connection_action,
             auth_connection_action,
             connect_to_server_action,
@@ -613,26 +633,49 @@ impl FieldMonitorApplication {
         dialog.present(window.as_ref());
     }
 
-    fn edit_connection_via_dialog(&self, target: Option<&glib::Variant>) {
-        debug!("app.edit-connection: {:?}", target);
+    fn edit_connection_via_dialog(
+        &self,
+        target: Option<&glib::Variant>,
+        target_is_server_path: bool,
+    ) {
+        debug!("app.edit-connection[-server]: {:?}", target);
         let imp = self.imp();
 
-        let Some(connection_id) = target.and_then(glib::Variant::str) else {
-            warn!("Invalid connection ID target passed to app.edit-connection. Ignoring.");
+        let Some(target) = target.and_then(glib::Variant::str) else {
+            warn!("Invalid connection ID target passed to app.edit-connection[-server]. Ignoring.");
             return;
         };
+
+        // Extract connection ID and possible the server path
+        let (connection_id, server_path) = if target_is_server_path {
+            let mut path = target.split("/");
+            let Some(connection_id) = path.next() else {
+                warn!(
+                    "Invalid connection ID target passed to app.edit-connection-server. Ignoring."
+                );
+                return;
+            };
+            (
+                connection_id,
+                Some(path.map(ToString::to_string).collect::<Vec<_>>()),
+            )
+        } else {
+            (target, None)
+        };
+
         let Some(connection) = imp
             .connections
             .borrow()
             .as_ref()
             .and_then(|m| m.get(connection_id).cloned())
         else {
-            warn!("Connection passed to app.edit-connection not found. Ignoring.");
+            warn!("Connection passed to app.edit-connection[-server] not found. Ignoring.");
             return;
         };
 
         let window = self.active_window();
-        let dialog = FieldMonitorUpdateConnectionDialog::new(self, connection);
+        let dialog =
+            FieldMonitorUpdateConnectionDialog::new(self, connection, server_path.as_deref());
         let msg = gettext("Connection successfully updated.");
 
         self.show_toast_or_parentless_dialog_on_signal(
@@ -671,7 +714,7 @@ impl FieldMonitorApplication {
             .heading(gettext_f(
                 // Translators: Do NOT translate the content between '{' and '}', this is a
                 // variable name.
-                "Remove {title}?",
+                "Permanently Remove “{title}”?",
                 &[("title", &title)],
             ))
             .build();

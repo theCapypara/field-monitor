@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-22 17:15+0100\n"
-"PO-Revision-Date: 2025-11-22 17:18+0100\n"
+"POT-Creation-Date: 2025-11-22 22:09+0100\n"
+"PO-Revision-Date: 2025-11-22 22:10+0100\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #. Translators: The name of the application.
 #: data/de.capypara.FieldMonitor.desktop.in.in:2
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:538
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:558
 #: src/widget/window.blp:9 src/widget/window.blp:59 src/widget/window.blp:169
 #: src/widget/window.blp:175 src/widget/window.rs:313
 msgid "Field Monitor"
@@ -201,23 +201,27 @@ msgstr "Benutzername"
 msgid "Password"
 msgstr "Passwort"
 
-#: connection/generic-group/src/lib.rs:57
+#: connection/generic-group/src/lib.rs:58
 msgid "Generic Connection Group"
 msgstr "Generische Verbindungsgruppe"
 
-#: connection/generic-group/src/lib.rs:61
+#: connection/generic-group/src/lib.rs:62
 msgid "Generic Connection Groups"
 msgstr "Generische Verbindungsgruppen"
 
-#: connection/generic-group/src/lib.rs:65
+#: connection/generic-group/src/lib.rs:66
 msgid "Add Generic Connection Group"
 msgstr "Generische Verbindungsgruppe hinzufügen"
 
-#: connection/generic-group/src/lib.rs:73
+#: connection/generic-group/src/lib.rs:74
 msgid "Connection to one or more RDP, SPICE and VNC servers"
 msgstr "Verbindung zu RDP, SPICE und/oder VNC Servern"
 
-#: connection/generic-group/src/lib.rs:325
+#: connection/generic-group/src/lib.rs:148
+msgid "One or more field(s) contain invalid values."
+msgstr "Ein oder mehrere Feld(er) enthalten ungültige Werte."
+
+#: connection/generic-group/src/lib.rs:371
 msgid "Failed to load password."
 msgstr "Laden des Passwortes fehlgeschlagen."
 
@@ -230,32 +234,32 @@ msgid "Servers"
 msgstr "Server"
 
 #: connection/generic-group/src/preferences.blp:31
-#: connection/generic-group/src/preferences.rs:582
+#: connection/generic-group/src/preferences.rs:584
 msgid "Add Server"
 msgstr "Server hinzufügen"
 
-#: connection/generic-group/src/preferences.rs:469
+#: connection/generic-group/src/preferences.rs:471
 msgid "No servers added yet."
 msgstr "Es wurde noch kein Server hinzugefügt."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/generic-group/src/preferences.rs:578
-#: src/widget/update_connection_dialog.rs:95
+#: connection/generic-group/src/preferences.rs:580
+#: src/widget/update_connection_dialog.rs:102
 #, rust-format
-msgid "Edit {title}"
-msgstr "Bearbeite {title}"
+msgid "Edit “{title}”"
+msgstr "Bearbeite »{title}«"
 
-#: connection/generic-group/src/preferences.rs:590
+#: connection/generic-group/src/preferences.rs:592
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: connection/generic-group/src/preferences.rs:592
+#: connection/generic-group/src/preferences.rs:594
 #: src/widget/add_connection_dialog.rs:133
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: connection/generic-group/src/preferences.rs:613
+#: connection/generic-group/src/preferences.rs:615
 msgid "Remove Server"
 msgstr "Entfernter Server"
 
@@ -565,47 +569,47 @@ msgid "Open the app with a new window"
 msgstr "Anwendung mit einem neuen Fenster starten"
 
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
-#: src/application.rs:553
+#: src/application.rs:573
 msgid "translator-credits"
 msgstr "Marco Köpcke <hello@capypara.de>"
 
-#: src/application.rs:562 src/connection_loader.rs:433
+#: src/application.rs:582 src/connection_loader.rs:433
 #: src/widget/add_connection_dialog.rs:209
 #: src/widget/authenticate_connection_dialog.rs:173
 #: src/widget/quick_connect_dialog.rs:101
 #: src/widget/quick_connect_dialog.rs:161
-#: src/widget/update_connection_dialog.rs:154
+#: src/widget/update_connection_dialog.rs:180
 msgid "OK"
 msgstr "OK"
 
-#: src/application.rs:604
+#: src/application.rs:624
 msgid "Connection successfully added."
 msgstr "Verbindung erfolgreich hinzugefügt."
 
-#: src/application.rs:636
+#: src/application.rs:679
 msgid "Connection successfully updated."
 msgstr "Verbindung erfolgreich aktualisiert."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/application.rs:674
+#: src/application.rs:717
 #, rust-format
-msgid "Remove {title}?"
-msgstr "{title} entfernen?"
+msgid "Permanently Remove “{title}”?"
+msgstr "»{title}« dauerhaft entfernen?"
 
-#: src/application.rs:678 src/widget/connection_view/connection_tab_view.rs:250
+#: src/application.rs:721 src/widget/connection_view/connection_tab_view.rs:250
 msgid "No"
 msgstr "Nein"
 
-#: src/application.rs:679 src/widget/connection_view/connection_tab_view.rs:251
+#: src/application.rs:722 src/widget/connection_view/connection_tab_view.rs:251
 msgid "Yes"
 msgstr "Ja"
 
-#: src/application.rs:684
+#: src/application.rs:727
 msgid "Connection successfully removed."
 msgstr "Verbindung erfolgreich entfernt."
 
-#: src/application.rs:745
+#: src/application.rs:788
 msgid "Authentication successfully updated"
 msgstr "Informationen zur Authentifizierung erfolgreich aktualisiert"
 
@@ -710,7 +714,7 @@ msgstr "Unbenannter Server"
 msgid "Quick Connect"
 msgstr "Schnellverbindung"
 
-#: src/quick_connect/mod.rs:316
+#: src/quick_connect/mod.rs:320
 msgid "via Quick Connect"
 msgstr "via Schnellverbindung"
 
@@ -756,13 +760,13 @@ msgstr "Neue Verbindung hinzufügen"
 
 #: src/widget/add_connection_dialog.rs:202
 #: src/widget/authenticate_connection_dialog.rs:166
-#: src/widget/update_connection_dialog.rs:147
+#: src/widget/update_connection_dialog.rs:173
 msgid "Failed to save connection"
 msgstr "Fehler beim Speichern der Verbindung"
 
 #: src/widget/add_connection_dialog.rs:205
 #: src/widget/authenticate_connection_dialog.rs:169
-#: src/widget/update_connection_dialog.rs:150
+#: src/widget/update_connection_dialog.rs:176
 msgid "An error occurred, while trying to save the connection"
 msgstr "Beim Speichern der Verbindung ist ein Fehler aufgetreten"
 
@@ -879,18 +883,24 @@ msgstr "Authentifizieren"
 msgid "No servers available"
 msgstr "Keine Server verfügbar"
 
-#: src/widget/connection_list/server_info.rs:242
+#. TODO: Getting the server name here isn't really easy...
+#: src/widget/connection_list/server_info.rs:209
+#: src/widget/update_connection_dialog.rs:97
+msgid "Edit Server"
+msgstr "Server bearbeiten"
+
+#: src/widget/connection_list/server_info.rs:258
 msgid "Actions"
 msgstr "Aktionen"
 
-#: src/widget/connection_list/server_info.rs:266
+#: src/widget/connection_list/server_info.rs:282
 #: src/widget/quick_connect_dialog.blp:39
 msgid "Connect"
 msgstr "Verbinden"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/widget/connection_list/server_info.rs:284
+#: src/widget/connection_list/server_info.rs:300
 #, rust-format
 msgid "Connect via {adapter}"
 msgstr "Verbinden via {adapter}"
