@@ -69,7 +69,7 @@ lib/src/tokiort.rs
 src/application.rs
 src/connection_loader.rs
 src/connection.rs
-src/gtk/help-overlay.blp
+src/shortcuts-dialog.blp
 src/main.rs
 src/quick_connect/mod.rs
 src/quick_connect/preferences.blp
