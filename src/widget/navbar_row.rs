@@ -170,36 +170,10 @@ impl FieldMonitorNavbarRow {
     }
 
     // This is all not great 🥲
-    pub fn add_context_menu(&self, build_menu: fn() -> gio::Menu) {
+    pub fn add_context_menu(&self, popover: impl IsA<gtk::PopoverMenu>) {
+        let popover = popover.upcast();
+
         self.update_property(&[gtk::accessible::Property::HasPopup(true)]);
-
-        let show_context_menu = move |row: &Self, x, y| {
-            let popover = gtk::PopoverMenu::builder()
-                .menu_model(&build_menu())
-                .has_arrow(false)
-                .pointing_to(&gdk::Rectangle::new(x, y, 0, 0))
-                .position(gtk::PositionType::Bottom)
-                .halign(gtk::Align::Start)
-                .build();
-            popover.set_parent(row);
-            popover.popup();
-
-            row.add_css_class("has-open-popup");
-            popover.connect_closed(glib::clone!(
-                #[weak]
-                row,
-                move |_popover| {
-                    row.remove_css_class("has-open-popup");
-                    // LEAK
-                    // XXX: We can't unparent here, because that would immediately cause the
-                    //      actions to not fire anymore. But waiting and then unparenting somehow
-                    //      crashes, with `Finalizing FieldMonitorNavbarRow 0x55bb9275a1d0, but it still has children left`
-                    //      This leak is realistically not a huge issue, but it's still bad,
-                    //      if anyone knows a solution (that ideally doesn't require big refactoring), let me know.
-                    //_popover.unparent();
-                }
-            ));
-        };
 
         let gesture_ctrl = gtk::GestureClick::builder()
             .button(MOUSE_RIGHT_BUTTON)
@@ -207,7 +181,9 @@ impl FieldMonitorNavbarRow {
         gesture_ctrl.connect_released(glib::clone!(
             #[weak(rename_to=slf)]
             self,
-            move |_, _, x, y| show_context_menu(&slf, x as _, y as _)
+            #[weak]
+            popover,
+            move |_, _, x, y| slf.show_context_menu(popover, x as _, y as _)
         ));
         self.add_controller(gesture_ctrl);
 
@@ -216,11 +192,33 @@ impl FieldMonitorNavbarRow {
         action.connect_activate(glib::clone!(
             #[weak(rename_to=slf)]
             self,
+            #[weak]
+            popover,
             move |_, _| {
-                show_context_menu(&slf, slf.width() / 2, ((slf.height() as f64) * 0.75) as _);
+                slf.show_context_menu(
+                    popover,
+                    slf.width() / 2,
+                    ((slf.height() as f64) * 0.75) as _,
+                );
             }
         ));
         group.add_action(&action);
         self.insert_action_group("menu", Some(&group));
+    }
+
+    fn show_context_menu(&self, popover: gtk::PopoverMenu, x: i32, y: i32) {
+        popover.set_pointing_to(Some(&gdk::Rectangle::new(x, y, 0, 0)));
+        popover.unparent();
+        popover.set_parent(self);
+        popover.popup();
+
+        self.add_css_class("has-open-popup");
+        popover.connect_closed(glib::clone!(
+            #[weak(rename_to=slf)]
+            self,
+            move |_popover| {
+                slf.remove_css_class("has-open-popup");
+            }
+        ));
     }
 }

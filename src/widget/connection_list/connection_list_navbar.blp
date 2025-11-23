@@ -2,16 +2,39 @@ using Gtk 4.0;
 using Adw 1;
 
 template $FieldMonitorNavbarConnectionList: Adw.Bin {
-    ListBox list {
-        row-activated => $on_list_row_activated() swapped;
+    Box {
+        ListBox list {
+            hexpand: true;
 
-        accessibility {
-            label: _("Sidebar");
+            row-activated => $on_list_row_activated() swapped;
+
+            accessibility {
+                label: _("Sidebar");
+            }
+
+            styles [
+                "fm-navbar",
+                "navigation-sidebar"
+            ]
         }
 
-        styles [
-            "fm-navbar",
-            "navigation-sidebar"
-        ]
+        PopoverMenu context_menu {
+            has-arrow: false;
+            position: bottom;
+            halign: start;
+            menu-model: context_menu_model;
+        }
+    }
+}
+
+menu context_menu_model {
+    item {
+        label: _("Edit Connection");
+        action: "row.connection-edit";
+    }
+
+    item {
+        label: _("Remove Connection");
+        action: "row.connection-remove";
     }
 }

@@ -75,7 +75,7 @@
 	</description>
 
 	<releases>
-		<release version="49.1" date="2025-11-XX">
+		<release version="49.1" date="2025-11-23">
 			<description translate="no">
 				TODO!!!
 			</description>
@@ -86,7 +86,7 @@
 				<ul>
 					<li>All libraries used by Field Monitor have been updated to the latest version.</li>
 					<li>
-						RDP connections are now handled with IronRDP instead of FreeRDP 1.
+						RDP connections are now handled with IronRDP instead of FreeRDP 2.
 						This is a more secure and modern implementation and should fix some issues, however IronRDP
 						is still overall less compatible with some RDP server implementations.
 					</li>

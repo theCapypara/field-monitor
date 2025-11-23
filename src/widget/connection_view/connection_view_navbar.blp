@@ -28,9 +28,28 @@ template $FieldMonitorNavbarConnectionView: Adw.Bin {
             ]
         }
 
+        PopoverMenu context_menu {
+            has-arrow: false;
+            position: bottom;
+            halign: start;
+            menu-model: context_menu_model;
+        }
+
         styles [
             "fm-navbar",
             "connection-view-navbar"
         ]
+    }
+}
+
+menu context_menu_model {
+    item {
+        label: _("Move to New Window");
+        action: "row.view-move-to-new-window";
+    }
+
+    item {
+        label: _("Close");
+        action: "row.view-close";
     }
 }

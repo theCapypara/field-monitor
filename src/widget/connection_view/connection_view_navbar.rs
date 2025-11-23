@@ -40,6 +40,8 @@ mod imp {
         pub list: TemplateChild<gtk::ListBox>,
         #[template_child]
         pub header_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub context_menu: TemplateChild<gtk::PopoverMenu>,
         #[property(get, set = Self::set_tab_view)]
         pub tab_view: RefCell<Option<FieldMonitorConnectionTabView>>,
         pub inner_tab_view: RefCell<Option<adw::TabView>>,
@@ -178,18 +180,7 @@ mod imp {
                     close_button.set_action_name(Some("row.view-close"));
                     row.add_suffix(&close_button);
 
-                    row.add_context_menu(|| {
-                        let menu = gio::Menu::new();
-
-                        menu.append_item(&gio::MenuItem::new(
-                            Some(&gettext("Move to New Window")),
-                            Some("row.view-move-to-new-window"),
-                        ));
-                        let close_item =
-                            gio::MenuItem::new(Some(&gettext("Close")), Some("row.view-close"));
-                        menu.append_item(&close_item);
-                        menu
-                    });
+                    row.add_context_menu(self.context_menu.get());
 
                     row.add_row_action(
                         "view-move-to-new-window",
