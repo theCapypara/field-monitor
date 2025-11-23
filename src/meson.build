@@ -27,6 +27,7 @@ blueprints = custom_target('blueprints',
 
 conf = configuration_data()
 conf.set_quoted('APP_ID_SLASHED', get_option('app-id').replace('.', '/'))
+conf.set('APP_ID_UNQUOTED', get_option('app-id'))
 
 configure_file(
     input: 'field-monitor.gresource.xml.in',
