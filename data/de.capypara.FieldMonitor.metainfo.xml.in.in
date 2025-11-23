@@ -77,7 +77,7 @@
 	<releases>
 		<release version="49.1" date="2025-11-23">
 			<description translate="no">
-				This release brings some small improvements.
+				<p>This release brings some small improvements.</p>
 				<ul>
 					<li>RDP connections to Windows servers no longer have swapped color channels.</li>
 					<li>Pasting text into RDP connections to Windows servers no longer cuts off the last character in some cases.</li>
