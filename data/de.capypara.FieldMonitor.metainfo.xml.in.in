@@ -77,7 +77,17 @@
 	<releases>
 		<release version="49.1" date="2025-11-23">
 			<description translate="no">
-				TODO!!!
+				This release brings some small improvements.
+				<ul>
+					<li>RDP connections to Windows servers no longer have swapped color channels.</li>
+					<li>Pasting text into RDP connections to Windows servers no longer cuts off the last character in some cases.</li>
+					<li>The app now requires less permissions when installed via Flatpak.</li>
+					<li>Dialogs can now be accepted using the ENTER key when inside of text input fields (thanks to f1ori).</li>
+					<li>Added context menus in the sidebar.</li>
+					<li>Servers in a generic connection group can now be edited individually right from the server list using a new edit button.</li>
+					<li>Fixed one of the "Keyboard Shortcuts" menu items not working.</li>
+					<li>Small wording changes.</li>
+				</ul>
 			</description>
 		</release>
 		<release version="49.0" date="2025-11-06">
