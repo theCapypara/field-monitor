@@ -33,7 +33,6 @@ mod imp {
     use super::*;
     use futures::future::OptionFuture;
     use futures::{stream, StreamExt};
-    use gettextrs::gettext;
     use gtk::pango;
     use std::sync::Arc;
 

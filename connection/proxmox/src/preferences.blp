@@ -10,6 +10,7 @@ template $ProxmoxPreferences: Adw.PreferencesPage {
     Adw.PreferencesGroup {
         Adw.EntryRow title_entry {
             title: _("Connection Name");
+            activates-default: true;
         }
     }
 
@@ -18,10 +19,12 @@ template $ProxmoxPreferences: Adw.PreferencesPage {
 
         Adw.EntryRow hostname_entry {
             title: _("Hostname");
+            activates-default: true;
         }
 
         Adw.EntryRow port_entry {
             title: _("Port");
+            activates-default: true;
             text: "8006";
             input-purpose: number;
         }

@@ -24,9 +24,11 @@ template $DebugBehaviourPreferences : Adw.PreferencesGroup {
 
     Adw.EntryRow store_session_entry_row {
         title: "Value stored in session";
+        activates-default: true;
     }
 
     Adw.EntryRow store_persistent_entry_row {
         title: "Value stored on disk";
+        activates-default: true;
     }
 }

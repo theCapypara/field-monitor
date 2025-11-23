@@ -31,13 +31,13 @@ template $FieldMonitorQuickConnectDialog: Adw.Dialog {
             [start]
             Button {
                 label: _("Open File...");
-                activate => $on_open_file() swapped;
+                clicked => $on_open_file() swapped;
             }
 
             [end]
             Button connect_button {
                 label: _("Connect");
-                activate => $on_connect() swapped;
+                clicked => $on_connect() swapped;
 
                 styles [
                     "suggested-action"

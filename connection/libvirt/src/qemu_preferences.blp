@@ -11,6 +11,7 @@ template $LibvirtQemuPreferences: Adw.PreferencesPage {
     Adw.PreferencesGroup {
         Adw.EntryRow title_entry {
             title: _("Connection Name");
+            activates-default: true;
         }
     }
 
@@ -49,10 +50,12 @@ template $LibvirtQemuPreferences: Adw.PreferencesPage {
 
             Adw.EntryRow ssh_hostname_entry {
                 title: _("Hostname");
+                activates-default: true;
             }
 
             Adw.EntryRow ssh_username_entry {
                 title: _("Username");
+                activates-default: true;
             }
         }
     }

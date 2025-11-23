@@ -166,6 +166,7 @@ impl FieldMonitorAddConnectionDialog {
                 });
             }
         ));
+        slf.set_default_widget(Some(&add_button));
 
         self.imp().navigation_view.push(&settings_nav_page);
     }
