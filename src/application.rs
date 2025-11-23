@@ -554,25 +554,18 @@ impl FieldMonitorApplication {
     fn show_about(&self) {
         let window = self.active_window();
 
-        let about = adw::AboutDialog::builder()
-            .application_name(gettext("Field Monitor"))
-            .application_icon(APP_ID)
-            .license_type(gtk::License::Gpl30)
-            .developer_name("Marco Köpcke")
-            .version(VERSION)
-            .developers(vec![
-                "Marco Köpcke <hello@capypara.de>",
-                "Florian Richter <florian@richter-es.de>",
-            ])
-            .artists(vec!["Jakub Steiner"])
-            .copyright("© 2025 Marco Köpcke")
-            .website("https://github.com/theCapypara/field-monitor")
-            .issue_url("https://github.com/theCapypara/field-monitor/issues")
-            .translator_credits(gettext(
-                // Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
-                "translator-credits",
-            ))
-            .build();
+        let about =
+            adw::AboutDialog::from_appdata("/de/capypara/FieldMonitor/metainfo.xml", Some(VERSION));
+        about.set_developers(&[
+            "Marco Köpcke <hello@capypara.de>",
+            "Florian Richter <florian@richter-es.de>",
+        ]);
+        about.set_artists(&["Jakub Steiner"]);
+        about.set_translator_credits(&gettext(
+            // Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
+            "translator-credits",
+        ));
+        about.set_copyright("© 2025 Marco Köpcke");
 
         about.present(window.as_ref());
     }
