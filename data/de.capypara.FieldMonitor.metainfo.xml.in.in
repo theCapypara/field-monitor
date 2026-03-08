@@ -59,7 +59,7 @@
 			It has support for directly connecting to VMs of the following hypervisors:
 		</p>
 		<ul>
-			<li>Proxmox</li>
+			<li>Proxmox Virtual Environment</li>
 			<li>QEMU/KVM via libvirt</li>
 		</ul>
 		<!-- Translators: Part of the description of the application in the metainfo. -->
@@ -147,7 +147,7 @@
 		</screenshot>
 		<screenshot>
 			<!-- Translators: Caption of the 5th screenshot in the metainfo -->
-			<caption>Adding a new Proxmox hypervisor connection</caption>
+			<caption>Adding a new Proxmox Virtual Environment hypervisor connection</caption>
 			<image>
 				https://raw.githubusercontent.com/theCapypara/field-monitor/refs/heads/main/data/screenshots/adding-proxmox.png
 			</image>

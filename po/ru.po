@@ -165,8 +165,8 @@ msgstr "Скриншот экрана подключённой консоли"
 
 #. Translators: Caption of the 5th screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:112
-msgid "Adding a new Proxmox hypervisor connection"
-msgstr "Скриншот экрана добавления подключения к Proxmox"
+msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
+msgstr "Скриншот экрана добавления подключения к Proxmox Virtual Environment"
 
 #: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
 msgid "Remote Desktop file"
@@ -456,8 +456,8 @@ msgid "Add Proxmox Connection"
 msgstr "Добавить подключение Proxmox"
 
 #: connection/proxmox/src/api/provider.rs:64
-msgid "Proxmox hypervisor connection"
-msgstr "Подключение к гипервизору Proxmox"
+msgid "Proxmox Virtual Environment hypervisor connection"
+msgstr "Подключение к гипервизору Proxmox Virtual Environment"
 
 #: connection/proxmox/src/api/vm.rs:132
 msgid "Reboot command successfully sent to VM."
