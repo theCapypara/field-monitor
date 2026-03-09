@@ -31,7 +31,7 @@
 }:
 stdenv.mkDerivation rec {
   pname = "field-monitor";
-  version = "49.1";
+  version = "50.0";
 
   strictDeps = true;
 
@@ -40,7 +40,7 @@ stdenv.mkDerivation rec {
   cargoDeps = rustPlatform.importCargoLock {
     lockFile = "${src}/Cargo.lock";
     outputHashes = {
-      "cbindgen-0.28.0" = "sha256-0GDT7OIJePWhj4gpMHZe6CTWZ63Sn+JaI8RtZXCbo5c=";
+      "cbindgen-0.28.0" = "sha256-ce0vn9+kYa/7q6fNrotlnp9q7len6ksDZSqaJhGrzCY=";
     };
   };
 

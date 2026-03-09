@@ -9,7 +9,7 @@ libfieldmonitor = { path = "../../lib" }
 gettext-rs = { workspace = true }
 anyhow = { workspace = true }
 futures = { workspace = true }
-http = "1.3"
+http = "1.4"
 tokio = { workspace = true }
 log = { workspace = true }
 gtk = { workspace = true }

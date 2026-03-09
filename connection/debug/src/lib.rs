@@ -28,7 +28,7 @@ use glib::timeout_future;
 use gtk::prelude::*;
 use indexmap::IndexMap;
 use log::debug;
-use rand::{Rng, rng};
+use rand::{rng, RngExt};
 
 use libfieldmonitor::adapter::rdp::RdpAdapter;
 use libfieldmonitor::adapter::spice::SpiceAdapter;

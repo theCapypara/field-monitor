@@ -5,9 +5,9 @@ rust-version.workspace = true
 
 [dependencies]
 futures = { workspace = true }
-reqwest = { version = "0.12", features = ["json", "default-tls"] }
+reqwest = { version = "0.13", features = ["json", "default-tls", "form", "query"] }
 log = { workspace = true }
-http = "1.3"
+http = "1.4"
 thiserror = "2"
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -17,7 +17,7 @@ urlencoding = "2.1"
 [dev-dependencies]
 simple_logger = "5"
 clap = { version = "4.5", features = ["derive", "env"] }
-tokio = { version = "1.48", features = ["rt-multi-thread", "macros"] }
+tokio = { version = "1.50", features = ["rt-multi-thread", "macros"] }
 
 [lints]
 workspace = true

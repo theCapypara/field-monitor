@@ -59,7 +59,7 @@ impl Adapter for RdpAdapter {
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
     ) -> Box<dyn AdapterDisplay> {
         debug!("creating rdp adapter");
-        let rdp = rdw_rdp::Display::new();
+        let rdp = rdw_rdp::Display::new(Default::default());
 
         let on_disconnected_cln = on_disconnected.clone();
         rdp.connect_rdp_connected_notify(move |rdp| {
