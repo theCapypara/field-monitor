@@ -71,10 +71,10 @@ pub(super) fn set_title_in(
     query: Option<HashMap<Cow<str>, Cow<str>>>,
     config: &mut ConnectionConfiguration,
 ) {
-    if let Some(query) = query {
-        if let Some(title) = query.get("title") {
-            config.set_title(title);
-        }
+    if let Some(query) = query
+        && let Some(title) = query.get("title")
+    {
+        config.set_title(title);
     }
 
     let mut host = "";

@@ -76,10 +76,10 @@ pub async fn try_from_file<T: Read + Seek>(
 
         if let Some(port) = vv.port {
             config.set_port(port);
-        } else if let Some(tls_port) = vv.tls_port {
-            if !matches!(vv.r#type, QuickConnectAdapterType::Spice) {
-                config.set_port(tls_port);
-            }
+        } else if let Some(tls_port) = vv.tls_port
+            && !matches!(vv.r#type, QuickConnectAdapterType::Spice)
+        {
+            config.set_port(tls_port);
         }
 
         if let Some(user) = &vv.username {

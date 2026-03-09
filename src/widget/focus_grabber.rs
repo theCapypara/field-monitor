@@ -99,10 +99,10 @@ mod imp {
     impl Drop for FieldMonitorFocusGrabber {
         fn drop(&mut self) {
             debug!("drop FieldMonitorFocusGrabber");
-            if let Some(display) = self.display.borrow().as_ref().and_then(WeakRef::upgrade) {
-                if let Some(display_signal_id) = self.display_signal_id.borrow_mut().take() {
-                    display.disconnect(display_signal_id);
-                }
+            if let Some(display) = self.display.borrow().as_ref().and_then(WeakRef::upgrade)
+                && let Some(display_signal_id) = self.display_signal_id.borrow_mut().take()
+            {
+                display.disconnect(display_signal_id);
             }
         }
     }
