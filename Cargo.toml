@@ -14,7 +14,7 @@ members = [
 
 [workspace.package]
 edition = "2024"
-rust-version = "1.87"
+rust-version = "1.92"
 
 [workspace.dependencies]
 gettext-rs = { version = "0.7", features = ["gettext-system"] }
