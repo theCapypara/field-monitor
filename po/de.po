@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-22 22:09+0100\n"
-"PO-Revision-Date: 2025-11-22 22:10+0100\n"
+"POT-Creation-Date: 2026-03-08 13:51+0100\n"
+"PO-Revision-Date: 2026-03-08 13:51+0100\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -16,13 +16,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Gtranslator 48.0\n"
+"X-Generator: Poedit 3.6\n"
 
 #. Translators: The name of the application.
 #: data/de.capypara.FieldMonitor.desktop.in.in:2
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/application.rs:558
-#: src/widget/window.blp:9 src/widget/window.blp:59 src/widget/window.blp:169
-#: src/widget/window.blp:175 src/widget/window.rs:313
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/widget/window.blp:9
+#: src/widget/window.blp:59 src/widget/window.blp:169 src/widget/window.blp:175
+#: src/widget/window.rs:313
 msgid "Field Monitor"
 msgstr "Feldmonitor"
 
@@ -52,21 +52,21 @@ msgstr "Entfernter Bildschirm"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
-#: connection/generic-group/src/server_preferences.blp:21
+#: connection/generic-group/src/server_preferences.blp:22
 #: lib/src/adapter/rdp.rs:51
 msgid "RDP"
 msgstr "RDP"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
-#: connection/generic-group/src/server_preferences.blp:23
+#: connection/generic-group/src/server_preferences.blp:24
 #: connection/proxmox/src/api/node.rs:163 lib/src/adapter/vnc.rs:71
 msgid "VNC"
 msgstr "VNC"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
-#: connection/generic-group/src/server_preferences.blp:22
+#: connection/generic-group/src/server_preferences.blp:23
 #: connection/proxmox/src/api/node.rs:162 lib/src/adapter/spice.rs:124
 msgid "SPICE"
 msgstr "SPICE"
@@ -88,7 +88,6 @@ msgstr "libvirt"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
 #: connection/proxmox/src/api/provider.rs:48
 #: connection/proxmox/src/api/provider.rs:52
 msgid "Proxmox"
@@ -124,6 +123,10 @@ msgid ""
 msgstr ""
 "Die Anwendung kann sich direkt mit den folgenden VM-Hypervisoren verbinden:"
 
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
+msgid "Proxmox Virtual Environment"
+msgstr "Proxmox Virtual Environment"
+
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:63
 msgid "QEMU/KVM via libvirt"
 msgstr "QEMU/KVM via libvirt"
@@ -147,31 +150,32 @@ msgstr ""
 "schnell Verbindungen zu RDP, SPICE und VNC Servern via URI herstellen."
 
 #. Translators: Caption of the first screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:107
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:122
 msgid "Screen of a connected graphical display"
 msgstr "Bildschirm einer verbundenen graphischen Anzeige"
 
 #. Translators: Caption of the second screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:114
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:129
 msgid "Welcome screen"
 msgstr "Willkommen-Fenster"
 
 #. Translators: Caption of the third screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:121
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:136
 msgid "A list of servers in a Proxmox cluster to connect to"
 msgstr ""
 "Eine Liste von Servern in einem Proxmox Cluster, mit denen sich verbunden "
 "werden kann"
 
 #. Translators: Caption of the 4th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:128
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:143
 msgid "Screen of a connected console"
 msgstr "Bildschirm einer verbundenen Konsole"
 
 #. Translators: Caption of the 5th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:135
-msgid "Adding a new Proxmox hypervisor connection"
-msgstr "Hinzufügen einer neuen Proxmox Hypervisor-Verbindung"
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:150
+msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
+msgstr ""
+"Hinzufügen einer neuen Proxmox Virtual Environment Hypervisor-Verbindung"
 
 #: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
 msgid "Remote Desktop file"
@@ -187,15 +191,15 @@ msgid "Credentials"
 msgstr "Zugangsdaten"
 
 #: connection/generic-group/src/credential_preferences.blp:10
-#: connection/libvirt/src/qemu_preferences.blp:55
-#: connection/proxmox/src/credential_preferences.blp:29
+#: connection/libvirt/src/qemu_preferences.blp:57
+#: connection/proxmox/src/credential_preferences.blp:30
 #: src/quick_connect/preferences.blp:9
 msgid "Username"
 msgstr "Benutzername"
 
 #: connection/generic-group/src/credential_preferences.blp:18
 #: connection/proxmox/src/credential_preferences.blp:17
-#: connection/proxmox/src/credential_preferences.blp:33
+#: connection/proxmox/src/credential_preferences.blp:35
 #: connection/proxmox/src/credential_preferences.rs:197
 #: src/quick_connect/preferences.blp:14
 msgid "Password"
@@ -229,11 +233,11 @@ msgstr "Laden des Passwortes fehlgeschlagen."
 msgid "Group Name"
 msgstr "Gruppenname"
 
-#: connection/generic-group/src/preferences.blp:25
+#: connection/generic-group/src/preferences.blp:26
 msgid "Servers"
 msgstr "Server"
 
-#: connection/generic-group/src/preferences.blp:31
+#: connection/generic-group/src/preferences.blp:32
 #: connection/generic-group/src/preferences.rs:584
 msgid "Add Server"
 msgstr "Server hinzufügen"
@@ -267,18 +271,18 @@ msgstr "Entfernter Server"
 msgid "Server Name"
 msgstr "Servername"
 
-#: connection/generic-group/src/server_preferences.blp:16
+#: connection/generic-group/src/server_preferences.blp:17
 msgid "Server Type"
 msgstr "Servertyp"
 
-#: connection/generic-group/src/server_preferences.blp:31
-#: connection/libvirt/src/qemu_preferences.blp:51
-#: connection/proxmox/src/preferences.blp:20
+#: connection/generic-group/src/server_preferences.blp:32
+#: connection/libvirt/src/qemu_preferences.blp:52
+#: connection/proxmox/src/preferences.blp:21
 msgid "Hostname"
 msgstr "Hostname"
 
-#: connection/generic-group/src/server_preferences.blp:35
-#: connection/proxmox/src/preferences.blp:24
+#: connection/generic-group/src/server_preferences.blp:37
+#: connection/proxmox/src/preferences.blp:26
 msgid "Port"
 msgstr "Port"
 
@@ -414,27 +418,27 @@ msgstr "QEMU/KVM Hypervisorverbindung via libvirt"
 msgid "Connection Name"
 msgstr "Verbindungsname"
 
-#: connection/libvirt/src/qemu_preferences.blp:18
+#: connection/libvirt/src/qemu_preferences.blp:19
 msgid "Session Type"
 msgstr "Sitzungstyp"
 
-#: connection/libvirt/src/qemu_preferences.blp:21
+#: connection/libvirt/src/qemu_preferences.blp:22
 msgid "System Session"
 msgstr "System-Sitzung"
 
-#: connection/libvirt/src/qemu_preferences.blp:22
+#: connection/libvirt/src/qemu_preferences.blp:23
 msgid "This is the QEMU/KVM default."
 msgstr "Dies ist der QEMU/KVM Standard."
 
-#: connection/libvirt/src/qemu_preferences.blp:32
+#: connection/libvirt/src/qemu_preferences.blp:33
 msgid "User Session"
 msgstr "Benutzer-Sitzung"
 
-#: connection/libvirt/src/qemu_preferences.blp:43
+#: connection/libvirt/src/qemu_preferences.blp:44
 msgid "Remote Connection"
 msgstr "Entfernte Verbindung"
 
-#: connection/libvirt/src/qemu_preferences.blp:46
+#: connection/libvirt/src/qemu_preferences.blp:47
 msgid "Connect via SSH"
 msgstr "Verbindung via SSH"
 
@@ -475,8 +479,8 @@ msgid "Add Proxmox Connection"
 msgstr "Proxmox Verbindung hinzufügen"
 
 #: connection/proxmox/src/api/provider.rs:64
-msgid "Proxmox hypervisor connection"
-msgstr "Proxmox Hypervisorverbindung"
+msgid "Proxmox Virtual Environment hypervisor connection"
+msgstr "Proxmox Virtual Environment Hypervisorverbindung"
 
 #: connection/proxmox/src/api/vm.rs:132
 msgid "Reboot command successfully sent to VM."
@@ -524,15 +528,15 @@ msgstr "API-Schlüssel"
 msgid "Token ID"
 msgstr "Token-ID"
 
-#: connection/proxmox/src/preferences.blp:17
+#: connection/proxmox/src/preferences.blp:18
 msgid "Connection"
 msgstr "Verbindung"
 
-#: connection/proxmox/src/preferences.blp:30
+#: connection/proxmox/src/preferences.blp:33
 msgid "Trust Any SSL Certificate"
 msgstr "Unsicheren SSL Zertifikaten vertrauen"
 
-#: connection/proxmox/src/preferences.blp:31
+#: connection/proxmox/src/preferences.blp:34
 msgid ""
 "Allows connecting to servers with self-signed and otherwise invalid SSL "
 "certificates. Be careful, as this is a potential security risk."
@@ -569,12 +573,12 @@ msgid "Open the app with a new window"
 msgstr "Anwendung mit einem neuen Fenster starten"
 
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
-#: src/application.rs:573
+#: src/application.rs:566
 msgid "translator-credits"
 msgstr "Marco Köpcke <hello@capypara.de>"
 
-#: src/application.rs:582 src/connection_loader.rs:433
-#: src/widget/add_connection_dialog.rs:209
+#: src/application.rs:575 src/connection_loader.rs:433
+#: src/widget/add_connection_dialog.rs:210
 #: src/widget/authenticate_connection_dialog.rs:173
 #: src/widget/quick_connect_dialog.rs:101
 #: src/widget/quick_connect_dialog.rs:161
@@ -582,34 +586,34 @@ msgstr "Marco Köpcke <hello@capypara.de>"
 msgid "OK"
 msgstr "OK"
 
-#: src/application.rs:624
+#: src/application.rs:617
 msgid "Connection successfully added."
 msgstr "Verbindung erfolgreich hinzugefügt."
 
-#: src/application.rs:679
+#: src/application.rs:672
 msgid "Connection successfully updated."
 msgstr "Verbindung erfolgreich aktualisiert."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/application.rs:717
+#: src/application.rs:710
 #, rust-format
 msgid "Permanently Remove “{title}”?"
 msgstr "»{title}« dauerhaft entfernen?"
 
-#: src/application.rs:721 src/widget/connection_view/connection_tab_view.rs:250
+#: src/application.rs:714 src/widget/connection_view/connection_tab_view.rs:250
 msgid "No"
 msgstr "Nein"
 
-#: src/application.rs:722 src/widget/connection_view/connection_tab_view.rs:251
+#: src/application.rs:715 src/widget/connection_view/connection_tab_view.rs:251
 msgid "Yes"
 msgstr "Ja"
 
-#: src/application.rs:727
+#: src/application.rs:720
 msgid "Connection successfully removed."
 msgstr "Verbindung erfolgreich entfernt."
 
-#: src/application.rs:788
+#: src/application.rs:781
 msgid "Authentication successfully updated"
 msgstr "Informationen zur Authentifizierung erfolgreich aktualisiert"
 
@@ -758,13 +762,13 @@ msgstr "Ein geheimer Wert, verwendet von Feldmonitor"
 msgid "Add New Connection"
 msgstr "Neue Verbindung hinzufügen"
 
-#: src/widget/add_connection_dialog.rs:202
+#: src/widget/add_connection_dialog.rs:203
 #: src/widget/authenticate_connection_dialog.rs:166
 #: src/widget/update_connection_dialog.rs:173
 msgid "Failed to save connection"
 msgstr "Fehler beim Speichern der Verbindung"
 
-#: src/widget/add_connection_dialog.rs:205
+#: src/widget/add_connection_dialog.rs:206
 #: src/widget/authenticate_connection_dialog.rs:169
 #: src/widget/update_connection_dialog.rs:176
 msgid "An error occurred, while trying to save the connection"
@@ -845,24 +849,24 @@ msgid "Cancel"
 msgstr "Abbrechen"
 
 #: src/widget/close_warning_dialog.rs:79
-#: src/widget/connection_view/connection_view_navbar.rs:174
-#: src/widget/connection_view/connection_view_navbar.rs:189
+#: src/widget/connection_view/connection_view_navbar.blp:52
+#: src/widget/connection_view/connection_view_navbar.rs:176
 #: src/widget/connection_view/server_screen.blp:111
 msgid "Close"
 msgstr "Schließen"
 
-#: src/widget/connection_list/connection_list_navbar.blp:9
+#: src/widget/connection_list/connection_list_navbar.blp:12
 #: src/widget/connection_view/connection_view_navbar.blp:23
 msgid "Sidebar"
 msgstr "Seitenleiste"
 
-#: src/widget/connection_list/connection_list_navbar.rs:194
+#: src/widget/connection_list/connection_list_navbar.blp:32
 #: src/widget/connection_list/info_page.blp:17
 msgid "Edit Connection"
 msgstr "Verbindung bearbeiten"
 
-#: src/widget/connection_list/connection_list_navbar.rs:199
-#: src/widget/update_connection_dialog.blp:20
+#: src/widget/connection_list/connection_list_navbar.blp:37
+#: src/widget/update_connection_dialog.blp:21
 msgid "Remove Connection"
 msgstr "Verbindung entfernen"
 
@@ -917,7 +921,7 @@ msgstr "Hierdurch wird die Verbindung zum entfernten Server getrennt."
 msgid "Active Connections"
 msgstr "Aktive Verbindungen"
 
-#: src/widget/connection_view/connection_view_navbar.rs:185
+#: src/widget/connection_view/connection_view_navbar.blp:47
 msgid "Move to New Window"
 msgstr "In neues Fenster verschieben"
 
@@ -1278,7 +1282,7 @@ msgstr "Verbindung via URL öffnen..."
 msgid "Field Monitor was unable to open the provided file."
 msgstr "Feldmonitor konnte die angegebene Datei nicht öffnen."
 
-#: src/widget/update_connection_dialog.blp:29
+#: src/widget/update_connection_dialog.blp:30
 msgid "Save"
 msgstr "Speichern"
 
