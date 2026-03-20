@@ -32,8 +32,10 @@ Field Monitor can be downloaded via Flathub.
 
 ### For NixOS
 
-> [!NOTE]
-> A Nixpkgs submission is currently pending: https://github.com/NixOS/nixpkgs/pull/392984
+Field Monitor can be installed via `nixpkgs`:
+
+- [Stable](https://search.nixos.org/packages?channel=26.05&query=field-monitor)
+- [Unstable](https://search.nixos.org/packages?channel=unstable&query=field-monitor)
 
 ### From Source
 
@@ -48,11 +50,11 @@ Please see [CONTRIBUTING.md](CONTRIBUTING.md) to get started.
 
 ## Copyright
 
-© 2025 [Marco Köpcke](https://github.com/theCapypara) and contributors
+© 2025-2026 [Marco Köpcke](https://github.com/theCapypara) and contributors
 
 ## Acknowledgements
 
-Field Monitor would not be possible without Marc-André Lureau's [RDW](https://gitlab.gnome.org/malureau/rdw),
+Field Monitor would not be possible without Marc-André Lureau's [rdw](https://gitlab.gnome.org/malureau/rdw),
 the remote-desktop widgets that power all RDP, VNC and SPICE connections. Thank you!
 
 ## License
