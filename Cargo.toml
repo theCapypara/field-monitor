@@ -81,7 +81,7 @@ version = "0.10"
 features = ["v0_76"]
 
 [workspace.dependencies.oo7]
-version = "0.5"
+version = "0.6"
 default-features = false
 features = ["async-std", "native_crypto"]
 

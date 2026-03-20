@@ -1,7 +1,7 @@
 {
   "id": "de.capypara.FieldMonitor",
   "runtime": "org.gnome.Platform",
-  "runtime-version": "50beta",
+  "runtime-version": "50",
   "sdk": "org.gnome.Sdk",
   "sdk-extensions": [
     "org.freedesktop.Sdk.Extension.rust-stable"

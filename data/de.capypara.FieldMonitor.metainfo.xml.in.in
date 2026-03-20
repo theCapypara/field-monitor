@@ -75,12 +75,12 @@
 	</description>
 
 	<releases>
-		<release version="50.0" date="2026-30-12">
+		<!--<release version="50.0" date="2026-30-12">
 			<description translate="no">
 				<p>This release updates Field Monitor for GNOME 50.</p>
 				<p>TODO</p>
 			</description>
-		</release>
+		</release>-->
 		<release version="49.1" date="2025-11-23">
 			<description translate="no">
 				<p>This release brings some small improvements.</p>

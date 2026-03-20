@@ -16,7 +16,7 @@ urlencoding = "2.1"
 
 [dev-dependencies]
 simple_logger = "5"
-clap = { version = "4.5", features = ["derive", "env"] }
+clap = { version = "4.6", features = ["derive", "env"] }
 tokio = { version = "1.50", features = ["rt-multi-thread", "macros"] }
 
 [lints]
