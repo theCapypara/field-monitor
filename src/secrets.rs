@@ -27,12 +27,12 @@ use libfieldmonitor::config::APP_ID;
 
 #[derive(Debug)]
 pub struct SecretManager {
-    keyring: oo7::file::Keyring,
+    keyring: oo7::Keyring,
 }
 
 impl SecretManager {
     pub async fn new() -> oo7::Result<Self> {
-        let keyring = oo7::file::Keyring::load_default().await?;
+        let keyring = oo7::Keyring::new().await?;
         Ok(Self { keyring })
     }
 }
@@ -62,7 +62,7 @@ impl ManagesSecrets for SecretManager {
             match items.first() {
                 None => Ok(None),
                 Some(item) => {
-                    let secret_raw = item.secret();
+                    let secret_raw = item.secret().await?;
                     let secret = String::from_utf8(secret_raw.to_vec())?.into();
                     Ok(Some(secret))
                 }

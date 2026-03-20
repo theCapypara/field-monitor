@@ -1005,28 +1005,28 @@ impl FieldMonitorApplication {
         let _busy = self.be_busy();
         debug!("removing connection {connection_id}");
         let mut brw = self.imp().connections.borrow_mut();
-        if let Some(map) = brw.as_mut() {
-            if map.remove(connection_id).is_some() {
-                if from_disk {
-                    let connection_id = connection_id.to_string();
-                    glib::spawn_future_local(glib::clone!(
-                        #[strong(rename_to=slf)]
-                        self,
-                        async move {
-                            // TODO: We should probably give some visual feedback if deleting fails,
-                            // even if its going to be rare. This entire function should probably
-                            // be async then and propagate the error.
-                            info!("Removing connection {connection_id} from disk...");
-                            let mut filename = slf.connections_dir().await;
-                            filename.push(format!("{}.yaml", connection_id));
-                            gio::spawn_blocking(move || remove_file(filename))
-                                .await
-                                .ok();
-                        }
-                    ));
-                }
-                self.emit_by_name::<()>("connection-removed", &[&connection_id]);
+        if let Some(map) = brw.as_mut()
+            && map.remove(connection_id).is_some()
+        {
+            if from_disk {
+                let connection_id = connection_id.to_string();
+                glib::spawn_future_local(glib::clone!(
+                    #[strong(rename_to=slf)]
+                    self,
+                    async move {
+                        // TODO: We should probably give some visual feedback if deleting fails,
+                        // even if its going to be rare. This entire function should probably
+                        // be async then and propagate the error.
+                        info!("Removing connection {connection_id} from disk...");
+                        let mut filename = slf.connections_dir().await;
+                        filename.push(format!("{}.yaml", connection_id));
+                        gio::spawn_blocking(move || remove_file(filename))
+                            .await
+                            .ok();
+                    }
+                ));
             }
+            self.emit_by_name::<()>("connection-removed", &[&connection_id]);
         }
     }
 

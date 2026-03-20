@@ -86,11 +86,12 @@ impl FieldMonitorConnectionTabView {
         //       but this is probably fine enough.
         for page in self.imp().tab_view.pages().iter::<adw::TabPage>().flatten() {
             let child = page.child().downcast::<FieldMonitorServerScreen>();
-            if let Ok(screen) = child {
-                if screen.server_path() == server_path && screen.adapter_id() == adapter_id {
-                    self.set_visible_page(Some(page));
-                    return true;
-                }
+            if let Ok(screen) = child
+                && screen.server_path() == server_path
+                && screen.adapter_id() == adapter_id
+            {
+                self.set_visible_page(Some(page));
+                return true;
             }
         }
         false
@@ -215,10 +216,10 @@ impl FieldMonitorConnectionTabView {
     #[template_callback]
     fn on_tab_view_selected_page_changed(&self) {
         let new_page = self.imp().tab_view.selected_page();
-        if let Some(new_page) = new_page {
-            if self.visible_page().as_ref() == Some(&new_page) {
-                self.set_visible_page(Some(&new_page))
-            }
+        if let Some(new_page) = new_page
+            && self.visible_page().as_ref() == Some(&new_page)
+        {
+            self.set_visible_page(Some(&new_page))
         }
     }
 

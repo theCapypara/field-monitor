@@ -158,14 +158,14 @@ impl Adapter for VncAdapter {
                 //       so we use this instead.
                 //       In the future this will be gvnc::ConnectionCredential::CaCertData probably.
                 const VNC_CONNECTION_CREDENTIAL_CA_CERT_DATA: i32 = 3;
-                if let Some(ca) = &*ca {
-                    if creds.contains(&gvnc::ConnectionCredential::__Unknown(
+                if let Some(ca) = &*ca
+                    && creds.contains(&gvnc::ConnectionCredential::__Unknown(
                         VNC_CONNECTION_CREDENTIAL_CA_CERT_DATA,
-                    )) {
-                        debug!("providing CA cert");
-                        conn.set_credential(VNC_CONNECTION_CREDENTIAL_CA_CERT_DATA, ca)
-                            .unwrap();
-                    }
+                    ))
+                {
+                    debug!("providing CA cert");
+                    conn.set_credential(VNC_CONNECTION_CREDENTIAL_CA_CERT_DATA, ca)
+                        .unwrap();
                 }
             }
         ));

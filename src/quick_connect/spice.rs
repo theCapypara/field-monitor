@@ -120,11 +120,12 @@ pub async fn try_from_uri(
 
             // spice+unix:///xyz.socket
 
-            if let Some(authority) = uri.authority() {
-                if !authority.host().is_empty() || authority.has_userinfo() || authority.has_port()
-                {
-                    invalid_uri()?;
-                }
+            if let Some(authority) = uri.authority()
+                && (!authority.host().is_empty()
+                    || authority.has_userinfo()
+                    || authority.has_port())
+            {
+                invalid_uri()?;
             }
 
             if uri.path().is_empty() {
@@ -160,10 +161,10 @@ pub async fn try_from_uri(
                         }
                     }
                     let (user, pass) = parse_userinfo(authority.userinfo());
-                    if let Some(user) = user {
-                        if !user.is_empty() {
-                            config.set_user(&user.decode().to_string_lossy());
-                        }
+                    if let Some(user) = user
+                        && !user.is_empty()
+                    {
+                        config.set_user(&user.decode().to_string_lossy());
                     }
                     if let Some(pass) = pass {
                         config.set_password(

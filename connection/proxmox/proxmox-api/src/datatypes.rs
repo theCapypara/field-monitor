@@ -325,10 +325,10 @@ where
 
     match MaybeNonZeroU32::deserialize(deserializer)? {
         MaybeNonZeroU32::String(string) => {
-            if let Ok(num) = string.parse::<u32>() {
-                if let Some(non_zero) = NonZeroU32::new(num) {
-                    return Ok(non_zero);
-                }
+            if let Ok(num) = string.parse::<u32>()
+                && let Some(non_zero) = NonZeroU32::new(num)
+            {
+                return Ok(non_zero);
             }
             Err(Error::invalid_type(
                 Unexpected::Str(string),

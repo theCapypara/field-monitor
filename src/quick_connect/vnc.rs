@@ -56,10 +56,10 @@ pub async fn try_from_uri(
                 config.set_port(parse_port(port.as_str())?);
             }
             let (user, pass) = parse_userinfo(authority.userinfo());
-            if let Some(user) = user {
-                if !user.is_empty() {
-                    config.set_user(&user.decode().to_string_lossy());
-                }
+            if let Some(user) = user
+                && !user.is_empty()
+            {
+                config.set_user(&user.decode().to_string_lossy());
             }
             if let Some(pass) = pass {
                 config.set_password(

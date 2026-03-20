@@ -14,7 +14,7 @@ adw = { workspace = true }
 vte = { workspace = true }
 num_enum = { workspace = true }
 indexmap = { workspace = true }
-rand = "0.9"
+rand = "0.10"
 
 [lints]
 workspace = true

@@ -1,7 +1,7 @@
 {
   "id": "de.capypara.FieldMonitor",
   "runtime": "org.gnome.Platform",
-  "runtime-version": "49",
+  "runtime-version": "50",
   "sdk": "org.gnome.Sdk",
   "sdk-extensions": [
     "org.freedesktop.Sdk.Extension.rust-stable"
@@ -105,8 +105,8 @@
           "sources": [
             {
               "type": "archive",
-              "url": "https://www.spice-space.org/download/releases/spice-protocol-0.14.3.tar.xz",
-              "sha256": "f986e5bc2a1598532c4897f889afb0df9257ac21c160c083703ae7c8de99487a"
+              "url": "https://www.spice-space.org/download/releases/spice-protocol-0.14.5.tar.xz",
+              "sha256": "baf58449f6e89d19f475899ad5fb9196fdc46c03cc53233f4e39cf2978f9cff7"
             }
           ]
         },
@@ -174,8 +174,8 @@
           "sources": [
             {
               "type": "archive",
-              "url": "https://www.spice-space.org/download/releases/spice-0.15.1.tar.bz2",
-              "sha256": "ada9af67ab321916bd7eb59e3d619a4a7796c08a28c732edfc7f02fc80b1a37a"
+              "url": "https://www.spice-space.org/download/releases/spice-0.15.2.tar.bz2",
+              "sha256": "6d9eb6117f03917471c4bc10004abecff48a79fb85eb85a1c45f023377015b81"
             }
           ]
         }
@@ -195,8 +195,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://download.gnome.org/sources/vte/0.82/vte-0.82.1.tar.xz",
-          "sha256": "79376d70402d271e2d38424418e1aea72357934d272e321e3906b71706a78e3a"
+          "url": "https://download.gnome.org/sources/vte/0.83/vte-0.83.91.tar.xz",
+          "sha256": "9ee8f5011d2856c5dae80bde3c11d7fc942fa479c2e2d08b07f2a7af351379c5"
         }
       ]
     },
@@ -238,8 +238,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://download.libvirt.org/libvirt-11.9.0.tar.xz",
-          "sha256": "104f70ee591e72989d4f8c6caa79ed9dacd5dc84efdb0125b848afe544ad0c2d"
+          "url": "https://download.libvirt.org/libvirt-11.10.0.tar.xz",
+          "sha256": "66154fee836235678b712676b2589c45f66e3d6a8721ee0697c9f20a66cad0d8"
         }
       ]
     },

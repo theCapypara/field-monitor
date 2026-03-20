@@ -673,16 +673,16 @@ impl FieldMonitorServerScreen {
             .map(Cast::downcast::<FieldMonitorWindow>)
             .and_then(Result::ok);
 
-        if let (Some(display), Some(window)) = (display, window) {
-            if let Some((w, h)) = display.display_size() {
-                let header_bar_h = if !self.imp().toolbar_view.is_extend_content_to_top_edge() {
-                    self.imp().header_bar.height() as usize
-                } else {
-                    0
-                };
-                if w != 0 && h != 0 {
-                    window.resize(w, h + header_bar_h);
-                }
+        if let (Some(display), Some(window)) = (display, window)
+            && let Some((w, h)) = display.display_size()
+        {
+            let header_bar_h = if !self.imp().toolbar_view.is_extend_content_to_top_edge() {
+                self.imp().header_bar.height() as usize
+            } else {
+                0
+            };
+            if w != 0 && h != 0 {
+                window.resize(w, h + header_bar_h);
             }
         }
     }
