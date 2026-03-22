@@ -1,14 +1,14 @@
 # German translations for Field Monitor
 # Copyright (C) 2015 Field Monitor authors
 # This file is distributed under the same license as the Field Monitor package.
-# Marco Köpcke <hello@capypara.de>, 2025.
+# Marco Köpcke <hello@capypara.de>, 2025-2026.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-08 13:51+0100\n"
-"PO-Revision-Date: 2026-03-08 13:51+0100\n"
+"POT-Creation-Date: 2026-03-22 11:42+0100\n"
+"PO-Revision-Date: 2026-03-22 11:43+0100\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.6\n"
+"X-Generator: Gtranslator 49.0\n"
 
 #. Translators: The name of the application.
 #: data/de.capypara.FieldMonitor.desktop.in.in:2
@@ -150,29 +150,29 @@ msgstr ""
 "schnell Verbindungen zu RDP, SPICE und VNC Servern via URI herstellen."
 
 #. Translators: Caption of the first screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:122
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:128
 msgid "Screen of a connected graphical display"
 msgstr "Bildschirm einer verbundenen graphischen Anzeige"
 
 #. Translators: Caption of the second screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:129
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:135
 msgid "Welcome screen"
 msgstr "Willkommen-Fenster"
 
 #. Translators: Caption of the third screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:136
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:142
 msgid "A list of servers in a Proxmox cluster to connect to"
 msgstr ""
 "Eine Liste von Servern in einem Proxmox Cluster, mit denen sich verbunden "
 "werden kann"
 
 #. Translators: Caption of the 4th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:143
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:149
 msgid "Screen of a connected console"
 msgstr "Bildschirm einer verbundenen Konsole"
 
 #. Translators: Caption of the 5th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:150
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:156
 msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
 msgstr ""
 "Hinzufügen einer neuen Proxmox Virtual Environment Hypervisor-Verbindung"
@@ -192,14 +192,14 @@ msgstr "Zugangsdaten"
 
 #: connection/generic-group/src/credential_preferences.blp:10
 #: connection/libvirt/src/qemu_preferences.blp:57
-#: connection/proxmox/src/credential_preferences.blp:30
+#: connection/proxmox/src/credential_preferences.blp:31
 #: src/quick_connect/preferences.blp:9
 msgid "Username"
 msgstr "Benutzername"
 
 #: connection/generic-group/src/credential_preferences.blp:18
-#: connection/proxmox/src/credential_preferences.blp:17
-#: connection/proxmox/src/credential_preferences.blp:35
+#: connection/proxmox/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:36
 #: connection/proxmox/src/credential_preferences.rs:197
 #: src/quick_connect/preferences.blp:14
 msgid "Password"
@@ -514,17 +514,25 @@ msgstr "Die VM startet..."
 msgid "Failed to send start command."
 msgstr "Starten der VM fehlgeschlagen."
 
-#: connection/proxmox/src/credential_preferences.blp:12
+#: connection/proxmox/src/credential_preferences.blp:10
+msgid ""
+"The Proxmox user needs at least the permissions <tt>VM.Console</tt>, "
+"<tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>."
+msgstr ""
+"Der Proxmox Benutzer benötigt die Berechtigungen <tt>VM.Console</tt>, "
+"<tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>."
+
+#: connection/proxmox/src/credential_preferences.blp:13
 msgid "Authentication Mode"
 msgstr "Authentifizierungsmodus"
 
-#: connection/proxmox/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:19
 #: connection/proxmox/src/credential_preferences.rs:195
 msgid "API Key"
 msgstr "API-Schlüssel"
 
 # The same name is used in Proxmox's localization
-#: connection/proxmox/src/credential_preferences.blp:25
+#: connection/proxmox/src/credential_preferences.blp:26
 msgid "Token ID"
 msgstr "Token-ID"
 
@@ -601,11 +609,11 @@ msgstr "Verbindung erfolgreich aktualisiert."
 msgid "Permanently Remove “{title}”?"
 msgstr "»{title}« dauerhaft entfernen?"
 
-#: src/application.rs:714 src/widget/connection_view/connection_tab_view.rs:250
+#: src/application.rs:714 src/widget/connection_view/connection_tab_view.rs:251
 msgid "No"
 msgstr "Nein"
 
-#: src/application.rs:715 src/widget/connection_view/connection_tab_view.rs:251
+#: src/application.rs:715 src/widget/connection_view/connection_tab_view.rs:252
 msgid "Yes"
 msgstr "Ja"
 
@@ -730,7 +738,7 @@ msgstr "Fehler beim Lesen der Datei"
 msgid "Invalid RDP parameters"
 msgstr "Ungültige RDP Parameter"
 
-#: src/quick_connect/spice.rs:207
+#: src/quick_connect/spice.rs:208
 msgid "Invalid SPICE URI"
 msgstr "Ungültige SPICE URI"
 
@@ -909,11 +917,11 @@ msgstr "Verbinden"
 msgid "Connect via {adapter}"
 msgstr "Verbinden via {adapter}"
 
-#: src/widget/connection_view/connection_tab_view.rs:245
+#: src/widget/connection_view/connection_tab_view.rs:246
 msgid "Close Connection?"
 msgstr "Verbindung schließen?"
 
-#: src/widget/connection_view/connection_tab_view.rs:247
+#: src/widget/connection_view/connection_tab_view.rs:248
 msgid "Closing the connection will disconnect from the remote server."
 msgstr "Hierdurch wird die Verbindung zum entfernten Server getrennt."
 
