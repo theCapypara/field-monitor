@@ -104,7 +104,12 @@ impl ProxmoxConfiguration for ConnectionConfiguration {
     }
 
     fn set_username(&mut self, value: &str) {
-        self.set_value("username", value);
+        if !value.contains('@') {
+            // Assume default "pam" realm if no realm is specified in the username.
+            self.set_value("username", &*format!("{value}@pam"));
+        } else {
+            self.set_value("username", value);
+        }
     }
 
     fn tokenid(&self) -> Option<&str> {
