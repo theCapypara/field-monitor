@@ -8,6 +8,7 @@
   gtk4,
   gtk-vnc,
   vte-gtk4,
+  gcr_4,
   libadwaita,
   libepoxy,
   libGL,
@@ -40,6 +41,7 @@ stdenv.mkDerivation {
     (enableDebugging gtk4)
     (enableDebugging gtk-vnc)
     (enableDebugging vte-gtk4)
+    (enableDebugging gcr_4)
     (enableDebugging libadwaita)
     libepoxy
     libGL

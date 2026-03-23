@@ -1,0 +1,38 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorCertificateDetailsWindow: Adw.Window {
+    title: _("Certificate Viewer");
+    default-width: 480;
+    default-height: 680;
+
+    Adw.ToastOverlay toast_overlay {
+        Adw.ToolbarView {
+            [top]
+            Adw.HeaderBar {}
+
+            content: Adw.PreferencesPage content {};
+
+            [bottom]
+            ActionBar {
+                [start]
+                Box {
+                    Button {
+                        action-name: "certificate.export";
+                        halign: center;
+                        label: _("Export");
+                    }
+                }
+
+                [end]
+                Box {
+                    Button {
+                        action-name: "window.close";
+                        halign: center;
+                        label: _("Close");
+                    }
+                }
+            }
+        }
+    }
+}

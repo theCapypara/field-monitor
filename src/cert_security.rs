@@ -120,13 +120,8 @@ impl FieldMonitorTrustStore {
 
     pub fn make_fingerprint_digest(cert: &X509Certificate) -> anyhow::Result<String> {
         let checksum = Self::checksum_for_cert(cert)?;
-        let mut fingerprint_string = String::new();
         let fingerprint = checksum.digest();
-        for byte in fingerprint {
-            fingerprint_string += &*format!("{:X}:", byte);
-        }
-        fingerprint_string.pop();
-        Ok(fingerprint_string)
+        Ok(format_bytes_as_hex_string(fingerprint))
     }
 
     fn digest_to_bytes(digest: &str) -> Result<Box<[u8]>, ParseIntError> {
@@ -139,4 +134,13 @@ impl FieldMonitorTrustStore {
             .map(|i| u8::from_str_radix(&digest[i..i + 2], 16))
             .collect()
     }
+}
+
+pub fn format_bytes_as_hex_string(bytes: impl AsRef<[u8]>) -> String {
+    let mut out_str = String::new();
+    for byte in bytes.as_ref() {
+        out_str += &*format!("{:02X}:", byte);
+    }
+    out_str.pop();
+    out_str
 }

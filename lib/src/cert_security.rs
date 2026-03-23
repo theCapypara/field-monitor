@@ -116,7 +116,7 @@ impl VerifyTls {
             .is_ok()
     }
 
-    pub fn into_verification_info(self) -> (x509_cert::Certificate, String) {
+    pub fn into_verification_info(self) -> (X509Certificate, String) {
         (self.certs.main.0, self.host)
     }
 
@@ -156,7 +156,7 @@ pub struct VerifiableCertChain {
 
 impl VerifiableCertChain {
     pub(crate) fn from_cert(cert: impl AsRef<[u8]>) -> ConnectionResult<Self> {
-        let cert = match x509_cert::Certificate::from_der(cert.as_ref()) {
+        let cert = match X509Certificate::from_der(cert.as_ref()) {
             Ok(cert) => cert,
             Err(err) => {
                 return Err(ConnectionError::General(None, err.into()));
@@ -171,7 +171,7 @@ impl VerifiableCertChain {
     pub(crate) fn from_pem_chain(pems: impl AsRef<[u8]>) -> ConnectionResult<Self> {
         // TODO: It's probably not correct to assume the first cert is the root CA cert and others
         //       the intermediates? We should probably actually build the chain?
-        let mut other_certs = match x509_cert::Certificate::load_pem_chain(pems.as_ref()) {
+        let mut other_certs = match X509Certificate::load_pem_chain(pems.as_ref()) {
             Ok(certs) => certs,
             Err(err) => {
                 return Err(ConnectionError::General(None, err.into()));
@@ -204,10 +204,10 @@ impl VerifiableCertChain {
 
 /// A certificate stored as rustls and x905 crate format
 #[derive(Debug, Clone)]
-pub struct Cert(x509_cert::Certificate, pki_types::CertificateDer<'static>);
+pub struct Cert(X509Certificate, pki_types::CertificateDer<'static>);
 
-impl From<x509_cert::Certificate> for Cert {
-    fn from(value: x509_cert::Certificate) -> Self {
+impl From<X509Certificate> for Cert {
+    fn from(value: X509Certificate) -> Self {
         let der = value.to_der().unwrap();
         Self(value, pki_types::CertificateDer::from(der))
     }

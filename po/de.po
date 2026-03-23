@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 01:00+0100\n"
-"PO-Revision-Date: 2026-03-23 01:07+0100\n"
+"POT-Creation-Date: 2026-03-23 22:19+0100\n"
+"PO-Revision-Date: 2026-03-23 22:21+0100\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -278,7 +278,7 @@ msgstr "Servertyp"
 #: connection/generic-group/src/server_preferences.blp:32
 #: connection/libvirt/src/qemu_preferences.blp:52
 #: connection/proxmox/src/preferences.blp:21
-#: src/widget/certificate_trust_dialog.rs:121
+#: src/widget/certificate_trust_dialog.rs:148
 msgid "Hostname"
 msgstr "Hostname"
 
@@ -593,6 +593,7 @@ msgstr "Marco Köpcke <hello@capypara.de>"
 #: src/application.rs:584 src/connection_loader.rs:433
 #: src/widget/add_connection_dialog.rs:210
 #: src/widget/authenticate_connection_dialog.rs:170
+#: src/widget/certificate_details_window.rs:235
 #: src/widget/quick_connect_dialog.rs:101
 #: src/widget/quick_connect_dialog.rs:161
 #: src/widget/update_connection_dialog.rs:180
@@ -845,11 +846,47 @@ msgid "This connection needs additional authentication to proceed."
 msgstr ""
 "Diese Verbindung benötigt zusätzliche Informationen zur Authentifizierung."
 
-#: src/widget/certificate_trust_dialog.rs:103
+#: src/widget/certificate_details_window.blp:5
+msgid "Certificate Viewer"
+msgstr "Zertifikatsbetrachter"
+
+#: src/widget/certificate_details_window.blp:23
+msgid "Export"
+msgstr "Exportieren"
+
+#: src/widget/certificate_details_window.blp:32
+#: src/widget/close_warning_dialog.rs:79
+#: src/widget/connection_view/connection_view_navbar.blp:52
+#: src/widget/connection_view/connection_view_navbar.rs:176
+#: src/widget/connection_view/server_screen.blp:111
+msgid "Close"
+msgstr "Schließen"
+
+#: src/widget/certificate_details_window.rs:160
+msgid "PEM Certificate"
+msgstr "PEM Zertifikat"
+
+#: src/widget/certificate_details_window.rs:165
+msgid "DER Certificate"
+msgstr "DER Zertifikat"
+
+#: src/widget/certificate_details_window.rs:171
+msgid "Export Certificate..."
+msgstr "Zertifikat exportieren..."
+
+#: src/widget/certificate_details_window.rs:230
+msgid "Failed to save"
+msgstr "Speichern fehlgeschlagen"
+
+#: src/widget/certificate_details_window.rs:232
+msgid "Field Monitor was unable to save the provided file."
+msgstr "Feldmonitor konnte die angegebene Datei nicht speichern."
+
+#: src/widget/certificate_trust_dialog.rs:128
 msgid "Trust this server?"
 msgstr "Diesem Server vertrauen?"
 
-#: src/widget/certificate_trust_dialog.rs:104
+#: src/widget/certificate_trust_dialog.rs:129
 msgid ""
 "The connection to this server is established using a certificate that your "
 "system does not automatically trust. Do you trust this server and "
@@ -859,11 +896,15 @@ msgstr ""
 "dem ihr System nicht automatisch vertraut. Möchten Sie dem Server und dem "
 "Zertifikat vertrauen und eine Verbindung herstellen?"
 
-#: src/widget/certificate_trust_dialog.rs:131
+#: src/widget/certificate_trust_dialog.rs:156
 msgid "Fingerprint"
 msgstr "Fingerabdruck"
 
-#: src/widget/certificate_trust_dialog.rs:141
+#: src/widget/certificate_trust_dialog.rs:166
+msgid "Show Certificate"
+msgstr "Zertifikat ansehen"
+
+#: src/widget/certificate_trust_dialog.rs:178
 msgid ""
 "If you choose to trust this certificate, your choice will be remembered for "
 "future connection attempts."
@@ -871,12 +912,12 @@ msgstr ""
 "Falls Sie diesem Zertifikat vertrauen, wird diese Entscheidung für "
 "zukünftige Verbindungsversuche gespeichert."
 
-#: src/widget/certificate_trust_dialog.rs:148
+#: src/widget/certificate_trust_dialog.rs:185
 #: src/widget/close_warning_dialog.rs:78
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/widget/certificate_trust_dialog.rs:149
+#: src/widget/certificate_trust_dialog.rs:186
 msgid "Trust Certificate"
 msgstr "Zertifikat vertrauen"
 
@@ -891,13 +932,6 @@ msgid ""
 msgstr ""
 "Die Anwendung ist noch mit einem oder mehreren Servern verbunden. Wird "
 "dieses Fenster geschlossen, wird die Verbindung zu allen Servern geschlossen."
-
-#: src/widget/close_warning_dialog.rs:79
-#: src/widget/connection_view/connection_view_navbar.blp:52
-#: src/widget/connection_view/connection_view_navbar.rs:176
-#: src/widget/connection_view/server_screen.blp:111
-msgid "Close"
-msgstr "Schließen"
 
 #: src/widget/connection_list/connection_list_navbar.blp:12
 #: src/widget/connection_view/connection_view_navbar.blp:23

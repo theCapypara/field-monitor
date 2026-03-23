@@ -1462,6 +1462,7 @@ dependencies = [
  "field-monitor-proxmox",
  "fluent-uri",
  "futures",
+ "gcr-sys-minimal",
  "gettext-rs",
  "glib 0.22.3",
  "gtk4",
@@ -1469,9 +1470,9 @@ dependencies = [
  "libadwaita",
  "libfieldmonitor",
  "log",
- "manual_future",
  "num_enum",
  "oo7",
+ "pem",
  "pretty_env_logger",
  "rdw4",
  "rdw4-vnc",
@@ -1787,6 +1788,18 @@ dependencies = [
  "memchr",
  "pin-project-lite",
  "slab",
+]
+
+[[package]]
+name = "gcr-sys-minimal"
+version = "0.0.1"
+dependencies = [
+ "glib 0.22.3",
+ "gtk4",
+ "libc",
+ "shell-words",
+ "system-deps",
+ "tempfile",
 ]
 
 [[package]]
@@ -3565,15 +3578,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "manual_future"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b0c72f11f1d8e0c453cbd8042dfb83c2b50384f78a5a5d41019627c5f2062ece"
-dependencies = [
- "futures-util",
-]
-
-[[package]]
 name = "md-5"
 version = "0.10.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4170,6 +4174,16 @@ dependencies = [
  "digest 0.11.0-rc.3",
  "hmac 0.13.0-rc.2",
  "sha1 0.11.0-rc.2",
+]
+
+[[package]]
+name = "pem"
+version = "3.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d30c53c26bc5b31a98cd02d20f25a7c8567146caf63ed593a9d87b2775291be"
+dependencies = [
+ "base64",
+ "serde_core",
 ]
 
 [[package]]
@@ -5455,6 +5469,12 @@ dependencies = [
  "lazy_static",
  "libc",
 ]
+
+[[package]]
+name = "shell-words"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dc6fe69c597f9c37bfeeeeeb33da3530379845f10be461a66d16d03eca2ded77"
 
 [[package]]
 name = "shlex"

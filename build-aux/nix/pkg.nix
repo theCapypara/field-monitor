@@ -23,6 +23,7 @@
   spice-protocol,
   spice-gtk,
   vte-gtk4,
+  gcr_4,
   gtk-vnc,
   usbredir,
   libepoxy,
@@ -69,6 +70,7 @@ stdenv.mkDerivation rec {
     gtk4
     gtk-vnc
     vte-gtk4
+    gcr_4
     libadwaita
     libepoxy
     libGL

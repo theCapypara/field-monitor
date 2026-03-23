@@ -20,6 +20,7 @@
 
   gtk4,
   vte-gtk4,
+  gcr_4,
   libadwaita,
   meson,
   ninja,
@@ -105,6 +106,7 @@ mkShell {
     [
       gtk4
       vte-gtk4
+      gcr_4
       libadwaita
       libadwaita.devdoc
       meson

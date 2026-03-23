@@ -91,6 +91,8 @@ src/widget/app_status.blp
 src/widget/app_status.rs
 src/widget/authenticate_connection_dialog.blp
 src/widget/authenticate_connection_dialog.rs
+src/widget/certificate_details_window.blp
+src/widget/certificate_details_window.rs
 src/widget/certificate_trust_dialog.rs
 src/widget/close_warning_dialog.rs
 src/widget/connection_list/connection_list_navbar.blp
