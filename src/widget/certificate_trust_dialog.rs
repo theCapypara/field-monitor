@@ -23,8 +23,9 @@ use adw::subclass::prelude::*;
 use adw::{ActionRow, gio};
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
-use gtk::{Orientation, glib};
+use gtk::{Align, Orientation, glib};
 use libfieldmonitor::cert_security::X509Certificate;
+use libfieldmonitor::i18n::gettext_f;
 use std::cell::RefCell;
 
 mod imp {
@@ -76,8 +77,9 @@ impl FieldMonitorCertificateTrustDialog {
         app: &FieldMonitorApplication,
         cert: &X509Certificate,
         for_host: &str,
+        is_ca: bool,
     ) -> LocalBoxFuture<'static, bool> {
-        let slf = Self::new(app, cert, for_host);
+        let slf = Self::new(app, cert, for_host, is_ca);
         Box::pin(gio::GioFuture::new(&slf, move |obj, _cancellable, send| {
             let sender = RefCell::new(Some(send));
             obj.run_sync_inner(move |_, _, result| {
@@ -92,9 +94,10 @@ impl FieldMonitorCertificateTrustDialog {
         app: &FieldMonitorApplication,
         cert: &X509Certificate,
         for_host: &str,
+        is_ca: bool,
         callback: impl Fn(&X509Certificate, &str, bool) + 'static,
     ) {
-        Self::new(app, cert, for_host).run_sync_inner(callback)
+        Self::new(app, cert, for_host, is_ca).run_sync_inner(callback)
     }
 
     fn run_sync_inner(&self, callback: impl Fn(&X509Certificate, &str, bool) + 'static) {
@@ -121,12 +124,20 @@ impl FieldMonitorCertificateTrustDialog {
         );
     }
 
-    fn new(app: &FieldMonitorApplication, cert: &X509Certificate, for_host: &str) -> Self {
+    fn new(
+        app: &FieldMonitorApplication,
+        cert: &X509Certificate,
+        for_host: &str,
+        is_ca: bool,
+    ) -> Self {
         let slf: Self = glib::Object::builder()
             .property("content-width", 500)
             .property("follows-content-size", false)
             .property("heading", gettext("Trust this server?"))
-            .property("body", gettext("The connection to this server is established using a certificate that your system does not automatically trust. Do you trust this server and certificate and want to establish a connection?"))
+            .property(
+                "body",
+                gettext("Do you trust this certificate and want to establish a connection?"),
+            )
             .build();
         slf.imp().app.replace(Some(app.clone()));
         slf.imp().cert.replace(Some(cert.clone()));
@@ -173,12 +184,54 @@ impl FieldMonitorCertificateTrustDialog {
         list_box.append(&row_fingerprint);
 
         boxx.append(&list_box);
-        let info = gtk::Label::builder()
+
+        if is_ca {
+            let info_ca = gtk::Box::builder()
+                .orientation(Orientation::Horizontal)
+                .halign(Align::Center)
+                .spacing(15)
+                .build();
+            let info_ca_label = gtk::Label::builder()
+                .wrap(true)
+                .label(gettext(
+                    "This certificate is the certificate authority (CA) issuing the connection certificate.",
+                ))
+                .build();
+            let info_ca_btn = gtk::Button::builder()
+                .icon_name("question-round-outline-symbolic")
+                .tooltip_text(gettext("Info"))
+                .build();
+
+            // XXX: Moving this string inside the closure, makes gettext not pick it up...
+            let explanation = gettext(
+                "After you choose to trust the CA, Field Monitor will confirm that the connection is established using a certificate issued by the CA. If not Field Monitor will refuse the connection.",
+            );
+            info_ca_btn.connect_clicked(glib::clone!(
+                #[weak]
+                app,
+                #[strong]
+                explanation,
+                move |_| {
+                    let diag = adw::AlertDialog::builder().body(&explanation).build();
+                    diag.add_response("ok", &gettext("OK"));
+                    diag.present(app.active_window().as_ref());
+                }
+            ));
+            info_ca.append(&info_ca_label);
+            info_ca.append(&info_ca_btn);
+            boxx.append(&info_ca);
+        }
+
+        let info_remember = gtk::Label::builder()
             .wrap(true)
-            .label(gettext("If you choose to trust this certificate, your choice will be remembered for future connection attempts."))
+            .label(gettext_f(
+                "If you choose to trust this certificate, your choice will be remembered for future connections to <tt>{host}</tt>.",
+                &[("host", for_host)]
+            ))
+            .use_markup(true)
             .css_classes(["dim-label"])
             .build();
-        boxx.append(&info);
+        boxx.append(&info_remember);
 
         slf.set_extra_child(Some(&boxx));
 

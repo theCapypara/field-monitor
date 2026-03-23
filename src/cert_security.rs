@@ -112,8 +112,8 @@ impl FieldMonitorTrustStore {
     }
 
     pub fn checksum_for_cert(cert: &X509Certificate) -> anyhow::Result<Checksum> {
-        let mut checksum = Checksum::new(ChecksumType::Sha256)
-            .ok_or_else(|| anyhow!("could not create SHA256"))?;
+        let mut checksum =
+            Checksum::new(ChecksumType::Sha1).ok_or_else(|| anyhow!("could not create SHA1"))?;
         checksum.update(&cert.to_der()?);
         Ok(checksum)
     }

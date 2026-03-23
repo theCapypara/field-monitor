@@ -602,6 +602,7 @@ impl FieldMonitorServerScreen {
         }
 
         let mode = tls_info.mode();
+        let is_ca = tls_info.is_ca();
 
         if let Some(cached) = *self.imp().interactive_tls_verified.borrow() {
             // We already asked the user before, use the cached result.
@@ -636,9 +637,10 @@ impl FieldMonitorServerScreen {
                             true
                         } else {
                             // Show interactive dialogue and return response
-                            let result =
-                                FieldMonitorCertificateTrustDialog::run_async(&app, &cert, &host)
-                                    .await;
+                            let result = FieldMonitorCertificateTrustDialog::run_async(
+                                &app, &cert, &host, is_ca,
+                            )
+                            .await;
                             if result {
                                 let _ = trust_store.trust(&cert, &host).map_err(warn_tls_err);
                             }
@@ -661,6 +663,7 @@ impl FieldMonitorServerScreen {
                                 &app,
                                 &cert,
                                 &host,
+                                is_ca,
                                 glib::clone!(
                                     #[strong]
                                     trust_store,

@@ -241,6 +241,7 @@ impl Adapter for SpiceAdapter {
                         .or_else(|| session.host().as_deref().map(ToString::to_string))
                         .unwrap_or_default(),
                     subject_line,
+                    true,
                 )) {
                     VerifyTlsResponse::Sync(_) => unreachable!(),
                     VerifyTlsResponse::Async(fut) => {

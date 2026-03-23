@@ -46,6 +46,7 @@ pub struct VerifyTls {
     host: String,
     verify_cert_subject: Option<Name>,
     mode: VerifyTlsMode,
+    is_ca: bool,
 }
 
 impl VerifyTls {
@@ -53,29 +54,37 @@ impl VerifyTls {
         certs: VerifiableCertChain,
         host: impl AsRef<str>,
         verify_cert_subject: Option<Name>,
+        is_ca: bool,
     ) -> Self {
         Self {
             certs,
             host: host.as_ref().to_string(),
             verify_cert_subject,
             mode: VerifyTlsMode::Async,
+            is_ca,
         }
     }
     pub(crate) fn verify_sync(
         certs: VerifiableCertChain,
         host: impl AsRef<str>,
         verify_cert_subject: Option<Name>,
+        is_ca: bool,
     ) -> Self {
         Self {
             certs,
             host: host.as_ref().to_string(),
             verify_cert_subject,
             mode: VerifyTlsMode::Sync,
+            is_ca,
         }
     }
 
     pub fn mode(&self) -> VerifyTlsMode {
         self.mode
+    }
+
+    pub fn is_ca(&self) -> bool {
+        self.is_ca
     }
 
     /// Verify the certificate against the system CA.

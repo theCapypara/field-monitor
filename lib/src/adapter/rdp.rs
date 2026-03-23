@@ -84,7 +84,7 @@ impl Adapter for RdpAdapter {
                     return false;
                 }
             };
-            match verify_tls(VerifyTls::verify_sync(cert, &subject, None)) {
+            match verify_tls(VerifyTls::verify_sync(cert, &subject, None, false)) {
                 VerifyTlsResponse::Sync(response) => response,
                 VerifyTlsResponse::Async(_) => unreachable!(),
             }

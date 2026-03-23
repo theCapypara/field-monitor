@@ -183,7 +183,7 @@ impl Adapter for VncAdapter {
                         return on_disconnected(Err(err));
                     }
                 };
-                match verify_tls(VerifyTls::verify_async(certs, &host, None)) {
+                match verify_tls(VerifyTls::verify_async(certs, &host, None, true)) {
                     VerifyTlsResponse::Sync(_) => unreachable!(),
                     VerifyTlsResponse::Async(fut) => {
                         if !fut.await {
