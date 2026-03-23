@@ -70,7 +70,7 @@ mod imp {
         pub secret_manager: RefCell<Option<Arc<Box<dyn ManagesSecrets>>>>,
         pub connections: RefCell<Option<HashMap<String, ConnectionInstance>>>,
         pub providers: RefCell<HashMap<String, Rc<Box<dyn ConnectionProvider>>>>,
-        pub app_trust_store: RefCell<Option<Arc<FieldMonitorTrustStore>>>,
+        pub app_trust_store: RefCell<Option<Rc<FieldMonitorTrustStore>>>,
         /// Manages a stack for `pending_server_action`. If stack size is zero, sets to false.
         pub busy_stack: RefCell<Option<BusyStack>>,
         /// Current overall state of the application (if it has finished loading)
@@ -316,7 +316,7 @@ mod imp {
             if self.app_trust_store.borrow().is_none() {
                 debug!("Init app trust store...");
                 self.app_trust_store
-                    .replace(Some(Arc::new(FieldMonitorTrustStore::load_default())));
+                    .replace(Some(Rc::new(FieldMonitorTrustStore::load_default())));
             }
 
             // If no error happened, continue app initialization, otherwise show an error by
@@ -1188,7 +1188,7 @@ impl FieldMonitorApplication {
         }
     }
 
-    pub fn app_trust_store(&self) -> Arc<FieldMonitorTrustStore> {
+    pub fn app_trust_store(&self) -> Rc<FieldMonitorTrustStore> {
         self.imp().app_trust_store.borrow().clone().unwrap()
     }
 }

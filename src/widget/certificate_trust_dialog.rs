@@ -164,7 +164,7 @@ impl FieldMonitorCertificateTrustDialog {
         let row_fingerprint = ActionRow::builder()
             .activatable(false)
             .selectable(false)
-            .title(gettext("Fingerprint"))
+            .title(format!("{} (SHA256)", gettext("Fingerprint")))
             .subtitle(fingerprint)
             .subtitle_selectable(true)
             .css_classes(["property", "monospace"])

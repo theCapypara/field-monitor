@@ -15,16 +15,17 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
 use crate::util::config_dir;
 use anyhow::anyhow;
 use glib::{Checksum, ChecksumType};
 use libfieldmonitor::cert_security::{Encode, X509Certificate};
 use log::{error, warn};
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fs::OpenOptions;
 use std::io;
 use std::io::BufRead;
+use std::io::Write;
 use std::num::ParseIntError;
 use std::path::{Path, PathBuf};
 
@@ -34,7 +35,7 @@ pub const TRUST_FILENAME: &str = "trusted_certs";
 /// or otherwise untrusted certificates.
 pub struct FieldMonitorTrustStore {
     pub path: PathBuf,
-    pub store: HashMap<String, Vec<Box<[u8]>>>,
+    pub store: RefCell<HashMap<String, Vec<Box<[u8]>>>>,
 }
 
 impl FieldMonitorTrustStore {
@@ -47,10 +48,13 @@ impl FieldMonitorTrustStore {
             }
         } else {
             match Self::parse(&path) {
-                Ok(store) => Self { path, store },
+                Ok(store) => Self {
+                    path,
+                    store: RefCell::new(store),
+                },
                 Err(err) => {
                     error!(
-                        "Failed to app's certificate trust store ({}): {}. Continuing with empty store.",
+                        "Failed to load app's certificate trust store ({}): {}. Continuing with empty store.",
                         path.display(),
                         err
                     );
@@ -102,18 +106,39 @@ impl FieldMonitorTrustStore {
     }
 
     pub fn verify(&self, cert: &X509Certificate, for_host: &str) -> anyhow::Result<bool> {
-        // TODO
-        Ok(false)
+        let checksum = Self::checksum_for_cert(cert)?;
+        Ok(self
+            .store
+            .borrow()
+            .get(for_host)
+            .map(|trusted| trusted.contains(&checksum.digest().into_boxed_slice()))
+            .unwrap_or_default())
     }
 
     pub fn trust(&self, cert: &X509Certificate, for_host: &str) -> anyhow::Result<()> {
-        // TODO
+        let checksum = Self::checksum_for_cert(cert)?;
+        let digest = checksum.digest().into_boxed_slice();
+        let fingerprint = format_bytes_as_hex_string(&digest);
+        self.store
+            .borrow_mut()
+            .entry(for_host.to_string())
+            .and_modify(|entry| entry.push(digest.clone()))
+            .or_insert_with(|| vec![digest]);
+        self.append_to_file(for_host, &fingerprint)?;
         Ok(())
     }
 
+    fn append_to_file(&self, host: &str, fingerprint: &str) -> io::Result<()> {
+        let mut file = OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&self.path)?;
+        writeln!(file, "{host}\t{fingerprint}")
+    }
+
     pub fn checksum_for_cert(cert: &X509Certificate) -> anyhow::Result<Checksum> {
-        let mut checksum =
-            Checksum::new(ChecksumType::Sha1).ok_or_else(|| anyhow!("could not create SHA1"))?;
+        let mut checksum = Checksum::new(ChecksumType::Sha256)
+            .ok_or_else(|| anyhow!("could not create SHA256"))?;
         checksum.update(&cert.to_der()?);
         Ok(checksum)
     }
@@ -127,7 +152,7 @@ impl FieldMonitorTrustStore {
     fn digest_to_bytes(digest: &str) -> Result<Box<[u8]>, ParseIntError> {
         let digest = digest
             .chars()
-            .filter(|c| c.is_numeric())
+            .filter(|c| c.is_alphanumeric())
             .collect::<String>();
         (0..digest.len())
             .step_by(2)
