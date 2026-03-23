@@ -28,6 +28,7 @@ use rdw_vnc::gvnc;
 use secure_string::SecureString;
 
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
+use crate::cert_security::{VerifiableCertChain, VerifyTls, VerifyTlsResponse};
 use crate::connection::ConnectionError;
 
 pub struct VncAdapter {
@@ -77,6 +78,7 @@ impl Adapter for VncAdapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
+        verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
     ) -> Box<dyn AdapterDisplay> {
         debug!("creating vnc adapter");
         let error_container: Rc<RefCell<Option<ConnectionError>>> = Rc::new(RefCell::new(None));
@@ -110,11 +112,12 @@ impl Adapter for VncAdapter {
                 )));
             });
 
+        let on_disconnected_cln = on_disconnected.clone();
         vnc.connection().connect_vnc_disconnected(move |_conn| {
             debug!("VNC connection disconnected");
             match error_container.borrow_mut().take() {
-                None => on_disconnected(Ok(())),
-                Some(err) => on_disconnected(Err(err)),
+                None => on_disconnected_cln(Ok(())),
+                Some(err) => on_disconnected_cln(Err(err)),
             }
         });
 
@@ -170,9 +173,32 @@ impl Adapter for VncAdapter {
             }
         ));
 
-        vnc.connection()
-            .open_host(&host, &format!("{}", port))
-            .unwrap();
+        let vnc_cln = vnc.clone();
+        glib::spawn_future_local(async move {
+            // TLS verification
+            if let Some(ca) = ca.as_deref() {
+                let certs = match VerifiableCertChain::from_pem_chain(ca) {
+                    Ok(certs) => certs,
+                    Err(err) => {
+                        return on_disconnected(Err(err));
+                    }
+                };
+                match verify_tls(VerifyTls::verify_async(certs, &host, None)) {
+                    VerifyTlsResponse::Sync(_) => unreachable!(),
+                    VerifyTlsResponse::Async(fut) => {
+                        if !fut.await {
+                            return on_disconnected(Err(VerifyTls::error()));
+                        }
+                    }
+                }
+            }
+
+            // Connect
+            vnc_cln
+                .connection()
+                .open_host(&host, &format!("{}", port))
+                .unwrap();
+        });
 
         Box::new(VncAdapterDisplay(vnc))
     }

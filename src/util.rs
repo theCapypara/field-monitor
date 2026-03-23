@@ -16,13 +16,19 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use adw::gdk;
+use glib::user_config_dir;
 use std::cmp::Ordering;
+use std::path::PathBuf;
 use vte::prelude::*;
 
 const BLACK: gdk::RGBA = gdk::RGBA::new(0.0, 0.0, 0.0, 1.0);
 const WHITE: gdk::RGBA = gdk::RGBA::new(1.0, 1.0, 1.0, 1.0);
 
 pub const MOUSE_RIGHT_BUTTON: u32 = 3;
+
+pub fn config_dir() -> PathBuf {
+    user_config_dir().join("field-monitor")
+}
 
 pub fn configure_vte_styling(terminal: &vte::Terminal, style_manager: &adw::StyleManager) {
     if style_manager.is_dark() {

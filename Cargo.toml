@@ -52,27 +52,27 @@ version = "0.9"
 package = "rdw4"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2"
+rev = "4472e7a82542c78a63babb8710371218113124a4"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2"
+rev = "4472e7a82542c78a63babb8710371218113124a4"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2"
+rev = "4472e7a82542c78a63babb8710371218113124a4"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2"
+rev = "4472e7a82542c78a63babb8710371218113124a4"
 default-features = false
 
 [workspace.dependencies.vte]
@@ -113,6 +113,7 @@ sorted-vec = "0.8"
 secure-string = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = "0.5"
+manual_future = "0.1"
 num_enum = { workspace = true }
 glib = { workspace = true }
 gtk = { workspace = true }

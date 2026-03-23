@@ -29,6 +29,7 @@ mod macros;
 pub mod adapter;
 pub mod busy;
 pub mod cache;
+pub mod cert_security;
 pub mod config;
 pub mod connection;
 pub mod gtk;

@@ -22,6 +22,7 @@ use anyhow::anyhow;
 use gtk::prelude::*;
 
 use libfieldmonitor::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
+use libfieldmonitor::cert_security::{VerifyTls, VerifyTlsResponse};
 use libfieldmonitor::connection::ConnectionError;
 
 use crate::behaviour_preferences::DebugBehaviour;
@@ -42,6 +43,7 @@ impl Adapter for DebugArbitraryAdapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
+        _verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
     ) -> Box<dyn AdapterDisplay> {
         glib::timeout_add_local(Duration::from_secs(1), move || {
             match self.mode {

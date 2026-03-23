@@ -22,6 +22,7 @@ use anyhow::anyhow;
 use vte::TerminalExt;
 
 use libfieldmonitor::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
+use libfieldmonitor::cert_security::{VerifyTls, VerifyTlsResponse};
 use libfieldmonitor::connection::ConnectionError;
 
 use crate::behaviour_preferences::DebugBehaviour;
@@ -39,6 +40,7 @@ impl Adapter for DebugVteAdapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
+        _verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
     ) -> Box<dyn AdapterDisplay> {
         let vte = vte::Terminal::builder()
             .cursor_blink_mode(vte::CursorBlinkMode::On)

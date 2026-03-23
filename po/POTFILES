@@ -52,6 +52,7 @@ lib/src/adapter/vnc.rs
 lib/src/adapter/vte_pty.rs
 lib/src/busy.rs
 lib/src/cache.rs
+lib/src/cert_security.rs
 lib/src/config.rs
 lib/src/connection/configuration.rs
 lib/src/connection/config_value.rs
@@ -67,6 +68,7 @@ lib/src/macros.rs
 lib/src/secrets.rs
 lib/src/tokiort.rs
 src/application.rs
+src/cert_security.rs
 src/connection_loader.rs
 src/connection.rs
 src/shortcuts-dialog.blp
@@ -89,6 +91,7 @@ src/widget/app_status.blp
 src/widget/app_status.rs
 src/widget/authenticate_connection_dialog.blp
 src/widget/authenticate_connection_dialog.rs
+src/widget/certificate_trust_dialog.rs
 src/widget/close_warning_dialog.rs
 src/widget/connection_list/connection_list_navbar.blp
 src/widget/connection_list/connection_list_navbar.rs

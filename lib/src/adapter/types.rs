@@ -15,9 +15,9 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use std::rc::Rc;
-
+use crate::cert_security::{VerifyTls, VerifyTlsResponse};
 use crate::connection::ConnectionError;
+use std::rc::Rc;
 
 /// Widget backing the adapter display.
 #[derive(Clone, Debug)]
@@ -46,5 +46,6 @@ pub trait Adapter: Send + Sync {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
+        verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
     ) -> Box<dyn AdapterDisplay>;
 }
