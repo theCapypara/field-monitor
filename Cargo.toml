@@ -114,7 +114,6 @@ sorted-vec = "0.8"
 secure-string = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = "0.5"
-#manual_future = "0.1"
 pem = "3"
 num_enum = { workspace = true }
 glib = { workspace = true }
