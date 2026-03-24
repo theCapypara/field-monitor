@@ -41,7 +41,7 @@ stdenv.mkDerivation rec {
   cargoDeps = rustPlatform.importCargoLock {
     lockFile = "${src}/Cargo.lock";
     outputHashes = {
-      "cbindgen-0.28.0" = "sha256-+uugMyqc55uj6EGBWQ9eCAA1xGlJGErlX9fvsbGk8Mg=";
+      "cbindgen-0.28.0" = "sha256-8RS57cFWzciu4kjn/+rwPmOLZ3r4b0+Q0beQqZVx1Dg=";
       "gvnc-0.7.0" = "sha256-PGPaFJn0BXldnDbyDPaWU+hnLRhmTt3E6y+7mcuqyzk=";
       "spice-client-glib-0.7.0" = "sha256-SS0pYng9PSHGjtoxpiILeLAT6pLBWdRBzvSQwbzxmfU=";
     };
