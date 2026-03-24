@@ -619,83 +619,71 @@ impl FieldMonitorServerScreen {
                 let app = app.clone().unwrap();
                 let trust_store = app.app_trust_store();
 
-                // If the target connection provider can handle async, we run check the
-                // app's trust store asynchronously and also shown an async dialogue if
-                // the cert is not yet trusted. Otherwise, we check the trust store synchronously,
-                // but if it doesn't trust the cert yet, we then return `false` (don't trust
-                // the cert), but still show the user the dialogue & simply reset ourselves if
-                // the user actually does trust the cert (which causes a re-connect).
+                // Check the app's trust store
+                if trust_store
+                    .verify(&cert, &host)
+                    .map_err(warn_tls_err)
+                    .unwrap_or_default()
+                {
+                    self.imp().interactive_tls_verified.replace(Some(true));
+                    return VerifyTlsResponse::make_static(mode, true);
+                }
+
+                // If the target connection provider can handle async, we show an async dialogue.
+                // Otherwise, we check the trust store synchronously, but if it doesn't trust the
+                // cert yet, we then return `false` (don't trust the cert), but still show the
+                // user the dialogue & simply reset ourselves if  the user actually does trust
+                // the cert (which causes a reconnect).
                 let slf = self.clone();
                 match mode {
                     VerifyTlsMode::Async => VerifyTlsResponse::Async(Box::pin(async move {
-                        // Check the app's trust store
-                        if trust_store
-                            .verify(&cert, &host)
-                            .map_err(warn_tls_err)
-                            .unwrap_or_default()
-                        {
-                            true
-                        } else {
-                            // Show interactive dialogue and return response
-                            let result = FieldMonitorCertificateTrustDialog::run_async(
-                                &app, &cert, &host, is_ca,
-                            )
-                            .await;
-                            if result {
-                                let _ = trust_store.trust(&cert, &host).map_err(warn_tls_err);
-                            }
-                            slf.imp().interactive_tls_verified.replace(Some(result));
-                            result
+                        let result = FieldMonitorCertificateTrustDialog::run_async(
+                            &app, &cert, &host, is_ca,
+                        )
+                        .await;
+                        if result {
+                            let _ = trust_store.trust(&cert, &host).map_err(warn_tls_err);
                         }
+                        slf.imp().interactive_tls_verified.replace(Some(result));
+                        result
                     })),
                     VerifyTlsMode::Sync => {
-                        // Check the app's trust store
-                        if trust_store
-                            .verify(&cert, &host)
-                            .map_err(warn_tls_err)
-                            .unwrap_or_default()
-                        {
-                            VerifyTlsResponse::Sync(true)
-                        } else {
-                            slf.imp().inhibit_status_view.set(true);
-                            // Show interactive dialogue and return response
-                            FieldMonitorCertificateTrustDialog::run_sync(
-                                &app,
-                                &cert,
-                                &host,
-                                is_ca,
-                                glib::clone!(
-                                    #[strong]
-                                    trust_store,
-                                    #[weak(rename_to = slf)]
-                                    self,
-                                    move |cert, host, result| {
-                                        slf.imp().interactive_tls_verified.replace(Some(result));
-                                        if result {
-                                            let _ =
-                                                trust_store.trust(cert, host).map_err(warn_tls_err);
-                                            // Reset to now reconnect and accept the cert.
-                                            glib::spawn_future_local(glib::clone!(
-                                                #[strong]
-                                                slf,
-                                                async move {
-                                                    slf.reset().await;
-                                                }
-                                            ));
-                                        } else {
-                                            // Show status screen
-                                            let imp = slf.imp();
-                                            imp.inhibit_status_view.set(false);
-                                            imp.status_stack.set_visible_child_name("disconnected");
-                                            imp.outer_stack.set_visible_child_name("status");
-                                        }
+                        slf.imp().inhibit_status_view.set(true);
+                        FieldMonitorCertificateTrustDialog::run_sync(
+                            &app,
+                            &cert,
+                            &host,
+                            is_ca,
+                            glib::clone!(
+                                #[strong]
+                                trust_store,
+                                #[weak(rename_to = slf)]
+                                self,
+                                move |cert, host, result| {
+                                    slf.imp().interactive_tls_verified.replace(Some(result));
+                                    if result {
+                                        let _ = trust_store.trust(cert, host).map_err(warn_tls_err);
+                                        // Reset to now reconnect and accept the cert.
+                                        glib::spawn_future_local(glib::clone!(
+                                            #[strong]
+                                            slf,
+                                            async move {
+                                                slf.reset().await;
+                                            }
+                                        ));
+                                    } else {
+                                        // Show status screen
+                                        let imp = slf.imp();
+                                        imp.inhibit_status_view.set(false);
+                                        imp.status_stack.set_visible_child_name("disconnected");
+                                        imp.outer_stack.set_visible_child_name("status");
                                     }
-                                ),
-                            );
-                            // We return false, this causes a disconnect, and then we later reset
-                            // in the closure above if we trust.
-                            VerifyTlsResponse::Sync(false)
-                        }
+                                }
+                            ),
+                        );
+                        // We return false, this causes a disconnect, and then we later reset
+                        // in the closure above if we trust.
+                        VerifyTlsResponse::Sync(false)
                     }
                 }
             }
