@@ -258,7 +258,7 @@ impl Adapter for SpiceAdapter {
             disconnect_error,
             #[strong]
             on_disconnected,
-            move |_| Self::on_session_disconnected(&disconnect_error, &on_disconnected)
+            move |_| Self::on_session_disconnected(&disconnect_error, &*on_disconnected)
         ));
 
         let session_cfg = self.0;
@@ -294,7 +294,7 @@ impl SpiceAdapter {
                 move |channel, _| Self::on_any_channel_open_fd(
                     channel,
                     &channel_stream_fn,
-                    &on_disconnected
+                    &*on_disconnected
                 )
             ));
         };
@@ -308,8 +308,8 @@ impl SpiceAdapter {
                 move |channel, event| Self::on_main_channel_event(
                     channel,
                     &event,
-                    &on_connected,
-                    &on_disconnected
+                    &*on_connected,
+                    &*on_disconnected
                 )
             ));
         }
@@ -317,8 +317,8 @@ impl SpiceAdapter {
 
     fn on_any_channel_open_fd(
         channel: &spice::Channel,
-        channel_stream_fn: &Arc<MakeChannelSocket>,
-        on_disconnected: &Rc<dyn Fn(Result<(), ConnectionError>)>,
+        channel_stream_fn: &MakeChannelSocket,
+        on_disconnected: &dyn Fn(Result<(), ConnectionError>),
     ) {
         match channel_stream_fn() {
             Ok(stream) => {
@@ -346,8 +346,8 @@ impl SpiceAdapter {
     fn on_main_channel_event(
         channel: &spice::MainChannel,
         event: &ChannelEvent,
-        on_connected: &Rc<dyn Fn()>,
-        on_disconnected: &Rc<dyn Fn(Result<(), ConnectionError>)>,
+        on_connected: &dyn Fn(),
+        on_disconnected: &dyn Fn(Result<(), ConnectionError>),
     ) {
         let error = channel.error();
         match event {
@@ -380,7 +380,7 @@ impl SpiceAdapter {
 
     fn on_session_channel_destroy(
         channel: &spice::Channel,
-        current_error: &Rc<RefCell<Option<glib::Error>>>,
+        current_error: &RefCell<Option<glib::Error>>,
     ) {
         if let Some(error) = channel.error() {
             current_error.replace(Some(error));
@@ -388,8 +388,8 @@ impl SpiceAdapter {
     }
 
     fn on_session_disconnected(
-        current_error: &Rc<RefCell<Option<glib::Error>>>,
-        on_disconnected: &Rc<dyn Fn(Result<(), ConnectionError>)>,
+        current_error: &RefCell<Option<glib::Error>>,
+        on_disconnected: &dyn Fn(Result<(), ConnectionError>),
     ) {
         if let Some(error) = current_error.take() {
             let con_error = if let Some(error) = error.kind::<spice::ClientError>() {

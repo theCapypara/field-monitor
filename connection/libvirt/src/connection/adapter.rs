@@ -20,12 +20,14 @@ use crate::connection::graphics::LibvirtConnectable;
 use anyhow::anyhow;
 use gettextrs::gettext;
 use gtk::glib;
-use libfieldmonitor::adapter::spice::SpiceAdapter;
+use libfieldmonitor::adapter::spice::{MakeChannelSocket, SpiceAdapter};
 use libfieldmonitor::adapter::types::{Adapter, AdapterDisplay, NullAdapterDisplay};
 use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::cert_security::{VerifyTls, VerifyTlsResponse};
 use log::{debug, error};
+use secure_string::SecureString;
 use std::marker::PhantomData;
+use std::num::NonZeroU32;
 use std::os::fd::FromRawFd;
 use std::os::unix::net::UnixStream;
 use std::rc::Rc;
@@ -43,7 +45,70 @@ impl<T> LibvirtDynamicAdapter<T> {
     }
 }
 
-impl LibvirtDynamicAdapter<SpiceAdapter> {
+trait AdapterConstructor: Adapter {
+    fn new_for_network(
+        host: String,
+        port: Option<NonZeroU32>,
+        tls_port: Option<NonZeroU32>,
+        user: String,
+        password: SecureString,
+    ) -> Self;
+    fn new_from_socket(
+        stream: UnixStream,
+        make_channel_socket: MakeChannelSocket,
+        username: Option<String>,
+        password: Option<SecureString>,
+    ) -> Self;
+}
+
+impl AdapterConstructor for SpiceAdapter {
+    fn new_for_network(
+        host: String,
+        port: Option<NonZeroU32>,
+        tls_port: Option<NonZeroU32>,
+        user: String,
+        password: SecureString,
+    ) -> Self {
+        SpiceAdapter::new(host, port, tls_port, user, password)
+    }
+    fn new_from_socket(
+        stream: UnixStream,
+        make_channel_socket: MakeChannelSocket,
+        username: Option<String>,
+        password: Option<SecureString>,
+    ) -> Self {
+        SpiceAdapter::new_from_socket(stream, make_channel_socket, username, password)
+    }
+}
+
+impl AdapterConstructor for VncAdapter {
+    fn new_for_network(
+        host: String,
+        port: Option<NonZeroU32>,
+        _tls_port: Option<NonZeroU32>,
+        user: String,
+        password: SecureString,
+    ) -> Self {
+        Self::new(
+            host,
+            port.map(NonZeroU32::get).unwrap_or_default(),
+            user,
+            password,
+        )
+    }
+
+    fn new_from_socket(
+        stream: UnixStream,
+        _make_channel_socket: MakeChannelSocket,
+        username: Option<String>,
+        password: Option<SecureString>,
+    ) -> Self {
+        Self::new_from_socket(stream, username, password)
+    }
+}
+
+#[allow(private_bounds)]
+impl<T: AdapterConstructor> LibvirtDynamicAdapter<T> {
     fn try_via_fd(
         mut self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
@@ -66,7 +131,7 @@ impl LibvirtDynamicAdapter<SpiceAdapter> {
             };
 
             // connect the other end to the spice adapter
-            Ok(Box::new(SpiceAdapter::new_from_socket(
+            Ok(Box::new(T::new_from_socket(
                 stream,
                 Box::new(glib::clone!(
                     #[strong]
@@ -103,7 +168,7 @@ impl LibvirtDynamicAdapter<SpiceAdapter> {
                 error!("connection to socket failed");
                 return Err(self);
             };
-            Ok(Box::new(SpiceAdapter::new_from_socket(
+            Ok(Box::new(T::new_from_socket(
                 socket,
                 Box::new(glib::clone!(
                     #[strong]
@@ -129,7 +194,7 @@ impl LibvirtDynamicAdapter<SpiceAdapter> {
         debug!("trying network");
         let network_cfg = self.0.via_network.take();
         if let Some(creds) = network_cfg {
-            Ok(Box::new(SpiceAdapter::new(
+            Ok(Box::new(T::new_for_network(
                 creds.host,
                 creds.port,
                 creds.tls_port,
@@ -142,7 +207,9 @@ impl LibvirtDynamicAdapter<SpiceAdapter> {
             Err(self)
         }
     }
+}
 
+impl<T> LibvirtDynamicAdapter<T> {
     fn not_supported(
         self,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
@@ -158,7 +225,7 @@ impl LibvirtDynamicAdapter<SpiceAdapter> {
     }
 }
 
-impl Adapter for LibvirtDynamicAdapter<SpiceAdapter> {
+impl<T: AdapterConstructor> Adapter for LibvirtDynamicAdapter<T> {
     fn create_and_connect_display(
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
@@ -179,16 +246,5 @@ impl Adapter for LibvirtDynamicAdapter<SpiceAdapter> {
         })
         .or_else(|slf| slf.try_via_network(on_connected, on_disconnected.clone(), verify_tls))
         .unwrap_or_else(|slf| slf.not_supported(on_disconnected))
-    }
-}
-
-impl Adapter for LibvirtDynamicAdapter<VncAdapter> {
-    fn create_and_connect_display(
-        self: Box<Self>,
-        on_connected: Rc<dyn Fn()>,
-        on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
-        verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
-    ) -> Box<dyn AdapterDisplay> {
-        todo!()
     }
 }
