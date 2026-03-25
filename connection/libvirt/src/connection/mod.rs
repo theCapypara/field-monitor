@@ -16,6 +16,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+mod adapter;
 mod graphics;
 
 use std::borrow::Cow;

@@ -289,14 +289,16 @@ impl ServerType {
     pub fn new_adapter(
         &self,
         host: String,
-        port: u32,
+        port: NonZeroU32,
         user: String,
         password: SecureString,
     ) -> Box<dyn Adapter> {
         let bx: Box<dyn Adapter> = match self {
-            ServerType::Rdp => Box::new(RdpAdapter::new(host, port, user, password)),
-            ServerType::Spice => Box::new(SpiceAdapter::new(host, port, user, password)),
-            ServerType::Vnc => Box::new(VncAdapter::new(host, port, user, password)),
+            ServerType::Rdp => Box::new(RdpAdapter::new(host, port.get(), user, password)),
+            ServerType::Spice => {
+                Box::new(SpiceAdapter::new(host, Some(port), None, user, password))
+            }
+            ServerType::Vnc => Box::new(VncAdapter::new(host, port.get(), user, password)),
         };
         bx
     }

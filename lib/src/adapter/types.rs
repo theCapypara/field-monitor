@@ -17,6 +17,7 @@
  */
 use crate::cert_security::{VerifyTls, VerifyTlsResponse};
 use crate::connection::ConnectionError;
+use glib::object::Cast;
 use std::rc::Rc;
 
 /// Widget backing the adapter display.
@@ -48,4 +49,16 @@ pub trait Adapter: Send + Sync {
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
         verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
     ) -> Box<dyn AdapterDisplay>;
+}
+
+pub struct NullAdapterDisplay;
+
+impl AdapterDisplay for NullAdapterDisplay {
+    fn widget(&self) -> AdapterDisplayWidget {
+        AdapterDisplayWidget::Arbitrary {
+            widget: gtk::Box::builder().build().upcast(),
+        }
+    }
+
+    fn close(&self) {}
 }

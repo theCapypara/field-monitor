@@ -24,7 +24,7 @@ use anyhow::anyhow;
 use fluent_uri::Uri;
 use gettextrs::gettext;
 use glib::object::IsA;
-use libfieldmonitor::adapter::spice::{SpiceAdapter, SpiceSessionConfigBuilder};
+use libfieldmonitor::adapter::spice::{SpiceAdapter, SpiceNetworkSessionConfigBuilder};
 use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::connection::{
     ConfigAccess, ConfigAccessMut, ConnectionConfiguration, ConnectionError, ConnectionResult,
@@ -212,7 +212,7 @@ fn invalid_uri() -> Result<Infallible, ConnectionError> {
 
 pub fn make_adapter(config: &ConnectionConfiguration) -> Box<dyn Adapter> {
     Box::new(SpiceAdapter::new_with_custom_config(
-        SpiceSessionConfigBuilder::default()
+        SpiceNetworkSessionConfigBuilder::default()
             .uri(config.spice_uri().map(ToString::to_string))
             .username(config.user().map(ToString::to_string))
             .password(config.password())

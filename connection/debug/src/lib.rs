@@ -18,6 +18,7 @@
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::convert::Infallible;
+use std::num::NonZeroU32;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -608,7 +609,8 @@ impl ServerConnection for DebugConnectionServer {
                             let (host, port) = parse_host_port(self.config.spice_host())?;
                             Box::new(SpiceAdapter::new(
                                 host.to_string(),
-                                port,
+                                Some(NonZeroU32::try_from(port).unwrap()),
+                                None,
                                 "".to_string(),
                                 self.config.spice_password().into(),
                             ))

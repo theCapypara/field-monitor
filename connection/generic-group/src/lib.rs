@@ -384,8 +384,7 @@ impl ServerConnection for GenericConnectionServer {
                     .port(&self.key)
                     .as_ref()
                     .copied()
-                    .map(NonZeroU32::get)
-                    .unwrap_or_default(),
+                    .unwrap_or(NonZeroU32::MAX),
                 self.config
                     .user(&self.key)
                     .as_ref()

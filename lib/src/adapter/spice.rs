@@ -24,22 +24,28 @@ use anyhow::anyhow;
 use derive_builder::Builder;
 use gettextrs::gettext;
 use glib::prelude::*;
-use log::{debug, warn};
+use log::{debug, error, warn};
 use rdw_spice::spice;
 use rdw_spice::spice::prelude::ChannelExt;
 use rdw_spice::spice::{ChannelEvent, Session};
 use secure_string::SecureString;
 use std::borrow::Cow;
 use std::cell::RefCell;
+use std::mem;
 use std::num::NonZeroU32;
+use std::os::fd::AsRawFd;
+use std::os::unix::net::UnixStream;
 use std::rc::Rc;
 use std::str::FromStr;
+use std::sync::Arc;
 use x509_cert::name::Name;
+
+pub type MakeChannelSocket = Box<dyn Fn() -> anyhow::Result<UnixStream> + Send + Sync>;
 
 #[derive(Builder, Debug, Clone, Default)]
 #[builder(pattern = "owned")]
 #[non_exhaustive]
-pub struct SpiceSessionConfig {
+pub struct SpiceNetworkSessionConfig {
     #[builder(default = "None")]
     uri: Option<String>,
     #[builder(default = "None")]
@@ -62,8 +68,13 @@ pub struct SpiceSessionConfig {
     unix_path: Option<String>,
 }
 
-impl SpiceSessionConfig {
-    fn apply(self, session: &mut Session) {
+trait MakeSession {
+    fn apply(&self, session: &Session);
+    fn connect(self, session: &Session) -> bool;
+}
+
+impl MakeSession for SpiceNetworkSessionConfig {
+    fn apply(&self, session: &Session) {
         // We check for Some, because the bindings seem to have some bugs / weird behaviour
         // with None values.
         if self.uri.is_some() {
@@ -97,30 +108,105 @@ impl SpiceSessionConfig {
             session.set_unix_path(self.unix_path.as_deref());
         }
     }
+
+    fn connect(self, session: &Session) -> bool {
+        session.connect()
+    }
 }
 
-pub struct SpiceAdapter(SpiceSessionConfig);
+struct SpiceSocketSessionConfig {
+    stream: UnixStream,
+    channel_stream_fn: Arc<MakeChannelSocket>,
+    username: Option<String>,
+    password: Option<SecureString>,
+}
+
+impl MakeSession for SpiceSocketSessionConfig {
+    fn apply(&self, session: &Session) {
+        if self.username.is_some() {
+            session.set_username(self.username.as_deref());
+        }
+        if self.password.is_some() {
+            session.set_password(self.password.as_ref().map(|v| v.unsecure()));
+        }
+        session.set_client_sockets(true);
+    }
+
+    fn connect(self, session: &Session) -> bool {
+        if session.open_fd(self.stream.as_raw_fd()) {
+            mem::forget(self.stream);
+            true
+        } else {
+            false
+        }
+    }
+}
+
+enum SpiceAdapterMode {
+    /// The connection is made over the network.
+    Network(SpiceNetworkSessionConfig),
+    /// The connection is made using a socket
+    Socket(SpiceSocketSessionConfig),
+}
+
+impl MakeSession for SpiceAdapterMode {
+    fn apply(&self, session: &Session) {
+        match self {
+            SpiceAdapterMode::Network(s) => s.apply(session),
+            SpiceAdapterMode::Socket(s) => s.apply(session),
+        }
+    }
+
+    fn connect(self, session: &Session) -> bool {
+        match self {
+            SpiceAdapterMode::Network(s) => s.connect(session),
+            SpiceAdapterMode::Socket(s) => s.connect(session),
+        }
+    }
+}
+
+pub struct SpiceAdapter(SpiceAdapterMode);
 
 impl SpiceAdapter {
     pub const TAG: &'static str = "spice";
 
-    pub fn new(host: String, port: u32, user: String, password: SecureString) -> Self {
-        Self(SpiceSessionConfig {
-            uri: Some(format!("spice://{}:{}", host, port)),
+    pub fn new(
+        host: String,
+        port: Option<NonZeroU32>,
+        tls_port: Option<NonZeroU32>,
+        user: String,
+        password: SecureString,
+    ) -> Self {
+        Self(SpiceAdapterMode::Network(SpiceNetworkSessionConfig {
+            uri: None,
             username: Some(user),
             password: Some(password),
             ca: None,
-            host: None,
-            port: None,
+            host: Some(host),
+            port,
             cert_subject: None,
-            tls_port: None,
+            tls_port,
             proxy: None,
             unix_path: None,
-        })
+        }))
     }
 
-    pub fn new_with_custom_config(config: SpiceSessionConfig) -> Self {
-        Self(config)
+    pub fn new_with_custom_config(config: SpiceNetworkSessionConfig) -> Self {
+        Self(SpiceAdapterMode::Network(config))
+    }
+
+    pub fn new_from_socket(
+        stream: UnixStream,
+        make_channel_socket: MakeChannelSocket,
+        username: Option<String>,
+        password: Option<SecureString>,
+    ) -> Self {
+        Self(SpiceAdapterMode::Socket(SpiceSocketSessionConfig {
+            stream,
+            channel_stream_fn: Arc::new(make_channel_socket),
+            username,
+            password,
+        }))
     }
 
     pub fn label() -> Cow<'static, str> {
@@ -138,18 +224,57 @@ impl Adapter for SpiceAdapter {
         debug!("creating spice adapter");
         let spice = rdw_spice::Display::new();
 
-        let mut session = spice.session();
-        self.0.apply(&mut session);
+        let session = spice.session();
+        self.0.apply(&session);
+        let channel_stream_fn = match &self.0 {
+            SpiceAdapterMode::Socket(cfg) => Some(cfg.channel_stream_fn.clone()),
+            _ => None,
+        };
 
         let disconnect_error: Rc<RefCell<Option<glib::Error>>> = Default::default();
 
         let on_disconnected_cln = on_disconnected.clone();
         session.connect_channel_new(move |_, channel| {
+            debug!("channel-new: {}", channel.type_().name());
+            // Open channel fd if we are connected using a socket.
+            if let Some(open_stream_fn) = channel_stream_fn.clone() {
+                let on_disconnected = on_disconnected_cln.clone();
+                debug!("connecting open fd");
+                channel.connect_open_fd(move |channel, _| {
+                    match open_stream_fn() {
+                        Ok(stream) => {
+                            debug!("connecting channel {channel:?} with {stream:?}");
+                            if !channel.open_fd(stream.as_raw_fd()) {
+                                error!("failed to open channel using fd (open_fd)");
+                                on_disconnected(Err(ConnectionError::General(
+                                    None,
+                                    anyhow!("failed to open channel using fd"),
+                                )));
+                            } else {
+                                mem::forget(stream);
+                            }
+                        }
+                        Err(err) => {
+                            error!("failed to open channel using fd (open_stream_fn)");
+                            on_disconnected(Err(ConnectionError::General(
+                                None,
+                                anyhow!("failed to open channel using fd: {err}"),
+                            )));
+                        }
+                    };
+                });
+            };
+
             if let Ok(main) = channel.clone().downcast::<spice::MainChannel>() {
                 let on_disconnected_cln_cln = on_disconnected_cln.clone();
+                let on_connected_cln = on_connected.clone();
                 main.connect_channel_event(move |channel, event| {
                     let error = channel.error();
                     match event {
+                        ChannelEvent::Opened => {
+                            debug!("main channel opened");
+                            on_connected_cln();
+                        }
                         ChannelEvent::ErrorConnect
                         | ChannelEvent::ErrorTls
                         | ChannelEvent::ErrorLink
@@ -213,6 +338,7 @@ impl Adapter for SpiceAdapter {
             }
         ));
 
+        let session_cfg = self.0;
         glib::spawn_future_local(async move {
             // TLS verification
             if let Some(ca) = session.ca() {
@@ -253,8 +379,10 @@ impl Adapter for SpiceAdapter {
             }
 
             // Connect
-            session.connect();
-            on_connected();
+            if !session_cfg.connect(&session) {
+                // handled by disconnected signal.
+                warn!("connect failed");
+            }
         });
 
         Box::new(SpiceAdapterDisplay(spice))
