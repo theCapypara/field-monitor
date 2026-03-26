@@ -18,7 +18,7 @@
 use anyhow::anyhow;
 use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
-use libfieldmonitor::adapter::spice::{SpiceAdapter, SpiceSessionConfigBuilder};
+use libfieldmonitor::adapter::spice::{SpiceAdapter, SpiceNetworkSessionConfigBuilder};
 use libfieldmonitor::adapter::types::Adapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
 use libfieldmonitor::adapter::vte_pty::VtePtyAdapter;
@@ -178,7 +178,7 @@ fn create_proxmox_adapter<'a>(
                 vncproxy.cert,
             )),
             AdapterCreds::Spice(spiceproxy) => Box::new(SpiceAdapter::new_with_custom_config(
-                SpiceSessionConfigBuilder::default()
+                SpiceNetworkSessionConfigBuilder::default()
                     .host(Some(spiceproxy.host))
                     .password(Some(spiceproxy.password.into()))
                     .proxy(Some(spiceproxy.proxy))

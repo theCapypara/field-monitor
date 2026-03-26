@@ -20,3 +20,12 @@ pub use hypervisor::*;
 mod connection;
 mod hypervisor;
 mod qemu_preferences;
+
+static LIBVIRT_LOCALHOST: &str = "localhost";
+
+/// Returns `true` if the given localhost is "localhost".
+// todo: in the future this might also want to check ip addresses, etc.
+#[inline(always)]
+pub fn is_localhost(hostname: &str) -> bool {
+    hostname == LIBVIRT_LOCALHOST
+}

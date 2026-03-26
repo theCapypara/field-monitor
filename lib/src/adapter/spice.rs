@@ -19,27 +19,33 @@ use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
 use crate::cert_security::{
     VerifiableCertChain, VerifyTls, VerifyTlsResponse, extract_common_name,
 };
-use crate::connection::ConnectionError;
+use crate::connection::{ConnectionError, ConnectionResult};
 use anyhow::anyhow;
 use derive_builder::Builder;
 use gettextrs::gettext;
 use glib::prelude::*;
-use log::{debug, warn};
+use log::{debug, error, warn};
 use rdw_spice::spice;
 use rdw_spice::spice::prelude::ChannelExt;
 use rdw_spice::spice::{ChannelEvent, Session};
 use secure_string::SecureString;
 use std::borrow::Cow;
 use std::cell::RefCell;
+use std::mem;
 use std::num::NonZeroU32;
+use std::os::fd::AsRawFd;
+use std::os::unix::net::UnixStream;
 use std::rc::Rc;
 use std::str::FromStr;
+use std::sync::Arc;
 use x509_cert::name::Name;
+
+pub type MakeChannelSocket = Box<dyn Fn() -> anyhow::Result<UnixStream> + Send + Sync>;
 
 #[derive(Builder, Debug, Clone, Default)]
 #[builder(pattern = "owned")]
 #[non_exhaustive]
-pub struct SpiceSessionConfig {
+pub struct SpiceNetworkSessionConfig {
     #[builder(default = "None")]
     uri: Option<String>,
     #[builder(default = "None")]
@@ -62,8 +68,13 @@ pub struct SpiceSessionConfig {
     unix_path: Option<String>,
 }
 
-impl SpiceSessionConfig {
-    fn apply(self, session: &mut Session) {
+trait MakeSession {
+    fn apply(&self, session: &Session);
+    fn connect(self, session: &Session) -> bool;
+}
+
+impl MakeSession for SpiceNetworkSessionConfig {
+    fn apply(&self, session: &Session) {
         // We check for Some, because the bindings seem to have some bugs / weird behaviour
         // with None values.
         if self.uri.is_some() {
@@ -97,30 +108,105 @@ impl SpiceSessionConfig {
             session.set_unix_path(self.unix_path.as_deref());
         }
     }
+
+    fn connect(self, session: &Session) -> bool {
+        session.connect()
+    }
 }
 
-pub struct SpiceAdapter(SpiceSessionConfig);
+struct SpiceSocketSessionConfig {
+    stream: UnixStream,
+    channel_stream_fn: Arc<MakeChannelSocket>,
+    username: Option<String>,
+    password: Option<SecureString>,
+}
+
+impl MakeSession for SpiceSocketSessionConfig {
+    fn apply(&self, session: &Session) {
+        if self.username.is_some() {
+            session.set_username(self.username.as_deref());
+        }
+        if self.password.is_some() {
+            session.set_password(self.password.as_ref().map(|v| v.unsecure()));
+        }
+        session.set_client_sockets(true);
+    }
+
+    fn connect(self, session: &Session) -> bool {
+        if session.open_fd(self.stream.as_raw_fd()) {
+            mem::forget(self.stream);
+            true
+        } else {
+            false
+        }
+    }
+}
+
+enum SpiceAdapterMode {
+    /// The connection is made over the network.
+    Network(SpiceNetworkSessionConfig),
+    /// The connection is made using a socket
+    Socket(SpiceSocketSessionConfig),
+}
+
+impl MakeSession for SpiceAdapterMode {
+    fn apply(&self, session: &Session) {
+        match self {
+            SpiceAdapterMode::Network(s) => s.apply(session),
+            SpiceAdapterMode::Socket(s) => s.apply(session),
+        }
+    }
+
+    fn connect(self, session: &Session) -> bool {
+        match self {
+            SpiceAdapterMode::Network(s) => s.connect(session),
+            SpiceAdapterMode::Socket(s) => s.connect(session),
+        }
+    }
+}
+
+pub struct SpiceAdapter(SpiceAdapterMode);
 
 impl SpiceAdapter {
     pub const TAG: &'static str = "spice";
 
-    pub fn new(host: String, port: u32, user: String, password: SecureString) -> Self {
-        Self(SpiceSessionConfig {
-            uri: Some(format!("spice://{}:{}", host, port)),
+    pub fn new(
+        host: String,
+        port: Option<NonZeroU32>,
+        tls_port: Option<NonZeroU32>,
+        user: String,
+        password: SecureString,
+    ) -> Self {
+        Self(SpiceAdapterMode::Network(SpiceNetworkSessionConfig {
+            uri: None,
             username: Some(user),
             password: Some(password),
             ca: None,
-            host: None,
-            port: None,
+            host: Some(host),
+            port,
             cert_subject: None,
-            tls_port: None,
+            tls_port,
             proxy: None,
             unix_path: None,
-        })
+        }))
     }
 
-    pub fn new_with_custom_config(config: SpiceSessionConfig) -> Self {
-        Self(config)
+    pub fn new_with_custom_config(config: SpiceNetworkSessionConfig) -> Self {
+        Self(SpiceAdapterMode::Network(config))
+    }
+
+    pub fn new_from_socket(
+        stream: UnixStream,
+        make_channel_socket: MakeChannelSocket,
+        username: Option<String>,
+        password: Option<SecureString>,
+    ) -> Self {
+        Self(SpiceAdapterMode::Socket(SpiceSocketSessionConfig {
+            stream,
+            channel_stream_fn: Arc::new(make_channel_socket),
+            username,
+            password,
+        }))
     }
 
     pub fn label() -> Cow<'static, str> {
@@ -138,126 +224,234 @@ impl Adapter for SpiceAdapter {
         debug!("creating spice adapter");
         let spice = rdw_spice::Display::new();
 
-        let mut session = spice.session();
-        self.0.apply(&mut session);
+        let session = spice.session();
+        self.0.apply(&session);
+        let channel_stream_fn = match &self.0 {
+            SpiceAdapterMode::Socket(cfg) => Some(cfg.channel_stream_fn.clone()),
+            _ => None,
+        };
 
         let disconnect_error: Rc<RefCell<Option<glib::Error>>> = Default::default();
 
-        let on_disconnected_cln = on_disconnected.clone();
-        session.connect_channel_new(move |_, channel| {
-            if let Ok(main) = channel.clone().downcast::<spice::MainChannel>() {
-                let on_disconnected_cln_cln = on_disconnected_cln.clone();
-                main.connect_channel_event(move |channel, event| {
-                    let error = channel.error();
-                    match event {
-                        ChannelEvent::ErrorConnect
-                        | ChannelEvent::ErrorTls
-                        | ChannelEvent::ErrorLink
-                        | ChannelEvent::ErrorIo => {
-                            on_disconnected_cln_cln(Err(ConnectionError::General(
-                                error.as_ref().map(ToString::to_string),
-                                if let Some(e) = error {
-                                    e.into()
-                                } else {
-                                    anyhow!("unknown error for event {event:?}")
-                                },
-                            )))
-                        }
-                        ChannelEvent::ErrorAuth => {
-                            on_disconnected_cln_cln(Err(ConnectionError::AuthFailed(
-                                error.as_ref().map(ToString::to_string),
-                                if let Some(e) = error {
-                                    e.into()
-                                } else {
-                                    anyhow!("unknown error for event {event:?}")
-                                },
-                            )))
-                        }
-                        _ => debug!("spice channel event: {event:?}"),
-                    }
-                });
-            }
-        });
+        session.connect_channel_new(glib::clone!(
+            #[strong]
+            channel_stream_fn,
+            #[strong]
+            on_connected,
+            #[strong]
+            on_disconnected,
+            move |_, channel| Self::on_session_channel_new(
+                channel,
+                channel_stream_fn.as_ref(),
+                &on_connected,
+                &on_disconnected,
+            )
+        ));
         session.connect_channel_destroy(glib::clone!(
             #[strong]
             disconnect_error,
-            move |_, channel| {
-                if let Some(error) = channel.error() {
-                    disconnect_error.replace(Some(error));
-                }
-            }
+            move |_, channel| Self::on_session_channel_destroy(channel, &disconnect_error)
         ));
 
-        let on_disconnected_cln = on_disconnected.clone();
         session.connect_disconnected(glib::clone!(
             #[strong]
             disconnect_error,
-            move |_| {
-                if let Some(error) = disconnect_error.take() {
-                    let con_error = if let Some(error) = error.kind::<spice::ClientError>() {
-                        match error {
-                            spice::ClientError::AuthNeedsPassword
-                            | spice::ClientError::AuthNeedsUsername
-                            | spice::ClientError::AuthNeedsPasswordAndUsername => {
-                                ConnectionError::AuthFailed(None, anyhow!("auth failed"))
-                            }
-                            _ => ConnectionError::General(None, anyhow!("{:?}", error)),
-                        }
-                    } else {
-                        ConnectionError::General(None, anyhow::Error::from(Box::new(error)))
-                    };
-                    on_disconnected_cln(Err(con_error))
-                } else {
-                    on_disconnected_cln(Ok(()))
-                }
-            }
+            #[strong]
+            on_disconnected,
+            move |_| Self::on_session_disconnected(&disconnect_error, &*on_disconnected)
         ));
 
+        let session_cfg = self.0;
         glib::spawn_future_local(async move {
-            // TLS verification
-            if let Some(ca) = session.ca() {
-                let certs = match VerifiableCertChain::from_pem_chain(ca) {
-                    Ok(certs) => certs,
-                    Err(err) => {
-                        return on_disconnected(Err(err));
-                    }
-                };
-                let subject_line = match session
-                    .cert_subject()
-                    .map(|x| Name::from_str(x.as_str()))
-                    .transpose()
-                {
-                    Ok(subject_line) => subject_line,
-                    Err(err) => {
-                        warn!("failed to parse cert name / subject: {:?}", err);
-                        return on_disconnected(Err(ConnectionError::General(None, err.into())));
-                    }
-                };
-                match verify_tls(VerifyTls::verify_async(
-                    certs,
-                    subject_line
-                        .as_ref()
-                        .and_then(extract_common_name)
-                        .or_else(|| session.host().as_deref().map(ToString::to_string))
-                        .unwrap_or_default(),
-                    subject_line,
-                    true,
-                )) {
-                    VerifyTlsResponse::Sync(_) => unreachable!(),
-                    VerifyTlsResponse::Async(fut) => {
-                        if !fut.await {
-                            return on_disconnected(Err(VerifyTls::error()));
-                        }
-                    }
-                }
+            if let Err(err) = Self::verify_tls(&session, &*verify_tls).await {
+                on_disconnected(Err(err));
+                return;
             }
-
-            // Connect
-            session.connect();
-            on_connected();
+            if !session_cfg.connect(&session) {
+                // handled by disconnected signal.
+                warn!("connect failed");
+            }
         });
 
         Box::new(SpiceAdapterDisplay(spice))
+    }
+}
+
+impl SpiceAdapter {
+    fn on_session_channel_new(
+        channel: &spice::Channel,
+        channel_stream_fn: Option<&Arc<MakeChannelSocket>>,
+        on_connected: &Rc<dyn Fn()>,
+        on_disconnected: &Rc<dyn Fn(Result<(), ConnectionError>)>,
+    ) {
+        debug!("channel-new: {}", channel.type_().name());
+        // Open channel fd if we are connected using a socket.
+        if let Some(channel_stream_fn) = channel_stream_fn.cloned() {
+            debug!("connecting open fd");
+            channel.connect_open_fd(glib::clone!(
+                #[strong]
+                on_disconnected,
+                move |channel, _| Self::on_any_channel_open_fd(
+                    channel,
+                    &channel_stream_fn,
+                    &*on_disconnected
+                )
+            ));
+        };
+
+        if let Ok(main) = channel.clone().downcast::<spice::MainChannel>() {
+            main.connect_channel_event(glib::clone!(
+                #[strong]
+                on_connected,
+                #[strong]
+                on_disconnected,
+                move |channel, event| Self::on_main_channel_event(
+                    channel,
+                    &event,
+                    &*on_connected,
+                    &*on_disconnected
+                )
+            ));
+        }
+    }
+
+    fn on_any_channel_open_fd(
+        channel: &spice::Channel,
+        channel_stream_fn: &MakeChannelSocket,
+        on_disconnected: &dyn Fn(Result<(), ConnectionError>),
+    ) {
+        match channel_stream_fn() {
+            Ok(stream) => {
+                debug!("connecting channel {channel:?} with {stream:?}");
+                if !channel.open_fd(stream.as_raw_fd()) {
+                    error!("failed to open channel using fd (open_fd)");
+                    on_disconnected(Err(ConnectionError::General(
+                        None,
+                        anyhow!("failed to open channel using fd"),
+                    )));
+                } else {
+                    mem::forget(stream);
+                }
+            }
+            Err(err) => {
+                error!("failed to open channel using fd (open_stream_fn)");
+                on_disconnected(Err(ConnectionError::General(
+                    None,
+                    anyhow!("failed to open channel using fd: {err}"),
+                )));
+            }
+        };
+    }
+
+    fn on_main_channel_event(
+        channel: &spice::MainChannel,
+        event: &ChannelEvent,
+        on_connected: &dyn Fn(),
+        on_disconnected: &dyn Fn(Result<(), ConnectionError>),
+    ) {
+        let error = channel.error();
+        match event {
+            ChannelEvent::Opened => {
+                debug!("main channel opened");
+                on_connected();
+            }
+            ChannelEvent::ErrorConnect
+            | ChannelEvent::ErrorTls
+            | ChannelEvent::ErrorLink
+            | ChannelEvent::ErrorIo => on_disconnected(Err(ConnectionError::General(
+                error.as_ref().map(ToString::to_string),
+                if let Some(e) = error {
+                    e.into()
+                } else {
+                    anyhow!("unknown error for event {event:?}")
+                },
+            ))),
+            ChannelEvent::ErrorAuth => on_disconnected(Err(ConnectionError::AuthFailed(
+                error.as_ref().map(ToString::to_string),
+                if let Some(e) = error {
+                    e.into()
+                } else {
+                    anyhow!("unknown error for event {event:?}")
+                },
+            ))),
+            _ => debug!("spice channel event: {event:?}"),
+        }
+    }
+
+    fn on_session_channel_destroy(
+        channel: &spice::Channel,
+        current_error: &RefCell<Option<glib::Error>>,
+    ) {
+        if let Some(error) = channel.error() {
+            current_error.replace(Some(error));
+        }
+    }
+
+    fn on_session_disconnected(
+        current_error: &RefCell<Option<glib::Error>>,
+        on_disconnected: &dyn Fn(Result<(), ConnectionError>),
+    ) {
+        if let Some(error) = current_error.take() {
+            let con_error = if let Some(error) = error.kind::<spice::ClientError>() {
+                match error {
+                    spice::ClientError::AuthNeedsPassword
+                    | spice::ClientError::AuthNeedsUsername
+                    | spice::ClientError::AuthNeedsPasswordAndUsername => {
+                        ConnectionError::AuthFailed(None, anyhow!("auth failed"))
+                    }
+                    _ => ConnectionError::General(None, anyhow!("{:?}", error)),
+                }
+            } else {
+                ConnectionError::General(None, anyhow::Error::from(Box::new(error)))
+            };
+            on_disconnected(Err(con_error))
+        } else {
+            on_disconnected(Ok(()))
+        }
+    }
+
+    async fn verify_tls(
+        session: &Session,
+        verify_tls: &dyn Fn(VerifyTls) -> VerifyTlsResponse,
+    ) -> ConnectionResult<()> {
+        // TLS verification
+        if let Some(ca) = session.ca() {
+            let certs = match VerifiableCertChain::from_pem_chain(ca) {
+                Ok(certs) => certs,
+                Err(err) => {
+                    return Err(err);
+                }
+            };
+            let subject_line = match session
+                .cert_subject()
+                .map(|x| Name::from_str(x.as_str()))
+                .transpose()
+            {
+                Ok(subject_line) => subject_line,
+                Err(err) => {
+                    warn!("failed to parse cert name / subject: {:?}", err);
+                    return Err(ConnectionError::General(None, err.into()));
+                }
+            };
+            match verify_tls(VerifyTls::verify_async(
+                certs,
+                subject_line
+                    .as_ref()
+                    .and_then(extract_common_name)
+                    .or_else(|| session.host().as_deref().map(ToString::to_string))
+                    .unwrap_or_default(),
+                subject_line,
+                true,
+            )) {
+                VerifyTlsResponse::Sync(_) => unreachable!(),
+                VerifyTlsResponse::Async(fut) => {
+                    if !fut.await {
+                        return Err(VerifyTls::error());
+                    }
+                }
+            }
+        }
+        Ok(())
     }
 }
 
