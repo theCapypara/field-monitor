@@ -23,6 +23,7 @@
   spice-protocol,
   spice-gtk,
   vte-gtk4,
+  gcr_4,
   gtk-vnc,
   usbredir,
   libepoxy,
@@ -40,7 +41,7 @@ stdenv.mkDerivation rec {
   cargoDeps = rustPlatform.importCargoLock {
     lockFile = "${src}/Cargo.lock";
     outputHashes = {
-      "cbindgen-0.28.0" = "sha256-V6Q8qtUqCf2kdw4dtG8xot2mWsyhOVWlEg6UCJh0obk=";
+      "cbindgen-0.28.0" = "sha256-+uugMyqc55uj6EGBWQ9eCAA1xGlJGErlX9fvsbGk8Mg=";
       "gvnc-0.7.0" = "sha256-PGPaFJn0BXldnDbyDPaWU+hnLRhmTt3E6y+7mcuqyzk=";
       "spice-client-glib-0.7.0" = "sha256-SS0pYng9PSHGjtoxpiILeLAT6pLBWdRBzvSQwbzxmfU=";
     };
@@ -69,6 +70,7 @@ stdenv.mkDerivation rec {
     gtk4
     gtk-vnc
     vte-gtk4
+    gcr_4
     libadwaita
     libepoxy
     libGL

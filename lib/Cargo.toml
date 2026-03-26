@@ -27,6 +27,10 @@ derive_builder = "0.20"
 nix = { version = "0.31", features = ["signal"] }
 async-rwlock = "1.3"
 tokio = { workspace = true, features = ["fs"] }
+rustls = { version = "0.23", default-features = false, features = ["tls12", "std"] }
+rustls-openssl = "0.3"
+rustls-platform-verifier = "0.6"
+x509-cert = "0.2"
 
 [lints]
 workspace = true

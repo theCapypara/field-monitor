@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-22 11:42+0100\n"
-"PO-Revision-Date: 2026-03-22 11:43+0100\n"
+"POT-Creation-Date: 2026-03-23 22:52+0100\n"
+"PO-Revision-Date: 2026-03-23 22:54+0100\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -53,21 +53,21 @@ msgstr "Entfernter Bildschirm"
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
 #: connection/generic-group/src/server_preferences.blp:22
-#: lib/src/adapter/rdp.rs:51
+#: lib/src/adapter/rdp.rs:52
 msgid "RDP"
 msgstr "RDP"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
 #: connection/generic-group/src/server_preferences.blp:24
-#: connection/proxmox/src/api/node.rs:163 lib/src/adapter/vnc.rs:71
+#: connection/proxmox/src/api/node.rs:163 lib/src/adapter/vnc.rs:72
 msgid "VNC"
 msgstr "VNC"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
 #: connection/generic-group/src/server_preferences.blp:23
-#: connection/proxmox/src/api/node.rs:162 lib/src/adapter/spice.rs:124
+#: connection/proxmox/src/api/node.rs:162 lib/src/adapter/spice.rs:127
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -278,6 +278,7 @@ msgstr "Servertyp"
 #: connection/generic-group/src/server_preferences.blp:32
 #: connection/libvirt/src/qemu_preferences.blp:52
 #: connection/proxmox/src/preferences.blp:21
+#: src/widget/certificate_trust_dialog.rs:159
 msgid "Hostname"
 msgstr "Hostname"
 
@@ -552,6 +553,10 @@ msgstr ""
 "Ermöglicht die Verbindung zu Servern mit selbst-signierten SSL Zertifikaten. "
 "Achtung, dies ist ein mögliches Sicherheitsrisiko."
 
+#: lib/src/cert_security.rs:134
+msgid "Server certificate verification failed"
+msgstr "Verifizierung des Server-Zertifikats fehlgeschlagen"
+
 #: lib/src/connection/instance.rs:191
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
@@ -572,56 +577,57 @@ msgstr "Speichern und merken"
 msgid "Ask for this every time"
 msgstr "Jedes Mal nachfragen"
 
-#: lib/src/lib.rs:42
+#: lib/src/lib.rs:43
 msgid "The connection configuration is invalid"
 msgstr "Die Verbindungskonfiguration ist ungültig"
 
-#: src/application.rs:125
+#: src/application.rs:127
 msgid "Open the app with a new window"
 msgstr "Anwendung mit einem neuen Fenster starten"
 
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
-#: src/application.rs:566
+#: src/application.rs:575
 msgid "translator-credits"
 msgstr "Marco Köpcke <hello@capypara.de>"
 
-#: src/application.rs:575 src/connection_loader.rs:433
+#: src/application.rs:584 src/connection_loader.rs:433
 #: src/widget/add_connection_dialog.rs:210
-#: src/widget/authenticate_connection_dialog.rs:173
+#: src/widget/authenticate_connection_dialog.rs:170
+#: src/widget/certificate_details_window.rs:235
 #: src/widget/quick_connect_dialog.rs:101
 #: src/widget/quick_connect_dialog.rs:161
 #: src/widget/update_connection_dialog.rs:180
 msgid "OK"
 msgstr "OK"
 
-#: src/application.rs:617
+#: src/application.rs:626
 msgid "Connection successfully added."
 msgstr "Verbindung erfolgreich hinzugefügt."
 
-#: src/application.rs:672
+#: src/application.rs:681
 msgid "Connection successfully updated."
 msgstr "Verbindung erfolgreich aktualisiert."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/application.rs:710
+#: src/application.rs:719
 #, rust-format
 msgid "Permanently Remove “{title}”?"
 msgstr "»{title}« dauerhaft entfernen?"
 
-#: src/application.rs:714 src/widget/connection_view/connection_tab_view.rs:251
+#: src/application.rs:723 src/widget/connection_view/connection_tab_view.rs:251
 msgid "No"
 msgstr "Nein"
 
-#: src/application.rs:715 src/widget/connection_view/connection_tab_view.rs:252
+#: src/application.rs:724 src/widget/connection_view/connection_tab_view.rs:252
 msgid "Yes"
 msgstr "Ja"
 
-#: src/application.rs:720
+#: src/application.rs:729
 msgid "Connection successfully removed."
 msgstr "Verbindung erfolgreich entfernt."
 
-#: src/application.rs:781
+#: src/application.rs:790
 msgid "Authentication successfully updated"
 msgstr "Informationen zur Authentifizierung erfolgreich aktualisiert"
 
@@ -771,13 +777,13 @@ msgid "Add New Connection"
 msgstr "Neue Verbindung hinzufügen"
 
 #: src/widget/add_connection_dialog.rs:203
-#: src/widget/authenticate_connection_dialog.rs:166
+#: src/widget/authenticate_connection_dialog.rs:163
 #: src/widget/update_connection_dialog.rs:173
 msgid "Failed to save connection"
 msgstr "Fehler beim Speichern der Verbindung"
 
 #: src/widget/add_connection_dialog.rs:206
-#: src/widget/authenticate_connection_dialog.rs:169
+#: src/widget/authenticate_connection_dialog.rs:166
 #: src/widget/update_connection_dialog.rs:176
 msgid "An error occurred, while trying to save the connection"
 msgstr "Beim Speichern der Verbindung ist ein Fehler aufgetreten"
@@ -835,10 +841,104 @@ msgstr "Authentifizierung erforderlich"
 msgid "Apply"
 msgstr "Anwenden"
 
-#: src/widget/authenticate_connection_dialog.rs:108
+#: src/widget/authenticate_connection_dialog.rs:105
 msgid "This connection needs additional authentication to proceed."
 msgstr ""
 "Diese Verbindung benötigt zusätzliche Informationen zur Authentifizierung."
+
+#: src/widget/certificate_details_window.blp:5
+msgid "Certificate Viewer"
+msgstr "Zertifikatsbetrachter"
+
+#: src/widget/certificate_details_window.blp:23
+msgid "Export"
+msgstr "Exportieren"
+
+#: src/widget/certificate_details_window.blp:32
+#: src/widget/close_warning_dialog.rs:79
+#: src/widget/connection_view/connection_view_navbar.blp:52
+#: src/widget/connection_view/connection_view_navbar.rs:176
+#: src/widget/connection_view/server_screen.blp:111
+msgid "Close"
+msgstr "Schließen"
+
+#: src/widget/certificate_details_window.rs:160
+msgid "PEM Certificate"
+msgstr "PEM Zertifikat"
+
+#: src/widget/certificate_details_window.rs:165
+msgid "DER Certificate"
+msgstr "DER Zertifikat"
+
+#: src/widget/certificate_details_window.rs:171
+msgid "Export Certificate..."
+msgstr "Zertifikat exportieren..."
+
+#: src/widget/certificate_details_window.rs:230
+msgid "Failed to save"
+msgstr "Speichern fehlgeschlagen"
+
+#: src/widget/certificate_details_window.rs:232
+msgid "Field Monitor was unable to save the provided file."
+msgstr "Feldmonitor konnte die angegebene Datei nicht speichern."
+
+#: src/widget/certificate_trust_dialog.rs:136
+msgid "Trust this server?"
+msgstr "Diesem Server vertrauen?"
+
+#: src/widget/certificate_trust_dialog.rs:139
+msgid "Do you trust this certificate and want to establish a connection?"
+msgstr ""
+"Vertrauen Sie diesem Zertifikat und wollen Sie eine Verbindung herstellen?"
+
+#: src/widget/certificate_trust_dialog.rs:167
+msgid "Fingerprint"
+msgstr "Fingerabdruck"
+
+#: src/widget/certificate_trust_dialog.rs:177
+msgid "Show Certificate"
+msgstr "Zertifikat ansehen"
+
+#: src/widget/certificate_trust_dialog.rs:197
+msgid ""
+"This certificate is the certificate authority (CA) issuing the connection "
+"certificate."
+msgstr ""
+"Dieses Zertifikat ist die Zertifizierungsstelle (CA), welche das Verbindungs-"
+"Zertifikat ausstellt."
+
+#: src/widget/certificate_trust_dialog.rs:202
+msgid "Info"
+msgstr "Info"
+
+#: src/widget/certificate_trust_dialog.rs:207
+msgid ""
+"After you choose to trust the CA, Field Monitor will confirm that the "
+"connection is established using a certificate issued by the CA. If not Field "
+"Monitor will refuse the connection."
+msgstr ""
+"Sobald Sie entscheiden dieser CA zu vertrauen wird Feldmonitor "
+"sicherstellen, dass das Zertifikat über das die Verbindung hergestellt wird "
+"tatsächlich von der CA ausgestellt wurde. Falls nicht, wird Feldmonitor die "
+"Verbindung ablehnen."
+
+#: src/widget/certificate_trust_dialog.rs:228
+#, rust-format
+msgid ""
+"If you choose to trust this certificate, your choice will be remembered for "
+"future connections to <tt>{host}</tt>."
+msgstr ""
+"Falls Sie diesem Zertifikat vertrauen, wird diese Entscheidung für "
+"zukünftige Verbindungen zu <tt>{host}</tt> gespeichert."
+
+#: src/widget/certificate_trust_dialog.rs:238
+#: src/widget/close_warning_dialog.rs:78
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: src/widget/certificate_trust_dialog.rs:239
+msgid "Trust Certificate"
+msgstr "Zertifikat vertrauen"
 
 #: src/widget/close_warning_dialog.rs:54
 msgid "Close Window?"
@@ -851,17 +951,6 @@ msgid ""
 msgstr ""
 "Die Anwendung ist noch mit einem oder mehreren Servern verbunden. Wird "
 "dieses Fenster geschlossen, wird die Verbindung zu allen Servern geschlossen."
-
-#: src/widget/close_warning_dialog.rs:78
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: src/widget/close_warning_dialog.rs:79
-#: src/widget/connection_view/connection_view_navbar.blp:52
-#: src/widget/connection_view/connection_view_navbar.rs:176
-#: src/widget/connection_view/server_screen.blp:111
-msgid "Close"
-msgstr "Schließen"
 
 #: src/widget/connection_list/connection_list_navbar.blp:12
 #: src/widget/connection_view/connection_view_navbar.blp:23
@@ -957,153 +1046,153 @@ msgstr "Neu verbinden"
 msgid "Show Output"
 msgstr "Ausgabe anzeigen"
 
-#: src/widget/connection_view/server_screen.rs:584
+#: src/widget/connection_view/server_screen.rs:716
 msgid "Disconnected"
 msgstr "Verbindung getrennt"
 
-#: src/widget/connection_view/server_screen.rs:586
+#: src/widget/connection_view/server_screen.rs:718
 msgid "The connection to the server was closed."
 msgstr "Die Verbindung mit dem Server wurde geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:622
+#: src/widget/connection_view/server_screen.rs:756
 msgid "Connection Failed"
 msgstr "Verbindung fehlgeschlagen"
 
-#: src/widget/connection_view/server_screen.rs:623
+#: src/widget/connection_view/server_screen.rs:757
 msgid "The connection was closed due to an error."
 msgstr "Die Verbindung wurde aufgrund eines Fehlers geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:782
+#: src/widget/connection_view/server_screen.rs:916
 msgid "_Dynamic Resize"
 msgstr "_Dynamische Größenanpassung"
 
-#: src/widget/connection_view/server_screen.rs:786
+#: src/widget/connection_view/server_screen.rs:920
 msgid "_Scale to Window"
 msgstr "Ausgabe an Fenstergröße _anpassen"
 
-#: src/widget/connection_view/server_screen.rs:796
+#: src/widget/connection_view/server_screen.rs:930
 msgid "_Resize Window to Screen"
 msgstr "_Fenstergröße auf Ausgabegröße setzen"
 
-#: src/widget/connection_view/server_screen.rs:800
+#: src/widget/connection_view/server_screen.rs:934
 msgid "Send _Keys"
 msgstr "Tasten _senden"
 
-#: src/widget/connection_view/server_screen.rs:804
+#: src/widget/connection_view/server_screen.rs:938
 msgid "Ctrl+Alt L"
 msgstr "Strg+Alt L"
 
-#: src/widget/connection_view/server_screen.rs:808
+#: src/widget/connection_view/server_screen.rs:942
 msgid "Ctrl+Alt+Backspace"
 msgstr "Strg+Alt+Rücktaste"
 
-#: src/widget/connection_view/server_screen.rs:812
+#: src/widget/connection_view/server_screen.rs:946
 msgid "Ctrl+Alt+Delete"
 msgstr "Strg+Alt+Entf"
 
-#: src/widget/connection_view/server_screen.rs:818
+#: src/widget/connection_view/server_screen.rs:952
 msgid "Ctrl+Alt+F1"
 msgstr "Strg+Alt+F1"
 
-#: src/widget/connection_view/server_screen.rs:822
+#: src/widget/connection_view/server_screen.rs:956
 msgid "Ctrl+Alt+F2"
 msgstr "Strg+Alt+F2"
 
-#: src/widget/connection_view/server_screen.rs:826
+#: src/widget/connection_view/server_screen.rs:960
 msgid "Ctrl+Alt+F3"
 msgstr "Strg+Alt+F3"
 
-#: src/widget/connection_view/server_screen.rs:830
+#: src/widget/connection_view/server_screen.rs:964
 msgid "Ctrl+Alt+F4"
 msgstr "Strg+Alt+F4"
 
-#: src/widget/connection_view/server_screen.rs:834
+#: src/widget/connection_view/server_screen.rs:968
 msgid "Ctrl+Alt+F5"
 msgstr "Strg+Alt+F5"
 
-#: src/widget/connection_view/server_screen.rs:838
+#: src/widget/connection_view/server_screen.rs:972
 msgid "Ctrl+Alt+F6"
 msgstr "Strg+Alt+F6"
 
-#: src/widget/connection_view/server_screen.rs:842
+#: src/widget/connection_view/server_screen.rs:976
 msgid "Ctrl+Alt+F7"
 msgstr "Strg+Alt+F7"
 
-#: src/widget/connection_view/server_screen.rs:846
+#: src/widget/connection_view/server_screen.rs:980
 msgid "Ctrl+Alt+F8"
 msgstr "Strg+Alt+F8"
 
-#: src/widget/connection_view/server_screen.rs:850
+#: src/widget/connection_view/server_screen.rs:984
 msgid "Ctrl+Alt+F9"
 msgstr "Strg+Alt+F9"
 
-#: src/widget/connection_view/server_screen.rs:854
+#: src/widget/connection_view/server_screen.rs:988
 msgid "Ctrl+Alt+F10"
 msgstr "Strg+Alt+F10"
 
-#: src/widget/connection_view/server_screen.rs:858
+#: src/widget/connection_view/server_screen.rs:992
 msgid "Ctrl+Alt+F11"
 msgstr "Strg+Alt+F11"
 
-#: src/widget/connection_view/server_screen.rs:862
+#: src/widget/connection_view/server_screen.rs:996
 msgid "Ctrl+Alt+F12"
 msgstr "Strg+Alt+F12"
 
-#: src/widget/connection_view/server_screen.rs:868
+#: src/widget/connection_view/server_screen.rs:1002
 msgid "Print"
 msgstr "Drucken"
 
-#: src/widget/connection_view/server_screen.rs:879
+#: src/widget/connection_view/server_screen.rs:1013
 msgid "_Zoom"
 msgstr "_Textgröße"
 
-#: src/widget/connection_view/server_screen.rs:900
+#: src/widget/connection_view/server_screen.rs:1034
 msgid "Server _Actions"
 msgstr "Server_aktionen"
 
-#: src/widget/connection_view/server_screen.rs:908
+#: src/widget/connection_view/server_screen.rs:1042
 msgid "_Close Connection"
 msgstr "Verbindung _schließen"
 
-#: src/widget/connection_view/server_screen.rs:918 src/widget/window.blp:307
+#: src/widget/connection_view/server_screen.rs:1052 src/widget/window.blp:307
 msgid "_New Window"
 msgstr "_Neues Fenster"
 
-#: src/widget/connection_view/server_screen.rs:922 src/widget/window.blp:317
+#: src/widget/connection_view/server_screen.rs:1056 src/widget/window.blp:317
 msgid "_Keyboard Shortcuts"
 msgstr "_Tastenkombinationen"
 
-#: src/widget/connection_view/server_screen.rs:926 src/widget/window.blp:322
+#: src/widget/connection_view/server_screen.rs:1060 src/widget/window.blp:322
 msgid "_About Field Monitor"
 msgstr "_Über Feldmonitor"
 
-#: src/widget/connection_view/server_screen.rs:939
+#: src/widget/connection_view/server_screen.rs:1073
 msgid "_Copy"
 msgstr "_Kopieren"
 
-#: src/widget/connection_view/server_screen.rs:943
+#: src/widget/connection_view/server_screen.rs:1077
 msgid "_Paste"
 msgstr "_Einfügen"
 
-#: src/widget/connection_view/server_screen.rs:947
+#: src/widget/connection_view/server_screen.rs:1081
 msgid "Select _All"
 msgstr "_Alles auswählen"
 
-#: src/widget/connection_view/server_screen.rs:956
+#: src/widget/connection_view/server_screen.rs:1090
 msgid "Zoom In"
 msgstr "Text vergrößern"
 
-#: src/widget/connection_view/server_screen.rs:960
+#: src/widget/connection_view/server_screen.rs:1094
 msgid "Zoom Out"
 msgstr "Text verkleinern"
 
-#: src/widget/connection_view/server_screen.rs:964
+#: src/widget/connection_view/server_screen.rs:1098
 msgid "Reset Zoom"
 msgstr "Textgröße zurücksetzen"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/widget/connection_view/server_screen.rs:1066
+#: src/widget/connection_view/server_screen.rs:1200
 #, rust-format
 msgid "Press {keycombo} to ungrab the mouse and keyboard."
 msgstr "Drücken Sie {keycombo} um Maus und Tastatur freizugeben."

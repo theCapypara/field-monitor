@@ -35,6 +35,7 @@ use field_monitor_vte_driver_lib::DBUS_KEY_ENV_VAR;
 use field_monitor_vte_driver_lib::dbus_server::VtePtyProcMon;
 
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
+use crate::cert_security::{VerifyTls, VerifyTlsResponse};
 use crate::config::APP_ID;
 use crate::connection::ConnectionError;
 
@@ -77,6 +78,7 @@ impl Adapter for VtePtyAdapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
+        _verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
     ) -> Box<dyn AdapterDisplay> {
         let vte = vte::Terminal::builder()
             .cursor_blink_mode(vte::CursorBlinkMode::On)

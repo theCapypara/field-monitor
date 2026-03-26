@@ -662,7 +662,7 @@ dependencies = [
 [[package]]
 name = "cbindgen"
 version = "0.28.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2#c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=4472e7a82542c78a63babb8710371218113124a4#4472e7a82542c78a63babb8710371218113124a4"
 dependencies = [
  "clap",
  "heck 0.4.1",
@@ -1092,6 +1092,7 @@ dependencies = [
  "const-oid 0.9.6",
  "der_derive",
  "flagset",
+ "pem-rfc7468 0.7.0",
  "zeroize",
 ]
 
@@ -1102,7 +1103,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e9d8dd2f26c86b27a2a8ea2767ec7f9df7a89516e4794e54ac01ee618dda3aa4"
 dependencies = [
  "const-oid 0.10.2",
- "pem-rfc7468",
+ "pem-rfc7468 1.0.0-rc.3",
  "zeroize",
 ]
 
@@ -1304,7 +1305,7 @@ dependencies = [
  "hkdf 0.13.0-rc.2",
  "hybrid-array",
  "once_cell",
- "pem-rfc7468",
+ "pem-rfc7468 1.0.0-rc.3",
  "pkcs8",
  "rand_core 0.9.5",
  "sec1",
@@ -1461,6 +1462,7 @@ dependencies = [
  "field-monitor-proxmox",
  "fluent-uri",
  "futures",
+ "gcr-sys-minimal",
  "gettext-rs",
  "glib 0.22.3",
  "gtk4",
@@ -1470,6 +1472,7 @@ dependencies = [
  "log",
  "num_enum",
  "oo7",
+ "pem",
  "pretty_env_logger",
  "rdw4",
  "rdw4-vnc",
@@ -1785,6 +1788,18 @@ dependencies = [
  "memchr",
  "pin-project-lite",
  "slab",
+]
+
+[[package]]
+name = "gcr-sys-minimal"
+version = "0.0.1"
+dependencies = [
+ "glib 0.22.3",
+ "gtk4",
+ "libc",
+ "shell-words",
+ "system-deps",
+ "tempfile",
 ]
 
 [[package]]
@@ -3437,12 +3452,16 @@ dependencies = [
  "rdw4-rdp",
  "rdw4-spice",
  "rdw4-vnc",
+ "rustls",
+ "rustls-openssl",
+ "rustls-platform-verifier",
  "secure-string",
  "serde_yaml",
  "thiserror 2.0.18",
  "tokio",
  "uuid",
  "vte4",
+ "x509-cert",
 ]
 
 [[package]]
@@ -4158,6 +4177,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "pem"
+version = "3.0.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1d30c53c26bc5b31a98cd02d20f25a7c8567146caf63ed593a9d87b2775291be"
+dependencies = [
+ "base64",
+ "serde_core",
+]
+
+[[package]]
+name = "pem-rfc7468"
+version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "88b39c9bfcfc231068454382784bb460aae594343fb030d46e9f50a645418412"
+dependencies = [
+ "base64ct",
+]
+
+[[package]]
 name = "pem-rfc7468"
 version = "1.0.0-rc.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4213,7 +4251,7 @@ dependencies = [
  "p384",
  "p521",
  "pbkdf2 0.13.0-rc.1",
- "pem-rfc7468",
+ "pem-rfc7468 1.0.0-rc.3",
  "picky-asn1",
  "picky-asn1-der",
  "picky-asn1-x509",
@@ -4702,12 +4740,12 @@ dependencies = [
 [[package]]
 name = "rdw-keycodemap"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2#c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=4472e7a82542c78a63babb8710371218113124a4#4472e7a82542c78a63babb8710371218113124a4"
 
 [[package]]
 name = "rdw4"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2#c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=4472e7a82542c78a63babb8710371218113124a4#4472e7a82542c78a63babb8710371218113124a4"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -4739,7 +4777,7 @@ dependencies = [
 [[package]]
 name = "rdw4-rdp"
 version = "0.2.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2#c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=4472e7a82542c78a63babb8710371218113124a4#4472e7a82542c78a63babb8710371218113124a4"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -4764,7 +4802,7 @@ dependencies = [
 [[package]]
 name = "rdw4-spice"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2#c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=4472e7a82542c78a63babb8710371218113124a4#4472e7a82542c78a63babb8710371218113124a4"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -4780,7 +4818,7 @@ dependencies = [
 [[package]]
 name = "rdw4-vnc"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2#c3f4ffadb0c3ef653e393117ea60a72d1fa88ae2"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=4472e7a82542c78a63babb8710371218113124a4#4472e7a82542c78a63babb8710371218113124a4"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -5068,6 +5106,20 @@ dependencies = [
  "rustls-pki-types",
  "schannel",
  "security-framework",
+]
+
+[[package]]
+name = "rustls-openssl"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "346f161084062dd5a443adfb0de9bbfab62699333e2d8424ca91da5f22ec88d1"
+dependencies = [
+ "foreign-types",
+ "once_cell",
+ "openssl",
+ "openssl-sys",
+ "rustls",
+ "zeroize",
 ]
 
 [[package]]
@@ -5419,6 +5471,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "shell-words"
+version = "1.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dc6fe69c597f9c37bfeeeeeb33da3530379845f10be461a66d16d03eca2ded77"
+
+[[package]]
 name = "shlex"
 version = "1.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5589,7 +5647,7 @@ dependencies = [
  "p256",
  "p384",
  "p521",
- "pem-rfc7468",
+ "pem-rfc7468 1.0.0-rc.3",
  "picky",
  "picky-asn1",
  "picky-asn1-der",

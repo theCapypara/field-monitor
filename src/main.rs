@@ -26,6 +26,7 @@ use std::path::PathBuf;
 use self::application::FieldMonitorApplication;
 
 mod application;
+mod cert_security;
 mod connection;
 mod connection_loader;
 mod quick_connect;

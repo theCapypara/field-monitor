@@ -1,0 +1,21 @@
+[package]
+name = "gcr-sys-minimal"
+version = "0.0.1"
+edition = "2021"
+build = "build.rs"
+
+[package.metadata.system-deps.gcr_4]
+name = "gcr-4"
+version = "4"
+
+[dependencies]
+libc = "0.2"
+glib = { workspace = true }
+gtk = { workspace = true }
+
+[build-dependencies]
+system-deps = "7"
+
+[dev-dependencies]
+shell-words = "1.0.0"
+tempfile = "3"

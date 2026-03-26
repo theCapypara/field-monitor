@@ -26,7 +26,6 @@ use std::rc::Rc;
 use std::sync::{Arc, OnceLock};
 
 use adw::gio::{File, FileCreateFlags};
-use adw::glib::user_config_dir;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use anyhow::anyhow;
@@ -48,20 +47,22 @@ use libfieldmonitor::connection::DualScopedConnectionConfiguration;
 use libfieldmonitor::i18n::gettext_f;
 use libfieldmonitor::{ManagesSecrets, impl_primitive_enum_param_spec};
 
+use crate::cert_security::FieldMonitorTrustStore;
 use crate::connection::CONNECTION_PROVIDERS;
 use crate::connection_loader::ConnectionLoader;
 use crate::remote_server_info::RemoteServerInfo;
 use crate::secrets::SecretManager;
 use crate::settings::FieldMonitorSettings;
+use crate::util::config_dir;
 use crate::widget::add_connection_dialog::FieldMonitorAddConnectionDialog;
 use crate::widget::authenticate_connection_dialog::FieldMonitorAuthenticateConnectionDialog;
 use crate::widget::preferences::FieldMonitorPreferencesDialog;
 use crate::widget::update_connection_dialog::FieldMonitorUpdateConnectionDialog;
 use crate::widget::window::FieldMonitorWindow;
+use std::ops::ControlFlow;
 
 mod imp {
     use super::*;
-    use std::ops::ControlFlow;
 
     #[derive(Default, glib::Properties)]
     #[properties(wrapper_type = super::FieldMonitorApplication)]
@@ -69,6 +70,7 @@ mod imp {
         pub secret_manager: RefCell<Option<Arc<Box<dyn ManagesSecrets>>>>,
         pub connections: RefCell<Option<HashMap<String, ConnectionInstance>>>,
         pub providers: RefCell<HashMap<String, Rc<Box<dyn ConnectionProvider>>>>,
+        pub app_trust_store: RefCell<Option<Rc<FieldMonitorTrustStore>>>,
         /// Manages a stack for `pending_server_action`. If stack size is zero, sets to false.
         pub busy_stack: RefCell<Option<BusyStack>>,
         /// Current overall state of the application (if it has finished loading)
@@ -310,6 +312,13 @@ mod imp {
                 }
             }
 
+            // Init app trust store
+            if self.app_trust_store.borrow().is_none() {
+                debug!("Init app trust store...");
+                self.app_trust_store
+                    .replace(Some(Rc::new(FieldMonitorTrustStore::load_default())));
+            }
+
             // If no error happened, continue app initialization, otherwise show an error by
             // setting the app state.
             if let Some(err) = state_error {
@@ -400,7 +409,7 @@ impl FieldMonitorApplication {
     }
 
     async fn connections_dir(&self) -> PathBuf {
-        let dir = user_config_dir().join("field-monitor").join("connections");
+        let dir = config_dir().join("connections");
         let dir_cln = dir.clone();
         gio::spawn_blocking(move || create_dir_all(&dir)).await.ok();
         dir_cln
@@ -1177,6 +1186,10 @@ impl FieldMonitorApplication {
                 Err(err.into())
             }
         }
+    }
+
+    pub fn app_trust_store(&self) -> Rc<FieldMonitorTrustStore> {
+        self.imp().app_trust_store.borrow().clone().unwrap()
     }
 }
 

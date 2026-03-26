@@ -25,17 +25,19 @@ use glib::object::ObjectExt;
 use glib::timeout_future;
 use gtk::gio;
 use gtk::glib;
-use log::{debug, info, trace, warn};
+use log::{debug, error, info, trace, warn};
 use rdw::DisplayExt;
 use std::borrow::Cow;
 use std::cell::Cell;
 use std::cell::RefCell;
+use std::fmt::Display;
 use std::iter;
 use std::rc::Rc;
 use std::time::Duration;
 use vte::TerminalExt;
 
 use libfieldmonitor::adapter::types::{AdapterDisplay, AdapterDisplayWidget};
+use libfieldmonitor::cert_security::{VerifyTls, VerifyTlsMode, VerifyTlsResponse};
 use libfieldmonitor::connection::{ConnectionError, ConnectionResult};
 use libfieldmonitor::i18n::gettext_f;
 
@@ -43,6 +45,7 @@ use crate::application::FieldMonitorApplication;
 use crate::connection_loader::ConnectionLoader;
 use crate::settings::{FieldMonitorSettings, SettingHeaderBarBehavior};
 use crate::util::configure_vte_styling;
+use crate::widget::certificate_trust_dialog::FieldMonitorCertificateTrustDialog;
 use crate::widget::focus_grabber::FieldMonitorFocusGrabber;
 use crate::widget::grab_note::FieldMonitorGrabNote;
 use crate::widget::window::FieldMonitorWindow;
@@ -109,6 +112,10 @@ mod imp {
         // the connection / disconnection events.
         pub connection_generation: RefCell<u32>,
         pub close_cb: RefCell<Option<Box<dyn Fn()>>>,
+        // Inhibit switching to the status screen
+        pub inhibit_status_view: Cell<bool>,
+        // Result of the interactive tls verification
+        pub interactive_tls_verified: RefCell<Option<bool>>,
     }
 
     #[glib::object_subclass]
@@ -369,6 +376,7 @@ impl FieldMonitorServerScreen {
 
         // Create the display and connect to the connection events
         let display = adapter.create_and_connect_display(
+            // on_connect
             Rc::new(glib::clone!(
                 #[weak(rename_to = slf)]
                 self,
@@ -382,6 +390,7 @@ impl FieldMonitorServerScreen {
                     )
                 }
             )),
+            // on_disconnect
             Rc::new(glib::clone!(
                 #[weak(rename_to = slf)]
                 self,
@@ -393,6 +402,21 @@ impl FieldMonitorServerScreen {
                         this_generation,
                         *slf.imp().connection_generation.borrow()
                     )
+                }
+            )),
+            // tls_verify
+            Rc::new(glib::clone!(
+                #[strong(rename_to = slf)]
+                self,
+                move |tls_info| if this_generation == *slf.imp().connection_generation.borrow() {
+                    slf.run_tls_verify(tls_info)
+                } else {
+                    warn!(
+                        "got old generation tls verify event (gen is: {} - should: {})",
+                        this_generation,
+                        *slf.imp().connection_generation.borrow()
+                    );
+                    VerifyTlsResponse::make_static(tls_info.mode(), false)
                 }
             )),
         );
@@ -570,6 +594,102 @@ impl FieldMonitorServerScreen {
         self.handle_error(result, true)
     }
 
+    /// Verify TLS certifications
+    fn run_tls_verify(&self, tls_info: VerifyTls) -> VerifyTlsResponse {
+        fn warn_tls_err<T: Display>(err: T) -> T {
+            error!("error during tls verification process: {}", err);
+            err
+        }
+
+        let mode = tls_info.mode();
+        let is_ca = tls_info.is_ca();
+
+        if let Some(cached) = *self.imp().interactive_tls_verified.borrow() {
+            // We already asked the user before, use the cached result.
+            VerifyTlsResponse::make_static(mode, cached)
+        } else {
+            // First do the system verification
+            if tls_info.verify_system() {
+                // System verification succeeded, we can just continue.
+                self.imp().interactive_tls_verified.replace(Some(true));
+                VerifyTlsResponse::make_static(mode, true)
+            } else {
+                let (cert, host) = tls_info.into_verification_info();
+                let app = self.imp().application.borrow();
+                let app = app.clone().unwrap();
+                let trust_store = app.app_trust_store();
+
+                // Check the app's trust store
+                if trust_store
+                    .verify(&cert, &host)
+                    .map_err(warn_tls_err)
+                    .unwrap_or_default()
+                {
+                    self.imp().interactive_tls_verified.replace(Some(true));
+                    return VerifyTlsResponse::make_static(mode, true);
+                }
+
+                // If the target connection provider can handle async, we show an async dialogue.
+                // Otherwise, we check the trust store synchronously, but if it doesn't trust the
+                // cert yet, we then return `false` (don't trust the cert), but still show the
+                // user the dialogue & simply reset ourselves if  the user actually does trust
+                // the cert (which causes a reconnect).
+                let slf = self.clone();
+                match mode {
+                    VerifyTlsMode::Async => VerifyTlsResponse::Async(Box::pin(async move {
+                        let result = FieldMonitorCertificateTrustDialog::run_async(
+                            &app, &cert, &host, is_ca,
+                        )
+                        .await;
+                        if result {
+                            let _ = trust_store.trust(&cert, &host).map_err(warn_tls_err);
+                        }
+                        slf.imp().interactive_tls_verified.replace(Some(result));
+                        result
+                    })),
+                    VerifyTlsMode::Sync => {
+                        slf.imp().inhibit_status_view.set(true);
+                        FieldMonitorCertificateTrustDialog::run_sync(
+                            &app,
+                            &cert,
+                            &host,
+                            is_ca,
+                            glib::clone!(
+                                #[strong]
+                                trust_store,
+                                #[weak(rename_to = slf)]
+                                self,
+                                move |cert, host, result| {
+                                    let imp = slf.imp();
+                                    imp.interactive_tls_verified.replace(Some(result));
+                                    imp.inhibit_status_view.set(false);
+                                    if result {
+                                        let _ = trust_store.trust(cert, host).map_err(warn_tls_err);
+                                        // Reset to now reconnect and accept the cert.
+                                        glib::spawn_future_local(glib::clone!(
+                                            #[strong]
+                                            slf,
+                                            async move {
+                                                slf.reset().await;
+                                            }
+                                        ));
+                                    } else {
+                                        // Show status screen
+                                        imp.status_stack.set_visible_child_name("disconnected");
+                                        imp.outer_stack.set_visible_child_name("status");
+                                    }
+                                }
+                            ),
+                        );
+                        // We return false, this causes a disconnect, and then we later reset
+                        // in the closure above if we trust.
+                        VerifyTlsResponse::Sync(false)
+                    }
+                }
+            }
+        }
+    }
+
     fn handle_error(&self, result: ConnectionResult<()>, allow_reauth: bool) {
         let imp = self.imp();
 
@@ -613,8 +733,10 @@ impl FieldMonitorServerScreen {
             }
             Err(ConnectionError::General(msg, err))
             | Err(ConnectionError::AuthFailed(msg, err)) => {
-                imp.status_stack.set_visible_child_name("disconnected");
-                imp.outer_stack.set_visible_child_name("status");
+                if !imp.inhibit_status_view.get() {
+                    imp.status_stack.set_visible_child_name("disconnected");
+                    imp.outer_stack.set_visible_child_name("status");
+                }
                 imp.focus_grabber.ungrab();
 
                 warn!("Connection failed: {err}");

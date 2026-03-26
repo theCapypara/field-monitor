@@ -27,14 +27,11 @@ use log::warn;
 use libfieldmonitor::connection::{ConnectionInstance, PreferencesGroupOrPage};
 
 use crate::application::FieldMonitorApplication;
+use std::sync::OnceLock;
+
+use glib::subclass::Signal;
 
 mod imp {
-    use std::sync::OnceLock;
-
-    use glib::subclass::Signal;
-
-    use libfieldmonitor::connection::ConnectionInstance;
-
     use super::*;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]

@@ -15,23 +15,26 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use std::borrow::Cow;
-use std::cell::RefCell;
-use std::num::NonZeroU32;
-use std::rc::Rc;
-
+use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
+use crate::cert_security::{
+    VerifiableCertChain, VerifyTls, VerifyTlsResponse, extract_common_name,
+};
+use crate::connection::ConnectionError;
 use anyhow::anyhow;
 use derive_builder::Builder;
 use gettextrs::gettext;
 use glib::prelude::*;
-use log::debug;
+use log::{debug, warn};
 use rdw_spice::spice;
 use rdw_spice::spice::prelude::ChannelExt;
 use rdw_spice::spice::{ChannelEvent, Session};
 use secure_string::SecureString;
-
-use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
-use crate::connection::ConnectionError;
+use std::borrow::Cow;
+use std::cell::RefCell;
+use std::num::NonZeroU32;
+use std::rc::Rc;
+use std::str::FromStr;
+use x509_cert::name::Name;
 
 #[derive(Builder, Debug, Clone, Default)]
 #[builder(pattern = "owned")]
@@ -130,6 +133,7 @@ impl Adapter for SpiceAdapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
+        verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
     ) -> Box<dyn AdapterDisplay> {
         debug!("creating spice adapter");
         let spice = rdw_spice::Display::new();
@@ -184,6 +188,7 @@ impl Adapter for SpiceAdapter {
             }
         ));
 
+        let on_disconnected_cln = on_disconnected.clone();
         session.connect_disconnected(glib::clone!(
             #[strong]
             disconnect_error,
@@ -201,14 +206,53 @@ impl Adapter for SpiceAdapter {
                     } else {
                         ConnectionError::General(None, anyhow::Error::from(Box::new(error)))
                     };
-                    on_disconnected(Err(con_error))
+                    on_disconnected_cln(Err(con_error))
                 } else {
-                    on_disconnected(Ok(()))
+                    on_disconnected_cln(Ok(()))
                 }
             }
         ));
 
         glib::spawn_future_local(async move {
+            // TLS verification
+            if let Some(ca) = session.ca() {
+                let certs = match VerifiableCertChain::from_pem_chain(ca) {
+                    Ok(certs) => certs,
+                    Err(err) => {
+                        return on_disconnected(Err(err));
+                    }
+                };
+                let subject_line = match session
+                    .cert_subject()
+                    .map(|x| Name::from_str(x.as_str()))
+                    .transpose()
+                {
+                    Ok(subject_line) => subject_line,
+                    Err(err) => {
+                        warn!("failed to parse cert name / subject: {:?}", err);
+                        return on_disconnected(Err(ConnectionError::General(None, err.into())));
+                    }
+                };
+                match verify_tls(VerifyTls::verify_async(
+                    certs,
+                    subject_line
+                        .as_ref()
+                        .and_then(extract_common_name)
+                        .or_else(|| session.host().as_deref().map(ToString::to_string))
+                        .unwrap_or_default(),
+                    subject_line,
+                    true,
+                )) {
+                    VerifyTlsResponse::Sync(_) => unreachable!(),
+                    VerifyTlsResponse::Async(fut) => {
+                        if !fut.await {
+                            return on_disconnected(Err(VerifyTls::error()));
+                        }
+                    }
+                }
+            }
+
+            // Connect
             session.connect();
             on_connected();
         });

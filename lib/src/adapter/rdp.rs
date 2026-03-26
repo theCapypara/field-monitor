@@ -26,6 +26,7 @@ use rdw_rdp::ironrdp::connector::ConnectorErrorKind;
 use secure_string::SecureString;
 
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
+use crate::cert_security::{VerifiableCertChain, VerifyTls, VerifyTlsResponse};
 use crate::connection::ConnectionError;
 
 pub struct RdpAdapter {
@@ -57,6 +58,7 @@ impl Adapter for RdpAdapter {
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
+        verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
     ) -> Box<dyn AdapterDisplay> {
         debug!("creating rdp adapter");
         let rdp = rdw_rdp::Display::new(Default::default());
@@ -69,6 +71,22 @@ impl Adapter for RdpAdapter {
             } else {
                 debug!("RDP connection connected!");
                 on_connected();
+            }
+        });
+
+        // TLS verification
+        let subject = self.host.clone();
+        rdp.connect_verify_tls_certificate(move |_display, cert| {
+            let cert = match VerifiableCertChain::from_cert(cert) {
+                Ok(cert) => cert,
+                Err(err) => {
+                    warn!("failed to read server cert: {:?}", err);
+                    return false;
+                }
+            };
+            match verify_tls(VerifyTls::verify_sync(cert, &subject, None, false)) {
+                VerifyTlsResponse::Sync(response) => response,
+                VerifyTlsResponse::Async(_) => unreachable!(),
             }
         });
 
