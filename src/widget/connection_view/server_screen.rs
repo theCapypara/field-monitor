@@ -660,7 +660,9 @@ impl FieldMonitorServerScreen {
                                 #[weak(rename_to = slf)]
                                 self,
                                 move |cert, host, result| {
-                                    slf.imp().interactive_tls_verified.replace(Some(result));
+                                    let imp = slf.imp();
+                                    imp.interactive_tls_verified.replace(Some(result));
+                                    imp.inhibit_status_view.set(false);
                                     if result {
                                         let _ = trust_store.trust(cert, host).map_err(warn_tls_err);
                                         // Reset to now reconnect and accept the cert.
@@ -673,8 +675,6 @@ impl FieldMonitorServerScreen {
                                         ));
                                     } else {
                                         // Show status screen
-                                        let imp = slf.imp();
-                                        imp.inhibit_status_view.set(false);
                                         imp.status_stack.set_visible_child_name("disconnected");
                                         imp.outer_stack.set_visible_child_name("status");
                                     }
