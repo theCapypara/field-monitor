@@ -53,27 +53,27 @@ version = "0.9"
 package = "rdw4"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "96c0d91e654d13a36d95a45cb7ecc6e51dcd041d"
+rev = "d1d1cbf2a24db6f3d0fba46483e8bfde28f25964"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "96c0d91e654d13a36d95a45cb7ecc6e51dcd041d"
+rev = "d1d1cbf2a24db6f3d0fba46483e8bfde28f25964"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "96c0d91e654d13a36d95a45cb7ecc6e51dcd041d"
+rev = "d1d1cbf2a24db6f3d0fba46483e8bfde28f25964"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "96c0d91e654d13a36d95a45cb7ecc6e51dcd041d"
+rev = "d1d1cbf2a24db6f3d0fba46483e8bfde28f25964"
 default-features = false
 
 [workspace.dependencies.vte]
