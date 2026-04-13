@@ -110,7 +110,7 @@ version = "1.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "40c48f72fd53cd289104fc64099abca73db4166ad86ea0b4341abe65af83dadc"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -121,7 +121,7 @@ checksum = "291e6a250ff86cd4a820112fb8898808a366d8f9f58ce16d1f538353ad55747d"
 dependencies = [
  "anstyle",
  "once_cell_polyfill",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -582,7 +582,7 @@ checksum = "5cc8d9aa793480744cd9a0524fef1a2e197d9eaa0f739cde19d16aba530dcb95"
 dependencies = [
  "bitflags 2.11.0",
  "cairo-sys-rs 0.22.0",
- "glib 0.22.3",
+ "glib 0.22.5",
  "libc",
 ]
 
@@ -811,7 +811,7 @@ version = "3.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "faf9468729b8cbcea668e36183cb69d317348c2e08e994829fb56ebfdfbaac34"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1399,7 +1399,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1464,7 +1464,7 @@ dependencies = [
  "futures",
  "gcr-sys-minimal",
  "gettext-rs",
- "glib 0.22.3",
+ "glib 0.22.5",
  "gtk4",
  "itertools",
  "libadwaita",
@@ -1491,7 +1491,7 @@ version = "0.0.0"
 dependencies = [
  "anyhow",
  "futures",
- "glib 0.22.3",
+ "glib 0.22.5",
  "gtk4",
  "indexmap",
  "libadwaita",
@@ -1509,7 +1509,7 @@ dependencies = [
  "anyhow",
  "futures",
  "gettext-rs",
- "glib 0.22.3",
+ "glib 0.22.5",
  "gtk4",
  "indexmap",
  "libadwaita",
@@ -1794,7 +1794,7 @@ dependencies = [
 name = "gcr-sys-minimal"
 version = "0.0.1"
 dependencies = [
- "glib 0.22.3",
+ "glib 0.22.5",
  "gtk4",
  "libc",
  "shell-words",
@@ -1822,7 +1822,7 @@ checksum = "25f420376dbee041b2db374ce4573892a36222bb3f6c0c43e24f0d67eae9b646"
 dependencies = [
  "gdk-pixbuf-sys 0.22.0",
  "gio 0.22.2",
- "glib 0.22.3",
+ "glib 0.22.5",
  "libc",
 ]
 
@@ -1877,7 +1877,7 @@ dependencies = [
  "gdk-pixbuf 0.22.0",
  "gdk4-sys 0.11.1",
  "gio 0.22.2",
- "glib 0.22.3",
+ "glib 0.22.5",
  "libc",
  "pango 0.22.0",
 ]
@@ -1925,7 +1925,7 @@ dependencies = [
  "gdk4 0.11.1",
  "gdk4-wayland-sys",
  "gio 0.22.2",
- "glib 0.22.3",
+ "glib 0.22.5",
  "khronos-egl",
  "libc",
  "wayland-backend",
@@ -1980,7 +1980,7 @@ dependencies = [
  "gdk4 0.11.1",
  "gdk4-x11-sys",
  "gio 0.22.2",
- "glib 0.22.3",
+ "glib 0.22.5",
  "khronos-egl",
  "libc",
 ]
@@ -2105,7 +2105,7 @@ dependencies = [
  "futures-io",
  "futures-util",
  "gio-sys 0.22.0",
- "glib 0.22.3",
+ "glib 0.22.5",
  "libc",
  "pin-project-lite",
  "smallvec",
@@ -2121,7 +2121,7 @@ dependencies = [
  "gobject-sys 0.21.5",
  "libc",
  "system-deps",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -2134,7 +2134,7 @@ dependencies = [
  "gobject-sys 0.22.0",
  "libc",
  "system-deps",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -2191,9 +2191,9 @@ dependencies = [
 
 [[package]]
 name = "glib"
-version = "0.22.3"
+version = "0.22.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "039f93465ac17e6cb02d16f16572cd3e43a77e736d5ecc461e71b9c9c5c0569c"
+checksum = "a1b7df55594e0e787d1560e23f7e12d7360d0b22e7b7c228ec2488b9e59b1b6b"
 dependencies = [
  "bitflags 2.11.0",
  "futures-channel",
@@ -2263,7 +2263,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3db68f55ecfbf2264595fe399760f12bf14e2f8984969b73fae2f13b1dec0f50"
 dependencies = [
  "futures-core",
- "glib 0.22.3",
+ "glib 0.22.5",
  "glib-unix-sys",
  "libc",
 ]
@@ -2307,7 +2307,7 @@ version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c7d1b7881f96869f49808b6adfe906a93a57a34204952253444d68c3208d71f1"
 dependencies = [
- "glib 0.22.3",
+ "glib 0.22.5",
  "graphene-sys",
  "libc",
 ]
@@ -2343,7 +2343,7 @@ checksum = "53c912dfcbd28acace5fc99c40bb9f25e1dcb73efb1f2608327f66a99acdcb62"
 dependencies = [
  "cairo-rs 0.22.0",
  "gdk4 0.11.1",
- "glib 0.22.3",
+ "glib 0.22.5",
  "graphene-rs",
  "gsk4-sys",
  "libc",
@@ -2376,7 +2376,7 @@ dependencies = [
  "futures-channel",
  "futures-core",
  "futures-util",
- "glib 0.22.3",
+ "glib 0.22.5",
  "gstreamer-sys",
  "itertools",
  "kstring",
@@ -2399,7 +2399,7 @@ checksum = "714874829f75e805192ddc2bd130b9d7669ebc3ed0e8b106039dd3416cb82916"
 dependencies = [
  "futures-core",
  "futures-sink",
- "glib 0.22.3",
+ "glib 0.22.5",
  "gstreamer",
  "gstreamer-app-sys",
  "gstreamer-base",
@@ -2426,7 +2426,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "46e64660e1963ff3b6a4a5175f917524254a6ae36ac7b83e29b760d879a33073"
 dependencies = [
  "cfg-if",
- "glib 0.22.3",
+ "glib 0.22.5",
  "gstreamer",
  "gstreamer-audio-sys",
  "gstreamer-base",
@@ -2456,7 +2456,7 @@ checksum = "c08353a8a382be9a49b15fb9c46b3abd6f8a6e6439e1eaedc87d08f1abdcfad1"
 dependencies = [
  "atomic_refcell",
  "cfg-if",
- "glib 0.22.3",
+ "glib 0.22.5",
  "gstreamer",
  "gstreamer-base-sys",
  "libc",
@@ -2500,7 +2500,7 @@ dependencies = [
  "gdk-pixbuf 0.22.0",
  "gdk4 0.11.1",
  "gio 0.22.2",
- "glib 0.22.3",
+ "glib 0.22.5",
  "graphene-rs",
  "gsk4",
  "gtk4-macros",
@@ -2546,7 +2546,7 @@ version = "0.7.0"
 source = "git+https://gitlab.gnome.org/theCapypara/gtk-vnc-rs.git?rev=6ec794f551999b6f0bf41ea3cec111a79342a91e#6ec794f551999b6f0bf41ea3cec111a79342a91e"
 dependencies = [
  "gio 0.22.2",
- "glib 0.22.3",
+ "glib 0.22.5",
  "gvnc-sys",
  "libc",
 ]
@@ -3259,7 +3259,7 @@ checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
 dependencies = [
  "hermit-abi",
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -3425,7 +3425,7 @@ checksum = "bc0da4e27b20d3e71f830e5b0f0188d22c257986bf421c02cfde777fe07932a4"
 dependencies = [
  "gdk4 0.11.1",
  "gio 0.22.2",
- "glib 0.22.3",
+ "glib 0.22.5",
  "gtk4",
  "libadwaita-sys",
  "libc",
@@ -3464,7 +3464,7 @@ dependencies = [
  "field-monitor-vte-driver-lib",
  "futures",
  "gettext-rs",
- "glib 0.22.3",
+ "glib 0.22.5",
  "gtk4",
  "indexmap",
  "libadwaita",
@@ -4108,7 +4108,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "25d8f224eddef627b896d2f7b05725b3faedbd140e0e8343446f0d34f34238ee"
 dependencies = [
  "gio 0.22.2",
- "glib 0.22.3",
+ "glib 0.22.5",
  "libc",
  "pango-sys 0.22.0",
 ]
@@ -5101,7 +5101,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -5173,7 +5173,7 @@ dependencies = [
  "security-framework",
  "security-framework-sys",
  "webpki-root-certs",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -5562,7 +5562,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3a766e1110788c36f4fa1c2b71b387a7815aa65f88ce0229841826633d93723e"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -5577,7 +5577,7 @@ version = "0.7.0"
 source = "git+https://gitlab.gnome.org/theCapypara/spice-gtk-rs.git?rev=852428bc08ff03e8fe2d90b4d0234f2a647135c0#852428bc08ff03e8fe2d90b4d0234f2a647135c0"
 dependencies = [
  "gio 0.22.2",
- "glib 0.22.3",
+ "glib 0.22.5",
  "libc",
  "rusb",
  "spice-client-glib-sys",
@@ -5826,7 +5826,7 @@ dependencies = [
  "getrandom 0.4.2",
  "once_cell",
  "rustix",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -6234,7 +6234,7 @@ checksum = "f2f6fb2847f6742cd76af783a2a2c49e9375d0a111c7bef6f71cd9e738c72d6e"
 dependencies = [
  "memoffset",
  "tempfile",
- "windows-sys 0.61.2",
+ "windows-sys 0.60.2",
 ]
 
 [[package]]
@@ -6409,7 +6409,7 @@ dependencies = [
  "cairo-rs 0.22.0",
  "gdk4 0.11.1",
  "gio 0.22.2",
- "glib 0.22.3",
+ "glib 0.22.5",
  "gtk4",
  "io-lifetimes",
  "libc",
@@ -6718,7 +6718,7 @@ version = "0.1.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
 dependencies = [
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
