@@ -50,3 +50,14 @@ jobs:
           fi
 
           echo "All translatable sources are listed in po/POTFILES."
+
+      - name: Check POTFILES is sorted alphabetically
+        run: |
+          # Extract non-empty, non-comment lines
+          grep -v '^\s*#' po/POTFILES | grep -v '^\s*$' > /tmp/potfiles_entries
+          LC_ALL=C sort /tmp/potfiles_entries > /tmp/potfiles_sorted
+          if ! diff -u /tmp/potfiles_entries /tmp/potfiles_sorted; then
+            echo "::error::po/POTFILES is not sorted alphabetically. Please sort it."
+            exit 1
+          fi
+          echo "po/POTFILES is sorted correctly."

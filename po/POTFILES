@@ -1,11 +1,5 @@
 # List of source files containing translatable strings.
 # Please keep this file sorted alphabetically.
-data/de.capypara.FieldMonitor.desktop.in.in
-data/de.capypara.FieldMonitor.gschema.xml.in
-data/de.capypara.FieldMonitor.metainfo.xml.in.in
-data/de.capypara.FieldMonitor.mime.rdp.xml.in
-data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in
-
 connection/debug/src/arbitrary_adapter.rs
 connection/debug/src/behaviour_preferences.blp
 connection/debug/src/behaviour_preferences.rs
@@ -22,18 +16,18 @@ connection/generic-group/src/server_config.rs
 connection/generic-group/src/server_preferences.blp
 connection/generic-group/src/server_preferences.rs
 connection/generic-group/src/util.rs
-connection/libvirt/src/connection/mod.rs
 connection/libvirt/src/connection/adapter.rs
 connection/libvirt/src/connection/graphics.rs
+connection/libvirt/src/connection/mod.rs
 connection/libvirt/src/hypervisor/mod.rs
 connection/libvirt/src/hypervisor/qemu.rs
 connection/libvirt/src/lib.rs
 connection/libvirt/src/qemu_preferences.blp
 connection/libvirt/src/qemu_preferences.rs
 connection/proxmox/proxmox-api/examples/proxmox_apicli.rs
+connection/proxmox/proxmox-api/src/datatypes.rs
 connection/proxmox/proxmox-api/src/datatypes/ids.rs
 connection/proxmox/proxmox-api/src/datatypes/params.rs
-connection/proxmox/proxmox-api/src/datatypes.rs
 connection/proxmox/proxmox-api/src/lib.rs
 connection/proxmox/src/api/cache.rs
 connection/proxmox/src/api/connection.rs
@@ -46,6 +40,11 @@ connection/proxmox/src/credential_preferences.rs
 connection/proxmox/src/lib.rs
 connection/proxmox/src/preferences.blp
 connection/proxmox/src/preferences.rs
+data/de.capypara.FieldMonitor.desktop.in.in
+data/de.capypara.FieldMonitor.gschema.xml.in
+data/de.capypara.FieldMonitor.metainfo.xml.in.in
+data/de.capypara.FieldMonitor.mime.rdp.xml.in
+data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in
 lib/src/adapter/mod.rs
 lib/src/adapter/rdp.rs
 lib/src/adapter/spice.rs
@@ -56,8 +55,8 @@ lib/src/busy.rs
 lib/src/cache.rs
 lib/src/cert_security.rs
 lib/src/config.rs
-lib/src/connection/configuration.rs
 lib/src/connection/config_value.rs
+lib/src/connection/configuration.rs
 lib/src/connection/instance.rs
 lib/src/connection/mod.rs
 lib/src/connection/types.rs
@@ -71,9 +70,8 @@ lib/src/secrets.rs
 lib/src/tokiort.rs
 src/application.rs
 src/cert_security.rs
-src/connection_loader.rs
 src/connection.rs
-src/shortcuts-dialog.blp
+src/connection_loader.rs
 src/main.rs
 src/quick_connect/mod.rs
 src/quick_connect/preferences.blp
@@ -86,6 +84,7 @@ src/quick_connect/vnc.rs
 src/remote_server_info.rs
 src/secrets.rs
 src/settings.rs
+src/shortcuts-dialog.blp
 src/util.rs
 src/widget/add_connection_dialog.blp
 src/widget/add_connection_dialog.rs
@@ -106,9 +105,9 @@ src/widget/connection_list/info_page.rs
 src/widget/connection_list/mod.rs
 src/widget/connection_list/server_group.blp
 src/widget/connection_list/server_group.rs
+src/widget/connection_list/server_info.rs
 src/widget/connection_list/server_info/icon.blp
 src/widget/connection_list/server_info/icon.rs
-src/widget/connection_list/server_info.rs
 src/widget/connection_list/server_row.rs
 src/widget/connection_view/connection_tab_view.blp
 src/widget/connection_view/connection_tab_view.rs
