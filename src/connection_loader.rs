@@ -43,7 +43,7 @@ enum Entity {
 pub struct ConnectionLoader {
     entity: Entity,
     connection: ConnectionInstance,
-    window: Option<gtk::Window>,
+    window: Option<glib::WeakRef<gtk::Window>>,
     app: Option<FieldMonitorApplication>,
     server_path: Vec<String>,
 }
@@ -121,7 +121,7 @@ impl ConnectionLoader {
                 Some(Self {
                     entity: Entity::Connection(connection.clone()),
                     connection,
-                    window: active_window.cloned(),
+                    window: active_window.map(ObjectExt::downgrade),
                     app,
                     server_path: vec![],
                 })
@@ -207,7 +207,7 @@ impl ConnectionLoader {
                     Some(server) => Some(Self {
                         entity: Entity::Server(server),
                         connection,
-                        window: active_window.cloned(),
+                        window: active_window.map(ObjectExt::downgrade),
                         app,
                         server_path: path_parts_orig,
                     }),
@@ -299,7 +299,7 @@ impl ConnectionLoader {
                 *self = Self::do_load_connection(
                     true,
                     connection,
-                    self.window.as_ref(),
+                    self.window.as_ref().and_then(|x| x.upgrade()).as_ref(),
                     self.server_path.clone(),
                     self.app.clone(),
                     false,
@@ -317,7 +317,7 @@ impl ConnectionLoader {
             self.connection.clone(),
             &self.server_path,
             self.app.clone(),
-            self.window.clone(),
+            self.window.as_ref().and_then(|x| x.upgrade()),
         )
         .await
         .unwrap();
@@ -325,7 +325,7 @@ impl ConnectionLoader {
         *self = Self::do_load_connection(
             true,
             connection,
-            self.window.as_ref(),
+            self.window.as_ref().and_then(|x| x.upgrade()).as_ref(),
             self.server_path.clone(),
             self.app.clone(),
             false,
@@ -350,7 +350,7 @@ impl ConnectionLoader {
                         self.connection.clone(),
                         self.server_path.as_slice(),
                         self.app.clone(),
-                        self.window.clone(),
+                        self.window.as_ref().and_then(|x| x.upgrade()),
                     )
                     .await
                     .unwrap();
@@ -363,7 +363,7 @@ impl ConnectionLoader {
                     Self::do_show_error(
                         &gettext("Failed to load or connect to server"),
                         msg.as_deref(),
-                        self.window.as_ref(),
+                        self.window.as_ref().and_then(|x| x.upgrade()).as_ref(),
                     );
                     Err(None)
                 }
@@ -422,7 +422,11 @@ impl ConnectionLoader {
 
     #[allow(unused)]
     fn show_error(&self, title: &str, msg: Option<&str>) {
-        Self::do_show_error(title, msg, self.window.as_ref())
+        Self::do_show_error(
+            title,
+            msg,
+            self.window.as_ref().and_then(|x| x.upgrade()).as_ref(),
+        )
     }
 
     fn do_show_error(title: &str, msg: Option<&str>, window: Option<&gtk::Window>) {

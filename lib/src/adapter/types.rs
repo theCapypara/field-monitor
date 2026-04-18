@@ -38,6 +38,26 @@ pub trait AdapterDisplay {
     ///
     /// Implementations should also call this in Drop.
     fn close(&self);
+
+    /// Number of monitors available for this display. Defaults to 1.
+    fn monitor_count(&self) -> u32 {
+        1
+    }
+
+    /// Register a callback that fires when the monitor count changes.
+    /// Returns a signal handler ID that can be used to disconnect the callback.
+    fn connect_monitor_count_changed(
+        &self,
+        _cb: Box<dyn Fn(u32)>,
+    ) -> Option<glib::SignalHandlerId> {
+        None
+    }
+
+    /// Create a new display for the given monitor index, sharing the same session.
+    /// Returns `None` if not supported or the index is out of range.
+    fn create_monitor_display(&self, _index: u32) -> Option<Box<dyn AdapterDisplay>> {
+        None
+    }
 }
 
 /// An adapter to connect to a remote server and provide widgets

@@ -48,6 +48,8 @@ use crate::util::configure_vte_styling;
 use crate::widget::certificate_trust_dialog::FieldMonitorCertificateTrustDialog;
 use crate::widget::focus_grabber::FieldMonitorFocusGrabber;
 use crate::widget::grab_note::FieldMonitorGrabNote;
+use crate::widget::pulse_anim_bin::FieldMonitorPulseAnimBin;
+use crate::widget::single_screen_window::FieldMonitorSingleScreenWindow;
 use crate::widget::window::FieldMonitorWindow;
 
 mod imp {
@@ -76,13 +78,17 @@ mod imp {
         #[template_child]
         pub grab_note: TemplateChild<FieldMonitorGrabNote>,
         #[template_child]
+        pub show_navigation_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub monitor_menu_button_bin: TemplateChild<FieldMonitorPulseAnimBin>,
+        #[template_child]
+        pub monitor_menu_button: TemplateChild<gtk::MenuButton>,
+        #[template_child]
         pub menu_button: TemplateChild<gtk::MenuButton>,
         #[template_child]
         pub show_output_button: TemplateChild<gtk::Button>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
-        #[property(get, construct_only, nullable)]
-        pub window: RefCell<Option<FieldMonitorWindow>>,
         #[property(get, construct_only)]
         pub server_path: RefCell<String>,
         #[property(get, construct_only)]
@@ -102,10 +108,14 @@ mod imp {
         pub scale_to_window: Cell<bool>,
         #[property(get, set)]
         pub allow_reauths: Cell<bool>,
+        #[property(get, set, default = false)]
+        pub standalone: Cell<bool>,
+        #[property(get = Self::get_connected, explicit_notify, default = false)]
+        pub connected: std::marker::PhantomData<bool>,
         // None: Status not initialized yet
         // true: Connected
         // false: Disconnected
-        pub connection_state: RefCell<Option<bool>>,
+        pub connection_state: Cell<Option<bool>>,
         pub connection_loader: Mutex<Option<ConnectionLoader>>,
         pub adapter: RefCell<Option<Box<dyn AdapterDisplay>>>,
         // Generation of the connection. This is used to prevent "old" adapters from triggering
@@ -116,6 +126,13 @@ mod imp {
         pub inhibit_status_view: Cell<bool>,
         // Result of the interactive tls verification
         pub interactive_tls_verified: RefCell<Option<bool>>,
+    }
+
+    impl FieldMonitorServerScreen {
+        #[inline]
+        pub fn get_connected(&self) -> bool {
+            self.connection_state.get().unwrap_or_default()
+        }
     }
 
     #[glib::object_subclass]
@@ -145,7 +162,7 @@ mod imp {
                 None,
                 |slf: &super::FieldMonitorServerScreen, _, _| {
                     glib::spawn_future_local(glib::clone!(
-                        #[strong]
+                        #[weak]
                         slf,
                         async move { slf.reset().await }
                     ));
@@ -169,6 +186,20 @@ mod imp {
                         return;
                     };
                     slf.send_keys(&keys);
+                },
+            );
+
+            klass.install_action(
+                "view.open-monitor",
+                Some(&String::static_variant_type()),
+                |slf: &super::FieldMonitorServerScreen, _, params| {
+                    let Some(index) = params
+                        .and_then(String::from_variant)
+                        .and_then(|s| s.parse().ok())
+                    else {
+                        return;
+                    };
+                    slf.open_monitor_in_new_window(index);
                 },
             );
 
@@ -270,7 +301,6 @@ impl FieldMonitorServerScreen {
     ) -> Self {
         let slf: Self = glib::Object::builder()
             .property("application", app)
-            .property("window", window)
             .property("server-path", server_path)
             .property("adapter-id", adapter_id)
             .property("dynamic-resize", true)
@@ -283,17 +313,7 @@ impl FieldMonitorServerScreen {
         slf.add_menu(MenuKind::Other, vec![]);
 
         if let Some(window) = window {
-            window.connect_notify_local(
-                Some("fullscreened"),
-                glib::clone!(
-                    #[weak]
-                    slf,
-                    move |window, _| {
-                        slf.on_window_fullscreened_changed(window);
-                    }
-                ),
-            );
-            slf.on_window_fullscreened_changed(window);
+            slf.setup_window_bindings(window);
         }
 
         imp.connection_loader.try_lock().unwrap().replace(loader);
@@ -303,30 +323,90 @@ impl FieldMonitorServerScreen {
             async move { slf.reset().await }
         ));
 
-        slf.update_header_bar_state();
-        if let Some(settings) = app.settings() {
-            settings.connect_header_bar_behavior_notify(glib::clone!(
-                #[weak]
-                slf,
-                move |_| slf.update_header_bar_state()
-            ));
-        }
-
         info!("Created connection view for {server_path}");
 
         slf
+    }
+
+    /// Create a version of server screen for a secondary monitor. It does not show the navigation
+    /// sidebar, does not have server actions in its menus and does not manage the connection
+    /// state itself. The display to show must be passed in.
+    pub fn new_secondary_monitor(
+        app: &FieldMonitorApplication,
+        server_path: &str,
+        adapter_id: &str,
+        monitor_index: u32,
+        display: Box<dyn AdapterDisplay>,
+        title: &str,
+        subtitle: &str,
+    ) -> Self {
+        let monitor_adapter_id = format!("{adapter_id}#monitor{monitor_index}");
+        let slf: Self = glib::Object::builder()
+            .property("application", app)
+            .property("server-path", server_path)
+            .property("adapter-id", &monitor_adapter_id)
+            .property("dynamic-resize", true)
+            .property("scale-to-window", true)
+            .property("reveal-osd-controls", true)
+            .property("allow-reauths", false)
+            .property("standalone", true)
+            .build();
+
+        slf.add_menu(MenuKind::Rdw, vec![]);
+        slf.action_set_enabled("view.reconnect", false);
+        slf.imp().show_navigation_button.set_visible(false);
+
+        let monitor_title = format!("{title} [Monitor {}]", monitor_index + 1);
+        slf.set_title(monitor_title);
+        slf.set_subtitle(subtitle);
+
+        slf.add_display(display, vec![]);
+        slf.on_connected();
+
+        info!("Created secondary monitor view for {server_path} monitor {monitor_index}");
+
+        slf
+    }
+
+    pub(crate) fn setup_window_bindings(&self, window: &impl IsA<gtk::Window>) {
+        window.connect_notify_local(
+            Some("fullscreened"),
+            glib::clone!(
+                #[weak(rename_to = slf)]
+                self,
+                move |window, _| {
+                    slf.on_window_fullscreened_changed(window);
+                }
+            ),
+        );
+        self.on_window_fullscreened_changed(window);
+
+        self.update_header_bar_state();
+        if let Some(settings) = self
+            .application()
+            .as_ref()
+            .and_then(FieldMonitorApplication::settings)
+        {
+            settings.connect_header_bar_behavior_notify(glib::clone!(
+                #[weak(rename_to = slf)]
+                self,
+                move |_| slf.update_header_bar_state()
+            ));
+        }
     }
 
     pub fn set_close_cb(&self, close_cb: impl Fn() + 'static) {
         self.imp().close_cb.replace(Some(Box::new(close_cb)));
     }
 
+    #[inline]
     pub fn is_connected(&self) -> bool {
-        self.imp().connection_state.borrow().unwrap_or_default()
+        self.imp().get_connected()
     }
 
+    #[inline]
     pub fn is_disconnected(&self) -> bool {
-        !self.imp().connection_state.borrow().unwrap_or(true)
+        !self.imp().connection_state.get().unwrap_or(true)
     }
 
     pub fn close(&self) {
@@ -334,6 +414,21 @@ impl FieldMonitorServerScreen {
         if let Some(close_cb) = self.imp().close_cb.borrow().as_ref() {
             close_cb()
         }
+    }
+
+    /// This is a crutch that will "forget" the DisplayAdapter and remove the adapter widget.
+    pub fn force_eject_adapter(&self) {
+        let imp = self.imp();
+        imp.adapter.replace(None);
+        imp.display_bin.set_child(None::<&gtk::Widget>);
+        imp.status_stack.set_visible_child_name("loading");
+        imp.outer_stack.set_visible_child_name("status");
+        imp.connection_state.set(None);
+        self.notify_connected();
+        if let Some(mut v) = imp.connection_loader.try_lock() {
+            *v = None;
+        }
+        imp.close_cb.replace(None);
     }
 
     pub async fn reset(&self) {
@@ -345,8 +440,12 @@ impl FieldMonitorServerScreen {
         trace!("connection loader lock: locking...");
         let mut loader_brw = imp.connection_loader.lock().await;
         trace!("connection loader lock: locked!");
-        let loader = loader_brw.as_mut().unwrap();
-        imp.connection_state.replace(None);
+        let Some(loader) = loader_brw.as_mut() else {
+            // Secondary monitor screens have no loader — cannot reset.
+            warn!("reset() called on a screen without a connection loader (secondary monitor?)");
+            return;
+        };
+        imp.connection_state.set(None);
 
         let adapter_id = { imp.adapter_id.borrow().clone() };
         let Some(adapter) = loader
@@ -406,16 +505,14 @@ impl FieldMonitorServerScreen {
             )),
             // tls_verify
             Rc::new(glib::clone!(
-                #[strong(rename_to = slf)]
+                #[weak_allow_none(rename_to = slf)]
                 self,
-                move |tls_info| if this_generation == *slf.imp().connection_generation.borrow() {
+                move |tls_info| if let Some(slf) = slf
+                    && this_generation == *slf.imp().connection_generation.borrow()
+                {
                     slf.run_tls_verify(tls_info)
                 } else {
-                    warn!(
-                        "got old generation tls verify event (gen is: {} - should: {})",
-                        this_generation,
-                        *slf.imp().connection_generation.borrow()
-                    );
+                    warn!("got old generation tls verify event or slf was destroyed");
                     VerifyTlsResponse::make_static(tls_info.mode(), false)
                 }
             )),
@@ -489,16 +586,28 @@ impl FieldMonitorServerScreen {
         let display_widget = display.widget();
 
         let widget: gtk::Widget = match &display_widget {
-            AdapterDisplayWidget::Rdw(display) => {
-                display.set_visible(true);
-                display.set_vexpand(true);
-                display.set_hexpand(true);
-                imp.focus_grabber.set_display(Some(display));
+            AdapterDisplayWidget::Rdw(rdw_display) => {
+                rdw_display.set_visible(true);
+                rdw_display.set_vexpand(true);
+                rdw_display.set_hexpand(true);
+                imp.focus_grabber.set_display(Some(rdw_display));
                 self.set_force_disable_overlay_headerbar(false);
+
                 self.add_menu(MenuKind::Rdw, server_actions);
+
+                // Set up the monitor button and keep it updated when monitor count changes.
+                self.update_monitor_button(display.monitor_count());
+                display.connect_monitor_count_changed(Box::new(glib::clone!(
+                    #[weak(rename_to = slf)]
+                    self,
+                    move |count| {
+                        slf.update_monitor_button(count);
+                    }
+                )));
+
                 self.remove_css_class("connection-view-vte");
-                display.add_css_class("rdw-display");
-                display.clone().upcast()
+                rdw_display.add_css_class("rdw-display");
+                rdw_display.clone().upcast()
             }
             AdapterDisplayWidget::Vte(terminal) => {
                 terminal.set_vexpand(true);
@@ -546,11 +655,10 @@ impl FieldMonitorServerScreen {
 
     pub fn on_connected(&self) {
         let imp = self.imp();
-        let state = &mut *imp.connection_state.borrow_mut();
-        match state {
+        match imp.connection_state.get() {
             None => {
                 info!("Connection connected.");
-                *state = Some(true)
+                imp.connection_state.set(Some(true));
             }
             Some(true) => {
                 warn!("Got multiple on_connected events. Ignoring.");
@@ -558,9 +666,10 @@ impl FieldMonitorServerScreen {
             }
             Some(false) => {
                 warn!("Connection reconnected.");
-                *state = Some(true);
+                imp.connection_state.set(Some(true));
             }
         }
+        self.notify_connected();
         imp.outer_stack.set_visible_child_name("connection");
         glib::spawn_future_local(glib::clone!(
             #[weak(rename_to=slf)]
@@ -573,23 +682,53 @@ impl FieldMonitorServerScreen {
         ));
     }
 
+    fn open_monitor_in_new_window(&self, monitor_index: u32) {
+        let imp = self.imp();
+        let adapter_brw = imp.adapter.borrow();
+        let Some(adapter) = adapter_brw.as_ref() else {
+            warn!("open_monitor_in_new_window: no adapter");
+            return;
+        };
+
+        let Some(monitor_display) = adapter.create_monitor_display(monitor_index) else {
+            warn!(
+                "open_monitor_in_new_window: failed to create display for monitor {monitor_index}"
+            );
+            return;
+        };
+        drop(adapter_brw);
+
+        let app_ref = imp.application.borrow().clone().unwrap();
+        let win = FieldMonitorSingleScreenWindow::new(
+            &app_ref,
+            self,
+            monitor_index,
+            monitor_display,
+            &self.title(),
+            &self.subtitle(),
+        );
+        win.present();
+    }
+
     pub fn on_disconnected(&self, result: ConnectionResult<()>) {
         let imp = self.imp();
-        let state = &mut *imp.connection_state.borrow_mut();
+        let state = imp.connection_state.get();
         match state {
             None => {
                 info!("Connection failed to establish.");
-                *state = Some(false)
+                imp.connection_state.set(Some(false));
             }
             Some(true) => {
                 info!("Connection got disconnected.");
-                *state = Some(false)
+                imp.connection_state.set(Some(false));
             }
             Some(false) => {
                 warn!("Got multiple on_disconnected events. Ignoring.");
                 return;
             }
         }
+
+        self.notify_connected();
 
         self.handle_error(result, true)
     }
@@ -1004,7 +1143,9 @@ impl FieldMonitorServerScreen {
             _ => {}
         }
 
-        let more_actions = if server_actions.is_empty() {
+        let standalone = self.standalone();
+
+        let more_actions = if standalone || server_actions.is_empty() {
             None
         } else {
             let server_path = self.server_path();
@@ -1022,37 +1163,60 @@ impl FieldMonitorServerScreen {
             Some(MenuObject::Submenu(gettext("Server _Actions"), submenu))
         };
 
+        let close_label = if standalone {
+            gettext("_Close Window")
+        } else {
+            gettext("_Close Connection")
+        };
+
         menu.append_section(
             None,
             &build_menu(&[
                 more_actions,
                 Some(MenuObject::Item(gio::MenuItem::new(
-                    Some(&gettext("_Close Connection")),
+                    Some(&close_label),
                     Some("view.close"),
                 ))),
             ]),
         );
 
-        menu.append_section(
-            None,
-            &build_menu(&[
-                Some(MenuObject::Item(gio::MenuItem::new(
-                    Some(&gettext("_New Window")),
-                    Some("app.new-window"),
-                ))),
-                Some(MenuObject::Item(gio::MenuItem::new(
-                    Some(&gettext("_Keyboard Shortcuts")),
-                    Some("app.shortcuts"),
-                ))),
-                Some(MenuObject::Item(gio::MenuItem::new(
-                    Some(&gettext("_About Field Monitor")),
-                    Some("app.about"),
-                ))),
-            ]),
-        );
+        let mut bottom_items: Vec<Option<MenuObject>> = Vec::new();
+        if !standalone {
+            bottom_items.push(Some(MenuObject::Item(gio::MenuItem::new(
+                Some(&gettext("_New Window")),
+                Some("app.new-window"),
+            ))));
+        }
+        bottom_items.push(Some(MenuObject::Item(gio::MenuItem::new(
+            Some(&gettext("_Keyboard Shortcuts")),
+            Some("app.shortcuts"),
+        ))));
+        bottom_items.push(Some(MenuObject::Item(gio::MenuItem::new(
+            Some(&gettext("_About Field Monitor")),
+            Some("app.about"),
+        ))));
+        menu.append_section(None, &build_menu(&bottom_items));
 
         menu.freeze();
         self.imp().menu_button.set_menu_model(Some(&menu));
+    }
+
+    fn update_monitor_button(&self, monitor_count: u32) {
+        let imp = self.imp();
+        if self.standalone() || monitor_count <= 1 {
+            imp.monitor_menu_button_bin.set_visible(false);
+            return;
+        }
+        imp.monitor_menu_button_bin.set_visible(true);
+
+        let menu = gio::Menu::new();
+        for i in 1..monitor_count {
+            let label = gettext_f("Show Monitor {number}", &[("number", &(i + 1).to_string())]);
+            let action = format!("view.open-monitor::{i}");
+            menu.append(Some(&label), Some(&action));
+        }
+        menu.freeze();
+        imp.monitor_menu_button.set_menu_model(Some(&menu));
     }
 
     fn vte_menu_shortcuts() -> gio::Menu {
@@ -1156,7 +1320,7 @@ impl FieldMonitorServerScreen {
 
         let window = self
             .root()
-            .map(Cast::downcast::<FieldMonitorWindow>)
+            .map(Cast::downcast::<gtk::Window>)
             .and_then(Result::ok);
 
         self.set_reveal_osd_controls(!grabbed);
@@ -1203,7 +1367,10 @@ impl FieldMonitorServerScreen {
 
     #[template_callback]
     fn on_self_unrealize(&self) {
-        debug!("connection view unrealized");
+        debug!(
+            "connection view unrealized. self ref count: {}",
+            self.ref_count()
+        );
         self.imp().focus_grabber.ungrab();
     }
 
@@ -1230,9 +1397,9 @@ impl FieldMonitorServerScreen {
             .unwrap_or_default();
         let reveal_osd_controls = self.reveal_osd_controls();
         let fullscreened = self
-            .window()
-            .as_ref()
-            .map(FieldMonitorWindow::is_fullscreen)
+            .root()
+            .and_downcast::<gtk::Window>()
+            .map(|w| w.is_fullscreen())
             .unwrap_or_default();
 
         let toolbar_view = &self.imp().toolbar_view;
@@ -1267,6 +1434,7 @@ impl FieldMonitorServerScreen {
     }
 }
 
+#[derive(Copy, Clone)]
 enum MenuKind {
     Rdw,
     Vte,

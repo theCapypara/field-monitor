@@ -31,7 +31,7 @@ use crate::widget::quick_connect_dialog::FieldMonitorQuickConnectDialog;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
-use glib::timeout_future;
+use glib::{timeout_future, WeakRef};
 use gtk::{gdk, gio, glib};
 use log::debug;
 use std::cell::Cell;
@@ -80,7 +80,8 @@ mod imp {
         pub welcome_button_box: TemplateChild<gtk::Box>,
         #[template_child]
         pub welcome_window_title: TemplateChild<adw::WindowTitle>,
-        pub tab_title_notify_binding: RefCell<Option<(gtk::Widget, glib::SignalHandlerId)>>,
+        pub tab_title_notify_binding:
+            RefCell<Option<(WeakRef<gtk::Widget>, glib::SignalHandlerId)>>,
         pub force_close: Cell<bool>,
         pub inhibit_possible_sidebar_click: Cell<bool>,
     }
@@ -313,7 +314,9 @@ impl FieldMonitorWindow {
         let field_monitor_str = gettext("Field Monitor");
         match title {
             WindowTitle::Main => {
-                if let Some((tab, signal)) = imp.tab_title_notify_binding.borrow_mut().take() {
+                if let Some((tab, signal)) = imp.tab_title_notify_binding.borrow_mut().take()
+                    && let Some(tab) = tab.upgrade()
+                {
                     glib::signal_handler_disconnect(&tab, signal);
                 }
                 self.set_title(Some(&field_monitor_str));
@@ -327,22 +330,24 @@ impl FieldMonitorWindow {
                     slf.set_title(Some(&format!("{} - {}", tab.title(), suffix)));
                 }
 
-                change_title(self, &tab, &field_monitor_str);
+                if let Some(tab) = tab.upgrade() {
+                    change_title(self, &tab, &field_monitor_str);
 
-                let signal_handler_id = tab.connect_notify_local(
-                    Some("title"),
-                    glib::clone!(
-                        #[weak(rename_to=slf)]
-                        self,
-                        move |tab, _| {
-                            change_title(&slf, tab, &field_monitor_str);
-                        }
-                    ),
-                );
+                    let signal_handler_id = tab.connect_notify_local(
+                        Some("title"),
+                        glib::clone!(
+                            #[weak(rename_to=slf)]
+                            self,
+                            move |tab, _| {
+                                change_title(&slf, tab, &field_monitor_str);
+                            }
+                        ),
+                    );
 
-                imp.tab_title_notify_binding
-                    .borrow_mut()
-                    .replace((tab.upcast(), signal_handler_id));
+                    imp.tab_title_notify_binding
+                        .borrow_mut()
+                        .replace((tab.upcast::<gtk::Widget>().downgrade(), signal_handler_id));
+                }
             }
         }
     }
@@ -359,6 +364,11 @@ impl FieldMonitorWindow {
         let imp = self.imp();
         if imp.force_close.get() {
             // User has forced the window to close.
+
+            // XXX: Clean up all open connection views. Now, this shouldn't be necessary, but
+            // somehow somewhere we have some issues with references being cleaned up otherwise.
+            // Signals? Maybe. Probably. Who knows!
+            imp.active_connection_tab_view.close_all_tabs();
 
             false
         } else if imp.active_connection_tab_view.n_pages() > 0 {
@@ -401,7 +411,7 @@ impl FieldMonitorWindow {
     fn on_layout_view_layout_name_changed(&self) {
         if let Some("connection-view") = self.imp().layout_view.layout_name().as_deref() {
             if let Some(view) = self.imp().active_connection_tab_view.current() {
-                self.change_window_title(WindowTitle::ConnectionView(view));
+                self.change_window_title(WindowTitle::ConnectionView(view.downgrade()));
             }
             self.add_css_class("connection-view-active");
         } else {
@@ -615,5 +625,5 @@ impl FieldMonitorWindow {
 #[derive(Debug, Clone)]
 enum WindowTitle {
     Main,
-    ConnectionView(FieldMonitorServerScreen),
+    ConnectionView(WeakRef<FieldMonitorServerScreen>),
 }

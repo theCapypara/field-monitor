@@ -28,6 +28,8 @@ mod focus_grabber;
 mod grab_note;
 mod navbar_row;
 pub mod preferences;
+pub mod pulse_anim_bin;
 pub mod quick_connect_dialog;
+pub mod single_screen_window;
 pub mod update_connection_dialog;
 pub mod window;

@@ -15,15 +15,16 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use crate::APP;
 use crate::remote_server_info::RemoteServerInfo;
 use crate::widget::connection_view::server_screen::FieldMonitorServerScreen;
 use crate::widget::window::FieldMonitorWindow;
+use crate::APP;
 use adw::gio;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use itertools::Itertools;
+use log::debug;
 use std::cell::RefCell;
 
 mod imp {
@@ -166,6 +167,25 @@ impl FieldMonitorConnectionTabView {
 
     pub fn close_tab(&self, page: &adw::TabPage) {
         self.imp().tab_view.close_page(page);
+    }
+
+    pub fn close_all_tabs(&self) {
+        let self_pages = self
+            .imp()
+            .tab_view
+            .pages()
+            .iter::<adw::TabPage>()
+            .collect::<Box<[_]>>();
+        for page in self_pages.into_iter().flatten() {
+            self.close_tab(&page);
+            // XXX: For some reason when closing the window, even after removing the tab page,
+            //      the server screen inside of it is still not disposed
+            if let Ok(ss) = page.child().downcast::<FieldMonitorServerScreen>() {
+                ss.force_eject_adapter();
+            }
+        }
+        self.set_visible_page(None::<&adw::TabPage>);
+        debug!("tab view: all closed");
     }
 
     pub fn move_page_to_new_window(&self, page: &adw::TabPage) {

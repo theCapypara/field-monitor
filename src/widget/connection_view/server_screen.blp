@@ -32,7 +32,7 @@ template $FieldMonitorServerScreen: Adw.Bin {
             }
 
             [start]
-            Button {
+            Button show_navigation_button {
                 hexpand: true;
                 valign: start;
                 halign: start;
@@ -50,6 +50,16 @@ template $FieldMonitorServerScreen: Adw.Bin {
                 primary: true;
                 icon-name: "view-more-symbolic";
                 tooltip-text: _("Menu");
+            }
+
+            [end]
+            $FieldMonitorPulseAnimBin monitor_menu_button_bin {
+                visible: false;
+
+                MenuButton monitor_menu_button {
+                    icon-name: "display-with-window-symbolic";
+                    tooltip-text: _("Open Monitor in New Window");
+                }
             }
         }
 

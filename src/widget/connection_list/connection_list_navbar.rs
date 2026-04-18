@@ -16,25 +16,25 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use crate::util::OrdKeyed;
-use crate::widget::connection_list::DEFAULT_GENERIC_ICON;
-use crate::widget::connection_list::FieldMonitorConnectionStack;
 use crate::widget::connection_list::info_page::FieldMonitorConnectionInfoPage;
+use crate::widget::connection_list::FieldMonitorConnectionStack;
+use crate::widget::connection_list::DEFAULT_GENERIC_ICON;
 use crate::widget::navbar_row::FieldMonitorNavbarRow;
 use adw::gio;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
+use futures::future::OptionFuture;
+use futures::{stream, StreamExt};
+use gtk::pango;
 use libfieldmonitor::connection::*;
 use log::{debug, warn};
 use sorted_vec::SortedSet;
 use std::cell::RefCell;
 use std::collections::HashMap;
+use std::sync::Arc;
 
 mod imp {
     use super::*;
-    use futures::future::OptionFuture;
-    use futures::{StreamExt, stream};
-    use gtk::pango;
-    use std::sync::Arc;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
     #[properties(wrapper_type = super::FieldMonitorNavbarConnectionList)]
@@ -174,10 +174,7 @@ mod imp {
                                 .ellipsize(pango::EllipsizeMode::End)
                                 .build();
                             let row: FieldMonitorNavbarRow = glib::Object::builder()
-                                .property(
-                                    "child-ref",
-                                    gtk::StringObject::new(&page.name().unwrap_or_default()),
-                                )
+                                .property("name", page.name().unwrap_or_default())
                                 .property("content", &item)
                                 .property("selectable", false)
                                 .property("activatable", true)
@@ -282,7 +279,7 @@ mod imp {
                             }
                         ),
                     );
-                    rows_brw.insert(row_string(&row), RowEntry { row, page, handler });
+                    rows_brw.insert(row.name(), RowEntry { row, page, handler });
                 }
             }
         }
@@ -313,7 +310,7 @@ glib::wrapper! {
 impl FieldMonitorNavbarConnectionList {
     #[template_callback]
     fn on_list_row_activated(&self, row: &FieldMonitorNavbarRow) {
-        let child_name = row_string(row);
+        let child_name = row.name();
         debug!("list row activated: {:?}", child_name);
         if let Some(stack) = self.imp().stack.borrow().as_ref() {
             stack.set_visible_connection_id(Some(child_name));
@@ -372,13 +369,4 @@ struct RowEntry {
     row: FieldMonitorNavbarRow,
     handler: glib::SignalHandlerId,
     page: gtk::StackPage,
-}
-
-fn row_string(row: &FieldMonitorNavbarRow) -> String {
-    row.child_ref()
-        .unwrap()
-        .downcast::<gtk::StringObject>()
-        .unwrap()
-        .string()
-        .into()
 }

@@ -16,6 +16,7 @@
 		<file preprocess="xml-stripblanks">widget/connection_view/connection_tab_view.ui</file>
 		<file preprocess="xml-stripblanks">widget/connection_view/connection_view_navbar.ui</file>
 		<file preprocess="xml-stripblanks">widget/connection_view/server_screen.ui</file>
+		<file preprocess="xml-stripblanks">widget/single_screen_window.ui</file>
 		<file preprocess="xml-stripblanks">widget/add_connection_dialog.ui</file>
 		<file preprocess="xml-stripblanks">widget/app_status.ui</file>
 		<file preprocess="xml-stripblanks">widget/authenticate_connection_dialog.ui</file>

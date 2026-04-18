@@ -17,6 +17,7 @@
  */
 use crate::util::MOUSE_RIGHT_BUTTON;
 use adw::{gdk, gio};
+use glib::WeakRef;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use std::cell::RefCell;
@@ -28,7 +29,9 @@ mod imp {
     #[properties(wrapper_type = super::FieldMonitorNavbarRow)]
     pub struct FieldMonitorNavbarRow {
         #[property(get, set)]
-        pub child_ref: RefCell<Option<glib::Object>>,
+        pub child_ref: WeakRef<glib::Object>,
+        #[property(get, set)]
+        pub name: RefCell<String>,
         #[property(get, set = Self::set_content)]
         pub content: RefCell<Option<gtk::Widget>>,
         pub slot_left: RefCell<Option<gtk::Box>>,
