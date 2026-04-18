@@ -22,7 +22,9 @@ connection/generic-group/src/server_config.rs
 connection/generic-group/src/server_preferences.blp
 connection/generic-group/src/server_preferences.rs
 connection/generic-group/src/util.rs
-connection/libvirt/src/connection.rs
+connection/libvirt/src/connection/mod.rs
+connection/libvirt/src/connection/adapter.rs
+connection/libvirt/src/connection/graphics.rs
 connection/libvirt/src/hypervisor/mod.rs
 connection/libvirt/src/hypervisor/qemu.rs
 connection/libvirt/src/lib.rs
@@ -123,6 +125,8 @@ src/widget/preferences.blp
 src/widget/preferences.rs
 src/widget/quick_connect_dialog.blp
 src/widget/quick_connect_dialog.rs
+src/widget/single_screen_window.blp
+src/widget/single_screen_window.rs
 src/widget/update_connection_dialog.blp
 src/widget/update_connection_dialog.rs
 src/widget/window.blp
