@@ -31,7 +31,7 @@ use crate::widget::quick_connect_dialog::FieldMonitorQuickConnectDialog;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
-use glib::{timeout_future, WeakRef};
+use glib::{WeakRef, timeout_future};
 use gtk::{gdk, gio, glib};
 use log::debug;
 use std::cell::Cell;
