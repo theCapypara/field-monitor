@@ -1,0 +1,52 @@
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+name: POTFILES
+jobs:
+  pot-generation:
+    name: POTFILE Generation
+    runs-on: ubuntu-24.04
+    container:
+      image: fedora:42
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Generate POT file
+        uses: ./.github/action/run-meson
+        with:
+          target: de.capypara.FieldMonitor-pot
+
+  potfiles-completeness:
+    name: POTFILES Completeness
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Check POTFILES contains all translatable sources
+        run: |
+          missing=0
+
+          # Check all .blp files in project source dirs are listed
+          for f in $(find src/ lib/ connection/ -name '*.blp' | sort); do
+            if ! grep -qxF "$f" po/POTFILES; then
+              echo "::error::Missing from po/POTFILES: $f"
+              missing=1
+            fi
+          done
+
+          # Check all .rs files containing "gettext" are listed
+          for f in $(grep -rl 'gettext' --include='*.rs' src/ lib/ connection/ | sort); do
+            if ! grep -qxF "$f" po/POTFILES; then
+              echo "::error::Missing from po/POTFILES: $f"
+              missing=1
+            fi
+          done
+
+          if [ "$missing" -eq 1 ]; then
+            echo ""
+            echo "Add the missing files to po/POTFILES and keep it sorted alphabetically."
+            exit 1
+          fi
+
+          echo "All translatable sources are listed in po/POTFILES."

@@ -21,14 +21,16 @@ use adw::prelude::*;
 use adw::subclass::prelude::*;
 
 use crate::widget::navbar_row::FieldMonitorNavbarRow;
+use adw::gdk::pango;
+use gettextrs::gettext;
+use glib::WeakRef;
+use glib::translate::ToGlibPtr;
 use log::{debug, warn};
 use std::cell::RefCell;
 use std::collections::HashMap;
 
 mod imp {
     use super::*;
-    use adw::gdk::pango;
-    use gettextrs::gettext;
 
     #[derive(Debug, Default, gtk::CompositeTemplate, glib::Properties)]
     #[properties(wrapper_type = super::FieldMonitorNavbarConnectionView)]
@@ -43,9 +45,10 @@ mod imp {
         #[template_child]
         pub context_menu: TemplateChild<gtk::PopoverMenu>,
         #[property(get, set = Self::set_tab_view)]
-        pub tab_view: RefCell<Option<FieldMonitorConnectionTabView>>,
-        pub inner_tab_view: RefCell<Option<adw::TabView>>,
-        pub(super) rows: RefCell<HashMap<adw::TabPage, FieldMonitorNavbarRow>>,
+        pub tab_view: WeakRef<FieldMonitorConnectionTabView>,
+        pub inner_tab_view: WeakRef<adw::TabView>,
+        // key is address of tab page
+        pub(super) rows: RefCell<HashMap<usize, FieldMonitorNavbarRow>>,
     }
 
     #[glib::object_subclass]
@@ -74,7 +77,7 @@ mod imp {
             match tab_view {
                 None => self.unset_tab_view(),
                 Some(tab_view) => {
-                    if self.tab_view.borrow().as_ref() == Some(&tab_view) {
+                    if self.tab_view.upgrade().as_ref() == Some(&tab_view) {
                         return;
                     }
                     self.unset_tab_view();
@@ -86,16 +89,17 @@ mod imp {
 
         fn unset_tab_view(&self) {
             // tab_view.take removes the old tab_view.
-            if self.tab_view.take().is_some() {
+            if self.tab_view.upgrade().is_some() {
+                self.tab_view.set(None);
                 self.clear_sidebar();
                 // TODO: Remove signal handlers?
             }
         }
 
         fn do_set_tab_view(&self, tab_view: FieldMonitorConnectionTabView) {
-            self.tab_view.replace(Some(tab_view.clone()));
+            self.tab_view.set(Some(&tab_view));
             let inner_tab_view = tab_view.inner();
-            self.inner_tab_view.replace(Some(inner_tab_view.clone()));
+            self.inner_tab_view.set(Some(&inner_tab_view));
             self.populate_sidebar();
             inner_tab_view.connect_page_attached(glib::clone!(
                 #[weak(rename_to=slf)]
@@ -141,10 +145,10 @@ mod imp {
         }
 
         pub fn populate_sidebar(&self) {
-            let tab_view_brw = self.tab_view.borrow();
-            let inner_brw = self.inner_tab_view.borrow();
             let mut self_empty = true;
-            if let (Some(inner), Some(tab_view)) = (inner_brw.as_ref(), tab_view_brw.as_ref()) {
+            if let (Some(inner), Some(tab_view)) =
+                (self.inner_tab_view.upgrade(), self.tab_view.upgrade())
+            {
                 let active_page = tab_view.visible_page();
 
                 let mut rows_brw = self.rows.borrow_mut();
@@ -217,7 +221,12 @@ mod imp {
 
                     self.list.append(&row);
                     rows_brw.insert(
-                        row.child_ref().unwrap().downcast::<adw::TabPage>().unwrap(),
+                        row.child_ref()
+                            .unwrap()
+                            .as_object_ref()
+                            .to_glib_none()
+                            .0
+                            .addr(),
                         row,
                     );
                 }
@@ -240,7 +249,7 @@ impl FieldMonitorNavbarConnectionView {
     fn on_list_row_activated(&self, row: &FieldMonitorNavbarRow) {
         let page = row.child_ref().unwrap().downcast::<adw::TabPage>().unwrap();
         debug!("list row activated: {:?}", page);
-        if let Some(tab_view) = self.imp().tab_view.borrow().as_ref() {
+        if let Some(tab_view) = self.imp().tab_view.upgrade() {
             tab_view.set_visible_page(Some(page));
         } else {
             warn!("no tab_view?");
@@ -254,7 +263,7 @@ impl FieldMonitorNavbarConnectionView {
         }
         if let Some(page) = page {
             let rows_brw = self.imp().rows.borrow();
-            let row = rows_brw.get(&page);
+            let row = rows_brw.get(&page.as_object_ref().to_glib_none().0.addr());
             if let Some(row) = row {
                 row.add_css_class("fm-navselected");
             } else {

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-23 22:52+0100\n"
-"PO-Revision-Date: 2026-03-23 22:54+0100\n"
+"POT-Creation-Date: 2026-04-18 13:14+0200\n"
+"PO-Revision-Date: 2026-04-18 13:26+0200\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -22,7 +22,7 @@ msgstr ""
 #: data/de.capypara.FieldMonitor.desktop.in.in:2
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/widget/window.blp:9
 #: src/widget/window.blp:59 src/widget/window.blp:169 src/widget/window.blp:175
-#: src/widget/window.rs:313
+#: src/widget/window.rs:314
 msgid "Field Monitor"
 msgstr "Feldmonitor"
 
@@ -53,21 +53,23 @@ msgstr "Entfernter Bildschirm"
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
 #: connection/generic-group/src/server_preferences.blp:22
-#: lib/src/adapter/rdp.rs:52
+#: connection/libvirt/src/connection/graphics.rs:250 lib/src/adapter/rdp.rs:52
 msgid "RDP"
 msgstr "RDP"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
 #: connection/generic-group/src/server_preferences.blp:24
-#: connection/proxmox/src/api/node.rs:163 lib/src/adapter/vnc.rs:72
+#: connection/libvirt/src/connection/graphics.rs:253
+#: connection/proxmox/src/api/node.rs:163 lib/src/adapter/vnc.rs:134
 msgid "VNC"
 msgstr "VNC"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
 #: connection/generic-group/src/server_preferences.blp:23
-#: connection/proxmox/src/api/node.rs:162 lib/src/adapter/spice.rs:127
+#: connection/libvirt/src/connection/graphics.rs:247
+#: connection/proxmox/src/api/node.rs:162 lib/src/adapter/spice.rs:213
 msgid "SPICE"
 msgstr "SPICE"
 
@@ -238,32 +240,32 @@ msgid "Servers"
 msgstr "Server"
 
 #: connection/generic-group/src/preferences.blp:32
-#: connection/generic-group/src/preferences.rs:584
+#: connection/generic-group/src/preferences.rs:586
 msgid "Add Server"
 msgstr "Server hinzufügen"
 
-#: connection/generic-group/src/preferences.rs:471
+#: connection/generic-group/src/preferences.rs:473
 msgid "No servers added yet."
 msgstr "Es wurde noch kein Server hinzugefügt."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/generic-group/src/preferences.rs:580
+#: connection/generic-group/src/preferences.rs:582
 #: src/widget/update_connection_dialog.rs:102
 #, rust-format
 msgid "Edit “{title}”"
 msgstr "Bearbeite »{title}«"
 
-#: connection/generic-group/src/preferences.rs:592
+#: connection/generic-group/src/preferences.rs:594
 msgid "Update"
 msgstr "Aktualisieren"
 
-#: connection/generic-group/src/preferences.rs:594
+#: connection/generic-group/src/preferences.rs:596
 #: src/widget/add_connection_dialog.rs:133
 msgid "Add"
 msgstr "Hinzufügen"
 
-#: connection/generic-group/src/preferences.rs:615
+#: connection/generic-group/src/preferences.rs:617
 msgid "Remove Server"
 msgstr "Entfernter Server"
 
@@ -287,130 +289,131 @@ msgstr "Hostname"
 msgid "Port"
 msgstr "Port"
 
-#: connection/libvirt/src/connection.rs:160
+#: connection/libvirt/src/connection/mod.rs:160
 msgid "(Unable to load server name)"
 msgstr "(Laden des Servernamen fehlgeschlagen)"
 
-#: connection/libvirt/src/connection.rs:278
+#: connection/libvirt/src/connection/mod.rs:214
 #: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:66
 #: connection/proxmox/src/api/vm.rs:71
 msgid "Reboot"
 msgstr "Neu starten"
 
-#: connection/libvirt/src/connection.rs:279
+#: connection/libvirt/src/connection/mod.rs:215
 #: connection/proxmox/src/api/node.rs:61 connection/proxmox/src/api/vm.rs:67
 #: connection/proxmox/src/api/vm.rs:72
 msgid "Shutdown"
 msgstr "Herunterfahren"
 
-#: connection/libvirt/src/connection.rs:280 connection/proxmox/src/api/vm.rs:73
+#: connection/libvirt/src/connection/mod.rs:216
+#: connection/proxmox/src/api/vm.rs:73
 msgid "Force Reset"
 msgstr "Zurücksetzen erzwingen"
 
-#: connection/libvirt/src/connection.rs:281 connection/proxmox/src/api/vm.rs:68
-#: connection/proxmox/src/api/vm.rs:74
+#: connection/libvirt/src/connection/mod.rs:217
+#: connection/proxmox/src/api/vm.rs:68 connection/proxmox/src/api/vm.rs:74
 msgid "Force Poweroff"
 msgstr "Ausschalten erzwingen"
 
 #. TRANSLATORS: Verb
-#: connection/libvirt/src/connection.rs:288 connection/proxmox/src/api/vm.rs:82
+#: connection/libvirt/src/connection/mod.rs:224
+#: connection/proxmox/src/api/vm.rs:82
 msgid "Start"
 msgstr "Starten"
 
-#: connection/libvirt/src/connection.rs:319
+#: connection/libvirt/src/connection/mod.rs:255
 msgid "Reboot command successfully sent to domain."
 msgstr "Befehl zum Neustart an Domäne gesendet."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/libvirt/src/connection.rs:324
+#: connection/libvirt/src/connection/mod.rs:260
 #, rust-format
 msgid "Failed to send reboot command: {err}"
 msgstr "Neustart fehlgeschlagen: {err}"
 
-#: connection/libvirt/src/connection.rs:345
+#: connection/libvirt/src/connection/mod.rs:281
 msgid "Shutdown command successfully sent to domain."
 msgstr "Befehl zum Herunterfahren an Domäne gesendet."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/libvirt/src/connection.rs:350
+#: connection/libvirt/src/connection/mod.rs:286
 #, rust-format
 msgid "Failed to send shutdown command: {err}"
 msgstr "Herunterfahren fehlgeschlagen: {err}"
 
-#: connection/libvirt/src/connection.rs:371
+#: connection/libvirt/src/connection/mod.rs:307
 msgid "Domain successfully reset."
 msgstr "Befehl zum Zurücksetzen an Domnäne gesendet."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/libvirt/src/connection.rs:376
+#: connection/libvirt/src/connection/mod.rs:312
 #, rust-format
 msgid "Failed to reset domain: {err}"
 msgstr "Zurücksetzen fehlgeschlagen: {err}"
 
-#: connection/libvirt/src/connection.rs:397
+#: connection/libvirt/src/connection/mod.rs:333
 msgid "Domain successfully shut down."
 msgstr "Domäne erfolgreich heruntergefahren."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/libvirt/src/connection.rs:402
+#: connection/libvirt/src/connection/mod.rs:338
 #, rust-format
 msgid "Failed to send destroy command: {err}"
 msgstr "Zerstören fehlgeschlagen: {err}"
 
-#: connection/libvirt/src/connection.rs:428
+#: connection/libvirt/src/connection/mod.rs:364
 msgid "Domain successfully started."
 msgstr "Domäne erfolgreich gestartet."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: connection/libvirt/src/connection.rs:433
+#: connection/libvirt/src/connection/mod.rs:369
 #, rust-format
 msgid "Failed to send create command: {err}"
 msgstr "Erstellen fehlgeschlagen: {err}"
 
-#: connection/libvirt/src/connection.rs:460
+#: connection/libvirt/src/connection/mod.rs:396
 msgid "Domain is not running."
 msgstr "Diese Domäne ist nicht aktiv."
 
-#: connection/libvirt/src/connection.rs:467
+#: connection/libvirt/src/connection/mod.rs:403
 msgid "Domain is already running."
 msgstr "Diese Domäne ist bereits aktiv."
 
-#: connection/libvirt/src/connection.rs:476
+#: connection/libvirt/src/connection/mod.rs:412
 #: connection/proxmox/src/api/mod.rs:84
 msgid "Internal error while trying to execute command."
 msgstr "Beim Ausführen des Befehls ist ein interner Fehler aufgetreten."
 
-#: connection/libvirt/src/connection.rs:506
-msgid "SPICE (Graphical)"
-msgstr "SPICE (graphisch)"
-
-#: connection/libvirt/src/connection.rs:510
-msgid "RDP (Graphical)"
-msgstr "RDP (graphisch)"
-
-#: connection/libvirt/src/connection.rs:513
-msgid "VNC (Graphical)"
-msgstr "VNC (graphisch)"
-
-#: connection/libvirt/src/connection.rs:515
+#: connection/libvirt/src/connection/mod.rs:440
 msgid "Serial Console"
 msgstr "Serielle Konsole"
 
-#: connection/libvirt/src/hypervisor/qemu.rs:45
-#: connection/libvirt/src/hypervisor/qemu.rs:49
+#: connection/libvirt/src/connection/adapter.rs:220
+msgid ""
+"No supported graphics endpoint available. Tip: If connected via SSH, make "
+"sure that the graphics adapter's listen type is set to 'address' and that "
+"the adapter is listening on all interfaces."
+msgstr ""
+"Kein unterstützter Grafikmodus verfügbar. Tipp: Falls Sie per SSH verbunden "
+"sind, stellen Sie sicher, dass der \"listen\"-Typ des Adapters auf "
+"\"address\" gestellt ist und das der Adapter auf allen "
+"Netzwerkschnittstellen horcht."
+
+#: connection/libvirt/src/hypervisor/qemu.rs:46
+#: connection/libvirt/src/hypervisor/qemu.rs:50
 msgid "QEMU/KVM"
 msgstr "QEMU/KVM"
 
-#: connection/libvirt/src/hypervisor/qemu.rs:53
+#: connection/libvirt/src/hypervisor/qemu.rs:54
 msgid "Add QEMU/KVM Connection"
 msgstr "QEMU/KVM Verbindung hinzufügen"
 
-#: connection/libvirt/src/hypervisor/qemu.rs:61
+#: connection/libvirt/src/hypervisor/qemu.rs:62
 msgid "QEMU/KVM hypervisor connection via libvirt"
 msgstr "QEMU/KVM Hypervisorverbindung via libvirt"
 
@@ -590,7 +593,7 @@ msgstr "Anwendung mit einem neuen Fenster starten"
 msgid "translator-credits"
 msgstr "Marco Köpcke <hello@capypara.de>"
 
-#: src/application.rs:584 src/connection_loader.rs:433
+#: src/application.rs:584 src/connection_loader.rs:437
 #: src/widget/add_connection_dialog.rs:210
 #: src/widget/authenticate_connection_dialog.rs:170
 #: src/widget/certificate_details_window.rs:235
@@ -615,11 +618,11 @@ msgstr "Verbindung erfolgreich aktualisiert."
 msgid "Permanently Remove “{title}”?"
 msgstr "»{title}« dauerhaft entfernen?"
 
-#: src/application.rs:723 src/widget/connection_view/connection_tab_view.rs:251
+#: src/application.rs:723 src/widget/connection_view/connection_tab_view.rs:271
 msgid "No"
 msgstr "Nein"
 
-#: src/application.rs:724 src/widget/connection_view/connection_tab_view.rs:252
+#: src/application.rs:724 src/widget/connection_view/connection_tab_view.rs:272
 msgid "Yes"
 msgstr "Ja"
 
@@ -857,8 +860,8 @@ msgstr "Exportieren"
 #: src/widget/certificate_details_window.blp:32
 #: src/widget/close_warning_dialog.rs:79
 #: src/widget/connection_view/connection_view_navbar.blp:52
-#: src/widget/connection_view/connection_view_navbar.rs:176
-#: src/widget/connection_view/server_screen.blp:111
+#: src/widget/connection_view/connection_view_navbar.rs:180
+#: src/widget/connection_view/server_screen.blp:121
 msgid "Close"
 msgstr "Schließen"
 
@@ -1006,11 +1009,11 @@ msgstr "Verbinden"
 msgid "Connect via {adapter}"
 msgstr "Verbinden via {adapter}"
 
-#: src/widget/connection_view/connection_tab_view.rs:246
+#: src/widget/connection_view/connection_tab_view.rs:266
 msgid "Close Connection?"
 msgstr "Verbindung schließen?"
 
-#: src/widget/connection_view/connection_tab_view.rs:248
+#: src/widget/connection_view/connection_tab_view.rs:268
 msgid "Closing the connection will disconnect from the remote server."
 msgstr "Hierdurch wird die Verbindung zum entfernten Server getrennt."
 
@@ -1034,165 +1037,178 @@ msgstr "Navigation anzeigen"
 msgid "Menu"
 msgstr "Menü"
 
-#: src/widget/connection_view/server_screen.blp:90
+#: src/widget/connection_view/server_screen.blp:61
+msgid "Open Monitor in New Window"
+msgstr "Monitor in neuem Fenster öffnen"
+
+#: src/widget/connection_view/server_screen.blp:100
 msgid "Connecting..."
 msgstr "Verbindet..."
 
-#: src/widget/connection_view/server_screen.blp:121
+#: src/widget/connection_view/server_screen.blp:131
 msgid "Reconnect"
 msgstr "Neu verbinden"
 
-#: src/widget/connection_view/server_screen.blp:128
+#: src/widget/connection_view/server_screen.blp:138
 msgid "Show Output"
 msgstr "Ausgabe anzeigen"
 
-#: src/widget/connection_view/server_screen.rs:716
+#: src/widget/connection_view/server_screen.rs:843
 msgid "Disconnected"
 msgstr "Verbindung getrennt"
 
-#: src/widget/connection_view/server_screen.rs:718
+#: src/widget/connection_view/server_screen.rs:845
 msgid "The connection to the server was closed."
 msgstr "Die Verbindung mit dem Server wurde geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:756
+#: src/widget/connection_view/server_screen.rs:883
 msgid "Connection Failed"
 msgstr "Verbindung fehlgeschlagen"
 
-#: src/widget/connection_view/server_screen.rs:757
+#: src/widget/connection_view/server_screen.rs:884
 msgid "The connection was closed due to an error."
 msgstr "Die Verbindung wurde aufgrund eines Fehlers geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:916
+#: src/widget/connection_view/server_screen.rs:1043
 msgid "_Dynamic Resize"
 msgstr "_Dynamische Größenanpassung"
 
-#: src/widget/connection_view/server_screen.rs:920
+#: src/widget/connection_view/server_screen.rs:1047
 msgid "_Scale to Window"
 msgstr "Ausgabe an Fenstergröße _anpassen"
 
-#: src/widget/connection_view/server_screen.rs:930
+#: src/widget/connection_view/server_screen.rs:1057
 msgid "_Resize Window to Screen"
 msgstr "_Fenstergröße auf Ausgabegröße setzen"
 
-#: src/widget/connection_view/server_screen.rs:934
+#: src/widget/connection_view/server_screen.rs:1061
 msgid "Send _Keys"
 msgstr "Tasten _senden"
 
-#: src/widget/connection_view/server_screen.rs:938
+#: src/widget/connection_view/server_screen.rs:1065
 msgid "Ctrl+Alt L"
 msgstr "Strg+Alt L"
 
-#: src/widget/connection_view/server_screen.rs:942
+#: src/widget/connection_view/server_screen.rs:1069
 msgid "Ctrl+Alt+Backspace"
 msgstr "Strg+Alt+Rücktaste"
 
-#: src/widget/connection_view/server_screen.rs:946
+#: src/widget/connection_view/server_screen.rs:1073
 msgid "Ctrl+Alt+Delete"
 msgstr "Strg+Alt+Entf"
 
-#: src/widget/connection_view/server_screen.rs:952
+#: src/widget/connection_view/server_screen.rs:1079
 msgid "Ctrl+Alt+F1"
 msgstr "Strg+Alt+F1"
 
-#: src/widget/connection_view/server_screen.rs:956
+#: src/widget/connection_view/server_screen.rs:1083
 msgid "Ctrl+Alt+F2"
 msgstr "Strg+Alt+F2"
 
-#: src/widget/connection_view/server_screen.rs:960
+#: src/widget/connection_view/server_screen.rs:1087
 msgid "Ctrl+Alt+F3"
 msgstr "Strg+Alt+F3"
 
-#: src/widget/connection_view/server_screen.rs:964
+#: src/widget/connection_view/server_screen.rs:1091
 msgid "Ctrl+Alt+F4"
 msgstr "Strg+Alt+F4"
 
-#: src/widget/connection_view/server_screen.rs:968
+#: src/widget/connection_view/server_screen.rs:1095
 msgid "Ctrl+Alt+F5"
 msgstr "Strg+Alt+F5"
 
-#: src/widget/connection_view/server_screen.rs:972
+#: src/widget/connection_view/server_screen.rs:1099
 msgid "Ctrl+Alt+F6"
 msgstr "Strg+Alt+F6"
 
-#: src/widget/connection_view/server_screen.rs:976
+#: src/widget/connection_view/server_screen.rs:1103
 msgid "Ctrl+Alt+F7"
 msgstr "Strg+Alt+F7"
 
-#: src/widget/connection_view/server_screen.rs:980
+#: src/widget/connection_view/server_screen.rs:1107
 msgid "Ctrl+Alt+F8"
 msgstr "Strg+Alt+F8"
 
-#: src/widget/connection_view/server_screen.rs:984
+#: src/widget/connection_view/server_screen.rs:1111
 msgid "Ctrl+Alt+F9"
 msgstr "Strg+Alt+F9"
 
-#: src/widget/connection_view/server_screen.rs:988
+#: src/widget/connection_view/server_screen.rs:1115
 msgid "Ctrl+Alt+F10"
 msgstr "Strg+Alt+F10"
 
-#: src/widget/connection_view/server_screen.rs:992
+#: src/widget/connection_view/server_screen.rs:1119
 msgid "Ctrl+Alt+F11"
 msgstr "Strg+Alt+F11"
 
-#: src/widget/connection_view/server_screen.rs:996
+#: src/widget/connection_view/server_screen.rs:1123
 msgid "Ctrl+Alt+F12"
 msgstr "Strg+Alt+F12"
 
-#: src/widget/connection_view/server_screen.rs:1002
+#: src/widget/connection_view/server_screen.rs:1129
 msgid "Print"
 msgstr "Drucken"
 
-#: src/widget/connection_view/server_screen.rs:1013
+#: src/widget/connection_view/server_screen.rs:1140
 msgid "_Zoom"
 msgstr "_Textgröße"
 
-#: src/widget/connection_view/server_screen.rs:1034
+#: src/widget/connection_view/server_screen.rs:1163
 msgid "Server _Actions"
 msgstr "Server_aktionen"
 
-#: src/widget/connection_view/server_screen.rs:1042
+#: src/widget/connection_view/server_screen.rs:1167
+msgid "_Close Window"
+msgstr "Fenster _schließen"
+
+#: src/widget/connection_view/server_screen.rs:1169
 msgid "_Close Connection"
 msgstr "Verbindung _schließen"
 
-#: src/widget/connection_view/server_screen.rs:1052 src/widget/window.blp:307
+#: src/widget/connection_view/server_screen.rs:1186 src/widget/window.blp:307
 msgid "_New Window"
 msgstr "_Neues Fenster"
 
-#: src/widget/connection_view/server_screen.rs:1056 src/widget/window.blp:317
+#: src/widget/connection_view/server_screen.rs:1191 src/widget/window.blp:317
 msgid "_Keyboard Shortcuts"
 msgstr "_Tastenkombinationen"
 
-#: src/widget/connection_view/server_screen.rs:1060 src/widget/window.blp:322
+#: src/widget/connection_view/server_screen.rs:1195 src/widget/window.blp:322
 msgid "_About Field Monitor"
 msgstr "_Über Feldmonitor"
 
-#: src/widget/connection_view/server_screen.rs:1073
+#: src/widget/connection_view/server_screen.rs:1214
+#, rust-format
+msgid "Show Monitor {number}"
+msgstr "Monitor {number} anzeigen"
+
+#: src/widget/connection_view/server_screen.rs:1225
 msgid "_Copy"
 msgstr "_Kopieren"
 
-#: src/widget/connection_view/server_screen.rs:1077
+#: src/widget/connection_view/server_screen.rs:1229
 msgid "_Paste"
 msgstr "_Einfügen"
 
-#: src/widget/connection_view/server_screen.rs:1081
+#: src/widget/connection_view/server_screen.rs:1233
 msgid "Select _All"
 msgstr "_Alles auswählen"
 
-#: src/widget/connection_view/server_screen.rs:1090
+#: src/widget/connection_view/server_screen.rs:1242
 msgid "Zoom In"
 msgstr "Text vergrößern"
 
-#: src/widget/connection_view/server_screen.rs:1094
+#: src/widget/connection_view/server_screen.rs:1246
 msgid "Zoom Out"
 msgstr "Text verkleinern"
 
-#: src/widget/connection_view/server_screen.rs:1098
+#: src/widget/connection_view/server_screen.rs:1250
 msgid "Reset Zoom"
 msgstr "Textgröße zurücksetzen"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/widget/connection_view/server_screen.rs:1200
+#: src/widget/connection_view/server_screen.rs:1352
 #, rust-format
 msgid "Press {keycombo} to ungrab the mouse and keyboard."
 msgstr "Drücken Sie {keycombo} um Maus und Tastatur freizugeben."
@@ -1399,10 +1415,19 @@ msgstr "Verbindungen neu_laden"
 msgid "_Preferences"
 msgstr "_Einstellungen"
 
-#: src/widget/window.rs:533
+#: src/widget/window.rs:543
 msgid "Connect to your virtual machines and remote servers."
 msgstr ""
 "Verbinden Sie sich mit ihren Virtuellen Maschinen und entfernen Servern."
+
+#~ msgid "SPICE (Graphical)"
+#~ msgstr "SPICE (graphisch)"
+
+#~ msgid "RDP (Graphical)"
+#~ msgstr "RDP (graphisch)"
+
+#~ msgid "VNC (Graphical)"
+#~ msgstr "VNC (graphisch)"
 
 #~ msgid "Failed to process RDP connection configuration"
 #~ msgstr "Die RDP Verbindungseinstellungen konnten nicht verarbeitet werden"

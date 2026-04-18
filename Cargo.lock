@@ -662,7 +662,7 @@ dependencies = [
 [[package]]
 name = "cbindgen"
 version = "0.28.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=d1d1cbf2a24db6f3d0fba46483e8bfde28f25964#d1d1cbf2a24db6f3d0fba46483e8bfde28f25964"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7#bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7"
 dependencies = [
  "clap",
  "heck 0.4.1",
@@ -4763,12 +4763,12 @@ dependencies = [
 [[package]]
 name = "rdw-keycodemap"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=d1d1cbf2a24db6f3d0fba46483e8bfde28f25964#d1d1cbf2a24db6f3d0fba46483e8bfde28f25964"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7#bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7"
 
 [[package]]
 name = "rdw4"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=d1d1cbf2a24db6f3d0fba46483e8bfde28f25964#d1d1cbf2a24db6f3d0fba46483e8bfde28f25964"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7#bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -4800,7 +4800,7 @@ dependencies = [
 [[package]]
 name = "rdw4-rdp"
 version = "0.2.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=d1d1cbf2a24db6f3d0fba46483e8bfde28f25964#d1d1cbf2a24db6f3d0fba46483e8bfde28f25964"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7#bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -4825,7 +4825,7 @@ dependencies = [
 [[package]]
 name = "rdw4-spice"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=d1d1cbf2a24db6f3d0fba46483e8bfde28f25964#d1d1cbf2a24db6f3d0fba46483e8bfde28f25964"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7#bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7"
 dependencies = [
  "cargo_metadata",
  "cbindgen",
@@ -4841,7 +4841,7 @@ dependencies = [
 [[package]]
 name = "rdw4-vnc"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=d1d1cbf2a24db6f3d0fba46483e8bfde28f25964#d1d1cbf2a24db6f3d0fba46483e8bfde28f25964"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7#bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7"
 dependencies = [
  "cargo_metadata",
  "cbindgen",

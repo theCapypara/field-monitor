@@ -273,7 +273,10 @@ impl Adapter for SpiceAdapter {
             }
         });
 
-        Box::new(SpiceAdapterDisplay(spice))
+        Box::new(SpiceAdapterDisplay {
+            display: spice,
+            counter: Arc::new(()),
+        })
     }
 }
 
@@ -455,20 +458,59 @@ impl SpiceAdapter {
     }
 }
 
-pub struct SpiceAdapterDisplay(rdw_spice::Display);
+pub struct SpiceAdapterDisplay {
+    display: rdw_spice::Display,
+    /// Keeps track of created SpiceAdapterDisplay copies, if this reaches 0, then close the session.
+    counter: Arc<()>,
+}
 
 impl AdapterDisplay for SpiceAdapterDisplay {
     fn widget(&self) -> AdapterDisplayWidget {
-        AdapterDisplayWidget::Rdw(self.0.clone().upcast())
+        AdapterDisplayWidget::Rdw(self.display.clone().upcast())
     }
 
     fn close(&self) {
-        self.0.session().disconnect();
+        debug!("closing SPICE session");
+        self.display.session().disconnect();
+    }
+
+    fn monitor_count(&self) -> u32 {
+        self.display.monitor_count()
+    }
+
+    fn connect_monitor_count_changed(&self, cb: Box<dyn Fn(u32)>) -> Option<glib::SignalHandlerId> {
+        Some(
+            self.display
+                .connect_notify_local(Some("monitor-count"), move |display, _| {
+                    cb(display.monitor_count());
+                }),
+        )
+    }
+
+    fn create_monitor_display(&self, index: u32) -> Option<Box<dyn AdapterDisplay>> {
+        if index >= self.display.monitor_count() {
+            return None;
+        }
+        let new_display = self.display.create_monitor_display(index);
+        let counter = self.counter.clone();
+        debug!(
+            "create_monitor_display: display count: {}",
+            Arc::strong_count(&counter)
+        );
+        Some(Box::new(SpiceAdapterDisplay {
+            display: new_display,
+            counter,
+        }))
     }
 }
 
 impl Drop for SpiceAdapterDisplay {
     fn drop(&mut self) {
-        self.close()
+        // If the count is 1, we are the last one being dropped.
+        let count = Arc::strong_count(&self.counter);
+        debug!("SpiceAdapterDisplay::Drop: display count: {}", count);
+        if count <= 1 {
+            self.close()
+        }
     }
 }
