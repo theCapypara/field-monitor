@@ -141,7 +141,7 @@ impl FieldMonitorCertificateDetailsWindow {
             target.push(group);
         }
 
-        for group in important_groups.into_iter().chain(other_groups.into_iter()) {
+        for group in important_groups.into_iter().chain(other_groups) {
             page.add(&group);
         }
 

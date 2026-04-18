@@ -283,7 +283,7 @@ where
                 format!("0:{}:", data.len())
                     .into_bytes()
                     .into_iter()
-                    .chain(data.into_iter())
+                    .chain(data)
                     .collect::<Bytes>(),
             ))
             .await?;

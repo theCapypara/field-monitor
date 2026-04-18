@@ -147,7 +147,7 @@ impl ConnectionConfiguration {
                 ))),
             }
         }
-        try_join_all(futs.into_iter()).await?;
+        try_join_all(futs).await?;
         Ok(self.config.clone())
     }
 

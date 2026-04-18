@@ -148,7 +148,7 @@ impl Connection for LibvirtConnection {
             // this is currently pretty messy (sort_by_cached_key can't take the async metadata).
             // Should probably be rewritten...
             let mut servers_and_title: IndexMap<Cow<str>, (Box<dyn ServerConnection>, String)> =
-                stream::iter(domains.into_iter())
+                stream::iter(domains)
                     .then(|domain| {
                         let hostname_cln = hostname.clone();
                         async move {
