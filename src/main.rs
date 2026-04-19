@@ -41,10 +41,13 @@ thread_local! {
 }
 
 fn main() -> glib::ExitCode {
-    #[cfg(feature = "devel")]
-    // SAFETY: This is generally safe to call with correct boolean arguments.
-    unsafe {
-        rdw_vnc::gvnc::ffi::vnc_util_set_debug(glib::ffi::GTRUE);
+    #[cfg(feature = "devel")] // Setup debug logging
+    {
+        // SAFETY: This is generally safe to call with correct boolean arguments.
+        unsafe {
+            rdw_vnc::gvnc::ffi::vnc_util_set_debug(glib::ffi::GTRUE);
+        }
+        usbredirhost::rusb::set_log_level(usbredirhost::rusb::LogLevel::Debug);
     }
     glib::log_set_default_handler(glib::rust_log_handler);
     pretty_env_logger::init_timed();

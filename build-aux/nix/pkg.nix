@@ -83,8 +83,10 @@ stdenv.mkDerivation rec {
     gst-plugins-good
   ]);
 
+  # /run/wrappers/bin is needed to pull in the wrapper from the `virtualisation.spiceUSBRedirection` module unfortunately.
+  # Other option would be `propagatedUserEnvPkgs`, but that's discussed to be removed + it doesn't work seemingly.
   postInstall = ''
-    wrapProgram $out/bin/de.capypara.FieldMonitor --prefix PATH ':' "$out/libexec" --set RUST_LOG 'field_monitor=info,libfieldmonitor=info,GLib=info,warning'
+    wrapProgram $out/bin/de.capypara.FieldMonitor --prefix PATH ':' "$out/libexec" --prefix PATH ':' "/run/wrappers/bin" --set RUST_LOG 'field_monitor=info,libfieldmonitor=info,GLib=info,warning'
   '';
 
   doCheck = true;

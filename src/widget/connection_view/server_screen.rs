@@ -21,7 +21,6 @@ use adw::subclass::prelude::*;
 use anyhow::anyhow;
 use futures::lock::Mutex;
 use gettextrs::gettext;
-use glib::object::ObjectExt;
 use glib::timeout_future;
 use gtk::gio;
 use gtk::glib;
@@ -87,6 +86,12 @@ mod imp {
         pub menu_button: TemplateChild<gtk::MenuButton>,
         #[template_child]
         pub show_output_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub usb_redir_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub usb_redir_bin: TemplateChild<adw::Bin>,
+        #[template_child]
+        pub usb_redir_dialog: TemplateChild<adw::Dialog>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
@@ -126,6 +131,8 @@ mod imp {
         pub inhibit_status_view: Cell<bool>,
         // Result of the interactive tls verification
         pub interactive_tls_verified: RefCell<Option<bool>>,
+        // Signal handler to listen for free channels on the redir widget to hide/show the button
+        pub usb_redir_signal: Cell<Option<(glib::WeakRef<rdw::UsbRedir>, glib::SignalHandlerId)>>,
     }
 
     impl FieldMonitorServerScreen {
@@ -264,6 +271,15 @@ mod imp {
                 |slf: &super::FieldMonitorServerScreen, _, _| {
                     debug!("view.term-zoom-out");
                     slf.send_term_command(TermCommand::ZoomOut);
+                },
+            );
+
+            klass.install_action(
+                "view.manage-usb-redir",
+                None,
+                |slf: &super::FieldMonitorServerScreen, _, _| {
+                    debug!("view.manage-usb-redir");
+                    slf.imp().usb_redir_dialog.present(Some(&*slf));
                 },
             );
         }
@@ -429,6 +445,12 @@ impl FieldMonitorServerScreen {
             *v = None;
         }
         imp.close_cb.replace(None);
+        imp.usb_redir_bin.set_child(None::<&gtk::Widget>);
+        if let Some((usb_redir, handler)) = imp.usb_redir_signal.take()
+            && let Some(usb_redir) = usb_redir.upgrade()
+        {
+            usb_redir.disconnect(handler);
+        }
     }
 
     pub async fn reset(&self) {
@@ -648,9 +670,36 @@ impl FieldMonitorServerScreen {
         };
 
         self.configure_rdw_action_support(&display_widget);
+        self.configure_usb_redir(&*display);
 
         imp.adapter.borrow_mut().replace(display);
         imp.display_bin.set_child(Some(&widget));
+    }
+
+    fn configure_usb_redir(&self, display: &dyn AdapterDisplay) {
+        let imp = self.imp();
+        // USB redirection
+        if !self.standalone()
+            && let Some(usb_widget) = display.usb_redir_widget()
+        {
+            info!("usb redirection supported");
+            imp.usb_redir_bin.set_child(Some(&usb_widget));
+            imp.usb_redir_signal.set(Some((
+                usb_widget.downgrade(),
+                usb_widget.connect_free_channels_notify(glib::clone!(
+                    #[weak]
+                    imp,
+                    move |usb_widget| {
+                        imp.usb_redir_button
+                            .set_visible(usb_widget.free_channels() > 0);
+                    }
+                )),
+            )));
+            imp.usb_redir_button
+                .set_visible(usb_widget.free_channels() > 0);
+        } else {
+            imp.usb_redir_button.set_visible(false);
+        }
     }
 
     pub fn on_connected(&self) {
@@ -888,6 +937,15 @@ impl FieldMonitorServerScreen {
                 };
                 imp.error_status_page.set_description(Some(&desc))
             }
+        }
+
+        // De-init USB redirection
+        imp.usb_redir_button.set_visible(false);
+        imp.usb_redir_bin.set_child(None::<&gtk::Widget>);
+        if let Some((usb_redir, handler)) = imp.usb_redir_signal.take()
+            && let Some(usb_redir) = usb_redir.upgrade()
+        {
+            usb_redir.disconnect(handler);
         }
     }
 

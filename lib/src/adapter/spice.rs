@@ -17,7 +17,7 @@
  */
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
 use crate::cert_security::{
-    VerifiableCertChain, VerifyTls, VerifyTlsResponse, extract_common_name,
+    extract_common_name, VerifiableCertChain, VerifyTls, VerifyTlsResponse,
 };
 use crate::connection::{ConnectionError, ConnectionResult};
 use anyhow::anyhow;
@@ -501,6 +501,16 @@ impl AdapterDisplay for SpiceAdapterDisplay {
             display: new_display,
             counter,
         }))
+    }
+
+    fn usb_redir_widget(&self) -> Option<rdw::UsbRedir> {
+        match rdw_spice::UsbRedir::build(&self.display.session()) {
+            Ok(widget) => Some(widget),
+            Err(e) => {
+                warn!("Failed to create USB redirection widget: {e}");
+                None
+            }
+        }
     }
 }
 

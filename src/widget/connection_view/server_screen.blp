@@ -53,6 +53,15 @@ template $FieldMonitorServerScreen: Adw.Bin {
             }
 
             [end]
+            Button usb_redir_button {
+                visible: false;
+                icon-name: "device-usb-symbolic";
+                tooltip-text: _("USB Devices");
+
+                action-name: "view.manage-usb-redir";
+            }
+
+            [end]
             $FieldMonitorPulseAnimBin monitor_menu_button_bin {
                 visible: false;
 
@@ -176,4 +185,34 @@ template $FieldMonitorServerScreen: Adw.Bin {
             }
         }
     };
+}
+
+Adw.Dialog usb_redir_dialog {
+    title: _("Share USB devices");
+    content-width: 460;
+
+    Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar {}
+
+        Box {
+            orientation: vertical;
+            spacing: 6;
+            margin-bottom: 24;
+
+            // TODO: rdw's USB redir widget doesn't really follow GNOME HIG.
+            Adw.Bin usb_redir_bin {}
+
+            Label {
+                label: _("You may need to reconnect devices for them to show up in this list.");
+
+                margin-start: 24;
+                margin-end: 24;
+
+                styles [
+                    "dim-label"
+                ]
+            }
+        }
+    }
 }

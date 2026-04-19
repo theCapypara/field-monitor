@@ -58,6 +58,11 @@ pub trait AdapterDisplay {
     fn create_monitor_display(&self, _index: u32) -> Option<Box<dyn AdapterDisplay>> {
         None
     }
+
+    /// Create a USB redirection widget, if supported
+    fn usb_redir_widget(&self) -> Option<rdw::UsbRedir> {
+        None
+    }
 }
 
 /// An adapter to connect to a remote server and provide widgets

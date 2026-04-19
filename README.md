@@ -37,6 +37,23 @@ Field Monitor can be installed via `nixpkgs`:
 - [Stable](https://search.nixos.org/packages?channel=26.05&query=field-monitor)
 - [Unstable](https://search.nixos.org/packages?channel=unstable&query=field-monitor)
 
+If you want USB redirection support, you will need to enable the PolicyKit rule for it:
+
+```nix
+virtualisation.spiceUSBRedirection.enable = true;
+```
+
+### For Arch Linux
+
+An AUR package for Field Monitor: [AUR](https://aur.archlinux.org/packages/field-monitor)
+
+### All distro repositories
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/field-monitor.svg)](https://repology.org/project/field-monitor/versions)
+
+> [!WARNING]  
+> Please note that this package is not officially maintained by the Field Monitor developers.
+
 ### From Source
 
 Field Monitor can be built from source using Meson. For a list of requirements, please see
