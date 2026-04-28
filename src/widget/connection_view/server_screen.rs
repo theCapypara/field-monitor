@@ -36,6 +36,7 @@ use std::time::Duration;
 use vte::TerminalExt;
 
 use libfieldmonitor::adapter::types::{AdapterDisplay, AdapterDisplayWidget};
+use libfieldmonitor::adapter::usbredir::FieldMonitorUsbRedirAdapter;
 use libfieldmonitor::cert_security::{VerifyTls, VerifyTlsMode, VerifyTlsResponse};
 use libfieldmonitor::connection::{ConnectionError, ConnectionResult};
 use libfieldmonitor::i18n::gettext_f;
@@ -53,6 +54,7 @@ use crate::widget::window::FieldMonitorWindow;
 
 mod imp {
     use super::*;
+    use libfieldmonitor::adapter::usbredir::FieldMonitorUsbRedirAdapter;
 
     #[derive(Default, gtk::CompositeTemplate, glib::Properties)]
     #[properties(wrapper_type = super::FieldMonitorServerScreen)]
@@ -87,11 +89,9 @@ mod imp {
         #[template_child]
         pub show_output_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub usb_redir_button: TemplateChild<gtk::Button>,
+        pub usb_redir_button_bin: TemplateChild<FieldMonitorPulseAnimBin>,
         #[template_child]
         pub usb_redir_bin: TemplateChild<adw::Bin>,
-        #[template_child]
-        pub usb_redir_dialog: TemplateChild<adw::Dialog>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
@@ -132,7 +132,12 @@ mod imp {
         // Result of the interactive tls verification
         pub interactive_tls_verified: RefCell<Option<bool>>,
         // Signal handler to listen for free channels on the redir widget to hide/show the button
-        pub usb_redir_signal: Cell<Option<(glib::WeakRef<rdw::UsbRedir>, glib::SignalHandlerId)>>,
+        pub usb_redir_signal: Cell<
+            Option<(
+                glib::WeakRef<FieldMonitorUsbRedirAdapter>,
+                glib::SignalHandlerId,
+            )>,
+        >,
     }
 
     impl FieldMonitorServerScreen {
@@ -271,15 +276,6 @@ mod imp {
                 |slf: &super::FieldMonitorServerScreen, _, _| {
                     debug!("view.term-zoom-out");
                     slf.send_term_command(TermCommand::ZoomOut);
-                },
-            );
-
-            klass.install_action(
-                "view.manage-usb-redir",
-                None,
-                |slf: &super::FieldMonitorServerScreen, _, _| {
-                    debug!("view.manage-usb-redir");
-                    slf.imp().usb_redir_dialog.present(Some(&*slf));
                 },
             );
         }
@@ -669,36 +665,80 @@ impl FieldMonitorServerScreen {
             }
         };
 
-        self.configure_rdw_action_support(&display_widget);
-        self.configure_usb_redir(&*display);
+        self.configure_action_support(&display_widget);
 
+        // xxx: this can panic if adapter is borrowed somewhere
         imp.adapter.borrow_mut().replace(display);
+
+        glib::spawn_future_local(glib::clone!(
+            #[strong(rename_to=slf)]
+            self,
+            async move {
+                slf.configure_usb_redir().await;
+            }
+        ));
+
         imp.display_bin.set_child(Some(&widget));
     }
 
-    fn configure_usb_redir(&self, display: &dyn AdapterDisplay) {
+    async fn configure_usb_redir(&self) {
+        let Some(usb_adapter) = self.create_usb_redir_widget().await else {
+            return;
+        };
+
         let imp = self.imp();
-        // USB redirection
-        if !self.standalone()
-            && let Some(usb_widget) = display.usb_redir_widget()
+        info!("usb redirection supported");
+
+        // TODO: FieldMonitorUsbRedirSettings widget must be created, it's the widget containing the popover content, then uncomment:
+        //imp.usb_redir_bin
+        //    .set_child(Some(&FieldMonitorUsbRedirSettings::new(&usb_adapter)));
+        let old = imp.usb_redir_signal.replace(Some((
+            usb_adapter.downgrade(),
+            usb_adapter.connect_free_channels_notify(glib::clone!(
+                #[weak]
+                imp,
+                move |usb_adapter| {
+                    imp.usb_redir_bin
+                        .set_visible(usb_adapter.free_channels() != 0);
+                }
+            )),
+        )));
+        if let Some((old_wdg, old_signal)) = old
+            && let Some(old_wdg) = old_wdg.upgrade()
         {
-            info!("usb redirection supported");
-            imp.usb_redir_bin.set_child(Some(&usb_widget));
-            imp.usb_redir_signal.set(Some((
-                usb_widget.downgrade(),
-                usb_widget.connect_free_channels_notify(glib::clone!(
-                    #[weak]
-                    imp,
-                    move |usb_widget| {
-                        imp.usb_redir_button
-                            .set_visible(usb_widget.free_channels() > 0);
+            old_wdg.disconnect(old_signal);
+        }
+        imp.usb_redir_button_bin
+            .set_visible(usb_adapter.free_channels() > 0);
+    }
+
+    async fn create_usb_redir_widget(&self) -> Option<FieldMonitorUsbRedirAdapter> {
+        let imp = self.imp();
+        // loop in case of borrow issues - not super clean but since we are in an async context I'd like to be cautious.
+        loop {
+            match imp.adapter.try_borrow().as_deref() {
+                Ok(Some(display)) => {
+                    // USB redirection
+                    if !self.standalone()
+                        && let Some(usb_adapter) = display.create_usb_redir_adapter().await
+                    {
+                        return Some(usb_adapter);
+                    } else {
+                        imp.usb_redir_button_bin.set_visible(false);
+                        return None;
                     }
-                )),
-            )));
-            imp.usb_redir_button
-                .set_visible(usb_widget.free_channels() > 0);
-        } else {
-            imp.usb_redir_button.set_visible(false);
+                }
+                Err(_) => {
+                    // not ideal, currently mutably borrowed, this should not really happen, just wait
+                    // a bit
+                    warn!("bug: adapter was mutably borrowed in configure_usb_redir");
+                    timeout_future(Duration::from_millis(500)).await;
+                    continue;
+                }
+                _ => {
+                    return None;
+                }
+            }
         }
     }
 
@@ -940,7 +980,7 @@ impl FieldMonitorServerScreen {
         }
 
         // De-init USB redirection
-        imp.usb_redir_button.set_visible(false);
+        imp.usb_redir_button_bin.set_visible(false);
         imp.usb_redir_bin.set_child(None::<&gtk::Widget>);
         if let Some((usb_redir, handler)) = imp.usb_redir_signal.take()
             && let Some(usb_redir) = usb_redir.upgrade()
@@ -949,7 +989,7 @@ impl FieldMonitorServerScreen {
         }
     }
 
-    fn configure_rdw_action_support(&self, display: &AdapterDisplayWidget) {
+    fn configure_action_support(&self, display: &AdapterDisplayWidget) {
         let mut is_rdw = false;
         let mut is_vte = false;
 

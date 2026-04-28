@@ -53,28 +53,34 @@ version = "0.9"
 package = "rdw4"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "87891c8a8454ae1fab90d777c04ad32b6e6290bb"
+rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "87891c8a8454ae1fab90d777c04ad32b6e6290bb"
+rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "87891c8a8454ae1fab90d777c04ad32b6e6290bb"
+rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "87891c8a8454ae1fab90d777c04ad32b6e6290bb"
+rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
 default-features = false
+
+[workspace.dependencies.spice-gtk-usb-portal]
+# todo: make stable release of that crate and use stable version here
+git = "https://github.com/theCapypara/spice-gtk-usb-portal.git"
+rev = "fc0e0cf38b225eee38681fe83741dda5c858a7a3"
+features = ["parent_window_gtk4"]
 
 [workspace.dependencies.vte]
 package = "vte4"
@@ -97,7 +103,7 @@ edition = { workspace = true }
 rust-version = { workspace = true }
 
 [features]
-devel = ["dep:field-monitor-debug", "dep:usbredirhost"]
+devel = ["dep:field-monitor-debug"]
 prod = ["log/release_max_level_info"]
 
 [dependencies]
@@ -129,7 +135,6 @@ field-monitor-generic-group = { path = "./connection/generic-group" }
 field-monitor-libvirt = { path = "./connection/libvirt" }
 field-monitor-proxmox = { path = "./connection/proxmox" }
 field-monitor-debug = { path = "./connection/debug", optional = true }
-usbredirhost = { version = "0.4", optional = true }
 
 [lints]
 workspace = true

@@ -15,8 +15,10 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use crate::adapter::usbredir::FieldMonitorUsbRedirAdapter;
 use crate::cert_security::{VerifyTls, VerifyTlsResponse};
 use crate::connection::ConnectionError;
+use futures::future::LocalBoxFuture;
 use glib::object::Cast;
 use std::rc::Rc;
 
@@ -59,9 +61,11 @@ pub trait AdapterDisplay {
         None
     }
 
-    /// Create a USB redirection widget, if supported
-    fn usb_redir_widget(&self) -> Option<rdw::UsbRedir> {
-        None
+    /// Create a USB redirection adapter, if supported
+    fn create_usb_redir_adapter(
+        &'_ self,
+    ) -> LocalBoxFuture<'_, Option<FieldMonitorUsbRedirAdapter>> {
+        Box::pin(futures::future::ready(None))
     }
 }
 

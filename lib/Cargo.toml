@@ -15,6 +15,7 @@ gtk = { workspace = true }
 adw = { workspace = true }
 rdw = { workspace = true }
 rdw-spice = { workspace = true }
+spice-gtk-usb-portal = { workspace = true }
 rdw-rdp = { workspace = true }
 rdw-vnc = { workspace = true }
 vte = { workspace = true }

@@ -16,12 +16,15 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
+use crate::adapter::usbredir::spice::FieldMonitorUsbRedirSpice;
+use crate::adapter::usbredir::FieldMonitorUsbRedirAdapter;
 use crate::cert_security::{
     extract_common_name, VerifiableCertChain, VerifyTls, VerifyTlsResponse,
 };
 use crate::connection::{ConnectionError, ConnectionResult};
 use anyhow::anyhow;
 use derive_builder::Builder;
+use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use glib::prelude::*;
 use log::{debug, error, warn};
@@ -503,14 +506,19 @@ impl AdapterDisplay for SpiceAdapterDisplay {
         }))
     }
 
-    fn usb_redir_widget(&self) -> Option<rdw::UsbRedir> {
-        match rdw_spice::UsbRedir::build(&self.display.session()) {
-            Ok(widget) => Some(widget),
-            Err(e) => {
-                warn!("Failed to create USB redirection widget: {e}");
-                None
+    fn create_usb_redir_adapter(
+        &'_ self,
+    ) -> LocalBoxFuture<'_, Option<FieldMonitorUsbRedirAdapter>> {
+        Box::pin(async move {
+            let result = FieldMonitorUsbRedirSpice::new(&self.display.session()).await;
+            match result {
+                Ok(w) => Some(w.upcast()),
+                Err(err) => {
+                    error!("failed to init usb redirection for SPICE: {err}");
+                    None
+                }
             }
-        }
+        })
     }
 }
 

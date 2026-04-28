@@ -47,7 +47,6 @@ fn main() -> glib::ExitCode {
         unsafe {
             rdw_vnc::gvnc::ffi::vnc_util_set_debug(glib::ffi::GTRUE);
         }
-        usbredirhost::rusb::set_log_level(usbredirhost::rusb::LogLevel::Debug);
     }
     glib::log_set_default_handler(glib::rust_log_handler);
     pretty_env_logger::init_timed();
