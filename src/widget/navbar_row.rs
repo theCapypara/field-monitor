@@ -38,6 +38,7 @@ mod imp {
         pub slot_middle: RefCell<Option<gtk::Box>>,
         pub slot_right: RefCell<Option<gtk::Box>>,
         pub action_group: RefCell<Option<gio::SimpleActionGroup>>,
+        pub opened_popover: glib::WeakRef<gtk::Widget>,
     }
 
     #[glib::object_subclass]
@@ -96,6 +97,10 @@ mod imp {
                 while let Some(child) = slt_ref.last_child() {
                     child.unparent();
                 }
+            }
+            if let Some(opened_popover) = self.opened_popover.upgrade() {
+                opened_popover.unparent();
+                self.opened_popover.set(None);
             }
         }
     }
@@ -211,8 +216,14 @@ impl FieldMonitorNavbarRow {
 
     fn show_context_menu(&self, popover: gtk::PopoverMenu, x: i32, y: i32) {
         popover.set_pointing_to(Some(&gdk::Rectangle::new(x, y, 0, 0)));
+        if let Some(parent) = popover.parent()
+            && let Ok(previos_row) = parent.downcast::<Self>()
+        {
+            previos_row.imp().opened_popover.set(None);
+        }
         popover.unparent();
         popover.set_parent(self);
+        self.imp().opened_popover.set(Some(popover.upcast_ref()));
         popover.popup();
 
         self.add_css_class("has-open-popup");
