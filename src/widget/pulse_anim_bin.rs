@@ -21,6 +21,7 @@
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gtk::glib;
+use log::trace;
 
 mod imp {
     use super::*;
@@ -40,7 +41,9 @@ mod imp {
             self.parent_constructed();
 
             self.obj().connect_visible_notify(|bin| {
-                if bin.is_visible() {
+                let visible = bin.is_visible();
+                trace!("FieldMonitorPulseAnimBin set visible {visible}");
+                if visible {
                     let target = adw::PropertyAnimationTarget::new(bin, "opacity");
                     let animation = adw::TimedAnimation::new(bin, 1.0, 0.0, 400, target);
                     animation.set_easing(adw::Easing::EaseInOutCubic);

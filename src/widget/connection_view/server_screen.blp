@@ -53,6 +53,20 @@ template $FieldMonitorServerScreen: Adw.Bin {
             }
 
             [end]
+            $FieldMonitorPulseAnimBin usb_redir_button_bin {
+                visible: false;
+
+                MenuButton {
+                    icon-name: "device-usb-symbolic";
+                    tooltip-text: _("USB Devices");
+
+                    popover: Popover {
+                        Adw.Bin usb_redir_bin {}
+                    };
+                }
+            }
+
+            [end]
             $FieldMonitorPulseAnimBin monitor_menu_button_bin {
                 visible: false;
 

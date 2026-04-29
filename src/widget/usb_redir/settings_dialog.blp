@@ -1,0 +1,51 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorUsbRedirSettingsDialog: Adw.Dialog {
+    content-width: 480;
+    content-height: 560;
+    title: _("USB Devices");
+
+    Adw.ToolbarView {
+        [top]
+        Adw.HeaderBar header_bar {
+            title-widget: Adw.WindowTitle {
+                title: _("USB Devices");
+            };
+
+            [end]
+            Button {
+                icon-name: "question-round-outline-symbolic";
+                tooltip-text: _("Help");
+                clicked => $on_help_clicked() swapped;
+
+                styles [
+                    "flat"
+                ]
+            }
+        }
+
+        Adw.ToastOverlay toast_overlay {
+            Adw.PreferencesPage {
+                Adw.PreferencesGroup devices_group {
+                    title: _("Devices");
+
+                    header-suffix: Label free_channels_label {
+                        visible: false;
+
+                        styles [
+                            "caption",
+                            "dim-label"
+                        ]
+                    };
+                }
+
+                Adw.PreferencesGroup {
+                    Adw.SwitchRow show_all_row {
+                        title: _("Show All Devices");
+                    }
+                }
+            }
+        }
+    }
+}

@@ -15,8 +15,10 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use crate::adapter::usbredir::FieldMonitorUsbRedirAdapter;
 use crate::cert_security::{VerifyTls, VerifyTlsResponse};
 use crate::connection::ConnectionError;
+use futures::future::LocalBoxFuture;
 use glib::object::Cast;
 use std::rc::Rc;
 
@@ -57,6 +59,13 @@ pub trait AdapterDisplay {
     /// Returns `None` if not supported or the index is out of range.
     fn create_monitor_display(&self, _index: u32) -> Option<Box<dyn AdapterDisplay>> {
         None
+    }
+
+    /// Create a USB redirection adapter, if supported
+    fn create_usb_redir_adapter(
+        &'_ self,
+    ) -> LocalBoxFuture<'_, Option<FieldMonitorUsbRedirAdapter>> {
+        Box::pin(futures::future::ready(None))
     }
 }
 

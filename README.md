@@ -37,6 +37,17 @@ Field Monitor can be installed via `nixpkgs`:
 - [Stable](https://search.nixos.org/packages?channel=26.05&query=field-monitor)
 - [Unstable](https://search.nixos.org/packages?channel=unstable&query=field-monitor)
 
+### For Arch Linux
+
+An AUR package for Field Monitor: [AUR](https://aur.archlinux.org/packages/field-monitor)
+
+> [!WARNING]  
+> Please note that this package is not officially maintained by the Field Monitor developers.
+
+### All distro repositories
+
+[![Packaging status](https://repology.org/badge/vertical-allrepos/field-monitor.svg)](https://repology.org/project/field-monitor/versions)
+
 ### From Source
 
 Field Monitor can be built from source using Meson. For a list of requirements, please see

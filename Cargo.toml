@@ -26,14 +26,14 @@ serde_json = "1"
 futures = "0.3"
 log = "0.4"
 num_enum = "0.7"
-indexmap = "2.13"
+indexmap = "2.14"
 secure-string = "0.3"
 http = "1.4"
 uuid = { version = "1.23", features = ["v7"] }
 parking_lot = "0.12"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 proxmox-api = { path = "connection/proxmox/proxmox-api" }
-tokio = { version = "1.51", features = ["parking_lot", "rt-multi-thread"] }
+tokio = { version = "1.52", features = ["parking_lot", "rt-multi-thread"] }
 
 [workspace.dependencies.glib]
 features = ["log"]
@@ -46,35 +46,41 @@ version = "0.11"
 
 [workspace.dependencies.adw]
 package = "libadwaita"
-features = ["v1_6"]
+features = ["v1_8"]
 version = "0.9"
 
 [workspace.dependencies.rdw]
 package = "rdw4"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7"
+rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7"
+rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7"
+rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "bed4a3aa8f2a59ca1d431c5196a4baddfdcceac7"
+rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
 default-features = false
+
+[workspace.dependencies.spice-gtk-usb-portal]
+# todo: make stable release of that crate and use stable version here
+git = "https://github.com/theCapypara/spice-gtk-usb-portal.git"
+rev = "fc0e0cf38b225eee38681fe83741dda5c858a7a3"
+features = ["parent_window_gtk4"]
 
 [workspace.dependencies.vte]
 package = "vte4"

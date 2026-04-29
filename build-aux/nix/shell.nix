@@ -17,6 +17,7 @@
   gobject-introspection,
   desktop-file-utils,
   appstream,
+  gi-docgen,
 
   gtk4,
   vte-gtk4,
@@ -127,6 +128,7 @@ mkShell {
       libGL
       desktop-file-utils
       appstream
+      gi-docgen
     ]
     ++ (with python312Packages; [
       pygobject3

@@ -108,7 +108,7 @@ impl FieldMonitorCertificateDetailsWindow {
                 &mut other_groups
             };
             let group = adw::PreferencesGroup::builder()
-                .title(section.label())
+                .title(glib::markup_escape_text(&section.label()))
                 .build();
 
             for field in section.fields().iter::<CertificateField>() {
@@ -126,11 +126,11 @@ impl FieldMonitorCertificateDetailsWindow {
                 let row = ActionRow::builder()
                     .activatable(false)
                     .selectable(false)
-                    .title(field.label())
-                    .subtitle(
-                        value_as_gstr(value)
+                    .title(glib::markup_escape_text(&field.label()))
+                    .subtitle(glib::markup_escape_text(
+                        &value_as_gstr(value)
                             .unwrap_or_else(|| "< failed to display value >".into()),
-                    )
+                    ))
                     .subtitle_selectable(true)
                     .css_classes(css_classes)
                     .build();

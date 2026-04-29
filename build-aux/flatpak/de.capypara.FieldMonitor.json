@@ -15,10 +15,12 @@
     "--device=dri",
     "--socket=wayland",
     "--socket=pulseaudio",
+    "--usb=all",
     "--filesystem=~/.ssh/known_hosts:ro",
     "--filesystem=xdg-run/libvirt",
     "--filesystem=/run/libvirt",
-    "--env=RUST_LOG=field_monitor=info,libfieldmonitor=info,Adwaita=info,GLib=info,warning"
+    "--env=RUST_LOG=field_monitor=info,libfieldmonitor=info,Adwaita=info,GLib=info,warning",
+    "--require-version=1.15.11"
   ],
   "build-options": {
     "append-path": "/usr/lib/sdk/rust-stable/bin",
@@ -88,14 +90,20 @@
         "-Dvapi=enabled",
         "-Dwebdav=enabled",
         "-Dpolkit=disabled",
-        "-Dusbredir=disabled",
+        "-Dusbredir=enabled",
         "-Dgtk_doc=disabled"
       ],
       "sources": [
         {
-          "type": "archive",
-          "url": "https://www.spice-space.org/download/gtk/spice-gtk-0.42.tar.xz",
-          "sha256": "9380117f1811ad1faa1812cb6602479b6290d4a0d8cc442d44427f7f6c0e7a58"
+          "type": "git",
+          "url": "https://gitlab.freedesktop.org/spice/spice-gtk.git",
+          "commit": "470c494a379a4d955c0b56c68a407e0f28c587a3"
+        },
+        {
+          "type": "shell",
+          "commands": [
+            "echo 0.43-dirty > .tarball-version"
+          ]
         }
       ],
       "modules": [

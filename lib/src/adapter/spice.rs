@@ -16,12 +16,15 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
+use crate::adapter::usbredir::FieldMonitorUsbRedirAdapter;
+use crate::adapter::usbredir::spice::FieldMonitorUsbRedirSpice;
 use crate::cert_security::{
     VerifiableCertChain, VerifyTls, VerifyTlsResponse, extract_common_name,
 };
 use crate::connection::{ConnectionError, ConnectionResult};
 use anyhow::anyhow;
 use derive_builder::Builder;
+use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use glib::prelude::*;
 use log::{debug, error, warn};
@@ -501,6 +504,21 @@ impl AdapterDisplay for SpiceAdapterDisplay {
             display: new_display,
             counter,
         }))
+    }
+
+    fn create_usb_redir_adapter(
+        &'_ self,
+    ) -> LocalBoxFuture<'_, Option<FieldMonitorUsbRedirAdapter>> {
+        Box::pin(async move {
+            let result = FieldMonitorUsbRedirSpice::new(&self.display.session()).await;
+            match result {
+                Ok(w) => Some(w.upcast()),
+                Err(err) => {
+                    error!("failed to init usb redirection for SPICE: {err}");
+                    None
+                }
+            }
+        })
     }
 }
 

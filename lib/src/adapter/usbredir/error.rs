@@ -15,22 +15,23 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use gettextrs::gettext;
 
-pub mod add_connection_dialog;
-pub mod app_status;
-pub mod authenticate_connection_dialog;
-mod certificate_details_window;
-pub mod certificate_trust_dialog;
-mod close_warning_dialog;
-pub mod connection_list;
-pub mod connection_view;
-mod focus_grabber;
-mod grab_note;
-mod navbar_row;
-pub mod preferences;
-pub mod pulse_anim_bin;
-pub mod quick_connect_dialog;
-pub mod single_screen_window;
-pub mod update_connection_dialog;
-pub mod usb_redir;
-pub mod window;
+pub type UsbRedirResult<T> = Result<T, UsbRedirError>;
+
+#[derive(Debug)]
+pub struct UsbRedirError(pub(crate) String);
+
+impl std::error::Error for UsbRedirError {}
+
+impl std::fmt::Display for UsbRedirError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
+
+impl UsbRedirError {
+    pub(crate) fn device_not_attachable() -> Self {
+        Self(gettext("The device can not be attached to the connection"))
+    }
+}

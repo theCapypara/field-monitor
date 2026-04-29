@@ -157,7 +157,7 @@ impl FieldMonitorCertificateTrustDialog {
             .activatable(false)
             .selectable(false)
             .title(gettext("Hostname"))
-            .subtitle(for_host)
+            .subtitle(glib::markup_escape_text(for_host))
             .subtitle_selectable(true)
             .css_classes(["property"])
             .build();
@@ -222,11 +222,12 @@ impl FieldMonitorCertificateTrustDialog {
             boxx.append(&info_ca);
         }
 
+        let escaped_host = glib::markup_escape_text(for_host);
         let info_remember = gtk::Label::builder()
             .wrap(true)
             .label(gettext_f(
                 "If you choose to trust this certificate, your choice will be remembered for future connections to <tt>{host}</tt>.",
-                &[("host", for_host)]
+                &[("host", &escaped_host)]
             ))
             .use_markup(true)
             .css_classes(["dim-label"])

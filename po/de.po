@@ -7,185 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-18 13:14+0200\n"
-"PO-Revision-Date: 2026-04-18 13:26+0200\n"
+"POT-Creation-Date: 2026-04-29 12:54+0200\n"
+"PO-Revision-Date: 2026-04-29 12:55+0200\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
-"Language-Team: German\n"
-"Language: de\n"
+"Language-Team: de_DE\n"
+"Language: de_DE\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Gtranslator 49.0\n"
-
-#. Translators: The name of the application.
-#: data/de.capypara.FieldMonitor.desktop.in.in:2
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/widget/window.blp:9
-#: src/widget/window.blp:59 src/widget/window.blp:169 src/widget/window.blp:175
-#: src/widget/window.rs:314
-msgid "Field Monitor"
-msgstr "Feldmonitor"
-
-#: data/de.capypara.FieldMonitor.desktop.in.in:3
-msgid "Remote Desktop Viewer"
-msgstr "Betrachter für entfernte Bildschirme"
-
-#. Translators: The summary of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.desktop.in.in:4
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
-msgid "Access VMs and external screens"
-msgstr "Greifen Sie auf VMs und entfernte Bildschirme zu"
-
-#. Translators: The keywords from the desktop file.
-#: data/de.capypara.FieldMonitor.desktop.in.in:12
-msgid "proxmox;vnc;spice;rdp;kvm;qemu;"
-msgstr "proxmox;vnc;spice;rdp;kvm;qemu;"
-
-#: data/de.capypara.FieldMonitor.desktop.in.in:17
-msgid "New Window"
-msgstr "Neues Fenster"
-
-#. Translators: Keyword in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:24
-msgid "remote desktop"
-msgstr "Entfernter Bildschirm"
-
-#. Translators: Keyword in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
-#: connection/generic-group/src/server_preferences.blp:22
-#: connection/libvirt/src/connection/graphics.rs:250 lib/src/adapter/rdp.rs:52
-msgid "RDP"
-msgstr "RDP"
-
-#. Translators: Keyword in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
-#: connection/generic-group/src/server_preferences.blp:24
-#: connection/libvirt/src/connection/graphics.rs:253
-#: connection/proxmox/src/api/node.rs:163 lib/src/adapter/vnc.rs:134
-msgid "VNC"
-msgstr "VNC"
-
-#. Translators: Keyword in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
-#: connection/generic-group/src/server_preferences.blp:23
-#: connection/libvirt/src/connection/graphics.rs:247
-#: connection/proxmox/src/api/node.rs:162 lib/src/adapter/spice.rs:213
-msgid "SPICE"
-msgstr "SPICE"
-
-#. Translators: Keyword in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:32
-msgid "KVM"
-msgstr "KVM"
-
-#. Translators: Keyword in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:34
-msgid "QEMU"
-msgstr "QEMU"
-
-#. Translators: Keyword in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:36
-msgid "libvirt"
-msgstr "libvirt"
-
-#. Translators: Keyword in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
-#: connection/proxmox/src/api/provider.rs:48
-#: connection/proxmox/src/api/provider.rs:52
-msgid "Proxmox"
-msgstr "Proxmox"
-
-#. Translators: Keyword in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:40
-msgid "GNOME"
-msgstr "GNOME"
-
-#. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:49
-msgid ""
-"Field Monitor is a remote-desktop client designed for the GNOME platform."
-msgstr ""
-"Feldmonitor ist eine Anwendung zur Steuerung von entfernten Bildschirmen, "
-"entworfen für die GNOME Plattform."
-
-#. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
-msgid ""
-"It is focused on connecting to virtual machines, but can connect to any "
-"server supporting the RDP, SPICE or VNC protocols."
-msgstr ""
-"Feldmonitor kann die Verbindung mit beliebigen RDP, SPICE oder VNC Servern "
-"herstellen und bietet zusätzliche Funktionen zur Steuerung von virtuellen "
-"Maschinen."
-
-#. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
-msgid ""
-"It has support for directly connecting to VMs of the following hypervisors:"
-msgstr ""
-"Die Anwendung kann sich direkt mit den folgenden VM-Hypervisoren verbinden:"
-
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
-msgid "Proxmox Virtual Environment"
-msgstr "Proxmox Virtual Environment"
-
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:63
-msgid "QEMU/KVM via libvirt"
-msgstr "QEMU/KVM via libvirt"
-
-#. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:66
-msgid ""
-"For supported VM hypervisors Field Monitor also offers options to manage the "
-"basic power state of VMs, such as starting, stopping, rebooting, etc."
-msgstr ""
-"Für diese unterstützten Hypervisoren bietet Feldmonitor unter anderem die "
-"Möglichkeit VMs zu starten, zu stoppen und neuzustarten."
-
-#. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:71
-msgid ""
-"Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
-"files and quickly connecting to RDP, SPICE or VNC servers via URI."
-msgstr ""
-"Außerdem kann Feldmonitor RDP und Virt Viewer Verbindungsdateien öffnen und "
-"schnell Verbindungen zu RDP, SPICE und VNC Servern via URI herstellen."
-
-#. Translators: Caption of the first screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:128
-msgid "Screen of a connected graphical display"
-msgstr "Bildschirm einer verbundenen graphischen Anzeige"
-
-#. Translators: Caption of the second screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:135
-msgid "Welcome screen"
-msgstr "Willkommen-Fenster"
-
-#. Translators: Caption of the third screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:142
-msgid "A list of servers in a Proxmox cluster to connect to"
-msgstr ""
-"Eine Liste von Servern in einem Proxmox Cluster, mit denen sich verbunden "
-"werden kann"
-
-#. Translators: Caption of the 4th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:149
-msgid "Screen of a connected console"
-msgstr "Bildschirm einer verbundenen Konsole"
-
-#. Translators: Caption of the 5th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:156
-msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
-msgstr ""
-"Hinzufügen einer neuen Proxmox Virtual Environment Hypervisor-Verbindung"
-
-#: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
-msgid "Remote Desktop file"
-msgstr "RDP Verbindungsdatei"
-
-#: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
-msgid "Virt-Viewer connection file"
-msgstr "Virt-Viewer Verbindungsdatei"
 
 #: connection/generic-group/src/credential_preferences.blp:5
 #: connection/proxmox/src/credential_preferences.blp:5
@@ -277,6 +108,32 @@ msgstr "Servername"
 msgid "Server Type"
 msgstr "Servertyp"
 
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:22
+#: connection/libvirt/src/connection/graphics.rs:250
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
+#: lib/src/adapter/rdp.rs:52
+msgid "RDP"
+msgstr "RDP"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:23
+#: connection/libvirt/src/connection/graphics.rs:247
+#: connection/proxmox/src/api/node.rs:162
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
+#: lib/src/adapter/spice.rs:216
+msgid "SPICE"
+msgstr "SPICE"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:24
+#: connection/libvirt/src/connection/graphics.rs:253
+#: connection/proxmox/src/api/node.rs:163
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
+#: lib/src/adapter/vnc.rs:134
+msgid "VNC"
+msgstr "VNC"
+
 #: connection/generic-group/src/server_preferences.blp:32
 #: connection/libvirt/src/qemu_preferences.blp:52
 #: connection/proxmox/src/preferences.blp:21
@@ -288,6 +145,17 @@ msgstr "Hostname"
 #: connection/proxmox/src/preferences.blp:26
 msgid "Port"
 msgstr "Port"
+
+#: connection/libvirt/src/connection/adapter.rs:220
+msgid ""
+"No supported graphics endpoint available. Tip: If connected via SSH, make "
+"sure that the graphics adapter's listen type is set to 'address' and that "
+"the adapter is listening on all interfaces."
+msgstr ""
+"Kein unterstützter Grafikmodus verfügbar. Tipp: Falls Sie per SSH verbunden "
+"sind, stellen Sie sicher, dass der \"listen\"-Typ des Adapters auf "
+"\"address\" gestellt ist und das der Adapter auf allen "
+"Netzwerkschnittstellen horcht."
 
 #: connection/libvirt/src/connection/mod.rs:160
 msgid "(Unable to load server name)"
@@ -393,17 +261,6 @@ msgstr "Beim Ausführen des Befehls ist ein interner Fehler aufgetreten."
 msgid "Serial Console"
 msgstr "Serielle Konsole"
 
-#: connection/libvirt/src/connection/adapter.rs:220
-msgid ""
-"No supported graphics endpoint available. Tip: If connected via SSH, make "
-"sure that the graphics adapter's listen type is set to 'address' and that "
-"the adapter is listening on all interfaces."
-msgstr ""
-"Kein unterstützter Grafikmodus verfügbar. Tipp: Falls Sie per SSH verbunden "
-"sind, stellen Sie sicher, dass der \"listen\"-Typ des Adapters auf "
-"\"address\" gestellt ist und das der Adapter auf allen "
-"Netzwerkschnittstellen horcht."
-
 #: connection/libvirt/src/hypervisor/qemu.rs:46
 #: connection/libvirt/src/hypervisor/qemu.rs:50
 msgid "QEMU/KVM"
@@ -477,6 +334,13 @@ msgstr "Herunterfahren der VM fehlgeschlagen."
 #: connection/proxmox/src/api/node.rs:164
 msgid "Console"
 msgstr "Konsole"
+
+#. Translators: Keyword in the metainfo.
+#: connection/proxmox/src/api/provider.rs:48
+#: connection/proxmox/src/api/provider.rs:52
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
+msgid "Proxmox"
+msgstr "Proxmox"
 
 #: connection/proxmox/src/api/provider.rs:56
 msgid "Add Proxmox Connection"
@@ -556,6 +420,168 @@ msgstr ""
 "Ermöglicht die Verbindung zu Servern mit selbst-signierten SSL Zertifikaten. "
 "Achtung, dies ist ein mögliches Sicherheitsrisiko."
 
+#. Translators: The name of the application.
+#: data/de.capypara.FieldMonitor.desktop.in.in:2
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/widget/window.blp:9
+#: src/widget/window.blp:59 src/widget/window.blp:169 src/widget/window.blp:175
+#: src/widget/window.rs:314
+msgid "Field Monitor"
+msgstr "Feldmonitor"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:3
+msgid "Remote Desktop Viewer"
+msgstr "Betrachter für entfernte Bildschirme"
+
+#. Translators: The summary of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.desktop.in.in:4
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
+msgid "Access VMs and external screens"
+msgstr "Greifen Sie auf VMs und entfernte Bildschirme zu"
+
+#. Translators: The keywords from the desktop file.
+#: data/de.capypara.FieldMonitor.desktop.in.in:12
+msgid "proxmox;vnc;spice;rdp;kvm;qemu;"
+msgstr "proxmox;vnc;spice;rdp;kvm;qemu;"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:17
+msgid "New Window"
+msgstr "Neues Fenster"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:24
+msgid "remote desktop"
+msgstr "Entfernter Bildschirm"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:32
+msgid "KVM"
+msgstr "KVM"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:34
+msgid "QEMU"
+msgstr "QEMU"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:36
+msgid "libvirt"
+msgstr "libvirt"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:40
+msgid "GNOME"
+msgstr "GNOME"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:49
+msgid ""
+"Field Monitor is a remote-desktop client designed for the GNOME platform."
+msgstr ""
+"Feldmonitor ist eine Anwendung zur Steuerung von entfernten Bildschirmen, "
+"entworfen für die GNOME Plattform."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
+msgid ""
+"It is focused on connecting to virtual machines, but can connect to any "
+"server supporting the RDP, SPICE or VNC protocols."
+msgstr ""
+"Feldmonitor kann die Verbindung mit beliebigen RDP, SPICE oder VNC Servern "
+"herstellen und bietet zusätzliche Funktionen zur Steuerung von virtuellen "
+"Maschinen."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
+msgid ""
+"It has support for directly connecting to VMs of the following hypervisors:"
+msgstr ""
+"Die Anwendung kann sich direkt mit den folgenden VM-Hypervisoren verbinden:"
+
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
+msgid "Proxmox Virtual Environment"
+msgstr "Proxmox Virtual Environment"
+
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:63
+msgid "QEMU/KVM via libvirt"
+msgstr "QEMU/KVM via libvirt"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:66
+msgid ""
+"For supported VM hypervisors Field Monitor also offers options to manage the "
+"basic power state of VMs, such as starting, stopping, rebooting, etc."
+msgstr ""
+"Für diese unterstützten Hypervisoren bietet Feldmonitor unter anderem die "
+"Möglichkeit VMs zu starten, zu stoppen und neuzustarten."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:71
+msgid ""
+"Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
+"files and quickly connecting to RDP, SPICE or VNC servers via URI."
+msgstr ""
+"Außerdem kann Feldmonitor RDP und Virt Viewer Verbindungsdateien öffnen und "
+"schnell Verbindungen zu RDP, SPICE und VNC Servern via URI herstellen."
+
+#. Translators: Caption of the first screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:128
+msgid "Screen of a connected graphical display"
+msgstr "Bildschirm einer verbundenen graphischen Anzeige"
+
+#. Translators: Caption of the second screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:135
+msgid "Welcome screen"
+msgstr "Willkommen-Fenster"
+
+#. Translators: Caption of the third screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:142
+msgid "A list of servers in a Proxmox cluster to connect to"
+msgstr ""
+"Eine Liste von Servern in einem Proxmox Cluster, mit denen sich verbunden "
+"werden kann"
+
+#. Translators: Caption of the 4th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:149
+msgid "Screen of a connected console"
+msgstr "Bildschirm einer verbundenen Konsole"
+
+#. Translators: Caption of the 5th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:156
+msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
+msgstr ""
+"Hinzufügen einer neuen Proxmox Virtual Environment Hypervisor-Verbindung"
+
+#: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
+msgid "Remote Desktop file"
+msgstr "RDP Verbindungsdatei"
+
+#: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
+msgid "Virt-Viewer connection file"
+msgstr "Virt-Viewer Verbindungsdatei"
+
+#: lib/src/adapter/usbredir/error.rs:35
+msgid "The device can not be attached to the connection"
+msgstr "Das Gerät kann nicht mit der Verbindung verknüpft werden"
+
+#: lib/src/adapter/usbredir/spice.rs:239
+#, rust-format
+msgid "Failed to communicate with the system portal: {details}"
+msgstr "Fehler bei der Kommunikation mit dem System-Portal: {details}"
+
+#: lib/src/adapter/usbredir/spice.rs:243
+#, rust-format
+msgid "USB portal request failed: {details}"
+msgstr "Anfrage an das USB-Portal fehlgeschlagen: {details}"
+
+#: lib/src/adapter/usbredir/spice.rs:247
+#, rust-format
+msgid "USB redirection initialization failed: {details}"
+msgstr "Initialisierung der USB-Weiterleitung fehlgeschlagen: {details}"
+
+#: lib/src/adapter/usbredir/spice.rs:261
+msgid "Failed to attach the USB device"
+msgstr "Fehler beim Verbinden des USB-Gerätes"
+
 #: lib/src/cert_security.rs:134
 msgid "Server certificate verification failed"
 msgstr "Verifizierung des Server-Zertifikats fehlgeschlagen"
@@ -600,6 +626,9 @@ msgstr "Marco Köpcke <hello@capypara.de>"
 #: src/widget/quick_connect_dialog.rs:101
 #: src/widget/quick_connect_dialog.rs:161
 #: src/widget/update_connection_dialog.rs:180
+#: src/widget/usb_redir/settings.rs:214
+#: src/widget/usb_redir/settings_dialog.rs:384
+#: src/widget/usb_redir/settings_dialog.rs:400
 msgid "OK"
 msgstr "OK"
 
@@ -645,6 +674,55 @@ msgstr "Server nicht gefunden."
 #: src/connection_loader.rs:246 src/connection_loader.rs:364
 msgid "Failed to load or connect to server"
 msgstr "Fehler beim Laden oder Verbinden mit Server"
+
+#: src/quick_connect/mod.rs:118
+msgid "Untitled Server"
+msgstr "Unbenannter Server"
+
+#: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
+#: src/widget/window.blp:141 src/widget/window.blp:202
+msgid "Quick Connect"
+msgstr "Schnellverbindung"
+
+#: src/quick_connect/mod.rs:320
+msgid "via Quick Connect"
+msgstr "via Schnellverbindung"
+
+#: src/quick_connect/rdp.rs:78
+msgid "Failed to read file"
+msgstr "Fehler beim Lesen der Datei"
+
+#: src/quick_connect/rdp.rs:169
+msgid "Invalid RDP parameters"
+msgstr "Ungültige RDP Parameter"
+
+#: src/quick_connect/spice.rs:208
+msgid "Invalid SPICE URI"
+msgstr "Ungültige SPICE URI"
+
+#: src/quick_connect/util.rs:58 src/quick_connect/util.rs:63
+msgid "Invalid port in URI"
+msgstr "Ungültiger Port in URI"
+
+#: src/quick_connect/vnc.rs:111
+msgid "Invalid VNC URI"
+msgstr "Ungültige VNC URI"
+
+#: src/remote_server_info.rs:47
+msgid "Field Monitor does not support this URI scheme"
+msgstr "Feldmonitor unterstützt dieses URI-Schema nicht"
+
+#: src/remote_server_info.rs:61
+msgid "Unable to detect supported file format"
+msgstr "Das Dateiformat konnte nicht erkannt werden"
+
+#: src/remote_server_info.rs:69
+msgid "Field Monitor was unable to read the file"
+msgstr "Feldmonitor konnte diese Datei nicht lesen"
+
+#: src/secrets.rs:90
+msgid "A secret value used by Field Monitor"
+msgstr "Ein geheimer Wert, verwendet von Feldmonitor"
 
 #: src/shortcuts-dialog.blp:6
 msgctxt "shortcut window"
@@ -725,55 +803,6 @@ msgstr "Einstellungen"
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Tastenkombinationen anzeigen"
-
-#: src/quick_connect/mod.rs:118
-msgid "Untitled Server"
-msgstr "Unbenannter Server"
-
-#: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
-#: src/widget/window.blp:141 src/widget/window.blp:202
-msgid "Quick Connect"
-msgstr "Schnellverbindung"
-
-#: src/quick_connect/mod.rs:320
-msgid "via Quick Connect"
-msgstr "via Schnellverbindung"
-
-#: src/quick_connect/rdp.rs:78
-msgid "Failed to read file"
-msgstr "Fehler beim Lesen der Datei"
-
-#: src/quick_connect/rdp.rs:169
-msgid "Invalid RDP parameters"
-msgstr "Ungültige RDP Parameter"
-
-#: src/quick_connect/spice.rs:208
-msgid "Invalid SPICE URI"
-msgstr "Ungültige SPICE URI"
-
-#: src/quick_connect/util.rs:58 src/quick_connect/util.rs:63
-msgid "Invalid port in URI"
-msgstr "Ungültiger Port in URI"
-
-#: src/quick_connect/vnc.rs:111
-msgid "Invalid VNC URI"
-msgstr "Ungültige VNC URI"
-
-#: src/remote_server_info.rs:47
-msgid "Field Monitor does not support this URI scheme"
-msgstr "Feldmonitor unterstützt dieses URI-Schema nicht"
-
-#: src/remote_server_info.rs:61
-msgid "Unable to detect supported file format"
-msgstr "Das Dateiformat konnte nicht erkannt werden"
-
-#: src/remote_server_info.rs:69
-msgid "Field Monitor was unable to read the file"
-msgstr "Feldmonitor konnte diese Datei nicht lesen"
-
-#: src/secrets.rs:90
-msgid "A secret value used by Field Monitor"
-msgstr "Ein geheimer Wert, verwendet von Feldmonitor"
 
 #: src/widget/add_connection_dialog.blp:11 src/widget/window.blp:295
 msgid "Add New Connection"
@@ -861,7 +890,7 @@ msgstr "Exportieren"
 #: src/widget/close_warning_dialog.rs:79
 #: src/widget/connection_view/connection_view_navbar.blp:52
 #: src/widget/connection_view/connection_view_navbar.rs:180
-#: src/widget/connection_view/server_screen.blp:121
+#: src/widget/connection_view/server_screen.blp:135
 msgid "Close"
 msgstr "Schließen"
 
@@ -999,6 +1028,7 @@ msgstr "Aktionen"
 
 #: src/widget/connection_list/server_info.rs:282
 #: src/widget/quick_connect_dialog.blp:39
+#: src/widget/usb_redir/settings_dialog.rs:205
 msgid "Connect"
 msgstr "Verbinden"
 
@@ -1038,177 +1068,184 @@ msgid "Menu"
 msgstr "Menü"
 
 #: src/widget/connection_view/server_screen.blp:61
+#: src/widget/usb_redir/settings_dialog.blp:7
+#: src/widget/usb_redir/settings_dialog.blp:13
+#: src/widget/usb_redir/settings_dialog.rs:396
+msgid "USB Devices"
+msgstr "USB-Geräte"
+
+#: src/widget/connection_view/server_screen.blp:75
 msgid "Open Monitor in New Window"
 msgstr "Monitor in neuem Fenster öffnen"
 
-#: src/widget/connection_view/server_screen.blp:100
+#: src/widget/connection_view/server_screen.blp:114
 msgid "Connecting..."
 msgstr "Verbindet..."
 
-#: src/widget/connection_view/server_screen.blp:131
+#: src/widget/connection_view/server_screen.blp:145
 msgid "Reconnect"
 msgstr "Neu verbinden"
 
-#: src/widget/connection_view/server_screen.blp:138
+#: src/widget/connection_view/server_screen.blp:152
 msgid "Show Output"
 msgstr "Ausgabe anzeigen"
 
-#: src/widget/connection_view/server_screen.rs:843
+#: src/widget/connection_view/server_screen.rs:934
 msgid "Disconnected"
 msgstr "Verbindung getrennt"
 
-#: src/widget/connection_view/server_screen.rs:845
+#: src/widget/connection_view/server_screen.rs:936
 msgid "The connection to the server was closed."
 msgstr "Die Verbindung mit dem Server wurde geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:883
+#: src/widget/connection_view/server_screen.rs:974
 msgid "Connection Failed"
 msgstr "Verbindung fehlgeschlagen"
 
-#: src/widget/connection_view/server_screen.rs:884
+#: src/widget/connection_view/server_screen.rs:975
 msgid "The connection was closed due to an error."
 msgstr "Die Verbindung wurde aufgrund eines Fehlers geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:1043
+#: src/widget/connection_view/server_screen.rs:1143
 msgid "_Dynamic Resize"
 msgstr "_Dynamische Größenanpassung"
 
-#: src/widget/connection_view/server_screen.rs:1047
+#: src/widget/connection_view/server_screen.rs:1147
 msgid "_Scale to Window"
 msgstr "Ausgabe an Fenstergröße _anpassen"
 
-#: src/widget/connection_view/server_screen.rs:1057
+#: src/widget/connection_view/server_screen.rs:1157
 msgid "_Resize Window to Screen"
 msgstr "_Fenstergröße auf Ausgabegröße setzen"
 
-#: src/widget/connection_view/server_screen.rs:1061
+#: src/widget/connection_view/server_screen.rs:1161
 msgid "Send _Keys"
 msgstr "Tasten _senden"
 
-#: src/widget/connection_view/server_screen.rs:1065
+#: src/widget/connection_view/server_screen.rs:1165
 msgid "Ctrl+Alt L"
 msgstr "Strg+Alt L"
 
-#: src/widget/connection_view/server_screen.rs:1069
+#: src/widget/connection_view/server_screen.rs:1169
 msgid "Ctrl+Alt+Backspace"
 msgstr "Strg+Alt+Rücktaste"
 
-#: src/widget/connection_view/server_screen.rs:1073
+#: src/widget/connection_view/server_screen.rs:1173
 msgid "Ctrl+Alt+Delete"
 msgstr "Strg+Alt+Entf"
 
-#: src/widget/connection_view/server_screen.rs:1079
+#: src/widget/connection_view/server_screen.rs:1179
 msgid "Ctrl+Alt+F1"
 msgstr "Strg+Alt+F1"
 
-#: src/widget/connection_view/server_screen.rs:1083
+#: src/widget/connection_view/server_screen.rs:1183
 msgid "Ctrl+Alt+F2"
 msgstr "Strg+Alt+F2"
 
-#: src/widget/connection_view/server_screen.rs:1087
+#: src/widget/connection_view/server_screen.rs:1187
 msgid "Ctrl+Alt+F3"
 msgstr "Strg+Alt+F3"
 
-#: src/widget/connection_view/server_screen.rs:1091
+#: src/widget/connection_view/server_screen.rs:1191
 msgid "Ctrl+Alt+F4"
 msgstr "Strg+Alt+F4"
 
-#: src/widget/connection_view/server_screen.rs:1095
+#: src/widget/connection_view/server_screen.rs:1195
 msgid "Ctrl+Alt+F5"
 msgstr "Strg+Alt+F5"
 
-#: src/widget/connection_view/server_screen.rs:1099
+#: src/widget/connection_view/server_screen.rs:1199
 msgid "Ctrl+Alt+F6"
 msgstr "Strg+Alt+F6"
 
-#: src/widget/connection_view/server_screen.rs:1103
+#: src/widget/connection_view/server_screen.rs:1203
 msgid "Ctrl+Alt+F7"
 msgstr "Strg+Alt+F7"
 
-#: src/widget/connection_view/server_screen.rs:1107
+#: src/widget/connection_view/server_screen.rs:1207
 msgid "Ctrl+Alt+F8"
 msgstr "Strg+Alt+F8"
 
-#: src/widget/connection_view/server_screen.rs:1111
+#: src/widget/connection_view/server_screen.rs:1211
 msgid "Ctrl+Alt+F9"
 msgstr "Strg+Alt+F9"
 
-#: src/widget/connection_view/server_screen.rs:1115
+#: src/widget/connection_view/server_screen.rs:1215
 msgid "Ctrl+Alt+F10"
 msgstr "Strg+Alt+F10"
 
-#: src/widget/connection_view/server_screen.rs:1119
+#: src/widget/connection_view/server_screen.rs:1219
 msgid "Ctrl+Alt+F11"
 msgstr "Strg+Alt+F11"
 
-#: src/widget/connection_view/server_screen.rs:1123
+#: src/widget/connection_view/server_screen.rs:1223
 msgid "Ctrl+Alt+F12"
 msgstr "Strg+Alt+F12"
 
-#: src/widget/connection_view/server_screen.rs:1129
+#: src/widget/connection_view/server_screen.rs:1229
 msgid "Print"
 msgstr "Drucken"
 
-#: src/widget/connection_view/server_screen.rs:1140
+#: src/widget/connection_view/server_screen.rs:1240
 msgid "_Zoom"
 msgstr "_Textgröße"
 
-#: src/widget/connection_view/server_screen.rs:1163
+#: src/widget/connection_view/server_screen.rs:1263
 msgid "Server _Actions"
 msgstr "Server_aktionen"
 
-#: src/widget/connection_view/server_screen.rs:1167
+#: src/widget/connection_view/server_screen.rs:1267
 msgid "_Close Window"
 msgstr "Fenster _schließen"
 
-#: src/widget/connection_view/server_screen.rs:1169
+#: src/widget/connection_view/server_screen.rs:1269
 msgid "_Close Connection"
 msgstr "Verbindung _schließen"
 
-#: src/widget/connection_view/server_screen.rs:1186 src/widget/window.blp:307
+#: src/widget/connection_view/server_screen.rs:1286 src/widget/window.blp:307
 msgid "_New Window"
 msgstr "_Neues Fenster"
 
-#: src/widget/connection_view/server_screen.rs:1191 src/widget/window.blp:317
+#: src/widget/connection_view/server_screen.rs:1291 src/widget/window.blp:317
 msgid "_Keyboard Shortcuts"
 msgstr "_Tastenkombinationen"
 
-#: src/widget/connection_view/server_screen.rs:1195 src/widget/window.blp:322
+#: src/widget/connection_view/server_screen.rs:1295 src/widget/window.blp:322
 msgid "_About Field Monitor"
 msgstr "_Über Feldmonitor"
 
-#: src/widget/connection_view/server_screen.rs:1214
+#: src/widget/connection_view/server_screen.rs:1314
 #, rust-format
 msgid "Show Monitor {number}"
 msgstr "Monitor {number} anzeigen"
 
-#: src/widget/connection_view/server_screen.rs:1225
+#: src/widget/connection_view/server_screen.rs:1325
 msgid "_Copy"
 msgstr "_Kopieren"
 
-#: src/widget/connection_view/server_screen.rs:1229
+#: src/widget/connection_view/server_screen.rs:1329
 msgid "_Paste"
 msgstr "_Einfügen"
 
-#: src/widget/connection_view/server_screen.rs:1233
+#: src/widget/connection_view/server_screen.rs:1333
 msgid "Select _All"
 msgstr "_Alles auswählen"
 
-#: src/widget/connection_view/server_screen.rs:1242
+#: src/widget/connection_view/server_screen.rs:1342
 msgid "Zoom In"
 msgstr "Text vergrößern"
 
-#: src/widget/connection_view/server_screen.rs:1246
+#: src/widget/connection_view/server_screen.rs:1346
 msgid "Zoom Out"
 msgstr "Text verkleinern"
 
-#: src/widget/connection_view/server_screen.rs:1250
+#: src/widget/connection_view/server_screen.rs:1350
 msgid "Reset Zoom"
 msgstr "Textgröße zurücksetzen"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/widget/connection_view/server_screen.rs:1352
+#: src/widget/connection_view/server_screen.rs:1452
 #, rust-format
 msgid "Press {keycombo} to ungrab the mouse and keyboard."
 msgstr "Drücken Sie {keycombo} um Maus und Tastatur freizugeben."
@@ -1398,6 +1435,98 @@ msgstr "Feldmonitor konnte die angegebene Datei nicht öffnen."
 #: src/widget/update_connection_dialog.blp:30
 msgid "Save"
 msgstr "Speichern"
+
+#. XXX: These are here because (1) some of them we need in multiple places and (2) they are used inside
+#. glib::clone where they can't be picked up by gettext's scanner
+#: src/widget/usb_redir/mod.rs:23
+msgid "USB device connected"
+msgstr "USB-Gerät verbunden"
+
+#: src/widget/usb_redir/mod.rs:25
+msgid "Failed to connect device"
+msgstr "Fehler beim Verbinden des Gerätes"
+
+#: src/widget/usb_redir/mod.rs:26
+msgid "USB device disconnected"
+msgstr "USB-Gerät getrennt"
+
+#: src/widget/usb_redir/mod.rs:28
+msgid "Failed to disconnect device"
+msgstr "Fehler beim Trennen des Gerätes"
+
+#: src/widget/usb_redir/mod.rs:29
+msgid "No devices available."
+msgstr "Keine Geräte verfügbar"
+
+#: src/widget/usb_redir/settings.blp:23
+msgid "No devices connected."
+msgstr "Keine Geräte verbunden."
+
+#: src/widget/usb_redir/settings.blp:48
+msgid "Manage Devices..."
+msgstr "Geräte verwalten..."
+
+#: src/widget/usb_redir/settings.rs:167
+#: src/widget/usb_redir/settings_dialog.rs:212
+msgid "Disconnect"
+msgstr "Trennen"
+
+#: src/widget/usb_redir/settings_dialog.blp:19
+msgid "Help"
+msgstr "Hilfe"
+
+#: src/widget/usb_redir/settings_dialog.blp:31
+msgid "Devices"
+msgstr "Geräte"
+
+#: src/widget/usb_redir/settings_dialog.blp:45
+msgid "Show All Devices"
+msgstr "Alle Geräte anzeigen"
+
+#: src/widget/usb_redir/settings_dialog.rs:163
+msgid "1 channel free"
+msgstr "1 Kanal frei"
+
+#. Translators: {free} = number of free USB redirection channels
+#: src/widget/usb_redir/settings_dialog.rs:166
+#, rust-format
+msgid "{free} channels free"
+msgstr "{free} Kanäle frei"
+
+#: src/widget/usb_redir/settings_dialog.rs:200
+msgid "This device can not be connected, you might be missing permissions."
+msgstr ""
+"Dieses Gerät kann nicht verbunden werden, Ihnen fehlen möglicherweise "
+"Berechtigungen."
+
+#: src/widget/usb_redir/settings_dialog.rs:398
+msgid ""
+"This dialog allows you to share USB devices with the remote server or "
+"virtual machine.\n"
+"\n"
+"The number of devices that can be shared may be limited by the remote "
+"server.\n"
+"\n"
+"The list hides some devices (USB hubs, etc.) by default. Use the toggle "
+"button to show all devices, but note that USB hubs can not be properly "
+"shared with remote servers.\n"
+"\n"
+"To share a device your user account may need read and write permissions on "
+"the raw device, consult your distribution documentation for more information."
+msgstr ""
+"Mit diesem Dialog können Sie USB-Geräte für den entfernten Server oder die "
+"virtuelle Maschine freigeben.\n"
+"\n"
+"Die Anzahl der freigebbaren Geräte kann durch den entfernten Server begrenzt "
+"sein.\n"
+"\n"
+"Die Liste blendet einige Geräte (USB-Hubs usw.) standardmäßig aus. Verwenden "
+"Sie die Umschaltfläche, um alle Geräte anzuzeigen. Beachten Sie jedoch, dass "
+"USB-Hubs üblicherweise nicht freigegeben werden können.\n"
+"\n"
+"Um ein Gerät freizugeben, benötigt Ihr Benutzerkonto unter Umständen Lese- "
+"und Schreibrechte auf das Gerät. Weitere Informationen finden Sie in der "
+"Dokumentation Ihrer Distribution."
 
 #: src/widget/window.blp:37
 msgid "About Field Monitor"

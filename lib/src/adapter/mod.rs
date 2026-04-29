@@ -19,5 +19,6 @@
 pub mod rdp;
 pub mod spice;
 pub mod types;
+pub mod usbredir;
 pub mod vnc;
 pub mod vte_pty;

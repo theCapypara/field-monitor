@@ -49,6 +49,8 @@ lib/src/adapter/mod.rs
 lib/src/adapter/rdp.rs
 lib/src/adapter/spice.rs
 lib/src/adapter/types.rs
+lib/src/adapter/usbredir/error.rs
+lib/src/adapter/usbredir/spice.rs
 lib/src/adapter/vnc.rs
 lib/src/adapter/vte_pty.rs
 lib/src/busy.rs
@@ -128,5 +130,10 @@ src/widget/single_screen_window.blp
 src/widget/single_screen_window.rs
 src/widget/update_connection_dialog.blp
 src/widget/update_connection_dialog.rs
+src/widget/usb_redir/mod.rs
+src/widget/usb_redir/settings.blp
+src/widget/usb_redir/settings.rs
+src/widget/usb_redir/settings_dialog.blp
+src/widget/usb_redir/settings_dialog.rs
 src/widget/window.blp
 src/widget/window.rs
