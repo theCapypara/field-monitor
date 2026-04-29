@@ -32,4 +32,5 @@ pub mod pulse_anim_bin;
 pub mod quick_connect_dialog;
 pub mod single_screen_window;
 pub mod update_connection_dialog;
+pub mod usb_redir;
 pub mod window;

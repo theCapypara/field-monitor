@@ -94,7 +94,9 @@ mod imp {
                 async move {
                     let device_inner_ref: OwnedUsbDevice = {
                         let device_handle_brw = device.attached_handle();
-                        let device_handle_ref = device_handle_brw.as_ref().unwrap();
+                        let Some(device_handle_ref) = device_handle_brw.as_ref() else {
+                            return Ok(()); // device already dropped
+                        };
 
                         device_handle_ref.clone().downcast().unwrap()
                     };
@@ -238,7 +240,7 @@ impl From<DeviceError> for UsbRedirError {
                 &[("details", &err.to_string())],
             ),
             DeviceError::Usb(err) => gettext_f(
-                "USB device communication failed: {details}",
+                "USB portal request failed: {details}",
                 &[("details", &err.to_string())],
             ),
             DeviceError::Init(err) => gettext_f(

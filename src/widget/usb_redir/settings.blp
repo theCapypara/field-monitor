@@ -1,0 +1,52 @@
+using Gtk 4.0;
+using Adw 1;
+
+template $FieldMonitorUsbRedirSettings: Adw.Bin {
+    width-request: 320;
+
+    child: Box {
+        orientation: vertical;
+        spacing: 12;
+        margin-top: 12;
+        margin-bottom: 12;
+        margin-start: 12;
+        margin-end: 12;
+
+        Stack list_stack {
+            transition-type: crossfade;
+            transition-duration: 150;
+
+            StackPage {
+                name: "empty";
+
+                child: Label {
+                    label: _("No devices connected.");
+                    halign: center;
+                    margin-top: 12;
+                    margin-bottom: 12;
+
+                    styles [
+                        "dim-label"
+                    ]
+                };
+            }
+
+            StackPage {
+                name: "list";
+
+                child: ListBox attached_list {
+                    selection-mode: none;
+
+                    styles [
+                        "boxed-list"
+                    ]
+                };
+            }
+        }
+
+        Button manage_button {
+            label: _("Manage Devices...");
+            clicked => $on_manage_clicked() swapped;
+        }
+    };
+}

@@ -46,7 +46,7 @@ version = "0.11"
 
 [workspace.dependencies.adw]
 package = "libadwaita"
-features = ["v1_6"]
+features = ["v1_8"]
 version = "0.9"
 
 [workspace.dependencies.rdw]

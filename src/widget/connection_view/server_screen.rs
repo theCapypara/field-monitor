@@ -50,6 +50,7 @@ use crate::widget::focus_grabber::FieldMonitorFocusGrabber;
 use crate::widget::grab_note::FieldMonitorGrabNote;
 use crate::widget::pulse_anim_bin::FieldMonitorPulseAnimBin;
 use crate::widget::single_screen_window::FieldMonitorSingleScreenWindow;
+use crate::widget::usb_redir::settings::FieldMonitorUsbRedirSettings;
 use crate::widget::window::FieldMonitorWindow;
 
 mod imp {
@@ -689,17 +690,17 @@ impl FieldMonitorServerScreen {
         let imp = self.imp();
         info!("usb redirection supported");
 
-        // TODO: FieldMonitorUsbRedirSettings widget must be created, it's the widget containing the popover content, then uncomment:
-        //imp.usb_redir_bin
-        //    .set_child(Some(&FieldMonitorUsbRedirSettings::new(&usb_adapter)));
+        imp.usb_redir_bin
+            .set_child(Some(&FieldMonitorUsbRedirSettings::new(&usb_adapter)));
         let old = imp.usb_redir_signal.replace(Some((
             usb_adapter.downgrade(),
             usb_adapter.connect_free_channels_notify(glib::clone!(
                 #[weak]
                 imp,
                 move |usb_adapter| {
-                    imp.usb_redir_bin
-                        .set_visible(usb_adapter.free_channels() != 0);
+                    let max_channels = usb_adapter.max_channels();
+                    debug!("max usb redir channels: {max_channels}");
+                    imp.usb_redir_button_bin.set_visible(max_channels != 0);
                 }
             )),
         )));
@@ -708,8 +709,9 @@ impl FieldMonitorServerScreen {
         {
             old_wdg.disconnect(old_signal);
         }
-        imp.usb_redir_button_bin
-            .set_visible(usb_adapter.free_channels() > 0);
+        let max_channels = usb_adapter.max_channels();
+        debug!("max usb redir channels: {max_channels}");
+        imp.usb_redir_button_bin.set_visible(max_channels != 0);
     }
 
     async fn create_usb_redir_widget(&self) -> Option<FieldMonitorUsbRedirAdapter> {

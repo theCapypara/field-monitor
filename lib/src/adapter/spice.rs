@@ -16,10 +16,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
-use crate::adapter::usbredir::spice::FieldMonitorUsbRedirSpice;
 use crate::adapter::usbredir::FieldMonitorUsbRedirAdapter;
+use crate::adapter::usbredir::spice::FieldMonitorUsbRedirSpice;
 use crate::cert_security::{
-    extract_common_name, VerifiableCertChain, VerifyTls, VerifyTlsResponse,
+    VerifiableCertChain, VerifyTls, VerifyTlsResponse, extract_common_name,
 };
 use crate::connection::{ConnectionError, ConnectionResult};
 use anyhow::anyhow;

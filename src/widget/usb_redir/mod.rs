@@ -16,22 +16,17 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use gettextrs::gettext;
+use std::sync::LazyLock;
 
-pub type UsbRedirResult<T> = Result<T, UsbRedirError>;
+// XXX: These are here because (1) some of them we need in multiple places and (2) they are used inside
+//      glib::clone where they can't be picked up by gettext's scanner
+static DEVICE_CONNECTED: LazyLock<String> = LazyLock::new(|| gettext("USB device connected"));
+static DEVICE_CONNECT_FAILED: LazyLock<String> =
+    LazyLock::new(|| gettext("Failed to connect device"));
+static DEVICE_DISCONNECTED: LazyLock<String> = LazyLock::new(|| gettext("USB device disconnected"));
+static DEVICE_DISCONNECT_FAILED: LazyLock<String> =
+    LazyLock::new(|| gettext("Failed to disconnect device"));
+static NO_DEVICES_AVAILABLE: LazyLock<String> = LazyLock::new(|| gettext("No devices available."));
 
-#[derive(Debug)]
-pub struct UsbRedirError(pub(crate) String);
-
-impl std::error::Error for UsbRedirError {}
-
-impl std::fmt::Display for UsbRedirError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.0.fmt(f)
-    }
-}
-
-impl UsbRedirError {
-    pub(crate) fn device_not_attachable() -> Self {
-        Self(gettext("The device can not be attached to the connection"))
-    }
-}
+pub mod settings;
+pub mod settings_dialog;
