@@ -188,6 +188,21 @@
       ]
     },
     {
+      "name": "simdutf",
+      "buildsystem": "cmake",
+      "config-opts": [
+        "-DCMAKE_BUILD_TYPE=Release"
+      ],
+      "sources": [
+        {
+          "type": "git",
+          "url": "https://github.com/simdutf/simdutf.git",
+          "tag": "v8.2.0",
+          "commit": "fd476229424b40ae71a58dd5a205795c3d76b5f1"
+        }
+      ]
+    },
+    {
       "name": "vte",
       "buildsystem": "meson",
       "config-opts": [
