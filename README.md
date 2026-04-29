@@ -41,12 +41,12 @@ Field Monitor can be installed via `nixpkgs`:
 
 An AUR package for Field Monitor: [AUR](https://aur.archlinux.org/packages/field-monitor)
 
+> [!WARNING]  
+> Please note that this package is not officially maintained by the Field Monitor developers.
+
 ### All distro repositories
 
 [![Packaging status](https://repology.org/badge/vertical-allrepos/field-monitor.svg)](https://repology.org/project/field-monitor/versions)
-
-> [!WARNING]  
-> Please note that this package is not officially maintained by the Field Monitor developers.
 
 ### From Source
 
