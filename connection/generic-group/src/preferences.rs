@@ -445,8 +445,8 @@ impl GenericGroupPreferences {
                         .map(|u| format!("{u}@"))
                         .unwrap_or_default();
                     let row = adw::ActionRow::builder()
-                        .title(config.title())
-                        .subtitle(format!(
+                        .title(glib::markup_escape_text(&config.title()))
+                        .subtitle(glib::markup_escape_text(&format!(
                             "{}://{}{}:{}",
                             ServerType::try_from(config.server_type())
                                 .ok()
@@ -455,7 +455,7 @@ impl GenericGroupPreferences {
                             user_part,
                             config.host(),
                             config.port()
-                        ))
+                        )))
                         .activatable_widget(&edit)
                         .build();
                     row.add_suffix(&edit);

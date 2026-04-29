@@ -231,7 +231,9 @@ impl FieldMonitorConnectionInfoPage {
             ConnectionError::General(expl, err) => {
                 imp.status_stack.set_visible_child_name("error");
 
-                imp.status_page_error.set_description(expl.as_deref());
+                let escaped = expl.as_deref().map(glib::markup_escape_text);
+                imp.status_page_error
+                    .set_description(escaped.as_ref().map(|s| s.as_str()));
 
                 warn!("failed to load connection in info page: {:?}", err);
             }

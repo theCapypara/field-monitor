@@ -975,7 +975,7 @@ impl FieldMonitorServerScreen {
                 let base_desc = gettext("The connection was closed due to an error.");
                 let desc = match msg {
                     None => base_desc,
-                    Some(msg) => format!("{base_desc}\n{msg}"),
+                    Some(msg) => format!("{base_desc}\n{}", glib::markup_escape_text(&msg)),
                 };
                 imp.error_status_page.set_description(Some(&desc))
             }

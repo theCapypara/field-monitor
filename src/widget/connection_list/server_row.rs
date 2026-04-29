@@ -80,11 +80,11 @@ impl FieldMonitorServerRow {
 
 impl ServerInfoWidget for FieldMonitorServerRow {
     fn set_server_title(&self, title: &str) {
-        self.set_title(title)
+        self.set_title(&glib::markup_escape_text(title))
     }
 
     fn set_server_subtitle(&self, subtitle: Option<&str>) {
-        self.set_subtitle(subtitle.unwrap_or_default())
+        self.set_subtitle(&glib::markup_escape_text(subtitle.unwrap_or_default()))
     }
 
     fn get_icon_container(&self) -> ServerInfoIcon {

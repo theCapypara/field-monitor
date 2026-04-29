@@ -213,7 +213,7 @@ impl FieldMonitorAddConnectionDialog {
             },
             Err(err) => toast_overlay.add_toast(
                 adw::Toast::builder()
-                    .title(err.to_string())
+                    .title(glib::markup_escape_text(&err.to_string()))
                     .timeout(5)
                     .build(),
             ),

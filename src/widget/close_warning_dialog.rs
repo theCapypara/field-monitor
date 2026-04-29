@@ -65,7 +65,7 @@ impl FieldMonitorCloseWarningDialog {
             };
             list_box.append(
                 &adw::ActionRow::builder()
-                    .title(label)
+                    .title(glib::markup_escape_text(&label))
                     .selectable(false)
                     .activatable(false)
                     .focusable(false)
