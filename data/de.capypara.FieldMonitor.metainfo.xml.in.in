@@ -75,22 +75,51 @@
 	</description>
 
 	<releases>
-		<!--<release version="50.0" date="2026-30-12">
+		<release version="50.0" date="2026-04-29">
 			<description translate="no">
-				<p>This release updates Field Monitor for GNOME 50.</p>
-				<p>TODO</p>
+				<p>This release updates Field Monitor for GNOME 50 and adds several major new features.</p>
+				<ul>
+					<li>Multiple monitors are now supported for SPICE connections.</li>
+					<li>SPICE connections now support sharing USB devices. This is implemented via the XDG USB Portal
+						and requires your desktop to support it and your user to have write permissions to devices.
+					</li>
+					<li>TLS certificates are now verified - if a certificate is unknown, you are asked to confirm your
+						trust.
+					</li>
+					<li>libvirt SPICE connections can now use local sockets and file descriptors when available and
+						support GPU accelerated rendering for those, if enabled on the VM.
+					</li>
+					<li>Proxmox connections automatically add the "@pam" realm for the username, when no realm is
+						specified.
+					</li>
+					<li>Improved RDP performance, fixed RDP mouse scroll speed, and fixed pasting of Unicode text into
+						RDP sessions.
+					</li>
+					<li>Fixed several SPICE cursor issues (hot-spot alignment, restoring after being hidden).
+					</li>
+					<li>Fixed a crash when repeatedly trying to move views into new windows.</li>
+					<li>Added Spanish translations (thanks to Óscar Fernández Díaz).</li>
+					<li>German translation has been updated.</li>
+					<li>All libraries used by Field Monitor have been updated.</li>
+				</ul>
 			</description>
-		</release>-->
+		</release>
 		<release version="49.1" date="2025-11-23">
 			<description translate="no">
 				<p>This release brings some small improvements.</p>
 				<ul>
 					<li>RDP connections to Windows servers no longer have swapped color channels.</li>
-					<li>Pasting text into RDP connections to Windows servers no longer cuts off the last character in some cases.</li>
+					<li>Pasting text into RDP connections to Windows servers no longer cuts off the last character in
+						some cases.
+					</li>
 					<li>The app now requires less permissions when installed via Flatpak.</li>
-					<li>Dialogs can now be accepted using the ENTER key when inside of text input fields (thanks to f1ori).</li>
+					<li>Dialogs can now be accepted using the ENTER key when inside of text input fields (thanks to
+						f1ori).
+					</li>
 					<li>Added context menus in the sidebar.</li>
-					<li>Servers in a generic connection group can now be edited individually right from the server list using a new edit button.</li>
+					<li>Servers in a generic connection group can now be edited individually right from the server list
+						using a new edit button.
+					</li>
 					<li>Fixed one of the "Keyboard Shortcuts" menu items not working.</li>
 					<li>Small wording changes.</li>
 				</ul>
