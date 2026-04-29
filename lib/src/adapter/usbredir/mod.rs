@@ -115,6 +115,7 @@ mod imp {
     }
 
     impl FieldMonitorUsbRedirAdapter {
+        #[allow(dead_code)]
         pub(super) fn assert_in_store(&self, device: &FieldMonitorUsbDevice) {
             let store_brw = self.store.get();
             let store = store_brw.unwrap();
