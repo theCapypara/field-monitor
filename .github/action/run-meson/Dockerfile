@@ -1,4 +1,4 @@
-FROM fedora:42
+FROM fedora:43
 
 # Install Rust using Rustup
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
