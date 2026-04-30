@@ -5539,7 +5539,7 @@ dependencies = [
 [[package]]
 name = "spice-gtk-usb-portal"
 version = "0.1.0"
-source = "git+https://github.com/theCapypara/spice-gtk-usb-portal.git?rev=fc0e0cf38b225eee38681fe83741dda5c858a7a3#fc0e0cf38b225eee38681fe83741dda5c858a7a3"
+source = "git+https://github.com/theCapypara/spice-gtk-usb-portal.git?rev=4e132c7d22c8883a7926127e347bf4b611339233#4e132c7d22c8883a7926127e347bf4b611339233"
 dependencies = [
  "ashpd",
  "futures-util",
