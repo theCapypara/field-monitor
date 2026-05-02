@@ -23,9 +23,9 @@ use libfieldmonitor::connection::*;
 use std::borrow::Cow;
 use std::convert::Infallible;
 
+use crate::LIBVIRT_LOCALHOST;
 use crate::connection::LibvirtConnection;
 use crate::qemu_preferences::{LibvirtQemuConfiguration, LibvirtQemuPreferences, SessionType};
-use crate::LIBVIRT_LOCALHOST;
 
 pub struct LibvirtQemuConnectionProviderConstructor;
 

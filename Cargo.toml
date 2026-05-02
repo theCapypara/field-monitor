@@ -53,27 +53,27 @@ version = "0.9"
 package = "rdw4"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
+rev = "bb5a22504f455de56f2e486a6323a84c5384bf93"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
+rev = "bb5a22504f455de56f2e486a6323a84c5384bf93"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
+rev = "bb5a22504f455de56f2e486a6323a84c5384bf93"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "283a58447a35fb00170f39c80a0c0846754ccb64"
+rev = "bb5a22504f455de56f2e486a6323a84c5384bf93"
 default-features = false
 
 [workspace.dependencies.spice-gtk-usb-portal]

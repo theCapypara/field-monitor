@@ -4713,12 +4713,12 @@ dependencies = [
 [[package]]
 name = "rdw-keycodemap"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=283a58447a35fb00170f39c80a0c0846754ccb64#283a58447a35fb00170f39c80a0c0846754ccb64"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=bb5a22504f455de56f2e486a6323a84c5384bf93#bb5a22504f455de56f2e486a6323a84c5384bf93"
 
 [[package]]
 name = "rdw4"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=283a58447a35fb00170f39c80a0c0846754ccb64#283a58447a35fb00170f39c80a0c0846754ccb64"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=bb5a22504f455de56f2e486a6323a84c5384bf93#bb5a22504f455de56f2e486a6323a84c5384bf93"
 dependencies = [
  "derivative",
  "epoxy",
@@ -4747,7 +4747,7 @@ dependencies = [
 [[package]]
 name = "rdw4-rdp"
 version = "0.2.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=283a58447a35fb00170f39c80a0c0846754ccb64#283a58447a35fb00170f39c80a0c0846754ccb64"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=bb5a22504f455de56f2e486a6323a84c5384bf93#bb5a22504f455de56f2e486a6323a84c5384bf93"
 dependencies = [
  "derivative",
  "futures-channel",
@@ -4769,7 +4769,7 @@ dependencies = [
 [[package]]
 name = "rdw4-spice"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=283a58447a35fb00170f39c80a0c0846754ccb64#283a58447a35fb00170f39c80a0c0846754ccb64"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=bb5a22504f455de56f2e486a6323a84c5384bf93#bb5a22504f455de56f2e486a6323a84c5384bf93"
 dependencies = [
  "derivative",
  "futures-channel",
@@ -4782,7 +4782,7 @@ dependencies = [
 [[package]]
 name = "rdw4-vnc"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=283a58447a35fb00170f39c80a0c0846754ccb64#283a58447a35fb00170f39c80a0c0846754ccb64"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=bb5a22504f455de56f2e486a6323a84c5384bf93#bb5a22504f455de56f2e486a6323a84c5384bf93"
 dependencies = [
  "derivative",
  "gvnc",
