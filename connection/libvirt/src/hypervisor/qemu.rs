@@ -23,9 +23,9 @@ use libfieldmonitor::connection::*;
 use std::borrow::Cow;
 use std::convert::Infallible;
 
-use crate::LIBVIRT_LOCALHOST;
 use crate::connection::LibvirtConnection;
 use crate::qemu_preferences::{LibvirtQemuConfiguration, LibvirtQemuPreferences, SessionType};
+use crate::LIBVIRT_LOCALHOST;
 
 pub struct LibvirtQemuConnectionProviderConstructor;
 
@@ -59,7 +59,8 @@ impl ConnectionProvider for LibvirtQemuConnectionProvider {
     }
 
     fn description(&self) -> Cow<'_, str> {
-        gettext("QEMU/KVM hypervisor connection via libvirt").into()
+        gettext("QEMU/KVM hypervisor connection via libvirt. Can also be used to connect to GNOME Boxes VMs.")
+            .into()
     }
 
     fn icon(&self) -> IconSpec<()> {

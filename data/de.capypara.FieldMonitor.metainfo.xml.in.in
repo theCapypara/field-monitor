@@ -60,7 +60,8 @@
 		</p>
 		<ul>
 			<li>Proxmox Virtual Environment</li>
-			<li>QEMU/KVM via libvirt</li>
+			<!-- Translators: Part of the description of the application in the metainfo. -->
+			<li>QEMU/KVM via libvirt (including GNOME Boxes VMs)</li>
 		</ul>
 		<!-- Translators: Part of the description of the application in the metainfo. -->
 		<p>

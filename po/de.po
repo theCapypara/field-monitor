@@ -7,11 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-29 12:54+0200\n"
-"PO-Revision-Date: 2026-04-29 12:55+0200\n"
+"POT-Creation-Date: 2026-05-02 12:06+0200\n"
+"PO-Revision-Date: 2026-05-02 12:08+0200\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
-"Language-Team: de_DE\n"
-"Language: de_DE\n"
+"Language-Team: German\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -24,7 +24,7 @@ msgid "Credentials"
 msgstr "Zugangsdaten"
 
 #: connection/generic-group/src/credential_preferences.blp:10
-#: connection/libvirt/src/qemu_preferences.blp:57
+#: connection/libvirt/src/qemu_preferences.blp:58
 #: connection/proxmox/src/credential_preferences.blp:31
 #: src/quick_connect/preferences.blp:9
 msgid "Username"
@@ -135,7 +135,7 @@ msgid "VNC"
 msgstr "VNC"
 
 #: connection/generic-group/src/server_preferences.blp:32
-#: connection/libvirt/src/qemu_preferences.blp:52
+#: connection/libvirt/src/qemu_preferences.blp:53
 #: connection/proxmox/src/preferences.blp:21
 #: src/widget/certificate_trust_dialog.rs:159
 msgid "Hostname"
@@ -271,8 +271,12 @@ msgid "Add QEMU/KVM Connection"
 msgstr "QEMU/KVM Verbindung hinzufügen"
 
 #: connection/libvirt/src/hypervisor/qemu.rs:62
-msgid "QEMU/KVM hypervisor connection via libvirt"
-msgstr "QEMU/KVM Hypervisorverbindung via libvirt"
+msgid ""
+"QEMU/KVM hypervisor connection via libvirt. Can also be used to connect to "
+"GNOME Boxes VMs."
+msgstr ""
+"QEMU/KVM Hypervisorverbindung via libvirt. Kann auch verwendet werden, für "
+"die Verbindung mit GNOME Boxen VMs."
 
 #: connection/libvirt/src/qemu_preferences.blp:13
 #: connection/proxmox/src/preferences.blp:12
@@ -295,11 +299,15 @@ msgstr "Dies ist der QEMU/KVM Standard."
 msgid "User Session"
 msgstr "Benutzer-Sitzung"
 
-#: connection/libvirt/src/qemu_preferences.blp:44
+#: connection/libvirt/src/qemu_preferences.blp:34
+msgid "Use this to manage GNOME Boxes VMs."
+msgstr "Verwenden Sie diese Option um GNOME Boxen VMs zu verwalten."
+
+#: connection/libvirt/src/qemu_preferences.blp:45
 msgid "Remote Connection"
 msgstr "Entfernte Verbindung"
 
-#: connection/libvirt/src/qemu_preferences.blp:47
+#: connection/libvirt/src/qemu_preferences.blp:48
 msgid "Connect via SSH"
 msgstr "Verbindung via SSH"
 
@@ -501,12 +509,13 @@ msgstr ""
 msgid "Proxmox Virtual Environment"
 msgstr "Proxmox Virtual Environment"
 
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:63
-msgid "QEMU/KVM via libvirt"
-msgstr "QEMU/KVM via libvirt"
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
+msgid "QEMU/KVM via libvirt (including GNOME Boxes VMs)"
+msgstr "QEMU/KVM via libvirt (inklusive GNOME Boxen VMs)"
 
 #. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:66
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
 msgid ""
 "For supported VM hypervisors Field Monitor also offers options to manage the "
 "basic power state of VMs, such as starting, stopping, rebooting, etc."
@@ -515,7 +524,7 @@ msgstr ""
 "Möglichkeit VMs zu starten, zu stoppen und neuzustarten."
 
 #. Translators: Part of the description of the application in the metainfo.
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:71
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
 msgid ""
 "Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
@@ -524,29 +533,29 @@ msgstr ""
 "schnell Verbindungen zu RDP, SPICE und VNC Servern via URI herstellen."
 
 #. Translators: Caption of the first screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:128
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:158
 msgid "Screen of a connected graphical display"
 msgstr "Bildschirm einer verbundenen graphischen Anzeige"
 
 #. Translators: Caption of the second screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:135
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:165
 msgid "Welcome screen"
 msgstr "Willkommen-Fenster"
 
 #. Translators: Caption of the third screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:142
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:172
 msgid "A list of servers in a Proxmox cluster to connect to"
 msgstr ""
 "Eine Liste von Servern in einem Proxmox Cluster, mit denen sich verbunden "
 "werden kann"
 
 #. Translators: Caption of the 4th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:149
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:179
 msgid "Screen of a connected console"
 msgstr "Bildschirm einer verbundenen Konsole"
 
 #. Translators: Caption of the 5th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:156
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:186
 msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
 msgstr ""
 "Hinzufügen einer neuen Proxmox Virtual Environment Hypervisor-Verbindung"
@@ -954,7 +963,7 @@ msgstr ""
 "tatsächlich von der CA ausgestellt wurde. Falls nicht, wird Feldmonitor die "
 "Verbindung ablehnen."
 
-#: src/widget/certificate_trust_dialog.rs:228
+#: src/widget/certificate_trust_dialog.rs:229
 #, rust-format
 msgid ""
 "If you choose to trust this certificate, your choice will be remembered for "
@@ -963,12 +972,12 @@ msgstr ""
 "Falls Sie diesem Zertifikat vertrauen, wird diese Entscheidung für "
 "zukünftige Verbindungen zu <tt>{host}</tt> gespeichert."
 
-#: src/widget/certificate_trust_dialog.rs:238
+#: src/widget/certificate_trust_dialog.rs:239
 #: src/widget/close_warning_dialog.rs:78
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: src/widget/certificate_trust_dialog.rs:239
+#: src/widget/certificate_trust_dialog.rs:240
 msgid "Trust Certificate"
 msgstr "Zertifikat vertrauen"
 
@@ -1548,6 +1557,9 @@ msgstr "_Einstellungen"
 msgid "Connect to your virtual machines and remote servers."
 msgstr ""
 "Verbinden Sie sich mit ihren Virtuellen Maschinen und entfernen Servern."
+
+#~ msgid "QEMU/KVM via libvirt"
+#~ msgstr "QEMU/KVM via libvirt"
 
 #~ msgid "SPICE (Graphical)"
 #~ msgstr "SPICE (graphisch)"
