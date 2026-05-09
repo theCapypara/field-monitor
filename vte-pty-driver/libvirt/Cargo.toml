@@ -14,7 +14,7 @@ parking_lot = { workspace = true }
 anyhow = { workspace = true }
 nix = { version = "0.31", features = ["signal", "term"] }
 virt = { version = "0.4" }
-ringbuf = "0.4"
+ringbuf = "0.5"
 
 [lints]
 workspace = true
