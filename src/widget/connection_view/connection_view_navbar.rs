@@ -25,6 +25,7 @@ use adw::gdk::pango;
 use gettextrs::gettext;
 use glib::WeakRef;
 use glib::translate::ToGlibPtr;
+use libfieldmonitor::i18n::gettext_f;
 use log::{debug, warn};
 use std::cell::RefCell;
 use std::collections::HashMap;
@@ -175,12 +176,14 @@ mod imp {
                         item.upcast_ref()
                     ])]);
 
+                    let close_label = gettext("Close");
                     let close_button = gtk::Button::builder()
                         .icon_name("cross-small-symbolic")
-                        .tooltip_text(gettext("Close"))
+                        .tooltip_text(&close_label)
                         .valign(gtk::Align::Center)
                         .css_classes(["flat", "compact-button"])
                         .build();
+                    close_button.update_property(&[gtk::accessible::Property::Label(&close_label)]);
                     close_button.set_action_name(Some("row.view-close"));
                     row.add_suffix(&close_button);
 
@@ -250,7 +253,24 @@ impl FieldMonitorNavbarConnectionView {
         let page = row.child_ref().unwrap().downcast::<adw::TabPage>().unwrap();
         debug!("list row activated: {:?}", page);
         if let Some(tab_view) = self.imp().tab_view.upgrade() {
+            let title = page.title();
             tab_view.set_visible_page(Some(page));
+            row.announce(
+                &gettext_f(
+                    // Translators: Do NOT translate the content between '{' and '}', this is a
+                    // variable name.
+                    "Switched to {title}",
+                    &[("title", &title)],
+                ),
+                gtk::AccessibleAnnouncementPriority::Medium,
+            );
+            // Move focus into the server screen so its context gets announced.
+            let tab_view = tab_view.clone();
+            glib::idle_add_local_once(move || {
+                if let Some(screen) = tab_view.current() {
+                    screen.grab_focus();
+                }
+            });
         } else {
             warn!("no tab_view?");
         }
@@ -260,12 +280,14 @@ impl FieldMonitorNavbarConnectionView {
         debug!("tab view nav bar: on_tab_view_visible_page_changed");
         for row in self.imp().rows.borrow().values() {
             row.remove_css_class("fm-navselected");
+            row.update_state(&[gtk::accessible::State::Selected(Some(false))]);
         }
         if let Some(page) = page {
             let rows_brw = self.imp().rows.borrow();
             let row = rows_brw.get(&page.as_object_ref().to_glib_none().0.addr());
             if let Some(row) = row {
                 row.add_css_class("fm-navselected");
+                row.update_state(&[gtk::accessible::State::Selected(Some(true))]);
             } else {
                 warn!("unknown page selected: {page:?}");
             }

@@ -36,6 +36,10 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                                 action-name: "app.about";
                                 tooltip-text: _("About Field Monitor");
                                 icon-name: "info-outline-symbolic";
+
+                                accessibility {
+                                    label: _("About Field Monitor");
+                                }
                             }
                         }
 
@@ -63,6 +67,10 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                                 icon-name: "arrows-pointing-outward-symbolic";
                                 tooltip-text: _("Toggle Fullscreen");
                                 action-name: "win.fullscreen";
+
+                                accessibility {
+                                    label: _("Toggle Fullscreen");
+                                }
                             }
 
                             [end]
@@ -71,6 +79,10 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                                 icon-name: "main-menu-symbolic";
                                 tooltip-text: _("Menu");
                                 menu-model: primary_menu;
+
+                                accessibility {
+                                    label: _("Main menu");
+                                }
                             }
                         }
 

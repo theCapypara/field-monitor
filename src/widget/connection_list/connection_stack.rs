@@ -180,6 +180,19 @@ impl FieldMonitorConnectionStack {
         self.imp().stack.pages()
     }
 
+    /// Grab focus on the currently visible info page - mostly for a11y reasons.
+    pub fn focus_visible_page(&self) -> bool {
+        // TODO: This doesn't actually work right now. The pages are not focusable themselves.
+        let res = self
+            .imp()
+            .stack
+            .visible_child()
+            .map(|w| w.grab_focus())
+            .unwrap_or(false);
+        debug!("focusing visible page in connection stack result: {res}");
+        res
+    }
+
     fn on_update_connection(&self, connection: ConnectionInstance) {
         let imp = self.imp();
 

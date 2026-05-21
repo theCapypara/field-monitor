@@ -202,14 +202,16 @@ where
 
     async fn maybe_add_edit_button(boxx: &gtk::Box, server: &dyn ServerConnection, path: &str) {
         if server.editable() {
+            let label = gettext("Edit Server");
             let button = gtk::Button::builder()
                 .action_name("app.edit-connection-server")
                 .action_target(&path.to_variant())
                 .icon_name("edit-symbolic")
-                .tooltip_text(gettext("Edit Server"))
+                .tooltip_text(&label)
                 .valign(gtk::Align::Center)
                 .css_classes(["flat"])
                 .build();
+            button.update_property(&[gtk::accessible::Property::Label(&label)]);
 
             boxx.append(&button);
         }
@@ -252,13 +254,15 @@ pub async fn maybe_add_actions_button(
         );
     }
 
+    let label = gettext("Actions");
     let button = gtk::MenuButton::builder()
         .menu_model(&menu)
         .icon_name("view-more-symbolic")
-        .tooltip_text(gettext("Actions"))
+        .tooltip_text(&label)
         .valign(gtk::Align::Center)
         .css_classes(["flat"])
         .build();
+    button.update_property(&[gtk::accessible::Property::Label(&label)]);
 
     boxx.append(&button);
 }
@@ -276,32 +280,36 @@ fn make_multi_connection_button(path: &str, adapters: Vec<(Cow<str>, Cow<str>)>)
         );
     }
 
-    gtk::MenuButton::builder()
+    let label = gettext("Connect");
+    let button = gtk::MenuButton::builder()
         .menu_model(&menu)
         .icon_name("display-with-window-symbolic")
-        .tooltip_text(gettext("Connect"))
+        .tooltip_text(&label)
         .valign(gtk::Align::Center)
         .css_classes(["flat"])
-        .build()
-        .upcast()
+        .build();
+    button.update_property(&[gtk::accessible::Property::Label(&label)]);
+    button.upcast()
 }
 
 fn make_single_connect_button(
     path: &str,
     (adapter_id, adapter_label): (Cow<str>, Cow<str>),
 ) -> gtk::Widget {
-    gtk::Button::builder()
+    let label = gettext_f(
+        // Translators: Do NOT translate the content between '{' and '}', this is a
+        // variable name.
+        "Connect via {adapter}",
+        &[("adapter", &adapter_label)],
+    );
+    let button = gtk::Button::builder()
         .action_name("app.connect-to-server")
         .action_target(&(path, &*adapter_id).to_variant())
         .icon_name("display-with-window-symbolic")
-        .tooltip_text(gettext_f(
-            // Translators: Do NOT translate the content between '{' and '}', this is a
-            // variable name.
-            "Connect via {adapter}",
-            &[("adapter", &adapter_label)],
-        ))
+        .tooltip_text(&label)
         .valign(gtk::Align::Center)
         .css_classes(["flat"])
-        .build()
-        .upcast()
+        .build();
+    button.update_property(&[gtk::accessible::Property::Label(&label)]);
+    button.upcast()
 }

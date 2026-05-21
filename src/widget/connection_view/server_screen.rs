@@ -455,6 +455,15 @@ impl FieldMonitorServerScreen {
         let imp = self.imp();
         imp.status_stack.set_visible_child_name("loading");
         imp.outer_stack.set_visible_child_name("status");
+        self.announce(
+            &gettext_f(
+                // Translators: Do NOT translate the content between '{' and '}', this is a
+                // variable name.
+                "Connecting to {title}",
+                &[("title", &self.title())],
+            ),
+            gtk::AccessibleAnnouncementPriority::Medium,
+        );
 
         trace!("connection loader lock: locking...");
         let mut loader_brw = imp.connection_loader.lock().await;
@@ -610,6 +619,7 @@ impl FieldMonitorServerScreen {
                 rdw_display.set_vexpand(true);
                 rdw_display.set_hexpand(true);
                 imp.focus_grabber.set_display(Some(rdw_display));
+                imp.focus_grabber.grab_focus();
                 self.set_force_disable_overlay_headerbar(false);
 
                 self.add_menu(MenuKind::Rdw, server_actions);
@@ -762,6 +772,15 @@ impl FieldMonitorServerScreen {
         }
         self.notify_connected();
         imp.outer_stack.set_visible_child_name("connection");
+        self.announce(
+            &gettext_f(
+                // Translators: Do NOT translate the content between '{' and '}', this is a
+                // variable name.
+                "Connected to {title}",
+                &[("title", &self.title())],
+            ),
+            gtk::AccessibleAnnouncementPriority::Medium,
+        );
         glib::spawn_future_local(glib::clone!(
             #[weak(rename_to=slf)]
             self,
@@ -938,6 +957,15 @@ impl FieldMonitorServerScreen {
                 imp.error_status_page.set_title(&gettext("Disconnected"));
                 imp.error_status_page
                     .set_description(Some(&gettext("The connection to the server was closed.")));
+                self.announce(
+                    &gettext_f(
+                        // Translators: Do NOT translate the content between '{' and '}', this is
+                        // a variable name.
+                        "Disconnected from {title}",
+                        &[("title", &self.title())],
+                    ),
+                    gtk::AccessibleAnnouncementPriority::Medium,
+                );
             }
             Err(ConnectionError::AuthFailed(_msg, err)) if allow_reauth && self.allow_reauths() => {
                 warn!("Connection failed with auth error: {err}");
@@ -977,11 +1005,21 @@ impl FieldMonitorServerScreen {
                 imp.error_status_page
                     .set_title(&gettext("Connection Failed"));
                 let base_desc = gettext("The connection was closed due to an error.");
-                let desc = match msg {
-                    None => base_desc,
-                    Some(msg) => format!("{base_desc}\n{}", glib::markup_escape_text(&msg)),
+                let desc = match &msg {
+                    None => base_desc.clone(),
+                    Some(msg) => format!("{base_desc}\n{}", glib::markup_escape_text(msg)),
                 };
-                imp.error_status_page.set_description(Some(&desc))
+                imp.error_status_page.set_description(Some(&desc));
+                let announcement = match &msg {
+                    None => gettext("Connection failed"),
+                    Some(msg) => gettext_f(
+                        // Translators: Do NOT translate the content between '{' and '}', this is
+                        // a variable name.
+                        "Connection failed: {detail}",
+                        &[("detail", msg)],
+                    ),
+                };
+                self.announce(&announcement, gtk::AccessibleAnnouncementPriority::High);
             }
         }
 
@@ -1448,16 +1486,37 @@ impl FieldMonitorServerScreen {
                 // The shortcut may have alternatives for technical reasons, but only show the
                 // first part.
                 // TODO: The displayed string is not stable.
-                let shortcut = shortcut.split(',').next().unwrap();
+                let shortcut = shortcut.split(',').next().unwrap().to_string();
 
                 self.imp().grab_note.show_note(&gettext_f(
                     // Translators: Do NOT translate the content between '{' and '}', this is a
                     // variable name.
                     "Press {keycombo} to ungrab the mouse and keyboard.",
-                    &[("keycombo", shortcut)],
+                    &[("keycombo", &shortcut)],
+                ));
+                // hack: there's some issues when grabbing via keyboard that cuts off the announcement
+                glib::spawn_future_local(glib::clone!(
+                    #[weak(rename_to=slf)]
+                    self,
+                    async move {
+                        timeout_future(Duration::from_millis(150)).await;
+                        slf.announce(
+                            &gettext_f(
+                                // Translators: Do NOT translate the content between '{' and '}', this is
+                                // a variable name.
+                                "Input grabbed. Press {keycombo} to release.",
+                                &[("keycombo", &shortcut)],
+                            ),
+                            gtk::AccessibleAnnouncementPriority::High,
+                        );
+                    }
                 ));
             } else {
                 self.imp().grab_note.hide_note();
+                self.announce(
+                    &gettext("Input released."),
+                    gtk::AccessibleAnnouncementPriority::High,
+                );
             }
         }
     }

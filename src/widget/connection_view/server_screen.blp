@@ -29,6 +29,10 @@ template $FieldMonitorServerScreen: Adw.Bin {
                 icon-name: "arrows-pointing-outward-symbolic";
                 tooltip-text: _("Toggle Fullscreen");
                 action-name: "win.fullscreen";
+
+                accessibility {
+                    label: _("Toggle Fullscreen");
+                }
             }
 
             [start]
@@ -40,6 +44,10 @@ template $FieldMonitorServerScreen: Adw.Bin {
                 tooltip-text: _("Show Navigation");
                 action-name: "win.show-sidebar";
                 clicked => $on_show_navigation_clicked() swapped;
+
+                accessibility {
+                    label: _("Show Navigation");
+                }
             }
 
             [end]
@@ -50,6 +58,10 @@ template $FieldMonitorServerScreen: Adw.Bin {
                 primary: true;
                 icon-name: "view-more-symbolic";
                 tooltip-text: _("Menu");
+
+                accessibility {
+                    label: _("Connection menu");
+                }
             }
 
             [end]
@@ -59,6 +71,10 @@ template $FieldMonitorServerScreen: Adw.Bin {
                 MenuButton {
                     icon-name: "device-usb-symbolic";
                     tooltip-text: _("USB Devices");
+
+                    accessibility {
+                        label: _("USB Devices");
+                    }
 
                     popover: Popover {
                         Adw.Bin usb_redir_bin {}
@@ -73,6 +89,10 @@ template $FieldMonitorServerScreen: Adw.Bin {
                 MenuButton monitor_menu_button {
                     icon-name: "display-with-window-symbolic";
                     tooltip-text: _("Open Monitor in New Window");
+
+                    accessibility {
+                        label: _("Open Monitor in New Window");
+                    }
                 }
             }
         }
@@ -184,6 +204,11 @@ template $FieldMonitorServerScreen: Adw.Bin {
                         Adw.Bin display_bin {
                             vexpand: true;
                             hexpand: true;
+                        }
+
+                        accessibility {
+                            label: _("Remote Server Screen");
+                            description: _("Press any key to grab input.");
                         }
                     };
                 };

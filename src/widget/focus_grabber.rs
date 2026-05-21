@@ -16,19 +16,15 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-// TODO: Now that we just always propagate events down to RDW, this class is barely useful anymore.
-//       It probably still has some uses that would be hard to do with just rdw itself, so we keep
-//       it for now, but we should probably check again.
-
-use std::cell::Cell;
-use std::cell::RefCell;
-
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::WeakRef;
 use gtk::glib;
+use gtk::{BinLayout, gdk};
 use log::debug;
 use rdw::DisplayExt;
+use std::cell::Cell;
+use std::cell::RefCell;
 
 use crate::application::FieldMonitorApplication;
 
@@ -48,7 +44,11 @@ mod imp {
     impl ObjectSubclass for FieldMonitorFocusGrabber {
         const NAME: &'static str = "FieldMonitorFocusGrabber";
         type Type = super::FieldMonitorFocusGrabber;
-        type ParentType = adw::Bin;
+        type ParentType = gtk::Widget;
+
+        fn class_init(klass: &mut Self::Class) {
+            klass.set_layout_manager_type::<BinLayout>();
+        }
     }
 
     #[glib::derived_properties]
@@ -64,7 +64,7 @@ mod imp {
             controller.connect_released(glib::clone!(
                 #[weak]
                 obj,
-                move |_, _, _, _| obj.grab()
+                move |_, _, _, _| obj.grab(false)
             ));
 
             obj.add_controller(controller);
@@ -78,6 +78,42 @@ mod imp {
                     .propagation_phase(gtk::PropagationPhase::Bubble)
                     .build(),
             );
+
+            let key_controller = gtk::EventControllerKey::builder()
+                .propagation_phase(gtk::PropagationPhase::Bubble)
+                .build();
+
+            key_controller.connect_key_pressed(glib::clone!(
+                #[weak]
+                obj,
+                #[upgrade_or]
+                glib::Propagation::Proceed,
+                move |_, key, _, state| {
+                    if !obj.grabbed() {
+                        if key == gdk::Key::Shift_L || key == gdk::Key::Shift_R {
+                            glib::Propagation::Stop
+                        } else if key == gdk::Key::Tab || key == gdk::Key::ISO_Left_Tab {
+                            debug!("tab pressed in focus grabber");
+                            obj.emit_move_focus(if state.contains(gdk::ModifierType::SHIFT_MASK) {
+                                gtk::DirectionType::TabBackward
+                            } else {
+                                gtk::DirectionType::TabForward
+                            });
+                            glib::Propagation::Stop
+                        } else {
+                            debug!("focused grabbed via keyboard in focus grabber");
+                            obj.grab(true);
+                            glib::Propagation::Stop
+                        }
+                    } else {
+                        glib::Propagation::Proceed
+                    }
+                }
+            ));
+
+            obj.add_controller(key_controller);
+
+            self.obj().set_focusable(true);
         }
     }
     impl WidgetImpl for FieldMonitorFocusGrabber {
@@ -92,9 +128,14 @@ mod imp {
                     move |window| slf.obj().on_window_active(window.is_active())
                 ));
             }
+            if let Some(child) = self.obj().first_child() {
+                self.obj()
+                    .bind_property("grabbed", &child, "sensitive")
+                    .sync_create()
+                    .build();
+            }
         }
     }
-    impl BinImpl for FieldMonitorFocusGrabber {}
 
     impl Drop for FieldMonitorFocusGrabber {
         fn drop(&mut self) {
@@ -110,7 +151,7 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorFocusGrabber(ObjectSubclass<imp::FieldMonitorFocusGrabber>)
-        @extends gtk::Widget, adw::Bin,
+        @extends gtk::Widget,
         @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
@@ -137,7 +178,7 @@ impl FieldMonitorFocusGrabber {
         *display_opt = value.map(ObjectExt::downgrade);
     }
 
-    fn grab(&self) {
+    fn grab(&self, clear_keys: bool) {
         let imp = self.imp();
         if imp.grabbed.get() {
             return;
@@ -154,7 +195,34 @@ impl FieldMonitorFocusGrabber {
             .and_then(WeakRef::upgrade)
         {
             let grab = display.try_grab();
+            display.grab_focus();
             debug!("try_grab result: {grab:?}");
+            if clear_keys {
+                // hack
+                glib::idle_add_local_once(glib::clone!(
+                    #[weak]
+                    display,
+                    move || {
+                        let gdk_display = display.display();
+                        for kv in [
+                            gdk::Key::Alt_L,
+                            gdk::Key::Alt_R,
+                            gdk::Key::Control_L,
+                            gdk::Key::Control_R,
+                            gdk::Key::Tab,
+                        ] {
+                            if let Some(kks) = gdk_display.map_keyval(kv) {
+                                for kk in kks {
+                                    display.emit_by_name::<()>(
+                                        "key-event",
+                                        &[&kv, &kk.keycode(), &rdw::KeyEvent::RELEASE],
+                                    );
+                                }
+                            }
+                        }
+                    }
+                ));
+            }
         }
         self.try_mute_accels(true);
     }
@@ -176,6 +244,16 @@ impl FieldMonitorFocusGrabber {
             .and_then(WeakRef::upgrade)
         {
             display.ungrab();
+
+            if let Some(root) = self.root()
+                && root.focus().is_none()
+            {
+                self.grab_focus();
+                debug!("self grab focus");
+            } else if recursive_check_has_focus(display.upcast_ref()) {
+                self.grab_focus();
+                debug!("self grab focus");
+            }
             debug!("ungrab");
         }
         self.try_mute_accels(false);
@@ -208,7 +286,7 @@ impl FieldMonitorFocusGrabber {
             if inner_grabbed.is_empty() {
                 self.ungrab();
             } else {
-                self.grab();
+                self.grab(false);
             }
         }
     }
@@ -216,6 +294,29 @@ impl FieldMonitorFocusGrabber {
     fn on_window_active(&self, is_active: bool) {
         if self.grabbed() && !is_active {
             self.ungrab();
+        }
+    }
+}
+
+fn recursive_check_has_focus(widget: &gtk::Widget) -> bool {
+    if widget.has_focus() {
+        true
+    } else {
+        if let Some(first_child) = widget.first_child() {
+            if recursive_check_has_focus(&first_child) {
+                true
+            } else {
+                let mut current = first_child;
+                while let Some(sibling) = current.next_sibling() {
+                    if recursive_check_has_focus(&sibling) {
+                        return true;
+                    }
+                    current = sibling;
+                }
+                false
+            }
+        } else {
+            false
         }
     }
 }

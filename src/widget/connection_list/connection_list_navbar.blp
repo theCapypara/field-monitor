@@ -5,11 +5,13 @@ template $FieldMonitorNavbarConnectionList: Adw.Bin {
     Box {
         ListBox list {
             hexpand: true;
+            tab-behavior: item;
 
             row-activated => $on_list_row_activated() swapped;
 
             accessibility {
-                label: _("Sidebar");
+                label: _("Connections");
+                description: _("List of configured connections.");
             }
 
             styles [

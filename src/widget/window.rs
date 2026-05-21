@@ -33,6 +33,7 @@ use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::{WeakRef, timeout_future};
 use gtk::{gdk, gio, glib};
+use libfieldmonitor::i18n::gettext_f;
 use log::debug;
 use std::cell::Cell;
 use std::cell::RefCell;
@@ -435,7 +436,8 @@ impl FieldMonitorWindow {
 
     #[template_callback]
     fn on_layout_view_layout_name_changed(&self) {
-        if let Some("connection-view") = self.imp().layout_view.layout_name().as_deref() {
+        let layout_name = self.imp().layout_view.layout_name();
+        if let Some("connection-view") = layout_name.as_deref() {
             if let Some(view) = self.imp().active_connection_tab_view.current() {
                 self.change_window_title(WindowTitle::ConnectionView(view.downgrade()));
             }
@@ -443,6 +445,34 @@ impl FieldMonitorWindow {
         } else {
             self.change_window_title(WindowTitle::Main);
             self.remove_css_class("connection-view-active");
+        }
+
+        let announcement = match layout_name.as_deref() {
+            Some("connection-view") => {
+                let title = self
+                    .imp()
+                    .active_connection_tab_view
+                    .visible_page()
+                    .map(|p| p.title().to_string())
+                    .unwrap_or_default();
+                if title.is_empty() {
+                    Some(gettext("Showing active connection"))
+                } else {
+                    Some(gettext_f(
+                        // Translators: Do NOT translate the content between '{' and '}', this is
+                        // a variable name.
+                        "Showing connection: {title}",
+                        &[("title", &title)],
+                    ))
+                }
+            }
+            Some("main") => Some(gettext("Showing connection list")),
+            Some("no-sidebar") => Some(gettext("Welcome screen")),
+            _ => None,
+        };
+        debug!("window layout changed. a11y announcement: {announcement:?}");
+        if let Some(message) = announcement {
+            self.announce(&message, gtk::AccessibleAnnouncementPriority::Medium);
         }
     }
 

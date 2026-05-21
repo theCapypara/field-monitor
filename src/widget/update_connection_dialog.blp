@@ -22,6 +22,10 @@ template $FieldMonitorUpdateConnectionDialog : Adw.Dialog {
 
                 clicked => $on_connection_delete() swapped;
 
+                accessibility {
+                    label: _("Remove Connection");
+                }
+
                 styles ["destructive-action"]
             }
 

@@ -26,6 +26,7 @@ use futures::lock::Mutex;
 use gettextrs::gettext;
 use gtk::glib;
 use libfieldmonitor::connection::*;
+use libfieldmonitor::i18n::gettext_f;
 use log::{debug, trace, warn};
 use std::borrow::Cow;
 use std::cell::RefCell;
@@ -134,6 +135,15 @@ impl FieldMonitorConnectionInfoPage {
         imp.status_stack.set_visible_child_name("loading");
         let connection = imp.connection.borrow().clone().unwrap();
         let connection_id = connection.connection_id();
+        self.announce(
+            &gettext_f(
+                // Translators: Do NOT translate the content between '{' and '}', this is a
+                // variable name.
+                "Loading connection: {title}",
+                &[("title", &connection.title())],
+            ),
+            gtk::AccessibleAnnouncementPriority::Medium,
+        );
 
         debug!("reloading connection, removing old entries");
         while let Some(child) = imp.group_box.last_child() {
@@ -220,6 +230,15 @@ impl FieldMonitorConnectionInfoPage {
 
         debug!("finished loading");
         imp.status_stack.set_visible_child_name("servers");
+        self.announce(
+            &gettext_f(
+                // Translators: Do NOT translate the content between '{' and '}', this is a
+                // variable name.
+                "Loaded connection: {title}",
+                &[("title", &connection.title())],
+            ),
+            gtk::AccessibleAnnouncementPriority::Medium,
+        );
 
         Ok(())
     }
@@ -236,11 +255,28 @@ impl FieldMonitorConnectionInfoPage {
                     .set_description(escaped.as_ref().map(|s| s.as_str()));
 
                 warn!("failed to load connection in info page: {:?}", err);
+
+                let detail = expl.as_deref().unwrap_or("");
+                let message = if detail.is_empty() {
+                    gettext("Failed to load connection")
+                } else {
+                    gettext_f(
+                        // Translators: Do NOT translate the content between '{' and '}', this is
+                        // a variable name.
+                        "Failed to load connection: {detail}",
+                        &[("detail", detail)],
+                    )
+                };
+                self.announce(&message, gtk::AccessibleAnnouncementPriority::High);
             }
             ConnectionError::AuthFailed(_, err) => {
                 imp.status_stack.set_visible_child_name("auth-required");
 
                 debug!("failed to load connection in info page (auth): {:?}", err);
+                self.announce(
+                    &gettext("Authentication required"),
+                    gtk::AccessibleAnnouncementPriority::High,
+                );
             }
         }
     }

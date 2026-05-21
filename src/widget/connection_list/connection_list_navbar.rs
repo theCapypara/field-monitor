@@ -314,6 +314,11 @@ impl FieldMonitorNavbarConnectionList {
         debug!("list row activated: {:?}", child_name);
         if let Some(stack) = self.imp().stack.borrow().as_ref() {
             stack.set_visible_connection_id(Some(child_name));
+            // Move focus into the info page.
+            let stack = stack.clone();
+            glib::idle_add_local_once(move || {
+                stack.focus_visible_page();
+            });
         } else {
             warn!("no stack?");
         }
@@ -351,12 +356,16 @@ impl FieldMonitorNavbarConnectionList {
     fn on_stack_visible_connection_id_changed(&self, connection_id: Option<&str>) {
         for row in self.imp().rows.borrow().values() {
             row.row.remove_css_class("fm-navselected");
+            row.row
+                .update_state(&[gtk::accessible::State::Selected(Some(false))]);
         }
         if let Some(connection_id) = connection_id {
             let rows_brw = self.imp().rows.borrow();
             let row = rows_brw.get(connection_id);
             if let Some(row) = row {
                 row.row.add_css_class("fm-navselected");
+                row.row
+                    .update_state(&[gtk::accessible::State::Selected(Some(true))]);
             } else {
                 warn!("unknown page selected: {connection_id}");
             }
