@@ -80,6 +80,8 @@ mod imp {
         pub welcome_button_box: TemplateChild<gtk::Box>,
         #[template_child]
         pub welcome_window_title: TemplateChild<adw::WindowTitle>,
+        #[template_child]
+        pub menu_button_main: TemplateChild<gtk::MenuButton>,
         pub tab_title_notify_binding:
             RefCell<Option<(WeakRef<gtk::Widget>, glib::SignalHandlerId)>>,
         pub force_close: Cell<bool>,
@@ -242,6 +244,30 @@ impl FieldMonitorWindow {
                         if slf.imp().layout_view.layout_name().as_deref() == Some("connection-view")
                         {
                             slf.imp().connection_view_split_view.set_show_sidebar(true);
+                        }
+                    }
+                ))
+                .build(),
+            gio::ActionEntry::builder("open-menu")
+                .activate(glib::clone!(
+                    #[weak(rename_to=slf)]
+                    self,
+                    move |_, _, _| {
+                        let imp = slf.imp();
+                        match imp.layout_view.layout_name().as_deref() {
+                            Some("connection-view") => {
+                                if !imp.connection_view_split_view.shows_sidebar()
+                                    && let Some(screen) = imp.active_connection_tab_view.current()
+                                {
+                                    screen.open_menu();
+                                } else {
+                                    imp.menu_button_main.popdown();
+                                }
+                            }
+                            Some("main") => {
+                                imp.menu_button_main.popdown();
+                            }
+                            _ => {}
                         }
                     }
                 ))

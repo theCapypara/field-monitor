@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-02 12:06+0200\n"
-"PO-Revision-Date: 2026-05-02 12:08+0200\n"
+"POT-Creation-Date: 2026-05-21 14:13+0200\n"
+"PO-Revision-Date: 2026-05-21 14:14+0200\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: German\n"
 "Language: de\n"
@@ -432,7 +432,7 @@ msgstr ""
 #: data/de.capypara.FieldMonitor.desktop.in.in:2
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/widget/window.blp:9
 #: src/widget/window.blp:59 src/widget/window.blp:169 src/widget/window.blp:175
-#: src/widget/window.rs:314
+#: src/widget/window.rs:340
 msgid "Field Monitor"
 msgstr "Feldmonitor"
 
@@ -624,11 +624,11 @@ msgid "Open the app with a new window"
 msgstr "Anwendung mit einem neuen Fenster starten"
 
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
-#: src/application.rs:575
+#: src/application.rs:580
 msgid "translator-credits"
 msgstr "Marco Köpcke <hello@capypara.de>"
 
-#: src/application.rs:584 src/connection_loader.rs:437
+#: src/application.rs:589 src/connection_loader.rs:437
 #: src/widget/add_connection_dialog.rs:210
 #: src/widget/authenticate_connection_dialog.rs:170
 #: src/widget/certificate_details_window.rs:235
@@ -641,34 +641,34 @@ msgstr "Marco Köpcke <hello@capypara.de>"
 msgid "OK"
 msgstr "OK"
 
-#: src/application.rs:626
+#: src/application.rs:631
 msgid "Connection successfully added."
 msgstr "Verbindung erfolgreich hinzugefügt."
 
-#: src/application.rs:681
+#: src/application.rs:686
 msgid "Connection successfully updated."
 msgstr "Verbindung erfolgreich aktualisiert."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/application.rs:719
+#: src/application.rs:724
 #, rust-format
 msgid "Permanently Remove “{title}”?"
 msgstr "»{title}« dauerhaft entfernen?"
 
-#: src/application.rs:723 src/widget/connection_view/connection_tab_view.rs:271
+#: src/application.rs:728 src/widget/connection_view/connection_tab_view.rs:271
 msgid "No"
 msgstr "Nein"
 
-#: src/application.rs:724 src/widget/connection_view/connection_tab_view.rs:272
+#: src/application.rs:729 src/widget/connection_view/connection_tab_view.rs:272
 msgid "Yes"
 msgstr "Ja"
 
-#: src/application.rs:729
+#: src/application.rs:734
 msgid "Connection successfully removed."
 msgstr "Verbindung erfolgreich entfernt."
 
-#: src/application.rs:790
+#: src/application.rs:795
 msgid "Authentication successfully updated"
 msgstr "Informationen zur Authentifizierung erfolgreich aktualisiert"
 
@@ -740,78 +740,93 @@ msgstr "Fenster"
 
 #: src/shortcuts-dialog.blp:9
 msgctxt "shortcut window"
-msgid "New Window"
-msgstr "Neues Fenster"
+msgid "Close Window"
+msgstr "Fenster schließen"
 
 #: src/shortcuts-dialog.blp:14
 msgctxt "shortcut window"
-msgid "Toggle Fullscreen"
-msgstr "Vollbild umschalten"
+msgid "New Window"
+msgstr "Neues Fenster"
 
 #: src/shortcuts-dialog.blp:19
 msgctxt "shortcut window"
 msgid "Show Navigation"
 msgstr "Navigation anzeigen"
 
-#: src/shortcuts-dialog.blp:25
+#: src/shortcuts-dialog.blp:24
+msgctxt "shortcut window"
+msgid "Open Menu"
+msgstr "Menü öffnen"
+
+#: src/shortcuts-dialog.blp:29
+msgctxt "shortcut window"
+msgid "Toggle Fullscreen"
+msgstr "Vollbild umschalten"
+
+#: src/shortcuts-dialog.blp:35
 msgctxt "shortcut window"
 msgid "Connection"
 msgstr "Verbindung"
 
-#: src/shortcuts-dialog.blp:28
+#: src/shortcuts-dialog.blp:38
 msgctxt "shortcut window"
 msgid "Close Connection"
 msgstr "Verbindung schließen"
 
-#: src/shortcuts-dialog.blp:34
+#: src/shortcuts-dialog.blp:44
 msgctxt "shortcut window"
 msgid "Terminal"
 msgstr "Terminal"
 
-#: src/shortcuts-dialog.blp:37
+#: src/shortcuts-dialog.blp:47
 msgctxt "shortcut window"
 msgid "Copy"
 msgstr "Kopieren"
 
-#: src/shortcuts-dialog.blp:42
+#: src/shortcuts-dialog.blp:52
 msgctxt "shortcut window"
 msgid "Paste"
 msgstr "Einfügen"
 
-#: src/shortcuts-dialog.blp:47
+#: src/shortcuts-dialog.blp:57
 msgctxt "shortcut window"
 msgid "Select All"
 msgstr "Alles auswählen"
 
-#: src/shortcuts-dialog.blp:52
+#: src/shortcuts-dialog.blp:62
 msgctxt "shortcut window"
 msgid "Zoom In"
 msgstr "Text vergrößern"
 
-#: src/shortcuts-dialog.blp:57
+#: src/shortcuts-dialog.blp:67
 msgctxt "shortcut window"
 msgid "Zoom Out"
 msgstr "Text verkleinern"
 
-#: src/shortcuts-dialog.blp:62
+#: src/shortcuts-dialog.blp:72
 msgctxt "shortcut window"
 msgid "Reset Zoom"
 msgstr "Textgröße zurücksetzen"
 
-#: src/shortcuts-dialog.blp:68
+#: src/shortcuts-dialog.blp:78
 msgctxt "shortcut window"
 msgid "General"
 msgstr "Allgemein"
 
-#: src/shortcuts-dialog.blp:71
+#: src/shortcuts-dialog.blp:81
 msgctxt "shortcut window"
 msgid "Preferences"
 msgstr "Einstellungen"
 
-#: src/shortcuts-dialog.blp:76
+#: src/shortcuts-dialog.blp:86
 msgctxt "shortcut window"
 msgid "Show Shortcuts"
 msgstr "Tastenkombinationen anzeigen"
+
+#: src/shortcuts-dialog.blp:91
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Anwendung beenden"
 
 #: src/widget/add_connection_dialog.blp:11 src/widget/window.blp:295
 msgid "Add New Connection"
@@ -1099,162 +1114,162 @@ msgstr "Neu verbinden"
 msgid "Show Output"
 msgstr "Ausgabe anzeigen"
 
-#: src/widget/connection_view/server_screen.rs:934
+#: src/widget/connection_view/server_screen.rs:938
 msgid "Disconnected"
 msgstr "Verbindung getrennt"
 
-#: src/widget/connection_view/server_screen.rs:936
+#: src/widget/connection_view/server_screen.rs:940
 msgid "The connection to the server was closed."
 msgstr "Die Verbindung mit dem Server wurde geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:974
+#: src/widget/connection_view/server_screen.rs:978
 msgid "Connection Failed"
 msgstr "Verbindung fehlgeschlagen"
 
-#: src/widget/connection_view/server_screen.rs:975
+#: src/widget/connection_view/server_screen.rs:979
 msgid "The connection was closed due to an error."
 msgstr "Die Verbindung wurde aufgrund eines Fehlers geschlossen."
 
-#: src/widget/connection_view/server_screen.rs:1143
+#: src/widget/connection_view/server_screen.rs:1147
 msgid "_Dynamic Resize"
 msgstr "_Dynamische Größenanpassung"
 
-#: src/widget/connection_view/server_screen.rs:1147
+#: src/widget/connection_view/server_screen.rs:1151
 msgid "_Scale to Window"
 msgstr "Ausgabe an Fenstergröße _anpassen"
 
-#: src/widget/connection_view/server_screen.rs:1157
+#: src/widget/connection_view/server_screen.rs:1161
 msgid "_Resize Window to Screen"
 msgstr "_Fenstergröße auf Ausgabegröße setzen"
 
-#: src/widget/connection_view/server_screen.rs:1161
+#: src/widget/connection_view/server_screen.rs:1165
 msgid "Send _Keys"
 msgstr "Tasten _senden"
 
-#: src/widget/connection_view/server_screen.rs:1165
+#: src/widget/connection_view/server_screen.rs:1169
 msgid "Ctrl+Alt L"
 msgstr "Strg+Alt L"
 
-#: src/widget/connection_view/server_screen.rs:1169
+#: src/widget/connection_view/server_screen.rs:1173
 msgid "Ctrl+Alt+Backspace"
 msgstr "Strg+Alt+Rücktaste"
 
-#: src/widget/connection_view/server_screen.rs:1173
+#: src/widget/connection_view/server_screen.rs:1177
 msgid "Ctrl+Alt+Delete"
 msgstr "Strg+Alt+Entf"
 
-#: src/widget/connection_view/server_screen.rs:1179
+#: src/widget/connection_view/server_screen.rs:1183
 msgid "Ctrl+Alt+F1"
 msgstr "Strg+Alt+F1"
 
-#: src/widget/connection_view/server_screen.rs:1183
+#: src/widget/connection_view/server_screen.rs:1187
 msgid "Ctrl+Alt+F2"
 msgstr "Strg+Alt+F2"
 
-#: src/widget/connection_view/server_screen.rs:1187
+#: src/widget/connection_view/server_screen.rs:1191
 msgid "Ctrl+Alt+F3"
 msgstr "Strg+Alt+F3"
 
-#: src/widget/connection_view/server_screen.rs:1191
+#: src/widget/connection_view/server_screen.rs:1195
 msgid "Ctrl+Alt+F4"
 msgstr "Strg+Alt+F4"
 
-#: src/widget/connection_view/server_screen.rs:1195
+#: src/widget/connection_view/server_screen.rs:1199
 msgid "Ctrl+Alt+F5"
 msgstr "Strg+Alt+F5"
 
-#: src/widget/connection_view/server_screen.rs:1199
+#: src/widget/connection_view/server_screen.rs:1203
 msgid "Ctrl+Alt+F6"
 msgstr "Strg+Alt+F6"
 
-#: src/widget/connection_view/server_screen.rs:1203
+#: src/widget/connection_view/server_screen.rs:1207
 msgid "Ctrl+Alt+F7"
 msgstr "Strg+Alt+F7"
 
-#: src/widget/connection_view/server_screen.rs:1207
+#: src/widget/connection_view/server_screen.rs:1211
 msgid "Ctrl+Alt+F8"
 msgstr "Strg+Alt+F8"
 
-#: src/widget/connection_view/server_screen.rs:1211
+#: src/widget/connection_view/server_screen.rs:1215
 msgid "Ctrl+Alt+F9"
 msgstr "Strg+Alt+F9"
 
-#: src/widget/connection_view/server_screen.rs:1215
+#: src/widget/connection_view/server_screen.rs:1219
 msgid "Ctrl+Alt+F10"
 msgstr "Strg+Alt+F10"
 
-#: src/widget/connection_view/server_screen.rs:1219
+#: src/widget/connection_view/server_screen.rs:1223
 msgid "Ctrl+Alt+F11"
 msgstr "Strg+Alt+F11"
 
-#: src/widget/connection_view/server_screen.rs:1223
+#: src/widget/connection_view/server_screen.rs:1227
 msgid "Ctrl+Alt+F12"
 msgstr "Strg+Alt+F12"
 
-#: src/widget/connection_view/server_screen.rs:1229
+#: src/widget/connection_view/server_screen.rs:1233
 msgid "Print"
 msgstr "Drucken"
 
-#: src/widget/connection_view/server_screen.rs:1240
+#: src/widget/connection_view/server_screen.rs:1244
 msgid "_Zoom"
 msgstr "_Textgröße"
 
-#: src/widget/connection_view/server_screen.rs:1263
+#: src/widget/connection_view/server_screen.rs:1267
 msgid "Server _Actions"
 msgstr "Server_aktionen"
 
-#: src/widget/connection_view/server_screen.rs:1267
+#: src/widget/connection_view/server_screen.rs:1271
 msgid "_Close Window"
 msgstr "Fenster _schließen"
 
-#: src/widget/connection_view/server_screen.rs:1269
+#: src/widget/connection_view/server_screen.rs:1273
 msgid "_Close Connection"
 msgstr "Verbindung _schließen"
 
-#: src/widget/connection_view/server_screen.rs:1286 src/widget/window.blp:307
+#: src/widget/connection_view/server_screen.rs:1290 src/widget/window.blp:307
 msgid "_New Window"
 msgstr "_Neues Fenster"
 
-#: src/widget/connection_view/server_screen.rs:1291 src/widget/window.blp:317
+#: src/widget/connection_view/server_screen.rs:1295 src/widget/window.blp:317
 msgid "_Keyboard Shortcuts"
 msgstr "_Tastenkombinationen"
 
-#: src/widget/connection_view/server_screen.rs:1295 src/widget/window.blp:322
+#: src/widget/connection_view/server_screen.rs:1299 src/widget/window.blp:322
 msgid "_About Field Monitor"
 msgstr "_Über Feldmonitor"
 
-#: src/widget/connection_view/server_screen.rs:1314
+#: src/widget/connection_view/server_screen.rs:1318
 #, rust-format
 msgid "Show Monitor {number}"
 msgstr "Monitor {number} anzeigen"
 
-#: src/widget/connection_view/server_screen.rs:1325
+#: src/widget/connection_view/server_screen.rs:1329
 msgid "_Copy"
 msgstr "_Kopieren"
 
-#: src/widget/connection_view/server_screen.rs:1329
+#: src/widget/connection_view/server_screen.rs:1333
 msgid "_Paste"
 msgstr "_Einfügen"
 
-#: src/widget/connection_view/server_screen.rs:1333
+#: src/widget/connection_view/server_screen.rs:1337
 msgid "Select _All"
 msgstr "_Alles auswählen"
 
-#: src/widget/connection_view/server_screen.rs:1342
+#: src/widget/connection_view/server_screen.rs:1346
 msgid "Zoom In"
 msgstr "Text vergrößern"
 
-#: src/widget/connection_view/server_screen.rs:1346
+#: src/widget/connection_view/server_screen.rs:1350
 msgid "Zoom Out"
 msgstr "Text verkleinern"
 
-#: src/widget/connection_view/server_screen.rs:1350
+#: src/widget/connection_view/server_screen.rs:1354
 msgid "Reset Zoom"
 msgstr "Textgröße zurücksetzen"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
-#: src/widget/connection_view/server_screen.rs:1452
+#: src/widget/connection_view/server_screen.rs:1456
 #, rust-format
 msgid "Press {keycombo} to ungrab the mouse and keyboard."
 msgstr "Drücken Sie {keycombo} um Maus und Tastatur freizugeben."
@@ -1553,7 +1568,7 @@ msgstr "Verbindungen neu_laden"
 msgid "_Preferences"
 msgstr "_Einstellungen"
 
-#: src/widget/window.rs:543
+#: src/widget/window.rs:569
 msgid "Connect to your virtual machines and remote servers."
 msgstr ""
 "Verbinden Sie sich mit ihren Virtuellen Maschinen und entfernen Servern."

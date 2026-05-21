@@ -6,18 +6,28 @@ Adw.ShortcutsDialog shortcuts_dialog {
         title: C_("shortcut window", "Window");
 
         Adw.ShortcutsItem {
+            title: C_("shortcut window", "Close Window");
+            action-name: "window.close";
+        }
+
+        Adw.ShortcutsItem {
             title: C_("shortcut window", "New Window");
             action-name: "app.new-window";
         }
 
         Adw.ShortcutsItem {
-            title: C_("shortcut window", "Toggle Fullscreen");
-            action-name: "win.fullscreen";
+            title: C_("shortcut window", "Show Navigation");
+            action-name: "win.show-sidebar";
         }
 
         Adw.ShortcutsItem {
-            title: C_("shortcut window", "Show Navigation");
-            action-name: "win.show-sidebar";
+            title: C_("shortcut window", "Open Menu");
+            action-name: "win.open-menu";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Toggle Fullscreen");
+            action-name: "win.fullscreen";
         }
     }
 
@@ -75,6 +85,11 @@ Adw.ShortcutsDialog shortcuts_dialog {
         Adw.ShortcutsItem {
             title: C_("shortcut window", "Show Shortcuts");
             action-name: "app.shortcuts";
+        }
+
+        Adw.ShortcutsItem {
+            title: C_("shortcut window", "Quit");
+            action-name: "app.quit";
         }
     }
 }

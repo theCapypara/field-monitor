@@ -219,8 +219,7 @@ mod imp {
             ));
 
             // Accelerators. We remove ALL accelerators first and only use custom accelerators
-            // since we remove and re-add them later. Plus some default accelerators are not useful
-            // for us, such an unconditional Control+Q to quit.
+            // since we remove and re-add them later.
             // TODO: If somebody knows a more elegant way, let me know.
             obj.remove_accels();
             obj.add_accels();
@@ -380,13 +379,11 @@ impl FieldMonitorApplication {
     }
 
     pub fn add_accels(&self) {
-        self.set_accels_for_action("window.close", &["<Alt>F4"]);
+        self.set_accels_for_action("app.quit", &["<Primary>Q"]);
         self.set_accels_for_action("app.new-window", &["<Primary>N"]);
         self.set_accels_for_action("app.preferences", &["<Primary>comma"]);
         self.set_accels_for_action("app.reload-connections", &["<Primary>R"]);
         self.set_accels_for_action("app.shortcuts", &["<Primary>question"]);
-        self.set_accels_for_action("win.fullscreen", &["F11"]);
-        self.set_accels_for_action("win.show-sidebar", &["<Primary>E"]);
         self.set_accels_for_action("view.close", &["<Shift><Primary>W"]);
         self.set_accels_for_action("view.term-copy", &["<Shift><Primary>C"]);
         self.set_accels_for_action("view.term-paste", &["<Shift><Primary>V"]);
@@ -394,6 +391,10 @@ impl FieldMonitorApplication {
         self.set_accels_for_action("view.term-zoom-in", &["<Primary>plus"]);
         self.set_accels_for_action("view.term-zoom-out", &["<Primary>minus"]);
         self.set_accels_for_action("view.term-zoom-reset", &["<Primary>0"]);
+        self.set_accels_for_action("window.close", &["<Alt>F4", "<Primary>W"]);
+        self.set_accels_for_action("win.fullscreen", &["F11"]);
+        self.set_accels_for_action("win.show-sidebar", &["<Primary>E", "F9"]);
+        self.set_accels_for_action("win.open-menu", &["F10"]);
     }
 
     pub fn open_new_window(&self) -> FieldMonitorWindow {
@@ -417,7 +418,11 @@ impl FieldMonitorApplication {
 
     fn setup_gactions(&self) {
         let quit_action = gio::ActionEntry::builder("quit")
-            .activate(move |app: &Self, _, _| app.quit())
+            .activate(move |app: &Self, _, _| {
+                for window in app.windows() {
+                    window.close();
+                }
+            })
             .build();
 
         let about_action = gio::ActionEntry::builder("about")

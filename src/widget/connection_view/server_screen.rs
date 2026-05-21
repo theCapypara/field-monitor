@@ -773,6 +773,10 @@ impl FieldMonitorServerScreen {
         ));
     }
 
+    pub fn open_menu(&self) {
+        self.imp().menu_button.popdown();
+    }
+
     fn open_monitor_in_new_window(&self, monitor_index: u32) {
         let imp = self.imp();
         let adapter_brw = imp.adapter.borrow();
