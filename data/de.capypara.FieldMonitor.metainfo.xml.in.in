@@ -76,6 +76,26 @@
 	</description>
 
 	<releases>
+		<release version="50.1" date="2026-05-21">
+			<description translate="no">
+				<p>This release brings some small improvements and bug fixes.</p>
+				<ul>
+					<li>The libvirt connection provider now explicitly mentions GNOME Boxes and indicates that the
+						"User Session" option should be used to manage GNOME Boxes VMs.
+					</li>
+					<li>Added support for more standard GNOME keyboard shortcuts: Ctrl+Q to quit, Ctrl+W to close the
+						window, F9 to toggle the navigation sidebar, and F10 to open the main menu.
+					</li>
+					<li>Fixed an issue with SPICE connections where the count of free USB channels was not decreased
+						when a device was detached (meaning you couldn't connect a device again until closing the
+						connection).
+					</li>
+					<li>Fixed SPICE multi-monitor configurations not being applied correctly when the SPICE agent was
+						not yet connected, and ensured the configuration is resent after the agent reconnects.
+					</li>
+				</ul>
+			</description>
+		</release>
 		<release version="50.0" date="2026-04-29">
 			<description translate="no">
 				<p>This release updates Field Monitor for GNOME 50 and adds several major new features.</p>
