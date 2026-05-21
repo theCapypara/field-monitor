@@ -56,8 +56,8 @@ You will need the following dependencies to successfully build and run Field Mon
     - usbredir
     - gtk-vnc 1.5+
     - spice-gtk
-    - freerdp
 - VTE4
+- grc4
 - libvirt
 
 ### Using GNOME Builder / Flatpak
