@@ -20,7 +20,7 @@ use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::WeakRef;
 use gtk::glib;
-use gtk::{BinLayout, gdk};
+use gtk::{gdk, BinLayout};
 use log::debug;
 use rdw::DisplayExt;
 use std::cell::Cell;
@@ -90,7 +90,15 @@ mod imp {
                 glib::Propagation::Proceed,
                 move |_, key, _, state| {
                     if !obj.grabbed() {
-                        if key == gdk::Key::Shift_L || key == gdk::Key::Shift_R {
+                        if key == gdk::Key::Shift_L
+                            || key == gdk::Key::Shift_R
+                            || key == gdk::Key::Control_L
+                            || key == gdk::Key::Control_R
+                            || key == gdk::Key::Alt_L
+                            || key == gdk::Key::Alt_R
+                            || key == gdk::Key::Meta_L
+                            || key == gdk::Key::Meta_R
+                        {
                             glib::Propagation::Stop
                         } else if key == gdk::Key::Tab || key == gdk::Key::ISO_Left_Tab {
                             debug!("tab pressed in focus grabber");
