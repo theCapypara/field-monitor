@@ -1,0 +1,1637 @@
+# Chinese translation for FieldMonitor.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the de.capypara.FieldMonitor package.
+# lumingzh <lumingzh@qq.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: de.capypara.FieldMonitor\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-07 09:46+0800\n"
+"PO-Revision-Date: 2026-06-21 10:45+0800\n"
+"Last-Translator: lumingzh <lumingzh@qq.com>\n"
+"Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Gtranslator 50.0\n"
+
+#: connection/generic-group/src/credential_preferences.blp:5
+#: connection/proxmox/src/credential_preferences.blp:5
+msgid "Credentials"
+msgstr "凭据"
+
+#: connection/generic-group/src/credential_preferences.blp:10
+#: connection/libvirt/src/qemu_preferences.blp:58
+#: connection/proxmox/src/credential_preferences.blp:31
+#: src/quick_connect/preferences.blp:9
+msgid "Username"
+msgstr "用户名"
+
+#: connection/generic-group/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:36
+#: connection/proxmox/src/credential_preferences.rs:197
+#: src/quick_connect/preferences.blp:14
+msgid "Password"
+msgstr "密码"
+
+#: connection/generic-group/src/lib.rs:58
+msgid "Generic Connection Group"
+msgstr "通用连接分组"
+
+#: connection/generic-group/src/lib.rs:62
+msgid "Generic Connection Groups"
+msgstr "通用连接分组"
+
+#: connection/generic-group/src/lib.rs:66
+msgid "Add Generic Connection Group"
+msgstr "添加通用连接分组"
+
+#: connection/generic-group/src/lib.rs:74
+msgid "Connection to one or more RDP, SPICE and VNC servers"
+msgstr "与一个或更多 RDP、SPICE 和 VNC 服务器的连接"
+
+#: connection/generic-group/src/lib.rs:148
+msgid "One or more field(s) contain invalid values."
+msgstr "一个或更多包含无效值的域。"
+
+#: connection/generic-group/src/lib.rs:371
+msgid "Failed to load password."
+msgstr "加载密码失败。"
+
+#: connection/generic-group/src/preferences.blp:20
+msgid "Group Name"
+msgstr "分组名称"
+
+#: connection/generic-group/src/preferences.blp:26
+msgid "Servers"
+msgstr "服务器"
+
+#: connection/generic-group/src/preferences.blp:32
+#: connection/generic-group/src/preferences.rs:586
+msgid "Add Server"
+msgstr "添加服务器"
+
+#: connection/generic-group/src/preferences.rs:473
+msgid "No servers added yet."
+msgstr "未添加服务器。"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/generic-group/src/preferences.rs:582
+#: src/widget/update_connection_dialog.rs:102
+#, rust-format
+msgid "Edit “{title}”"
+msgstr "编辑“{title}”"
+
+#: connection/generic-group/src/preferences.rs:594
+msgid "Update"
+msgstr "更新"
+
+#: connection/generic-group/src/preferences.rs:596
+#: src/widget/add_connection_dialog.rs:133
+msgid "Add"
+msgstr "添加"
+
+#: connection/generic-group/src/preferences.rs:617
+msgid "Remove Server"
+msgstr "移除服务器"
+
+#: connection/generic-group/src/server_preferences.blp:12
+msgid "Server Name"
+msgstr "服务器名称"
+
+#: connection/generic-group/src/server_preferences.blp:17
+msgid "Server Type"
+msgstr "服务器类型"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:22
+#: connection/libvirt/src/connection/graphics.rs:250
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
+#: lib/src/adapter/rdp.rs:52
+msgid "RDP"
+msgstr "RDP"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:23
+#: connection/libvirt/src/connection/graphics.rs:247
+#: connection/proxmox/src/api/node.rs:162
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
+#: lib/src/adapter/spice.rs:216
+msgid "SPICE"
+msgstr "SPICE"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:24
+#: connection/libvirt/src/connection/graphics.rs:253
+#: connection/proxmox/src/api/node.rs:163
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
+#: lib/src/adapter/vnc.rs:134
+msgid "VNC"
+msgstr "VNC"
+
+#: connection/generic-group/src/server_preferences.blp:32
+#: connection/libvirt/src/qemu_preferences.blp:53
+#: connection/proxmox/src/preferences.blp:21
+#: src/widget/certificate_trust_dialog.rs:159
+msgid "Hostname"
+msgstr "主机名"
+
+#: connection/generic-group/src/server_preferences.blp:37
+#: connection/proxmox/src/preferences.blp:26
+msgid "Port"
+msgstr "端口"
+
+#: connection/libvirt/src/connection/adapter.rs:220
+msgid ""
+"No supported graphics endpoint available. Tip: If connected via SSH, make "
+"sure that the graphics adapter's listen type is set to 'address' and that "
+"the adapter is listening on all interfaces."
+msgstr ""
+"无可用的已支持图形端点。提示：如果通过 SSH 连接，请确保图形适配器的监听类型设"
+"为“地址”且该适配器在所有接口监听。"
+
+#: connection/libvirt/src/connection/mod.rs:160
+msgid "(Unable to load server name)"
+msgstr "（无法加载服务器名称）"
+
+#: connection/libvirt/src/connection/mod.rs:214
+#: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:66
+#: connection/proxmox/src/api/vm.rs:71
+msgid "Reboot"
+msgstr "重启"
+
+#: connection/libvirt/src/connection/mod.rs:215
+#: connection/proxmox/src/api/node.rs:61 connection/proxmox/src/api/vm.rs:67
+#: connection/proxmox/src/api/vm.rs:72
+msgid "Shutdown"
+msgstr "关机"
+
+#: connection/libvirt/src/connection/mod.rs:216
+#: connection/proxmox/src/api/vm.rs:73
+msgid "Force Reset"
+msgstr "强制重置"
+
+#: connection/libvirt/src/connection/mod.rs:217
+#: connection/proxmox/src/api/vm.rs:68 connection/proxmox/src/api/vm.rs:74
+msgid "Force Poweroff"
+msgstr "强制关机"
+
+#. TRANSLATORS: Verb
+#: connection/libvirt/src/connection/mod.rs:224
+#: connection/proxmox/src/api/vm.rs:82
+msgid "Start"
+msgstr "启动"
+
+#: connection/libvirt/src/connection/mod.rs:255
+msgid "Reboot command successfully sent to domain."
+msgstr "重启命令成功发送至虚拟机。"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:260
+#, rust-format
+msgid "Failed to send reboot command: {err}"
+msgstr "发送重启命令失败：{err}"
+
+#: connection/libvirt/src/connection/mod.rs:281
+msgid "Shutdown command successfully sent to domain."
+msgstr "关机命令成功发送至虚拟机。"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:286
+#, rust-format
+msgid "Failed to send shutdown command: {err}"
+msgstr "发送关机命令失败：{err}"
+
+#: connection/libvirt/src/connection/mod.rs:307
+msgid "Domain successfully reset."
+msgstr "虚拟机成功重置。"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:312
+#, rust-format
+msgid "Failed to reset domain: {err}"
+msgstr "重置虚拟机失败：{err}"
+
+#: connection/libvirt/src/connection/mod.rs:333
+msgid "Domain successfully shut down."
+msgstr "虚拟机成功关机。"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:338
+#, rust-format
+msgid "Failed to send destroy command: {err}"
+msgstr "发送终止命令失败：{err}"
+
+#: connection/libvirt/src/connection/mod.rs:364
+msgid "Domain successfully started."
+msgstr "虚拟机成功启动。"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:369
+#, rust-format
+msgid "Failed to send create command: {err}"
+msgstr "发送创建命令失败：{err}"
+
+#: connection/libvirt/src/connection/mod.rs:396
+msgid "Domain is not running."
+msgstr "虚拟机未运行。"
+
+#: connection/libvirt/src/connection/mod.rs:403
+msgid "Domain is already running."
+msgstr "虚拟机已在运行。"
+
+#: connection/libvirt/src/connection/mod.rs:412
+#: connection/proxmox/src/api/mod.rs:84
+msgid "Internal error while trying to execute command."
+msgstr "尝试执行命令时发生内部错误。"
+
+#: connection/libvirt/src/connection/mod.rs:440
+msgid "Serial Console"
+msgstr "串口控制台"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:46
+#: connection/libvirt/src/hypervisor/qemu.rs:50
+msgid "QEMU/KVM"
+msgstr "QEMU/KVM"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:54
+msgid "Add QEMU/KVM Connection"
+msgstr "添加 QEMU/KVM 连接"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:62
+msgid ""
+"QEMU/KVM hypervisor connection via libvirt. Can also be used to connect to "
+"GNOME Boxes VMs."
+msgstr ""
+"通过 libvirt 的 QEMU/KVM 虚拟机连接。也可以用来连接至 GNOME Boxes 虚拟机。"
+
+#: connection/libvirt/src/qemu_preferences.blp:13
+#: connection/proxmox/src/preferences.blp:12
+msgid "Connection Name"
+msgstr "连接名称"
+
+#: connection/libvirt/src/qemu_preferences.blp:19
+msgid "Session Type"
+msgstr "会话类型"
+
+#: connection/libvirt/src/qemu_preferences.blp:22
+msgid "System Session"
+msgstr "系统会话"
+
+#: connection/libvirt/src/qemu_preferences.blp:23
+msgid "This is the QEMU/KVM default."
+msgstr "这是 QEMU/KVM 的默认值。"
+
+#: connection/libvirt/src/qemu_preferences.blp:33
+msgid "User Session"
+msgstr "用户会话"
+
+#: connection/libvirt/src/qemu_preferences.blp:34
+msgid "Use this to manage GNOME Boxes VMs."
+msgstr "使用此选项管理 GNOME Boxes 虚拟机。"
+
+#: connection/libvirt/src/qemu_preferences.blp:45
+msgid "Remote Connection"
+msgstr "远程连接"
+
+#: connection/libvirt/src/qemu_preferences.blp:48
+msgid "Connect via SSH"
+msgstr "通过 SSH 连接"
+
+#: connection/proxmox/src/api/connection.rs:60
+msgid "Was unable to build a valid URL to connect to. Check your settings."
+msgstr "无法构建可连接的有效 URL。请检查您的设置。"
+
+#: connection/proxmox/src/api/connection.rs:72
+msgid "Failed to retrieve API Key or Password from secrets service."
+msgstr "从保密服务获取 API 密钥或密码失败。"
+
+#: connection/proxmox/src/api/node.rs:100
+msgid "Reboot command successfully sent to server."
+msgstr "重启命令成功发送至服务器。"
+
+#: connection/proxmox/src/api/node.rs:103 connection/proxmox/src/api/vm.rs:135
+msgid "Failed to send reboot command."
+msgstr "发送重启命令失败。"
+
+#: connection/proxmox/src/api/node.rs:125
+msgid "Shutdown command successfully sent to server."
+msgstr "关机命令成功发送至服务器。"
+
+#: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:168
+msgid "Failed to send shutdown command."
+msgstr "发送关机命令失败。"
+
+#: connection/proxmox/src/api/node.rs:164
+msgid "Console"
+msgstr "控制台"
+
+#. Translators: Keyword in the metainfo.
+#: connection/proxmox/src/api/provider.rs:48
+#: connection/proxmox/src/api/provider.rs:52
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
+msgid "Proxmox"
+msgstr "Proxmox"
+
+#: connection/proxmox/src/api/provider.rs:56
+msgid "Add Proxmox Connection"
+msgstr "添加 Proxmox 连接"
+
+#: connection/proxmox/src/api/provider.rs:64
+msgid "Proxmox Virtual Environment hypervisor connection"
+msgstr "Proxmox 虚拟环境管理程序连接"
+
+#: connection/proxmox/src/api/vm.rs:132
+msgid "Reboot command successfully sent to VM."
+msgstr "重启命令成功发送至虚拟机。"
+
+#: connection/proxmox/src/api/vm.rs:165
+msgid "Shutdown command successfully sent to VM."
+msgstr "关机命令成功发送至虚拟机。"
+
+#: connection/proxmox/src/api/vm.rs:197
+msgid "VM was successfully reset."
+msgstr "虚拟机成功重置。"
+
+#: connection/proxmox/src/api/vm.rs:200
+msgid "Failed to send reset command."
+msgstr "发送重置命令失败。"
+
+#: connection/proxmox/src/api/vm.rs:230
+msgid "VM is now stopping."
+msgstr "虚拟机未停止。"
+
+#: connection/proxmox/src/api/vm.rs:233
+msgid "Failed to send stop command."
+msgstr "发送停止命令失败。"
+
+#: connection/proxmox/src/api/vm.rs:263
+msgid "VM is now starting."
+msgstr "虚拟机正在启动。"
+
+#: connection/proxmox/src/api/vm.rs:266
+msgid "Failed to send start command."
+msgstr "发送启动命令失败。"
+
+#: connection/proxmox/src/credential_preferences.blp:10
+msgid ""
+"The Proxmox user needs at least the permissions <tt>VM.Console</tt>, "
+"<tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>."
+msgstr ""
+"Proxmox 用户需要 <tt>VM.Console</tt>、<tt>VM.Audit</tt> 和 <tt>VM.PowerMgmt</"
+"tt> 权限。"
+
+#: connection/proxmox/src/credential_preferences.blp:13
+msgid "Authentication Mode"
+msgstr "认证模式"
+
+#: connection/proxmox/src/credential_preferences.blp:19
+#: connection/proxmox/src/credential_preferences.rs:195
+msgid "API Key"
+msgstr "API 密钥"
+
+#: connection/proxmox/src/credential_preferences.blp:26
+msgid "Token ID"
+msgstr "口令 ID"
+
+#: connection/proxmox/src/preferences.blp:18
+msgid "Connection"
+msgstr "连接"
+
+#: connection/proxmox/src/preferences.blp:33
+msgid "Trust Any SSL Certificate"
+msgstr "信任任何 SSL 证书"
+
+#: connection/proxmox/src/preferences.blp:34
+msgid ""
+"Allows connecting to servers with self-signed and otherwise invalid SSL "
+"certificates. Be careful, as this is a potential security risk."
+msgstr ""
+"允许连接至使用自签名或其它无效 SSL 证书的服务器。请注意，这是存在潜在安全风险"
+"的行为。"
+
+#. Translators: The name of the application.
+#: data/de.capypara.FieldMonitor.desktop.in.in:2
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/widget/window.blp:9
+#: src/widget/window.blp:63 src/widget/window.blp:181 src/widget/window.blp:187
+#: src/widget/window.rs:341
+msgid "Field Monitor"
+msgstr "现场监视器"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:3
+msgid "Remote Desktop Viewer"
+msgstr "远程桌面查看器"
+
+#. Translators: The summary of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.desktop.in.in:4
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
+msgid "Access VMs and external screens"
+msgstr "访问虚拟机和外部屏幕"
+
+#. Translators: The keywords from the desktop file.
+#: data/de.capypara.FieldMonitor.desktop.in.in:12
+msgid "proxmox;vnc;spice;rdp;kvm;qemu;"
+msgstr "proxmox;vnc;spice;rdp;kvm;qemu;虚拟机;远程桌面;远程连接;连接;"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:17
+msgid "New Window"
+msgstr "新建窗口"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:24
+msgid "remote desktop"
+msgstr "远程桌面"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:32
+msgid "KVM"
+msgstr "KVM"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:34
+msgid "QEMU"
+msgstr "QEMU"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:36
+msgid "libvirt"
+msgstr "libvirt"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:40
+msgid "GNOME"
+msgstr "GNOME"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:49
+msgid ""
+"Field Monitor is a remote-desktop client designed for the GNOME platform."
+msgstr "现场监视器是为 GNOME 平台设计的一款远程桌面客户端。"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
+msgid ""
+"It is focused on connecting to virtual machines, but can connect to any "
+"server supporting the RDP, SPICE or VNC protocols."
+msgstr ""
+"其聚焦于与虚拟机的连接，但也可以连接至任何支持 RDP、SPICE 或 VNC 协议的服务"
+"器。"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
+msgid ""
+"It has support for directly connecting to VMs of the following hypervisors:"
+msgstr "支持直接连接至以下管理程序的虚拟机："
+
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
+msgid "Proxmox Virtual Environment"
+msgstr "Proxmox 虚拟环境"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
+msgid "QEMU/KVM via libvirt (including GNOME Boxes VMs)"
+msgstr "使用 libvirt 的 QEMU/KVM（包括 GNOME Boxes 虚拟机）"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
+msgid ""
+"For supported VM hypervisors Field Monitor also offers options to manage the "
+"basic power state of VMs, such as starting, stopping, rebooting, etc."
+msgstr ""
+"现场监视器对支持的虚拟机管理程序提供了管理虚拟机基本电源状态的选项，例如启"
+"动、停止、重启等。"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
+msgid ""
+"Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
+"files and quickly connecting to RDP, SPICE or VNC servers via URI."
+msgstr ""
+"另外，现场监视器支持打开 RDP 和 Virt 查看器连接文件以及通过 URI 快速连接至 "
+"RDP、SPICE 或 VNC 服务器。"
+
+#. Translators: Caption of the first screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:178
+msgid "Screen of a connected graphical display"
+msgstr "已连接图形显示的屏幕"
+
+#. Translators: Caption of the second screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:185
+#: src/widget/window.rs:470
+msgid "Welcome screen"
+msgstr "欢迎屏幕"
+
+#. Translators: Caption of the third screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:192
+msgid "A list of servers in a Proxmox cluster to connect to"
+msgstr "Proxmox 集群中的服务器列表"
+
+#. Translators: Caption of the 4th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:199
+msgid "Screen of a connected console"
+msgstr "已连接控制台的屏幕"
+
+#. Translators: Caption of the 5th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:206
+msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
+msgstr "添加新的 Proxmox 虚拟环境管理程序连接"
+
+#: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
+msgid "Remote Desktop file"
+msgstr "远程桌面文件"
+
+#: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
+msgid "Virt-Viewer connection file"
+msgstr "Virt 查看器连接文件"
+
+#: lib/src/adapter/usbredir/error.rs:35
+msgid "The device can not be attached to the connection"
+msgstr "该设备无法附加至连接"
+
+#: lib/src/adapter/usbredir/spice.rs:239
+#, rust-format
+msgid "Failed to communicate with the system portal: {details}"
+msgstr "与系统门户沟通失败：{details}"
+
+#: lib/src/adapter/usbredir/spice.rs:243
+#, rust-format
+msgid "USB portal request failed: {details}"
+msgstr "USB 门户请求失败：{details}"
+
+#: lib/src/adapter/usbredir/spice.rs:247
+#, rust-format
+msgid "USB redirection initialization failed: {details}"
+msgstr "USB 重定向初始化失败：{details}"
+
+#: lib/src/adapter/usbredir/spice.rs:261
+msgid "Failed to attach the USB device"
+msgstr "附加 USB 设备失败"
+
+#: lib/src/cert_security.rs:134
+msgid "Server certificate verification failed"
+msgstr "服务器证书验证失败"
+
+#: lib/src/connection/instance.rs:191
+msgid "Unknown error"
+msgstr "未知错误"
+
+#: lib/src/connection/types.rs:49
+msgid "Authentication failed"
+msgstr "认证失败"
+
+#: lib/src/connection/types.rs:50
+msgid "General Error"
+msgstr "常规错误"
+
+#: lib/src/gtk/save_credentials_button.blp:22
+msgid "Save and remember"
+msgstr "保存并记住"
+
+#: lib/src/gtk/save_credentials_button.blp:28
+msgid "Ask for this every time"
+msgstr "每次都询问"
+
+#: lib/src/lib.rs:43
+msgid "The connection configuration is invalid"
+msgstr "该连接配置无效"
+
+#: src/application.rs:127
+msgid "Open the app with a new window"
+msgstr "使用新窗口打开应用"
+
+#. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
+#: src/application.rs:580
+msgid "translator-credits"
+msgstr "lumingzh <lumingzh@qq.com>, 2026"
+
+#: src/application.rs:589 src/connection_loader.rs:437
+#: src/widget/add_connection_dialog.rs:210
+#: src/widget/authenticate_connection_dialog.rs:170
+#: src/widget/certificate_details_window.rs:235
+#: src/widget/quick_connect_dialog.rs:101
+#: src/widget/quick_connect_dialog.rs:161
+#: src/widget/update_connection_dialog.rs:180
+#: src/widget/usb_redir/settings.rs:214
+#: src/widget/usb_redir/settings_dialog.rs:384
+#: src/widget/usb_redir/settings_dialog.rs:400
+msgid "OK"
+msgstr "确定"
+
+#: src/application.rs:631
+msgid "Connection successfully added."
+msgstr "已成功添加连接。"
+
+#: src/application.rs:686
+msgid "Connection successfully updated."
+msgstr "已成功更新连接。"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/application.rs:724
+#, rust-format
+msgid "Permanently Remove “{title}”?"
+msgstr "永久移除“{title}”吗？"
+
+#: src/application.rs:728 src/widget/connection_view/connection_tab_view.rs:271
+msgid "No"
+msgstr "否"
+
+#: src/application.rs:729 src/widget/connection_view/connection_tab_view.rs:272
+msgid "Yes"
+msgstr "是"
+
+#: src/application.rs:734
+msgid "Connection successfully removed."
+msgstr "已成功移除连接。"
+
+#: src/application.rs:795
+msgid "Authentication successfully updated"
+msgstr "已成功更新认证"
+
+#: src/connection_loader.rs:83 src/connection_loader.rs:93
+msgid "Connection not found."
+msgstr "未找到连接。"
+
+#: src/connection_loader.rs:193 src/connection_loader.rs:204
+msgid "Server not found."
+msgstr "未找到服务器。"
+
+#: src/connection_loader.rs:246 src/connection_loader.rs:364
+msgid "Failed to load or connect to server"
+msgstr "加载或连接至服务器失败"
+
+#: src/quick_connect/mod.rs:118
+msgid "Untitled Server"
+msgstr "无标题服务器"
+
+#: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
+#: src/widget/window.blp:153 src/widget/window.blp:214
+msgid "Quick Connect"
+msgstr "快速连接"
+
+#: src/quick_connect/mod.rs:320
+msgid "via Quick Connect"
+msgstr "通过快速连接"
+
+#: src/quick_connect/rdp.rs:78
+msgid "Failed to read file"
+msgstr "读取文件失败"
+
+#: src/quick_connect/rdp.rs:169
+msgid "Invalid RDP parameters"
+msgstr "无效的 RDP 参数"
+
+#: src/quick_connect/spice.rs:208
+msgid "Invalid SPICE URI"
+msgstr "无效的 SPICE URI"
+
+#: src/quick_connect/util.rs:58 src/quick_connect/util.rs:63
+msgid "Invalid port in URI"
+msgstr "无效的 URI 端口"
+
+#: src/quick_connect/vnc.rs:111
+msgid "Invalid VNC URI"
+msgstr "无效的 VNC URI"
+
+#: src/remote_server_info.rs:47
+msgid "Field Monitor does not support this URI scheme"
+msgstr "现场监视器不支持此 URI 方案"
+
+#: src/remote_server_info.rs:61
+msgid "Unable to detect supported file format"
+msgstr "无法检测支持的文件格式"
+
+#: src/remote_server_info.rs:69
+msgid "Field Monitor was unable to read the file"
+msgstr "现场监视器无法读取该文件"
+
+#: src/secrets.rs:90
+msgid "A secret value used by Field Monitor"
+msgstr "现场监视器使用的保密值"
+
+#: src/shortcuts-dialog.blp:6
+msgctxt "shortcut window"
+msgid "Window"
+msgstr "窗口"
+
+#: src/shortcuts-dialog.blp:9
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "关闭窗口"
+
+#: src/shortcuts-dialog.blp:14
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "新建窗口"
+
+#: src/shortcuts-dialog.blp:19
+msgctxt "shortcut window"
+msgid "Show Navigation"
+msgstr "显示导航"
+
+#: src/shortcuts-dialog.blp:24
+msgctxt "shortcut window"
+msgid "Open Menu"
+msgstr "打开菜单"
+
+#: src/shortcuts-dialog.blp:29
+msgctxt "shortcut window"
+msgid "Toggle Fullscreen"
+msgstr "切换全屏"
+
+#: src/shortcuts-dialog.blp:35
+msgctxt "shortcut window"
+msgid "Connection"
+msgstr "连接"
+
+#: src/shortcuts-dialog.blp:38
+msgctxt "shortcut window"
+msgid "Close Connection"
+msgstr "关闭连接"
+
+#: src/shortcuts-dialog.blp:44
+msgctxt "shortcut window"
+msgid "Terminal"
+msgstr "终端"
+
+#: src/shortcuts-dialog.blp:47
+msgctxt "shortcut window"
+msgid "Copy"
+msgstr "复制"
+
+#: src/shortcuts-dialog.blp:52
+msgctxt "shortcut window"
+msgid "Paste"
+msgstr "粘贴"
+
+#: src/shortcuts-dialog.blp:57
+msgctxt "shortcut window"
+msgid "Select All"
+msgstr "全选"
+
+#: src/shortcuts-dialog.blp:62
+msgctxt "shortcut window"
+msgid "Zoom In"
+msgstr "放大"
+
+#: src/shortcuts-dialog.blp:67
+msgctxt "shortcut window"
+msgid "Zoom Out"
+msgstr "缩小"
+
+#: src/shortcuts-dialog.blp:72
+msgctxt "shortcut window"
+msgid "Reset Zoom"
+msgstr "重置缩放"
+
+#: src/shortcuts-dialog.blp:78
+msgctxt "shortcut window"
+msgid "General"
+msgstr "常规"
+
+#: src/shortcuts-dialog.blp:81
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "首选项"
+
+#: src/shortcuts-dialog.blp:86
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "显示快捷键"
+
+#: src/shortcuts-dialog.blp:91
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "退出"
+
+#: src/widget/add_connection_dialog.blp:11 src/widget/window.blp:307
+msgid "Add New Connection"
+msgstr "添加新连接"
+
+#: src/widget/add_connection_dialog.rs:203
+#: src/widget/authenticate_connection_dialog.rs:163
+#: src/widget/update_connection_dialog.rs:173
+msgid "Failed to save connection"
+msgstr "保存连接失败"
+
+#: src/widget/add_connection_dialog.rs:206
+#: src/widget/authenticate_connection_dialog.rs:166
+#: src/widget/update_connection_dialog.rs:176
+msgid "An error occurred, while trying to save the connection"
+msgstr "尝试保存连接时发生了错误"
+
+#: src/widget/app_status.blp:30
+msgid "Field Monitor is starting..."
+msgstr "现场监视器正在启动…"
+
+#: src/widget/app_status.blp:50
+msgid "Failed to Initialize"
+msgstr "初始化失败"
+
+#: src/widget/app_status.blp:51
+msgid ""
+"Field Monitor could not start, because it could not connect to your system's "
+"secret service for accessing passwords."
+msgstr "现场监视器无法启动，因为其无法连接至您的系统保密服务以获取访问密码。"
+
+#: src/widget/app_status.blp:56 src/widget/app_status.blp:84
+msgid "Quit"
+msgstr "退出"
+
+#: src/widget/app_status.blp:78
+msgid "Failed to Initialize - Secrets Invalid"
+msgstr "初始化失败 - 保密无效"
+
+#: src/widget/app_status.blp:79
+msgid ""
+"Field Monitor could not start, because the secrets backend reports that the "
+"system secrets are invalid or corrupted.\n"
+"\n"
+"This can happen if you moved your HOME directory to another system.\n"
+"\n"
+"You may be able to resolve this with <a href='https://github.com/theCapypara/"
+"field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
+msgstr ""
+"现场监视器无法启动，因为保密后端报告系统保密服务无效或已损坏。\n"
+"\n"
+"如果您将 home 目录移动至另一个系统可能会发生该情况。\n"
+"\n"
+"您可以通过 <a href='https://github.com/theCapypara/field-monitor/issues/"
+"18#issuecomment-2763807003'>oo7-cli</a> 解决此问题。"
+
+#: src/widget/authenticate_connection_dialog.blp:6
+#: src/widget/connection_list/info_page.blp:74
+#: src/widget/connection_list/info_page.rs:277
+msgid "Authentication required"
+msgstr "需要认证"
+
+#: src/widget/authenticate_connection_dialog.blp:19
+msgid "Apply"
+msgstr "应用"
+
+#: src/widget/authenticate_connection_dialog.rs:105
+msgid "This connection needs additional authentication to proceed."
+msgstr "此连接需要额外认证以继续。"
+
+#: src/widget/certificate_details_window.blp:5
+msgid "Certificate Viewer"
+msgstr "证书查看器"
+
+#: src/widget/certificate_details_window.blp:23
+msgid "Export"
+msgstr "导出"
+
+#: src/widget/certificate_details_window.blp:32
+#: src/widget/close_warning_dialog.rs:79
+#: src/widget/connection_view/connection_view_navbar.blp:53
+#: src/widget/connection_view/connection_view_navbar.rs:179
+#: src/widget/connection_view/server_screen.blp:155
+msgid "Close"
+msgstr "关闭"
+
+#: src/widget/certificate_details_window.rs:160
+msgid "PEM Certificate"
+msgstr "PEM 证书"
+
+#: src/widget/certificate_details_window.rs:165
+msgid "DER Certificate"
+msgstr "DER 证书"
+
+#: src/widget/certificate_details_window.rs:171
+msgid "Export Certificate..."
+msgstr "导出证书…"
+
+#: src/widget/certificate_details_window.rs:230
+msgid "Failed to save"
+msgstr "保存失败"
+
+#: src/widget/certificate_details_window.rs:232
+msgid "Field Monitor was unable to save the provided file."
+msgstr "现场监视器无法保存提供的文件。"
+
+#: src/widget/certificate_trust_dialog.rs:136
+msgid "Trust this server?"
+msgstr "信任此服务器吗？"
+
+#: src/widget/certificate_trust_dialog.rs:139
+msgid "Do you trust this certificate and want to establish a connection?"
+msgstr "您信任此服务器并想要建立连接吗？"
+
+#: src/widget/certificate_trust_dialog.rs:167
+msgid "Fingerprint"
+msgstr "指纹"
+
+#: src/widget/certificate_trust_dialog.rs:177
+msgid "Show Certificate"
+msgstr "显示证书"
+
+#: src/widget/certificate_trust_dialog.rs:197
+msgid ""
+"This certificate is the certificate authority (CA) issuing the connection "
+"certificate."
+msgstr "此证书是该证书认证机构（CA）颁发的连接证书。"
+
+#: src/widget/certificate_trust_dialog.rs:202
+msgid "Info"
+msgstr "信息"
+
+#: src/widget/certificate_trust_dialog.rs:207
+msgid ""
+"After you choose to trust the CA, Field Monitor will confirm that the "
+"connection is established using a certificate issued by the CA. If not Field "
+"Monitor will refuse the connection."
+msgstr ""
+"在您选择信任该认证机构后，现场监视器将确认连接是使用由该机构颁发的证书建立"
+"的。如果不是，现场监视器将拒绝连接。"
+
+#: src/widget/certificate_trust_dialog.rs:229
+#, rust-format
+msgid ""
+"If you choose to trust this certificate, your choice will be remembered for "
+"future connections to <tt>{host}</tt>."
+msgstr ""
+"如果您选择信任此证书，您的选择将会被记住以用于未来与 <tt>{host}</tt> 的连接。"
+
+#: src/widget/certificate_trust_dialog.rs:239
+#: src/widget/close_warning_dialog.rs:78
+msgid "Cancel"
+msgstr "取消"
+
+#: src/widget/certificate_trust_dialog.rs:240
+msgid "Trust Certificate"
+msgstr "信任证书"
+
+#: src/widget/close_warning_dialog.rs:54
+msgid "Close Window?"
+msgstr "关闭窗口吗？"
+
+#: src/widget/close_warning_dialog.rs:55
+msgid ""
+"The app is still connected to one or more servers. Closing the window will "
+"disconnect from all servers."
+msgstr "应用仍连接至一个或更多服务器。关闭窗口将与所有服务器断开连接。"
+
+#: src/widget/connection_list/connection_list_navbar.blp:13
+msgid "Connections"
+msgstr "连接"
+
+#: src/widget/connection_list/connection_list_navbar.blp:14
+msgid "List of configured connections."
+msgstr "已配置连接的列表。"
+
+#: src/widget/connection_list/connection_list_navbar.blp:34
+#: src/widget/connection_list/info_page.blp:17
+#: src/widget/connection_list/info_page.blp:21
+msgid "Edit Connection"
+msgstr "编辑连接"
+
+#: src/widget/connection_list/connection_list_navbar.blp:39
+#: src/widget/update_connection_dialog.blp:21
+#: src/widget/update_connection_dialog.blp:26
+msgid "Remove Connection"
+msgstr "移除连接"
+
+#: src/widget/connection_list/info_page.blp:65
+#: src/widget/connection_list/info_page.rs:261
+msgid "Failed to load connection"
+msgstr "加载连接失败"
+
+#: src/widget/connection_list/info_page.blp:75
+msgid "This connection requires additional authentication."
+msgstr "此连接需要额外认证。"
+
+#: src/widget/connection_list/info_page.blp:78
+msgid "Authenticate"
+msgstr "认证"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/info_page.rs:142
+#, rust-format
+msgid "Loading connection: {title}"
+msgstr "正在加载连接：{title}"
+
+#: src/widget/connection_list/info_page.rs:196
+msgid "No servers available"
+msgstr "无可用服务器"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/info_page.rs:237
+#, rust-format
+msgid "Loaded connection: {title}"
+msgstr "已加载连接：{title}"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_list/info_page.rs:266
+#, rust-format
+msgid "Failed to load connection: {detail}"
+msgstr "加载连接失败：{detail}"
+
+#. TODO: Getting the server name here isn't really easy...
+#: src/widget/connection_list/server_info.rs:205
+#: src/widget/update_connection_dialog.rs:97
+msgid "Edit Server"
+msgstr "编辑服务器"
+
+#: src/widget/connection_list/server_info.rs:257
+msgid "Actions"
+msgstr "操作"
+
+#: src/widget/connection_list/server_info.rs:283
+#: src/widget/quick_connect_dialog.blp:39
+#: src/widget/usb_redir/settings_dialog.rs:205
+msgid "Connect"
+msgstr "连接"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/server_info.rs:302
+#, rust-format
+msgid "Connect via {adapter}"
+msgstr "通过 {adapter} 连接"
+
+#: src/widget/connection_view/connection_tab_view.rs:266
+msgid "Close Connection?"
+msgstr "关闭连接吗？"
+
+#: src/widget/connection_view/connection_tab_view.rs:268
+msgid "Closing the connection will disconnect from the remote server."
+msgstr "关闭连接会从远程服务器断开连接。"
+
+#: src/widget/connection_view/connection_view_navbar.blp:12
+#: src/widget/connection_view/connection_view_navbar.blp:23
+msgid "Active Connections"
+msgstr "活动连接"
+
+#: src/widget/connection_view/connection_view_navbar.blp:24
+msgid "List of currently open connections."
+msgstr "当前打开连接的列表。"
+
+#: src/widget/connection_view/connection_view_navbar.blp:48
+msgid "Move to New Window"
+msgstr "移到新窗口"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/connection_view_navbar.rs:262
+#, rust-format
+msgid "Switched to {title}"
+msgstr "已切换至 {title}"
+
+#: src/widget/connection_view/server_screen.blp:30
+#: src/widget/connection_view/server_screen.blp:34 src/widget/window.blp:68
+#: src/widget/window.blp:72
+msgid "Toggle Fullscreen"
+msgstr "切换全屏"
+
+#: src/widget/connection_view/server_screen.blp:44
+#: src/widget/connection_view/server_screen.blp:49
+msgid "Show Navigation"
+msgstr "显示导航"
+
+#: src/widget/connection_view/server_screen.blp:60 src/widget/window.blp:80
+msgid "Menu"
+msgstr "菜单"
+
+#: src/widget/connection_view/server_screen.blp:63
+msgid "Connection menu"
+msgstr "连接菜单"
+
+#: src/widget/connection_view/server_screen.blp:73
+#: src/widget/connection_view/server_screen.blp:76
+#: src/widget/usb_redir/settings_dialog.blp:7
+#: src/widget/usb_redir/settings_dialog.blp:13
+#: src/widget/usb_redir/settings_dialog.rs:396
+msgid "USB Devices"
+msgstr "USB 设备"
+
+#: src/widget/connection_view/server_screen.blp:91
+#: src/widget/connection_view/server_screen.blp:94
+msgid "Open Monitor in New Window"
+msgstr "在新窗口打开监视器"
+
+#: src/widget/connection_view/server_screen.blp:134
+msgid "Connecting..."
+msgstr "正在连接…"
+
+#: src/widget/connection_view/server_screen.blp:165
+msgid "Reconnect"
+msgstr "重新连接"
+
+#: src/widget/connection_view/server_screen.blp:172
+msgid "Show Output"
+msgstr "显示输出"
+
+#: src/widget/connection_view/server_screen.blp:210
+msgid "Remote Server Screen"
+msgstr "远程服务器屏幕"
+
+#: src/widget/connection_view/server_screen.blp:211
+msgid "Press any key to grab input."
+msgstr "按任意键以抓取输入设备。"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:462
+#, rust-format
+msgid "Connecting to {title}"
+msgstr "正在连接至 {title}"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:779
+#, rust-format
+msgid "Connected to {title}"
+msgstr "已连接至 {title}"
+
+#: src/widget/connection_view/server_screen.rs:957
+msgid "Disconnected"
+msgstr "已断开连接"
+
+#: src/widget/connection_view/server_screen.rs:959
+msgid "The connection to the server was closed."
+msgstr "与服务器的连接已关闭。"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_view/server_screen.rs:964
+#, rust-format
+msgid "Disconnected from {title}"
+msgstr "已从 {title} 断开连接"
+
+#: src/widget/connection_view/server_screen.rs:1006
+msgid "Connection Failed"
+msgstr "连接失败"
+
+#: src/widget/connection_view/server_screen.rs:1007
+msgid "The connection was closed due to an error."
+msgstr "该连接已因发生错误而关闭。"
+
+#: src/widget/connection_view/server_screen.rs:1014
+msgid "Connection failed"
+msgstr "连接失败"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_view/server_screen.rs:1018
+#, rust-format
+msgid "Connection failed: {detail}"
+msgstr "连接失败：{detail}"
+
+#: src/widget/connection_view/server_screen.rs:1185
+msgid "_Dynamic Resize"
+msgstr "动态改变大小(_D)"
+
+#: src/widget/connection_view/server_screen.rs:1189
+msgid "_Scale to Window"
+msgstr "缩放至窗口大小(_S)"
+
+#: src/widget/connection_view/server_screen.rs:1199
+msgid "_Resize Window to Screen"
+msgstr "更改窗口大小至屏幕(_R)"
+
+#: src/widget/connection_view/server_screen.rs:1203
+msgid "Send _Keys"
+msgstr "发送按键(_K)"
+
+#: src/widget/connection_view/server_screen.rs:1207
+msgid "Ctrl+Alt L"
+msgstr "Ctrl+Alt L"
+
+#: src/widget/connection_view/server_screen.rs:1211
+msgid "Ctrl+Alt+Backspace"
+msgstr "Ctrl+Alt+Backspace"
+
+#: src/widget/connection_view/server_screen.rs:1215
+msgid "Ctrl+Alt+Delete"
+msgstr "Ctrl+Alt+Delete"
+
+#: src/widget/connection_view/server_screen.rs:1221
+msgid "Ctrl+Alt+F1"
+msgstr "Ctrl+Alt+F1"
+
+#: src/widget/connection_view/server_screen.rs:1225
+msgid "Ctrl+Alt+F2"
+msgstr "Ctrl+Alt+F2"
+
+#: src/widget/connection_view/server_screen.rs:1229
+msgid "Ctrl+Alt+F3"
+msgstr "Ctrl+Alt+F3"
+
+#: src/widget/connection_view/server_screen.rs:1233
+msgid "Ctrl+Alt+F4"
+msgstr "Ctrl+Alt+F4"
+
+#: src/widget/connection_view/server_screen.rs:1237
+msgid "Ctrl+Alt+F5"
+msgstr "Ctrl+Alt+F5"
+
+#: src/widget/connection_view/server_screen.rs:1241
+msgid "Ctrl+Alt+F6"
+msgstr "Ctrl+Alt+F6"
+
+#: src/widget/connection_view/server_screen.rs:1245
+msgid "Ctrl+Alt+F7"
+msgstr "Ctrl+Alt+F7"
+
+#: src/widget/connection_view/server_screen.rs:1249
+msgid "Ctrl+Alt+F8"
+msgstr "Ctrl+Alt+F8"
+
+#: src/widget/connection_view/server_screen.rs:1253
+msgid "Ctrl+Alt+F9"
+msgstr "Ctrl+Alt+F9"
+
+#: src/widget/connection_view/server_screen.rs:1257
+msgid "Ctrl+Alt+F10"
+msgstr "Ctrl+Alt+F10"
+
+#: src/widget/connection_view/server_screen.rs:1261
+msgid "Ctrl+Alt+F11"
+msgstr "Ctrl+Alt+F11"
+
+#: src/widget/connection_view/server_screen.rs:1265
+msgid "Ctrl+Alt+F12"
+msgstr "Ctrl+Alt+F12"
+
+#: src/widget/connection_view/server_screen.rs:1271
+msgid "Print"
+msgstr "打印"
+
+#: src/widget/connection_view/server_screen.rs:1282
+msgid "_Zoom"
+msgstr "缩放(_Z)"
+
+#: src/widget/connection_view/server_screen.rs:1305
+msgid "Server _Actions"
+msgstr "服务器操作(_A)"
+
+#: src/widget/connection_view/server_screen.rs:1309
+msgid "_Close Window"
+msgstr "关闭窗口(_C)"
+
+#: src/widget/connection_view/server_screen.rs:1311
+msgid "_Close Connection"
+msgstr "关闭连接(_C)"
+
+#: src/widget/connection_view/server_screen.rs:1328 src/widget/window.blp:319
+msgid "_New Window"
+msgstr "新建窗口(_N)"
+
+#: src/widget/connection_view/server_screen.rs:1333 src/widget/window.blp:329
+msgid "_Keyboard Shortcuts"
+msgstr "键盘快捷键(_K)"
+
+#: src/widget/connection_view/server_screen.rs:1337 src/widget/window.blp:334
+msgid "_About Field Monitor"
+msgstr "关于现场监视器(_A)"
+
+#: src/widget/connection_view/server_screen.rs:1356
+#, rust-format
+msgid "Show Monitor {number}"
+msgstr "显示监视器 {number}"
+
+#: src/widget/connection_view/server_screen.rs:1367
+msgid "_Copy"
+msgstr "复制(_C)"
+
+#: src/widget/connection_view/server_screen.rs:1371
+msgid "_Paste"
+msgstr "粘贴(_P)"
+
+#: src/widget/connection_view/server_screen.rs:1375
+msgid "Select _All"
+msgstr "全选(_A)"
+
+#: src/widget/connection_view/server_screen.rs:1384
+msgid "Zoom In"
+msgstr "放大"
+
+#: src/widget/connection_view/server_screen.rs:1388
+msgid "Zoom Out"
+msgstr "缩小"
+
+#: src/widget/connection_view/server_screen.rs:1392
+msgid "Reset Zoom"
+msgstr "重置缩放"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:1494
+#, rust-format
+msgid "Press {keycombo} to ungrab the mouse and keyboard."
+msgstr "按 {keycombo} 以释放鼠标和键盘。"
+
+#: src/widget/connection_view/server_screen.rs:1517
+msgid "Input released."
+msgstr "输入设备已释放。"
+
+#: src/widget/preferences.blp:12
+msgid "Preferences"
+msgstr "首选项"
+
+#: src/widget/preferences.blp:15
+msgid "Behavior"
+msgstr "行为"
+
+#: src/widget/preferences.blp:18
+msgid "Open connections in new windows"
+msgstr "在新窗口打开连接"
+
+#: src/widget/preferences.blp:23
+msgid "Appearance"
+msgstr "外观"
+
+#: src/widget/preferences.blp:26 src/widget/preferences.rs:204
+msgid "Sharp window corners"
+msgstr "锐利窗口夹角"
+
+#: src/widget/preferences.blp:46 src/widget/preferences.rs:234
+msgid "Header bars for active connections"
+msgstr "用于活动连接的标头栏"
+
+#: src/widget/preferences.blp:66
+msgid "Show keyboard shortcut for how to ungrab"
+msgstr "显示释放输入设备的键盘快捷键"
+
+#: src/widget/preferences.blp:67
+msgid ""
+"Show a message on what key combination can be used to ungrab mouse and "
+"keyboard from an active connection, every time this input is grabbed."
+msgstr ""
+"每次输入设备已被抓取时，显示消息以提示可用来从活动连接释放鼠标和键盘的按键组"
+"合。"
+
+#: src/widget/preferences.rs:180 src/widget/preferences.rs:207
+msgid "Automatic"
+msgstr "自动"
+
+#: src/widget/preferences.rs:181 src/widget/preferences.rs:208
+msgid "Always"
+msgstr "总是"
+
+#: src/widget/preferences.rs:182 src/widget/preferences.rs:209
+msgid "Never"
+msgstr "永不"
+
+#: src/widget/preferences.rs:190 src/widget/preferences.rs:237
+msgid "Default"
+msgstr "默认"
+
+#: src/widget/preferences.rs:191 src/widget/preferences.rs:238
+msgid "Show Above"
+msgstr "显示在上面"
+
+#: src/widget/preferences.rs:192 src/widget/preferences.rs:239
+msgid "Overlay and Hide"
+msgstr "叠加和隐藏"
+
+#: src/widget/preferences.rs:205
+msgid ""
+"Configure whether and when Field Monitor will use sharp, right angle, window "
+"corners instead of the default corner radius. This is useful to make sure "
+"the corners of connected screens are not cut off."
+msgstr ""
+"配置现场监视器是否以及何时使用锐利角度的窗口夹角而不是默认的圆角。此选项对确"
+"保已连接屏幕不会因圆角而被裁剪比较有用。"
+
+#: src/widget/preferences.rs:207
+msgid ""
+"Use default corner radius, but make window corners sharp whenever input is "
+"grabbed."
+msgstr "使用默认圆角，但在抓取输入设备后使窗口夹角锐化。"
+
+#: src/widget/preferences.rs:208
+msgid "Always use sharp window corners."
+msgstr "总是使用锐利的窗口夹角。"
+
+#: src/widget/preferences.rs:209
+msgid "Never use sharp window corners."
+msgstr "永不使用锐利的窗口夹角。"
+
+#: src/widget/preferences.rs:235
+msgid "Change how the header bar is presented for active connection screens."
+msgstr "更改活动连接屏幕标头栏的呈现方式。"
+
+#: src/widget/preferences.rs:237
+msgid ""
+"The header bar is shown above the connection screen. In fullscreen mode the "
+"header bar is instead overlayed and hides whenever input is grabbed."
+msgstr ""
+"标头栏显示在连接屏幕的上方。全屏模式下在抓取输入设备后会以叠加与隐藏的方式代"
+"替。"
+
+#: src/widget/preferences.rs:238
+msgid ""
+"The header bar is always shown above the connection screen, even in "
+"fullscreen mode."
+msgstr "标头栏总是显示在连接屏幕的上方，即使在全屏模式下也如此。"
+
+#: src/widget/preferences.rs:239
+msgid ""
+"The header bar is always shown as an overlay on top of the connection "
+"screen, it is hidden whenever input is grabbed."
+msgstr "标头栏总是在连接屏幕的顶部显示为叠加层，抓取输入设备后则隐藏。"
+
+#: src/widget/quick_connect_dialog.blp:19
+#, c-format
+msgid ""
+"Enter the URL of the server you want to connect to.\n"
+"Supported protocols are: RDP, SPICE, VNC.\n"
+"\n"
+"<b>Examples:</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://server:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://user@server?VncPassword=password123</i>"
+msgstr ""
+"输入您要连接服务器的 URL。\n"
+"支持的协议为：RDP、SPICE、VNC。\n"
+"\n"
+"<b>示例：</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://server:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://user@server?VncPassword=password123</i>"
+
+#: src/widget/quick_connect_dialog.blp:22
+msgid "Connection URL"
+msgstr "连接 URL"
+
+#: src/widget/quick_connect_dialog.blp:33
+msgid "Open File..."
+msgstr "打开文件…"
+
+#: src/widget/quick_connect_dialog.rs:94 src/widget/quick_connect_dialog.rs:156
+msgid "Failed to open"
+msgstr "打开失败"
+
+#: src/widget/quick_connect_dialog.rs:97
+msgid ""
+"Field Monitor could not connect to the server using the specified file or URI"
+msgstr "现场监视器无法使用指定的文件或 URI 连接至服务器"
+
+#: src/widget/quick_connect_dialog.rs:119
+msgid "Supported files"
+msgstr "支持的文件"
+
+#: src/widget/quick_connect_dialog.rs:126
+msgid "RDP file"
+msgstr "RDP 文件"
+
+#: src/widget/quick_connect_dialog.rs:133
+msgid "Virt Viewer file"
+msgstr "Virt 查看器文件"
+
+#: src/widget/quick_connect_dialog.rs:137
+msgid "Any file"
+msgstr "任何文件"
+
+#: src/widget/quick_connect_dialog.rs:145
+msgid "Open Connection from file..."
+msgstr "从文件打开连接…"
+
+#: src/widget/quick_connect_dialog.rs:158
+msgid "Field Monitor was unable to open the provided file."
+msgstr "现场监视器无法打开提供的文件。"
+
+#: src/widget/update_connection_dialog.blp:34
+msgid "Save"
+msgstr "保存"
+
+#. XXX: These are here because (1) some of them we need in multiple places and (2) they are used inside
+#. glib::clone where they can't be picked up by gettext's scanner
+#: src/widget/usb_redir/mod.rs:23
+msgid "USB device connected"
+msgstr "USB 设备已连接"
+
+#: src/widget/usb_redir/mod.rs:25
+msgid "Failed to connect device"
+msgstr "连接设备失败"
+
+#: src/widget/usb_redir/mod.rs:26
+msgid "USB device disconnected"
+msgstr "USB 设备已断开连接"
+
+#: src/widget/usb_redir/mod.rs:28
+msgid "Failed to disconnect device"
+msgstr "断开设备连接失败"
+
+#: src/widget/usb_redir/mod.rs:29
+msgid "No devices available."
+msgstr "无可用设备。"
+
+#: src/widget/usb_redir/settings.blp:23
+msgid "No devices connected."
+msgstr "无连接的设备。"
+
+#: src/widget/usb_redir/settings.blp:48
+msgid "Manage Devices..."
+msgstr "管理设备…"
+
+#: src/widget/usb_redir/settings.rs:167
+#: src/widget/usb_redir/settings_dialog.rs:212
+msgid "Disconnect"
+msgstr "断开连接"
+
+#: src/widget/usb_redir/settings_dialog.blp:19
+msgid "Help"
+msgstr "帮助"
+
+#: src/widget/usb_redir/settings_dialog.blp:31
+msgid "Devices"
+msgstr "设备"
+
+#: src/widget/usb_redir/settings_dialog.blp:45
+msgid "Show All Devices"
+msgstr "显示所有设备"
+
+#: src/widget/usb_redir/settings_dialog.rs:163
+msgid "1 channel free"
+msgstr "1 个通道闲置"
+
+#. Translators: {free} = number of free USB redirection channels
+#: src/widget/usb_redir/settings_dialog.rs:166
+#, rust-format
+msgid "{free} channels free"
+msgstr "{free} 个通道闲置"
+
+#: src/widget/usb_redir/settings_dialog.rs:200
+msgid "This device can not be connected, you might be missing permissions."
+msgstr "无法连接此设备，您可能缺少权限。"
+
+#: src/widget/usb_redir/settings_dialog.rs:398
+msgid ""
+"This dialog allows you to share USB devices with the remote server or "
+"virtual machine.\n"
+"\n"
+"The number of devices that can be shared may be limited by the remote "
+"server.\n"
+"\n"
+"The list hides some devices (USB hubs, etc.) by default. Use the toggle "
+"button to show all devices, but note that USB hubs can not be properly "
+"shared with remote servers.\n"
+"\n"
+"To share a device your user account may need read and write permissions on "
+"the raw device, consult your distribution documentation for more information."
+msgstr ""
+"此对话框可让您与远程服务器或虚拟机共享 USB 设备。\n"
+"\n"
+"可共享的设备数量可能受远程服务器限制。\n"
+"\n"
+"该列表默认隐藏部分设备（USB 集线器等）。使用切换按钮来显示所有设备，但请注意 "
+"USB 集线器无法正确与远程服务器共享。\n"
+"\n"
+"要共享设备，您的用户账户可能需要在原始设备上的读写权限，查阅您的发行版文档获"
+"取更多信息。"
+
+#: src/widget/window.blp:37 src/widget/window.blp:41
+msgid "About Field Monitor"
+msgstr "关于现场监视器"
+
+#: src/widget/window.blp:84
+msgid "Main menu"
+msgstr "主菜单"
+
+#: src/widget/window.blp:138 src/widget/window.blp:200
+msgid "Add Connection"
+msgstr "添加连接"
+
+#: src/widget/window.blp:312
+msgid "_Reload Connections"
+msgstr "重新加载连接(_R)"
+
+#: src/widget/window.blp:324
+msgid "_Preferences"
+msgstr "首选项(_P)"
+
+#: src/widget/window.rs:459
+msgid "Showing active connection"
+msgstr "显示活动连接"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/window.rs:464
+#, rust-format
+msgid "Showing connection: {title}"
+msgstr "显示连接：{title}"
+
+#: src/widget/window.rs:469
+msgid "Showing connection list"
+msgstr "显示连接列表"
+
+#: src/widget/window.rs:599
+msgid "Connect to your virtual machines and remote servers."
+msgstr "连接至您的虚拟机和远程服务器。"
