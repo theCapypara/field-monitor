@@ -121,7 +121,7 @@ fn handle_rdp_error(
         }
         Some(rdw_rdp::Error::Connector(err))
             if matches!(
-                err.kind,
+                err.kind(),
                 ConnectorErrorKind::Credssp(_) | ConnectorErrorKind::AccessDenied
             ) =>
         {

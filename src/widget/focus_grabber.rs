@@ -20,7 +20,7 @@ use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::WeakRef;
 use gtk::glib;
-use gtk::{gdk, BinLayout};
+use gtk::{BinLayout, gdk};
 use log::debug;
 use rdw::DisplayExt;
 use std::cell::Cell;

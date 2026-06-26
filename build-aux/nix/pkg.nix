@@ -32,7 +32,7 @@
 }:
 stdenv.mkDerivation rec {
   pname = "field-monitor";
-  version = "50.1";
+  version = "50.1+dev";
 
   strictDeps = true;
 
