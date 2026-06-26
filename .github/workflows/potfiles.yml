@@ -8,7 +8,7 @@ jobs:
     name: POTFILE Generation
     runs-on: ubuntu-24.04
     container:
-      image: fedora:42
+      image: fedora:43
     steps:
       - uses: actions/checkout@v6
 
