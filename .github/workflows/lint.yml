@@ -8,7 +8,7 @@ jobs:
     name: Rustfmt Check
     runs-on: ubuntu-24.04
     container:
-      image: fedora:42
+      image: fedora:45
     steps:
       - uses: actions/checkout@v6
 
@@ -21,7 +21,7 @@ jobs:
     name: Clippy Check
     runs-on: ubuntu-24.04
     container:
-      image: fedora:42
+      image: fedora:45
     steps:
       - uses: actions/checkout@v6
 
