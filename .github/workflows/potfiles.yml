@@ -10,7 +10,7 @@ jobs:
     container:
       image: fedora:rawhide
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Generate POT file
         uses: ./.github/action/run-meson
@@ -21,7 +21,7 @@ jobs:
     name: POTFILES Completeness
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Check POTFILES contains all translatable sources
         run: |
