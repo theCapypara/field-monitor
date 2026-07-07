@@ -20,7 +20,7 @@ use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::WeakRef;
 use gtk::glib;
-use gtk::{BinLayout, gdk};
+use gtk::{gdk, BinLayout};
 use log::debug;
 use rdw::DisplayExt;
 use std::cell::Cell;
@@ -96,8 +96,8 @@ mod imp {
                             || key == gdk::Key::Control_R
                             || key == gdk::Key::Alt_L
                             || key == gdk::Key::Alt_R
-                            || key == gdk::Key::Meta_L
-                            || key == gdk::Key::Meta_R
+                            || key == gdk::Key::Super_L
+                            || key == gdk::Key::Super_R
                         {
                             glib::Propagation::Stop
                         } else if key == gdk::Key::Tab || key == gdk::Key::ISO_Left_Tab {
@@ -109,7 +109,7 @@ mod imp {
                             });
                             glib::Propagation::Stop
                         } else {
-                            debug!("focused grabbed via keyboard in focus grabber");
+                            debug!("focused grabbed via keyboard in focus grabber: {:?}", key);
                             obj.grab(true);
                             glib::Propagation::Stop
                         }
