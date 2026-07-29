@@ -216,22 +216,22 @@ impl Adapter for VncAdapter {
 
 impl VncAdapter {
     fn on_connect_vnc_error(error_container: &RefCell<Option<ConnectionError>>, err: &str) {
-        warn!("VNC connect error: {:?}", &err);
+        warn!("VNC connect error: {:?}", err);
         let err_msg = err.to_string();
 
         if error_container.borrow().is_none() {
             error_container.replace(Some(ConnectionError::General(
                 Some(err_msg),
-                anyhow!("{}", &err),
+                anyhow!("{}", err),
             )));
         }
     }
     fn on_vnc_auth_failure(error_container: &Rc<RefCell<Option<ConnectionError>>>, err: &str) {
-        warn!("VNC auth failure: {:?}", &err);
+        warn!("VNC auth failure: {:?}", err);
         let err_msg = err.to_string();
         error_container.replace(Some(ConnectionError::AuthFailed(
             Some(err_msg),
-            anyhow!("{}", &err),
+            anyhow!("{}", err),
         )));
     }
     fn on_vnc_disconnected(

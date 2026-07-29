@@ -113,7 +113,7 @@ fn handle_rdp_error(
     err: Option<rdw_rdp::Error>,
     on_disconnected: &Rc<dyn Fn(Result<(), ConnectionError>)>,
 ) {
-    debug!("RDP connection disconnected (raw): {:?}", &err);
+    debug!("RDP connection disconnected (raw): {:?}", err);
     match err {
         None => {
             debug!("RDP connection disconnected");

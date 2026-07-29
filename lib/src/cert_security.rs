@@ -121,7 +121,7 @@ impl VerifyTls {
                     UnixTime::now(),
                 )
             })
-            .inspect_err(|err| warn!("failed cert verification (for {}): {}", &self.host, err))
+            .inspect_err(|err| warn!("failed cert verification (for {}): {}", self.host, err))
             .is_ok()
     }
 

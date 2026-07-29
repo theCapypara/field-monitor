@@ -394,7 +394,7 @@ impl ConfigAccess for ConfigSectionRef<'_> {
     ) -> BoxFuture<'_, anyhow::Result<Option<SecureString>>> {
         let key = key.to_string();
         Box::pin(async move {
-            let key = format!("{}///{}", self.section_key, &key);
+            let key = format!("{}///{}", self.section_key, key);
             match self.pending_secret_changes.get(&key) {
                 None => self.secret_manager.lookup(self.connection_id, &key).await,
                 Some(v) => Ok(v.clone()),
@@ -420,7 +420,7 @@ impl ConfigAccess for ConfigSectionMut<'_> {
     ) -> BoxFuture<'_, anyhow::Result<Option<SecureString>>> {
         let key = key.to_string();
         Box::pin(async move {
-            let key = format!("{}///{}", self.section_key, &key);
+            let key = format!("{}///{}", self.section_key, key);
             match self.pending_secret_changes.get(&key) {
                 None => self.secret_manager.lookup(self.connection_id, &key).await,
                 Some(v) => Ok(v.clone()),
