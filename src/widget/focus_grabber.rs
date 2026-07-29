@@ -246,7 +246,7 @@ impl FieldMonitorFocusGrabber {
                 debug!("self grab focus");
             }
             debug!("ungrab");
-            imp.release_all_held_mod_keys(&display);
+            Self::release_all_held_mod_keys(&display);
         }
         self.try_mute_accels(false);
     }
