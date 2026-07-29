@@ -21,7 +21,7 @@ use adw::subclass::prelude::*;
 use glib::WeakRef;
 use gtk::glib;
 use gtk::{BinLayout, gdk};
-use log::debug;
+use log::{debug, trace};
 use rdw::DisplayExt;
 use std::cell::Cell;
 use std::cell::RefCell;
@@ -57,39 +57,57 @@ mod imp {
             self.parent_constructed();
             let obj = self.obj();
 
+            // -- Forwarding input
+
+            // We send mouse motion to the RDW display always. Clicks are delivered
+            // exactly from when the input is grabbed (including the click to grab itself).
             let controller = gtk::GestureClick::builder()
                 .propagation_phase(gtk::PropagationPhase::Bubble)
+                .button(0)
                 .build();
-
             controller.connect_released(glib::clone!(
                 #[weak]
                 obj,
-                move |_, _, _, _| obj.grab(false)
+                move |_, _, _, _| obj.grab()
             ));
-
             obj.add_controller(controller);
-            obj.add_controller(
-                gtk::EventControllerScroll::builder()
-                    .propagation_phase(gtk::PropagationPhase::Bubble)
-                    .build(),
-            );
-            obj.add_controller(
-                gtk::EventControllerMotion::builder()
-                    .propagation_phase(gtk::PropagationPhase::Bubble)
-                    .build(),
-            );
 
-            let key_controller = gtk::EventControllerKey::builder()
-                .propagation_phase(gtk::PropagationPhase::Bubble)
+            // Scrolling however should not reach the display while not grabbed
+            let scroll_controller = gtk::EventControllerScroll::builder()
+                .propagation_phase(gtk::PropagationPhase::Capture)
+                .flags(gtk::EventControllerScrollFlags::BOTH_AXES)
                 .build();
-
-            key_controller.connect_key_pressed(glib::clone!(
+            scroll_controller.connect_scroll(glib::clone!(
                 #[weak]
                 obj,
                 #[upgrade_or]
                 glib::Propagation::Proceed,
-                move |_, key, _, state| {
-                    if !obj.grabbed() {
+                move |_, _, _| {
+                    if obj.grabbed() {
+                        glib::Propagation::Proceed
+                    } else {
+                        glib::Propagation::Stop
+                    }
+                }
+            ));
+            obj.add_controller(scroll_controller);
+
+            // For key presses, we filter some out when ungrabbed so tab element navigation
+            // works (a11y) and special keys (especially Super) aren't forwarded to the
+            // display unexpectedly. All other key presses cause a grab and send that key
+            // to the RDW display immediately.
+            let key_controller = gtk::EventControllerKey::builder()
+                .propagation_phase(gtk::PropagationPhase::Bubble)
+                .build();
+            key_controller.connect_key_pressed(glib::clone!(
+                #[weak(rename_to=slf)]
+                self,
+                #[weak]
+                obj,
+                #[upgrade_or]
+                glib::Propagation::Proceed,
+                move |_, key, keycode, state| {
+                    if !slf.grabbed.get() {
                         if key == gdk::Key::Shift_L
                             || key == gdk::Key::Shift_R
                             || key == gdk::Key::Control_L
@@ -110,7 +128,9 @@ mod imp {
                             glib::Propagation::Stop
                         } else {
                             debug!("focused grabbed via keyboard in focus grabber: {:?}", key);
-                            obj.grab(true);
+                            obj.grab();
+                            // We now need to forward this to rdw as well
+                            obj.forward_key_press(key, keycode);
                             glib::Propagation::Stop
                         }
                     } else {
@@ -118,7 +138,6 @@ mod imp {
                     }
                 }
             ));
-
             obj.add_controller(key_controller);
 
             self.obj().set_focusable(true);
@@ -136,9 +155,11 @@ mod imp {
                     move |window| slf.obj().on_window_active(window.is_active())
                 ));
             }
+            // When we are not grabbed the rdw display should not be focusable, but still sensitive
+            // so it properly handles things like motion.
             if let Some(child) = self.obj().first_child() {
                 self.obj()
-                    .bind_property("grabbed", &child, "sensitive")
+                    .bind_property("grabbed", &child, "can-focus")
                     .sync_create()
                     .build();
             }
@@ -186,7 +207,7 @@ impl FieldMonitorFocusGrabber {
         *display_opt = value.map(ObjectExt::downgrade);
     }
 
-    fn grab(&self, clear_keys: bool) {
+    fn grab(&self) {
         let imp = self.imp();
         if imp.grabbed.get() {
             return;
@@ -195,42 +216,10 @@ impl FieldMonitorFocusGrabber {
         imp.grabbed.set(true);
         self.notify_grabbed();
 
-        if let Some(display) = self
-            .imp()
-            .display
-            .borrow()
-            .as_ref()
-            .and_then(WeakRef::upgrade)
-        {
+        if let Some(display) = self.display() {
             let grab = display.try_grab();
             display.grab_focus();
             debug!("try_grab result: {grab:?}");
-            if clear_keys {
-                // hack
-                glib::idle_add_local_once(glib::clone!(
-                    #[weak]
-                    display,
-                    move || {
-                        let gdk_display = display.display();
-                        for kv in [
-                            gdk::Key::Alt_L,
-                            gdk::Key::Alt_R,
-                            gdk::Key::Control_L,
-                            gdk::Key::Control_R,
-                            gdk::Key::Tab,
-                        ] {
-                            if let Some(kks) = gdk_display.map_keyval(kv) {
-                                for kk in kks {
-                                    display.emit_by_name::<()>(
-                                        "key-event",
-                                        &[&kv, &kk.keycode(), &rdw::KeyEvent::RELEASE],
-                                    );
-                                }
-                            }
-                        }
-                    }
-                ));
-            }
         }
         self.try_mute_accels(true);
     }
@@ -244,13 +233,7 @@ impl FieldMonitorFocusGrabber {
         imp.grabbed.set(false);
         self.notify_grabbed();
 
-        if let Some(display) = self
-            .imp()
-            .display
-            .borrow()
-            .as_ref()
-            .and_then(WeakRef::upgrade)
-        {
+        if let Some(display) = self.display() {
             display.ungrab();
 
             if let Some(root) = self.root()
@@ -263,6 +246,7 @@ impl FieldMonitorFocusGrabber {
                 debug!("self grab focus");
             }
             debug!("ungrab");
+            imp.release_all_held_mod_keys(&display);
         }
         self.try_mute_accels(false);
     }
@@ -283,18 +267,11 @@ impl FieldMonitorFocusGrabber {
     }
 
     fn on_inner_grab_changed(&self) {
-        if let Some(inner_grabbed) = self
-            .imp()
-            .display
-            .borrow()
-            .as_ref()
-            .and_then(WeakRef::upgrade)
-            .map(|d| d.grabbed())
-        {
+        if let Some(inner_grabbed) = self.display().as_ref().map(DisplayExt::grabbed) {
             if inner_grabbed.is_empty() {
                 self.ungrab();
             } else {
-                self.grab(false);
+                self.grab();
             }
         }
     }
@@ -303,6 +280,53 @@ impl FieldMonitorFocusGrabber {
         if self.grabbed() && !is_active {
             self.ungrab();
         }
+    }
+
+    fn display(&self) -> Option<rdw::Display> {
+        self.imp()
+            .display
+            .borrow()
+            .as_ref()
+            .and_then(WeakRef::upgrade)
+    }
+
+    fn forward_key_press(&self, key: gdk::Key, keycode: u32) {
+        if let Some(display) = self.display()
+            && !display.read_only()
+        {
+            trace!("forwarding grabbing key press: {key:?}");
+            display.emit_by_name::<()>("key-event", &[&key, &keycode, &rdw::KeyEvent::PRESS]);
+        }
+    }
+
+    /// Release CTRL, ALT and TAB on the rdw display
+    fn release_all_held_mod_keys(display: &rdw::Display) {
+        // a bit of a hack tbh
+        glib::idle_add_local_once(glib::clone!(
+            #[weak]
+            display,
+            move || {
+                let gdk_display = display.display();
+                trace!("release_all_held_mod_keys");
+                for kv in [
+                    gdk::Key::Alt_L,
+                    gdk::Key::Alt_R,
+                    gdk::Key::Control_L,
+                    gdk::Key::Control_R,
+                    gdk::Key::Tab,
+                ] {
+                    if let Some(kks) = gdk_display.map_keyval(kv) {
+                        for kk in kks {
+                            trace!("emit key-event release for {kk:?}");
+                            display.emit_by_name::<()>(
+                                "key-event",
+                                &[&kv, &kk.keycode(), &rdw::KeyEvent::RELEASE],
+                            );
+                        }
+                    }
+                }
+            }
+        ));
     }
 }
 
