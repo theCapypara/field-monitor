@@ -14,11 +14,11 @@
   libGL,
   libvirt,
   openssl,
-  spice-gtk,
+  spice-glib,
   spice-protocol,
   usbredir,
   xdg-desktop-portal,
-  gst_all_1
+  gst_all_1,
 }:
 stdenv.mkDerivation {
   pname = "field-monitor-devel";
@@ -47,7 +47,7 @@ stdenv.mkDerivation {
     libGL
     libvirt
     openssl
-    (enableDebugging spice-gtk)
+    (enableDebugging spice-glib)
     (enableDebugging spice-protocol)
     usbredir
     xdg-desktop-portal

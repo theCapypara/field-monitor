@@ -95,7 +95,7 @@ impl VerifyTls {
         };
 
         if let Some(expected) = &self.verify_cert_subject {
-            let actual = &self.certs.main.0.tbs_certificate.subject;
+            let actual = self.certs.main.0.tbs_certificate().subject();
             if actual != expected {
                 warn!(
                     "tls verify: subject lines did not match. Expected: '{}', Actual: '{}'",
@@ -223,8 +223,8 @@ impl From<X509Certificate> for Cert {
 }
 
 pub fn extract_common_name(name: &Name) -> Option<String> {
-    for entry in &name.0 {
-        for attr in entry.0.iter() {
+    for entry in name.as_ref().iter() {
+        for attr in entry.as_ref().iter() {
             if attr.oid == COMMON_NAME
                 && let Ok(cn) = str::from_utf8(attr.value.value())
             {

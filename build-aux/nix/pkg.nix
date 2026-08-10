@@ -21,7 +21,7 @@
   blueprint-compiler,
   libxml2,
   spice-protocol,
-  spice-gtk,
+  spice-glib,
   vte-gtk4,
   gcr_4,
   gtk-vnc,
@@ -72,7 +72,7 @@ stdenv.mkDerivation rec {
     libGL
     libvirt
     openssl
-    spice-gtk
+    spice-glib
     spice-protocol
     usbredir
     xdg-desktop-portal

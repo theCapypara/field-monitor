@@ -18,7 +18,7 @@ edition = "2024"
 rust-version = "1.92"
 
 [workspace.dependencies]
-gettext-rs = { version = "0.7", features = ["gettext-system"] }
+gettext-rs = { version = "0.8", features = ["gettext-system"] }
 anyhow = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 serde_yaml = "0.9"
@@ -28,12 +28,12 @@ log = "0.4"
 num_enum = "0.7"
 indexmap = "2.14"
 secure-string = "0.3"
-http = "1.4"
-uuid = { version = "1.23", features = ["v7"] }
+http = "1.5"
+uuid = { version = "1.24", features = ["v7"] }
 parking_lot = "0.12"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 proxmox-api = { path = "connection/proxmox/proxmox-api" }
-tokio = { version = "1.52", features = ["parking_lot", "rt-multi-thread"] }
+tokio = { version = "1.53", features = ["parking_lot", "rt-multi-thread"] }
 
 [workspace.dependencies.glib]
 features = ["log"]
@@ -53,27 +53,27 @@ version = "0.9"
 package = "rdw4"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "16c62787fbcc0b4f6fae922e3feaaa7533e7af74"
+rev = "376601e316163f77c57af08a8b282b59e94effb6"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "16c62787fbcc0b4f6fae922e3feaaa7533e7af74"
+rev = "376601e316163f77c57af08a8b282b59e94effb6"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "16c62787fbcc0b4f6fae922e3feaaa7533e7af74"
+rev = "376601e316163f77c57af08a8b282b59e94effb6"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "16c62787fbcc0b4f6fae922e3feaaa7533e7af74"
+rev = "376601e316163f77c57af08a8b282b59e94effb6"
 default-features = false
 
 [workspace.dependencies.spice-gtk-usb-portal]
@@ -115,12 +115,12 @@ serde_ini = "0.2"
 futures = { workspace = true }
 uuid = { workspace = true }
 fluent-uri = "0.4"
-itertools = "0.14"
+itertools = "0.15"
 sorted-vec = "0.8"
 secure-string = { workspace = true }
 log = { workspace = true }
 pretty_env_logger = "0.5"
-pem = "3"
+pem = "4"
 num_enum = { workspace = true }
 glib = { workspace = true }
 gtk = { workspace = true }

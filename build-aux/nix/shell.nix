@@ -8,7 +8,7 @@
   gst_all_1,
   gtk-vnc,
   spice-protocol,
-  spice-gtk,
+  spice-glib,
   libepoxy,
   llvmPackages_latest,
   glib,
@@ -63,7 +63,7 @@ let
     gst_all_1.gst-plugins-good
     patched-gtk-vnc
     spice-protocol
-    spice-gtk
+    spice-glib
     libepoxy
     libGL
   ];
@@ -79,7 +79,7 @@ mkShell {
   '';
   # Add precompiled library to rustc search path
   RUSTFLAGS = (
-    builtins.map (a: ''-L ${a}/lib'') [
+    builtins.map (a: "-L ${a}/lib") [
       # add libraries here (e.g. pkgs.libvmi)
     ]
   );
@@ -95,7 +95,7 @@ mkShell {
     ++ [
       ''-I"${llvmPackages_latest.libclang.lib}/lib/clang/${llvmPackages_latest.libclang.version}/include"''
       ''-I"${glib.dev}/include/glib-2.0"''
-      ''-I${glib.out}/lib/glib-2.0/include/''
+      "-I${glib.out}/lib/glib-2.0/include/"
     ];
 
   nativeBuildInputs = [
@@ -103,50 +103,49 @@ mkShell {
     gobject-introspection
   ];
 
-  buildInputs =
-    [
-      gtk4
-      vte-gtk4
-      gcr_4
-      libadwaita
-      libadwaita.devdoc
-      meson
-      ninja
-      cmake
-      zlib
-      usbredir
-      gst_all_1.gstreamer
-      gst_all_1.gst-plugins-base
-      gst_all_1.gst-plugins-good
-      patched-gtk-vnc
-      spice-protocol
-      spice-gtk
-      libepoxy
-      flatpak-builder
-      python312
-      libvirt
-      libGL
-      desktop-file-utils
-      appstream
-      gi-docgen
-    ]
-    ++ (with python312Packages; [
-      pygobject3
-      # Flatpak Builder Tools requirements
-      aiohttp
-      toml
-    ])
-    ## RUST
-    ++ [
-      clang
-      llvmPackages_latest.bintools
-      rustup
-      openssl
-      pkg-config
-    ]
-    ## UTIL
-    ++ [
-      editorconfig-checker
-      jq
-    ];
+  buildInputs = [
+    gtk4
+    vte-gtk4
+    gcr_4
+    libadwaita
+    libadwaita.devdoc
+    meson
+    ninja
+    cmake
+    zlib
+    usbredir
+    gst_all_1.gstreamer
+    gst_all_1.gst-plugins-base
+    gst_all_1.gst-plugins-good
+    patched-gtk-vnc
+    spice-protocol
+    spice-glib
+    libepoxy
+    flatpak-builder
+    python312
+    libvirt
+    libGL
+    desktop-file-utils
+    appstream
+    gi-docgen
+  ]
+  ++ (with python312Packages; [
+    pygobject3
+    # Flatpak Builder Tools requirements
+    aiohttp
+    toml
+  ])
+  ## RUST
+  ++ [
+    clang
+    llvmPackages_latest.bintools
+    rustup
+    openssl
+    pkg-config
+  ]
+  ## UTIL
+  ++ [
+    editorconfig-checker
+    jq
+  ];
 }
