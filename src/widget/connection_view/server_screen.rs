@@ -310,12 +310,16 @@ impl FieldMonitorServerScreen {
         window: Option<&FieldMonitorWindow>,
         server_path: &str,
         adapter_id: &str,
+        title: &str,
+        subtitle: &str,
         loader: ConnectionLoader,
     ) -> Self {
         let slf: Self = glib::Object::builder()
             .property("application", app)
             .property("server-path", server_path)
             .property("adapter-id", adapter_id)
+            .property("title", title)
+            .property("subtitle", subtitle)
             .property("dynamic-resize", true)
             .property("scale-to-window", true)
             .property("reveal-osd-controls", true)
@@ -441,7 +445,6 @@ impl FieldMonitorServerScreen {
         if let Some(mut v) = imp.connection_loader.try_lock() {
             *v = None;
         }
-        imp.close_cb.replace(None);
         imp.usb_redir_bin.set_child(None::<&gtk::Widget>);
         if let Some((usb_redir, handler)) = imp.usb_redir_signal.take()
             && let Some(usb_redir) = usb_redir.upgrade()
@@ -893,7 +896,7 @@ impl FieldMonitorServerScreen {
                         let result = FieldMonitorCertificateTrustDialog::run_async(
                             &app, &cert, &host, is_ca,
                         )
-                        .await;
+                            .await;
                         if result {
                             let _ = trust_store.trust(&cert, &host).map_err(warn_tls_err);
                         }

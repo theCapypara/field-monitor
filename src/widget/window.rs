@@ -24,9 +24,7 @@ use crate::widget::close_warning_dialog::FieldMonitorCloseWarningDialog;
 use crate::widget::connection_list::{
     FieldMonitorConnectionStack, FieldMonitorNavbarConnectionList,
 };
-use crate::widget::connection_view::{
-    FieldMonitorConnectionTabView, FieldMonitorNavbarConnectionView, FieldMonitorServerScreen,
-};
+use crate::widget::connection_view::FieldMonitorServerScreen;
 use crate::widget::quick_connect_dialog::FieldMonitorQuickConnectDialog;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
@@ -70,9 +68,7 @@ mod imp {
         #[template_child]
         pub connection_list_stack: TemplateChild<FieldMonitorConnectionStack>,
         #[template_child]
-        pub active_connection_tab_view: TemplateChild<FieldMonitorConnectionTabView>,
-        #[template_child]
-        pub navbar_connection_view: TemplateChild<FieldMonitorNavbarConnectionView>,
+        pub current_server_screen_bin: TemplateChild<adw::Bin>,
         #[template_child]
         pub navbar_connection_list: TemplateChild<FieldMonitorNavbarConnectionList>,
         #[template_child]
@@ -258,7 +254,7 @@ impl FieldMonitorWindow {
                         match imp.layout_view.layout_name().as_deref() {
                             Some("connection-view") => {
                                 if !imp.connection_view_split_view.shows_sidebar()
-                                    && let Some(screen) = imp.active_connection_tab_view.current()
+                                    && let Some(screen) = slf.current_server_screen()
                                 {
                                     screen.open_menu();
                                 } else {
@@ -290,13 +286,18 @@ impl FieldMonitorWindow {
         &self.imp().mobile_breakpoint
     }
 
+    pub fn current_server_screen(&self) -> Option<FieldMonitorServerScreen> {
+        let child = self.imp().current_server_screen_bin.child();
+        child.and_downcast()
+    }
+
     /// Try to focus an already open connection view, if a connection view for the given
     /// server is open
     pub fn focus_connection_view(&self, server_path: &str, adapter_id: &str) -> bool {
         if self
-            .imp()
-            .active_connection_tab_view
-            .focus(server_path, adapter_id)
+            .current_server_screen()
+            .map(|screen| screen.server_path() == server_path && screen.adapter_id() == adapter_id)
+            .unwrap_or_default()
         {
             self.imp().layout_view.set_layout_name("connection-view");
             true
@@ -307,8 +308,80 @@ impl FieldMonitorWindow {
 
     /// Open a connection view
     pub fn open_connection_view(&self, info: RemoteServerInfo) {
-        self.imp().active_connection_tab_view.open(self, info);
+        let app = self.application().unwrap().downcast().unwrap();
+        let view = FieldMonitorServerScreen::new(
+            &app,
+            Some(self),
+            &info.server_path,
+            &info.adapter_id,
+            &info.connection_title,
+            &info.server_title,
+            info.loader,
+        );
+
+        view.set_close_cb(glib::clone!(
+            #[weak(rename_to=slf)]
+            self,
+            move || slf.close_connection_view()
+        ));
+
+        self.imp().current_server_screen_bin.set_child(Some(&view));
+
         self.select_connection_view();
+    }
+
+    pub fn close_connection_view(&self) {
+        let imp = self.imp();
+        let bin = &imp.current_server_screen_bin;
+        if let Some(screen) = bin.child().and_downcast::<FieldMonitorServerScreen>() {
+            if screen.is_disconnected() {
+                self.do_close_connection_view();
+                return;
+            }
+
+            // if connected or unknown: confirmation dialog
+            let dialog = adw::AlertDialog::builder()
+                .heading(gettext("Close Connection?"))
+                .body(gettext(
+                    "Closing the connection will disconnect from the remote server.",
+                ))
+                .build();
+            dialog.add_response("No", &gettext("No"));
+            dialog.add_response("Yes", &gettext("Yes"));
+            dialog.set_response_appearance("Yes", adw::ResponseAppearance::Destructive);
+            dialog.set_default_response(Some("No"));
+            dialog.set_close_response("No");
+
+            dialog.connect_closure(
+                "response",
+                false,
+                glib::closure_local!(
+                    #[strong(rename_to = slf)]
+                    self,
+                    move |_: &adw::AlertDialog, response: &str| {
+                        if response == "Yes" {
+                            slf.do_close_connection_view();
+                        }
+                    }
+                ),
+            );
+
+            dialog.present(Some(self));
+        }
+    }
+
+    fn do_close_connection_view(&self) {
+        let imp = self.imp();
+        let bin = &imp.current_server_screen_bin;
+        if let Some(screen) = bin.child().and_downcast::<FieldMonitorServerScreen>() {
+            // XXX: For some reason when closing the window, even after removing the tab page,
+            //      the server screen inside of it is still not disposed
+            screen.force_eject_adapter();
+            bin.set_child(None::<&gtk::Widget>);
+        }
+        debug!("switching to welcome view");
+        self.unselect_connection_view();
+        imp.inner_list_stack.set_visible_child_name("welcome");
     }
 
     // Taken in parts from Showtime:
@@ -378,10 +451,6 @@ impl FieldMonitorWindow {
             }
         }
     }
-
-    pub(crate) fn tab_view(&self) -> FieldMonitorConnectionTabView {
-        self.imp().active_connection_tab_view.get()
-    }
 }
 
 #[gtk::template_callbacks]
@@ -392,22 +461,16 @@ impl FieldMonitorWindow {
         if imp.force_close.get() {
             // User has forced the window to close.
 
-            // XXX: Clean up all open connection views. Now, this shouldn't be necessary, but
+            // XXX: Clean up still open connection view. Now, this shouldn't be necessary, but
             // somehow somewhere we have some issues with references being cleaned up otherwise.
             // Signals? Maybe. Probably. Who knows!
-            imp.active_connection_tab_view.close_all_tabs();
+            self.close_connection_view();
 
             false
-        } else if imp.active_connection_tab_view.n_pages() > 0 {
-            // Handle still open connections and ask user to confirm.
+        } else if let Some(screen) = self.current_server_screen() {
+            // Handle still open connection and ask user to confirm.
 
-            let open_connection_descs = imp.active_connection_tab_view.describe_active();
-
-            if open_connection_descs.is_empty() {
-                return false;
-            }
-
-            let dialog = FieldMonitorCloseWarningDialog::new(open_connection_descs);
+            let dialog = FieldMonitorCloseWarningDialog::new(&screen.title(), &screen.subtitle());
 
             dialog.connect_closure(
                 "response",
@@ -428,7 +491,7 @@ impl FieldMonitorWindow {
 
             true
         } else {
-            // No open connections, close.
+            // No open connection, close.
 
             false
         }
@@ -438,8 +501,8 @@ impl FieldMonitorWindow {
     fn on_layout_view_layout_name_changed(&self) {
         let layout_name = self.imp().layout_view.layout_name();
         if let Some("connection-view") = layout_name.as_deref() {
-            if let Some(view) = self.imp().active_connection_tab_view.current() {
-                self.change_window_title(WindowTitle::ConnectionView(view.downgrade()));
+            if let Some(screen) = self.current_server_screen() {
+                self.change_window_title(WindowTitle::ConnectionView(screen.downgrade()));
             }
             self.add_css_class("connection-view-active");
         } else {
@@ -450,10 +513,8 @@ impl FieldMonitorWindow {
         let announcement = match layout_name.as_deref() {
             Some("connection-view") => {
                 let title = self
-                    .imp()
-                    .active_connection_tab_view
-                    .visible_page()
-                    .map(|p| p.title().to_string())
+                    .current_server_screen()
+                    .map(|screen| format!("{} - {}", screen.title(), screen.subtitle()))
                     .unwrap_or_default();
                 if title.is_empty() {
                     Some(gettext("Showing active connection"))
@@ -520,32 +581,6 @@ impl FieldMonitorWindow {
                 imp.inner_list_stack
                     .set_visible_child_name("connection-list");
                 self.maybe_disable_no_sidebar_mode();
-            }
-            self.maybe_clicked_item_on_sidebar();
-        }
-    }
-
-    #[template_callback]
-    fn on_active_connection_tab_view_visible_page_changed(&self) {
-        let imp = self.imp();
-        let page = imp.active_connection_tab_view.visible_page();
-        debug!(
-            "Connection View active page changed: {:?} - inner stack page: {:?}",
-            page,
-            imp.inner_stack.visible_child_name()
-        );
-
-        let connection_view_visible =
-            imp.inner_stack.visible_child_name().as_deref() == Some("connection-view");
-
-        if page.is_none() && connection_view_visible {
-            debug!("switching to welcome view");
-            self.unselect_connection_view();
-            imp.inner_list_stack.set_visible_child_name("welcome");
-        } else if page.is_some() {
-            if !connection_view_visible {
-                debug!("switching to connection view");
-                self.select_connection_view();
             }
             self.maybe_clicked_item_on_sidebar();
         }
@@ -649,8 +684,6 @@ impl FieldMonitorWindow {
     fn unselect_connection_view(&self) {
         let imp = self.imp();
         if imp.inner_stack.visible_child_name().as_deref() == Some("connection-view") {
-            imp.active_connection_tab_view
-                .set_visible_page(None::<&adw::TabPage>);
             imp.inner_stack.set_visible_child_name("main");
             imp.layout_view.set_layout_name("main");
         }

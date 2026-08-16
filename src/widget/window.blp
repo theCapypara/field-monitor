@@ -96,10 +96,6 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                                     spacing: 12;
                                     vexpand: true;
 
-                                    $FieldMonitorNavbarConnectionView navbar_connection_view {
-                                        tab-view: active_connection_tab_view;
-                                    }
-
                                     Stack connection_list_navbar_stack {
                                         StackPage {
                                             name: "list";
@@ -237,10 +233,7 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                         StackPage connection_view {
                             name: "connection-view";
 
-                            child: $FieldMonitorConnectionTabView active_connection_tab_view {
-                                notify::visible-page => $on_active_connection_tab_view_visible_page_changed() swapped;
-                                toast-overlay: toast_overlay;
-                            };
+                            child: Adw.Bin current_server_screen_bin {};
                         }
                     }
 
