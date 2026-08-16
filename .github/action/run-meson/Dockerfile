@@ -9,7 +9,8 @@ RUN yum install -y \
     gtk-update-icon-cache wayland-devel egl-wayland-devel \
     libepoxy-devel openssl-devel cairo-devel spice-glib-devel \
     cairo-gobject-devel gcr-devel gvnc-devel appstream \
-    gtk4-devel libadwaita-devel vte291-gtk4-devel git \
+    gtk4-devel libadwaita-devel vte291-gtk4-devel git\
+    python3-gobject \
     && yum clean all && rm -rf /var/cache/yum
 
 COPY entrypoint.sh /entrypoint.sh

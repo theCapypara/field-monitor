@@ -1,6 +1,8 @@
 pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
 gnome = import('gnome')
 
+blueprint_compiler = find_program('blueprint-compiler')
+
 blueprints = custom_target('blueprints',
   input: files(
     'shortcuts-dialog.blp',
@@ -24,7 +26,7 @@ blueprints = custom_target('blueprints',
     'quick_connect/preferences.blp',
   ),
   output: '.',
-  command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
+  command: [blueprint_compiler, 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
 )
 
 conf = configuration_data()
@@ -104,5 +106,14 @@ cargo_check_fmt = run_target(
     'fmt', '--verbose',
     cargo_src_opt,
     '--', '--check'
+  ]
+)
+
+blueprint_format_check_src = run_target(
+  'blueprint-format-check-src',
+  command: [
+    blueprint_compiler,
+    'format', '-s4',
+    meson.current_source_dir()
   ]
 )
