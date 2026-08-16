@@ -35,21 +35,6 @@ template $FieldMonitorServerScreen: Adw.Bin {
                 }
             }
 
-            [start]
-            Button show_navigation_button {
-                hexpand: true;
-                valign: start;
-                halign: start;
-                icon-name: "sidebar-show-symbolic";
-                tooltip-text: _("Show Navigation");
-                action-name: "win.show-sidebar";
-                clicked => $on_show_navigation_clicked() swapped;
-
-                accessibility {
-                    label: _("Show Navigation");
-                }
-            }
-
             [end]
             MenuButton menu_button {
                 hexpand: true;

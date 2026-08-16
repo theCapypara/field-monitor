@@ -46,17 +46,13 @@ mod imp {
         #[template_child]
         pub app_status: TemplateChild<FieldMonitorAppStatus>,
         #[template_child]
-        pub outer_stack: TemplateChild<gtk::Stack>,
+        pub app_mode_stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub inner_stack: TemplateChild<gtk::Stack>,
+        pub initial_welcome_page_bin: TemplateChild<adw::Bin>,
         #[template_child]
         pub main_split_view: TemplateChild<adw::NavigationSplitView>,
         #[template_child]
-        pub connection_view_split_view: TemplateChild<adw::OverlaySplitView>,
-        #[template_child]
-        pub layout_view: TemplateChild<adw::MultiLayoutView>,
-        #[template_child]
-        pub inner_list_stack: TemplateChild<gtk::Stack>,
+        pub connection_list_content_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
@@ -73,6 +69,8 @@ mod imp {
         pub navbar_connection_list: TemplateChild<FieldMonitorNavbarConnectionList>,
         #[template_child]
         pub connection_list_navbar_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub welcome_page_bin: TemplateChild<adw::Bin>,
         #[template_child]
         pub welcome_button_box: TemplateChild<gtk::Box>,
         #[template_child]
@@ -158,7 +156,7 @@ impl FieldMonitorWindow {
             glib::clone!(
                 #[weak]
                 slf,
-                move |app, _| slf.on_app_loading_connections_changed(app)
+                move |app, _| slf.update_connection_list(app, false)
             ),
         );
 
@@ -172,7 +170,7 @@ impl FieldMonitorWindow {
                 move |_| {
                     // If a connection was updated then we now no longer have 0 connections if we
                     // did before, so in that case switch to the normal app mode
-                    slf.maybe_disable_no_sidebar_mode();
+                    slf.disable_initial_welcome();
                     None
                 }
             ),
@@ -187,7 +185,7 @@ impl FieldMonitorWindow {
             ),
         );
 
-        slf.on_app_loading_connections_changed(application);
+        slf.update_connection_list(application, false);
         slf.on_app_state_changed(application);
 
         if let Some(settings) = application.settings() {
@@ -233,35 +231,19 @@ impl FieldMonitorWindow {
                     }
                 ))
                 .build(),
-            gio::ActionEntry::builder("show-sidebar")
-                .activate(glib::clone!(
-                    #[weak(rename_to=slf)]
-                    self,
-                    move |_, _, _| {
-                        if slf.imp().layout_view.layout_name().as_deref() == Some("connection-view")
-                        {
-                            slf.imp().connection_view_split_view.set_show_sidebar(true);
-                        }
-                    }
-                ))
-                .build(),
             gio::ActionEntry::builder("open-menu")
                 .activate(glib::clone!(
                     #[weak(rename_to=slf)]
                     self,
                     move |_, _, _| {
                         let imp = slf.imp();
-                        match imp.layout_view.layout_name().as_deref() {
+                        match imp.app_mode_stack.visible_child_name().as_deref() {
                             Some("connection-view") => {
-                                if !imp.connection_view_split_view.shows_sidebar()
-                                    && let Some(screen) = slf.current_server_screen()
-                                {
+                                if let Some(screen) = slf.current_server_screen() {
                                     screen.open_menu();
-                                } else {
-                                    imp.menu_button_main.popdown();
                                 }
                             }
-                            Some("main") => {
+                            Some("connection-list") => {
                                 imp.menu_button_main.popdown();
                             }
                             _ => {}
@@ -299,7 +281,9 @@ impl FieldMonitorWindow {
             .map(|screen| screen.server_path() == server_path && screen.adapter_id() == adapter_id)
             .unwrap_or_default()
         {
-            self.imp().layout_view.set_layout_name("connection-view");
+            self.imp()
+                .app_mode_stack
+                .set_visible_child_name("connection-view");
             true
         } else {
             false
@@ -381,7 +365,8 @@ impl FieldMonitorWindow {
         }
         debug!("switching to welcome view");
         self.unselect_connection_view();
-        imp.inner_list_stack.set_visible_child_name("welcome");
+        imp.connection_list_content_stack
+            .set_visible_child_name("welcome");
     }
 
     // Taken in parts from Showtime:
@@ -498,9 +483,23 @@ impl FieldMonitorWindow {
     }
 
     #[template_callback]
-    fn on_layout_view_layout_name_changed(&self) {
-        let layout_name = self.imp().layout_view.layout_name();
-        if let Some("connection-view") = layout_name.as_deref() {
+    fn on_self_fullscreened_changed(&self) {
+        if self.is_fullscreen() {
+            self.imp()
+                .button_fullscreen
+                .set_icon_name("arrows-pointing-inward-symbolic");
+        } else {
+            self.imp()
+                .button_fullscreen
+                .set_icon_name("arrows-pointing-outward-symbolic");
+        }
+    }
+
+    #[template_callback]
+    fn on_app_mode_stack_visible_child_name_changed(&self) {
+        let imp = self.imp();
+        let child_name = imp.app_mode_stack.visible_child_name();
+        if let Some("connection-view") = child_name.as_deref() {
             if let Some(screen) = self.current_server_screen() {
                 self.change_window_title(WindowTitle::ConnectionView(screen.downgrade()));
             }
@@ -510,7 +509,7 @@ impl FieldMonitorWindow {
             self.remove_css_class("connection-view-active");
         }
 
-        let announcement = match layout_name.as_deref() {
+        let announcement = match child_name.as_deref() {
             Some("connection-view") => {
                 let title = self
                     .current_server_screen()
@@ -527,8 +526,7 @@ impl FieldMonitorWindow {
                     ))
                 }
             }
-            Some("main") => Some(gettext("Showing connection list")),
-            Some("no-sidebar") => Some(gettext("Welcome screen")),
+            Some("connection-list") => Some(gettext("Showing connection list")),
             _ => None,
         };
         debug!("window layout changed. a11y announcement: {announcement:?}");
@@ -538,22 +536,14 @@ impl FieldMonitorWindow {
     }
 
     #[template_callback]
-    fn on_self_fullscreened_changed(&self) {
-        if self.is_fullscreen() {
-            self.imp()
-                .button_fullscreen
-                .set_icon_name("arrows-pointing-inward-symbolic");
-        } else {
-            self.imp()
-                .button_fullscreen
-                .set_icon_name("arrows-pointing-outward-symbolic");
-        }
-    }
-
-    #[template_callback]
-    fn on_inner_list_stack_visible_child_name_changed(&self) {
+    fn on_connection_list_content_stack_visible_child_name_changed(&self) {
         let imp = self.imp();
-        if imp.inner_list_stack.visible_child_name().as_deref() != Some("connection-list") {
+        if imp
+            .connection_list_content_stack
+            .visible_child_name()
+            .as_deref()
+            != Some("server-list")
+        {
             imp.connection_list_stack.unselect_connection();
         }
     }
@@ -565,22 +555,26 @@ impl FieldMonitorWindow {
         debug!(
             "Connection List page changed: {:?} - inner list stack page: {:?}",
             connection_id,
-            imp.inner_list_stack.visible_child_name()
+            imp.connection_list_content_stack.visible_child_name()
         );
 
-        let connection_list_visible =
-            imp.inner_list_stack.visible_child_name().as_deref() == Some("connection-list");
+        let connection_list_visible = imp
+            .connection_list_content_stack
+            .visible_child_name()
+            .as_deref()
+            == Some("server-list");
 
         if connection_id.is_none() && connection_list_visible {
             debug!("switching to welcome view");
-            imp.inner_list_stack.set_visible_child_name("welcome");
+            imp.connection_list_content_stack
+                .set_visible_child_name("welcome");
         } else if connection_id.is_some() {
             if !connection_list_visible {
                 debug!("switching to connection list");
                 self.unselect_connection_view();
-                imp.inner_list_stack
-                    .set_visible_child_name("connection-list");
-                self.maybe_disable_no_sidebar_mode();
+                imp.connection_list_content_stack
+                    .set_visible_child_name("server-list");
+                self.disable_initial_welcome();
             }
             self.maybe_clicked_item_on_sidebar();
         }
@@ -600,7 +594,8 @@ impl FieldMonitorWindow {
                     timeout_future(Duration::from_millis(100)).await;
                     let imp = slf.imp();
                     // just in case the user resizes the window:
-                    imp.inner_list_stack.set_visible_child_name("welcome");
+                    imp.connection_list_content_stack
+                        .set_visible_child_name("welcome");
                     imp.inhibit_possible_sidebar_click.set(true);
                     slf.unselect_connection_view();
                     slf.unselect_connection_list();
@@ -610,41 +605,49 @@ impl FieldMonitorWindow {
         }
     }
 
-    fn on_app_loading_connections_changed(&self, app: &FieldMonitorApplication) {
+    /// Updates the connection list state.
+    /// If `switch` is true, switches to it (or the initial welcome screen if no connections are loaded).
+    fn update_connection_list(&self, app: &FieldMonitorApplication, switch: bool) {
+        debug!("updating connection list (switch?: {switch})");
+        let imp = self.imp();
         if app.loading_connections() {
-            self.imp()
-                .connection_list_navbar_stack
+            imp.connection_list_navbar_stack
                 .set_visible_child_name("loader");
         } else {
-            self.imp()
-                .connection_list_navbar_stack
+            imp.connection_list_navbar_stack
                 .set_visible_child_name("list");
 
-            if self.imp().connection_list_stack.is_empty() {
-                if self.imp().layout_view.layout_name().as_deref() == Some("main") {
-                    // Enable "no sidebar mode"
-                    self.imp()
-                        .inner_list_stack
-                        .set_visible_child_name("welcome");
-                    self.imp().welcome_button_box.set_visible(true);
-                    self.imp().layout_view.set_layout_name("no-sidebar");
-                    self.imp()
-                        .welcome_status_page
-                        .set_description(Some(&gettext(
-                            "Connect to your virtual machines and remote servers.",
-                        )));
+            if imp.connection_list_stack.is_empty() {
+                // enable initial welcome (if not already enabled)
+                if let Some(content) = imp.welcome_page_bin.child() {
+                    imp.welcome_page_bin.set_child(None::<&gtk::Widget>);
+                    imp.initial_welcome_page_bin.set_child(Some(&content));
+                    imp.welcome_button_box.set_visible(true);
+                    imp.welcome_status_page.set_description(Some(&gettext(
+                        "Connect to your virtual machines and remote servers.",
+                    )));
+                }
+                if switch
+                    || imp.app_mode_stack.visible_child_name().as_deref() == Some("connection-list")
+                {
+                    imp.app_mode_stack.set_visible_child_name("initial-welcome");
                 }
             } else {
-                self.maybe_disable_no_sidebar_mode();
+                self.disable_initial_welcome();
+                if switch
+                    || imp.app_mode_stack.visible_child_name().as_deref() == Some("initial-welcome")
+                {
+                    imp.app_mode_stack.set_visible_child_name("connection-list");
+                }
             }
         }
     }
 
     fn on_app_state_changed(&self, app: &FieldMonitorApplication) {
         if app.state() == AppState::Ready {
-            self.imp().outer_stack.set_visible_child_name("app");
+            self.update_connection_list(app, true);
         } else {
-            self.imp().outer_stack.set_visible_child_name("starting");
+            self.imp().app_mode_stack.set_visible_child_name("starting");
         }
     }
 
@@ -676,16 +679,14 @@ impl FieldMonitorWindow {
     pub(crate) fn select_connection_view(&self) {
         self.unselect_connection_list();
         self.imp()
-            .inner_stack
+            .app_mode_stack
             .set_visible_child_name("connection-view");
-        self.imp().layout_view.set_layout_name("connection-view");
     }
 
     fn unselect_connection_view(&self) {
         let imp = self.imp();
-        if imp.inner_stack.visible_child_name().as_deref() == Some("connection-view") {
-            imp.inner_stack.set_visible_child_name("main");
-            imp.layout_view.set_layout_name("main");
+        if imp.app_mode_stack.visible_child_name().as_deref() == Some("connection-view") {
+            self.update_connection_list(&self.application().unwrap().downcast().unwrap(), true);
         }
     }
 
@@ -697,16 +698,18 @@ impl FieldMonitorWindow {
         let imp = self.imp();
         if !imp.inhibit_possible_sidebar_click.get() {
             imp.main_split_view.set_show_content(true);
-            imp.connection_view_split_view.set_show_sidebar(false);
         }
     }
 
-    /// Disable the no-sidebar mode used for initial presentation if no connections are present.
-    fn maybe_disable_no_sidebar_mode(&self) {
-        self.imp().welcome_button_box.set_visible(false);
-        self.imp().welcome_status_page.set_description(None);
-        if self.imp().layout_view.layout_name().as_deref() == Some("no-sidebar") {
-            self.imp().layout_view.set_layout_name("main");
+    /// Disable the initial welcome if active (moving the welcome page back to the connection list content).
+    fn disable_initial_welcome(&self) {
+        let imp = self.imp();
+        if let Some(content) = imp.initial_welcome_page_bin.child() {
+            debug!("initial welcome disabled");
+            imp.welcome_button_box.set_visible(false);
+            imp.welcome_status_page.set_description(None);
+            imp.initial_welcome_page_bin.set_child(None::<&gtk::Widget>);
+            imp.welcome_page_bin.set_child(Some(&content));
         }
     }
 }
