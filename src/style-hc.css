@@ -1,4 +1,0 @@
-.connection-view-toolbarview .border {
-    /* this is the HC default from libadwaita */
-    box-shadow: 0 1px color-mix(in srgb, currentColor var(--border-opacity), transparent);
-}

@@ -76,6 +76,13 @@ window {
     padding-top: 12px;
 }
 
+@media (prefers-color-scheme: dark) {
+    .vte-box {
+        background: #000;
+        color: #fff;
+    }
+}
+
 window.use-sharp-corners.connection-view-grabbed, window.use-sharp-corners.always-sharp {
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
@@ -88,6 +95,13 @@ window.use-sharp-corners.overlay-headerbar.connection-view-grabbed, window.use-s
 
 .connection-view-toolbarview headerbar {
     transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+@media (prefers-contrast: more) {
+    .connection-view-toolbarview .border {
+        /* this is the HC default from libadwaita */
+        box-shadow: 0 1px color-mix(in srgb, currentColor var(--border-opacity), transparent);
+    }
 }
 
 .connection-view-grabbed .connection-view-toolbarview .border {

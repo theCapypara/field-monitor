@@ -30,9 +30,6 @@
 	<gresource prefix=@APP_ID_SLASHED@>
 		<file preprocess="xml-stripblanks">shortcuts-dialog.ui</file>
 		<file>style.css</file>
-		<file>style-dark.css</file>
-		<file>style-hc.css</file>
-		<file>style-hc-dark.css</file>
 		<file preprocess="xml-stripblanks">icons/scalable/actions/application-certificate-symbolic.svg</file>
 		<file preprocess="xml-stripblanks">icons/scalable/actions/arrows-pointing-inward-symbolic.svg</file>
 		<file preprocess="xml-stripblanks">icons/scalable/actions/arrows-pointing-outward-symbolic.svg</file>
