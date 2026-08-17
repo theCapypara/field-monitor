@@ -581,7 +581,7 @@ impl FieldMonitorApplication {
             // Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
             "translator-credits",
         ));
-        about.set_copyright("© 2025 Marco Köpcke");
+        about.set_copyright("© 2026 Marco Köpcke");
 
         about.present(window.as_ref());
     }
