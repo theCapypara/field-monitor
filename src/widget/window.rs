@@ -298,8 +298,8 @@ impl FieldMonitorWindow {
             Some(self),
             &info.server_path,
             &info.adapter_id,
-            &info.connection_title,
             &info.server_title,
+            &info.connection_title,
             info.loader,
         );
 
