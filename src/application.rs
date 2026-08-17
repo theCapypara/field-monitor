@@ -400,6 +400,7 @@ impl FieldMonitorApplication {
     }
 
     pub fn open_new_window(&self) -> FieldMonitorWindow {
+        debug!("opening new window");
         let win = FieldMonitorWindow::new(self);
         win.present();
         win

@@ -677,7 +677,6 @@ impl FieldMonitorWindow {
     }
 
     pub(crate) fn select_connection_view(&self) {
-        self.unselect_connection_list();
         self.imp()
             .app_mode_stack
             .set_visible_child_name("connection-view");
