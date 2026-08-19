@@ -62,7 +62,7 @@ where
                 CacheRefHolder(self.value.read().await)
             }
             Some((cur_time, _v)) => {
-                if cur_time.add(self.valid_for) > Instant::now() {
+                if cur_time.add(self.valid_for) <= Instant::now() {
                     let mut write_time_and_v =
                         RwLockUpgradableReadGuard::upgrade(cur_time_and_v).await;
                     let old_value = write_time_and_v.take().unwrap().1;

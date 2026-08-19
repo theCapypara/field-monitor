@@ -272,6 +272,9 @@ impl FieldMonitorWindow {
         let child = self.imp().current_server_screen_bin.child();
         child.and_downcast()
     }
+    pub fn is_connection_list_visible(&self) -> bool {
+        self.imp().app_mode_stack.visible_child_name().as_deref() == Some("connection-list")
+    }
 
     /// Try to focus an already open connection view, if a connection view for the given
     /// server is open

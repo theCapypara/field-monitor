@@ -20,6 +20,7 @@ pub const DEFAULT_GENERIC_ICON: &str = "network-server-symbolic";
 mod connection_list_navbar;
 mod connection_stack;
 mod info_page;
+pub mod server_actions;
 mod server_group;
 mod server_info;
 mod server_row;
@@ -28,7 +29,7 @@ pub use connection_list_navbar::*;
 pub use connection_stack::*;
 use libfieldmonitor::connection::*;
 
-enum ServerOrConnection<'a> {
+pub enum ServerOrConnection<'a> {
     Server(&'a dyn ServerConnection),
     Connection(&'a dyn Connection),
 }
