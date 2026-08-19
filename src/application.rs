@@ -61,6 +61,9 @@ use crate::widget::update_connection_dialog::FieldMonitorUpdateConnectionDialog;
 use crate::widget::window::FieldMonitorWindow;
 use std::ops::ControlFlow;
 
+/// Useful for debugging the initial "welcome" view.
+const DEBUG_DONT_LOAD_CONNECTIONS_INITIALLY: bool = false;
+
 mod imp {
     use super::*;
 
@@ -333,7 +336,7 @@ mod imp {
                         #[weak]
                         slf,
                         async move {
-                            slf.obj().reload_connections().await;
+                            slf.obj().reload_connections(true).await;
                         }
                     ));
                 }
@@ -393,11 +396,11 @@ impl FieldMonitorApplication {
         self.set_accels_for_action("view.term-zoom-reset", &["<Primary>0"]);
         self.set_accels_for_action("window.close", &["<Alt>F4", "<Primary>W"]);
         self.set_accels_for_action("win.fullscreen", &["F11"]);
-        self.set_accels_for_action("win.show-sidebar", &["<Primary>E", "F9"]);
         self.set_accels_for_action("win.open-menu", &["F10"]);
     }
 
     pub fn open_new_window(&self) -> FieldMonitorWindow {
+        debug!("opening new window");
         let win = FieldMonitorWindow::new(self);
         win.present();
         win
@@ -435,7 +438,7 @@ impl FieldMonitorApplication {
                     #[weak]
                     app,
                     async move {
-                        app.reload_connections().await;
+                        app.reload_connections(false).await;
                     }
                 ));
             })
@@ -579,7 +582,7 @@ impl FieldMonitorApplication {
             // Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
             "translator-credits",
         ));
-        about.set_copyright("© 2025 Marco Köpcke");
+        about.set_copyright("© 2026 Marco Köpcke");
 
         about.present(window.as_ref());
     }
@@ -1045,10 +1048,15 @@ impl FieldMonitorApplication {
     }
 
     /// Reloads all connections. I/O errors and config deserialization errors are logged but ignored.
-    pub async fn reload_connections(&self) {
+    async fn reload_connections(&self, is_initial_load: bool) {
         let _busy = self.be_busy();
         debug!("reloading connections");
         self.imp().set_loading_connection(true);
+        if DEBUG_DONT_LOAD_CONNECTIONS_INITIALLY && is_initial_load {
+            debug!("not loading connections (debug flag enabled)");
+            self.imp().set_loading_connection(false);
+            return;
+        }
 
         // Remove already loaded connections
         let connections_to_remove = {

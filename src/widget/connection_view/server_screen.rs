@@ -80,8 +80,6 @@ mod imp {
         #[template_child]
         pub grab_note: TemplateChild<FieldMonitorGrabNote>,
         #[template_child]
-        pub show_navigation_button: TemplateChild<gtk::Button>,
-        #[template_child]
         pub monitor_menu_button_bin: TemplateChild<FieldMonitorPulseAnimBin>,
         #[template_child]
         pub monitor_menu_button: TemplateChild<gtk::MenuButton>,
@@ -310,12 +308,16 @@ impl FieldMonitorServerScreen {
         window: Option<&FieldMonitorWindow>,
         server_path: &str,
         adapter_id: &str,
+        title: &str,
+        subtitle: &str,
         loader: ConnectionLoader,
     ) -> Self {
         let slf: Self = glib::Object::builder()
             .property("application", app)
             .property("server-path", server_path)
             .property("adapter-id", adapter_id)
+            .property("title", title)
+            .property("subtitle", subtitle)
             .property("dynamic-resize", true)
             .property("scale-to-window", true)
             .property("reveal-osd-controls", true)
@@ -367,7 +369,6 @@ impl FieldMonitorServerScreen {
 
         slf.add_menu(MenuKind::Rdw, vec![]);
         slf.action_set_enabled("view.reconnect", false);
-        slf.imp().show_navigation_button.set_visible(false);
 
         let monitor_title = format!("{title} [Monitor {}]", monitor_index + 1);
         slf.set_title(monitor_title);
@@ -441,7 +442,6 @@ impl FieldMonitorServerScreen {
         if let Some(mut v) = imp.connection_loader.try_lock() {
             *v = None;
         }
-        imp.close_cb.replace(None);
         imp.usb_redir_bin.set_child(None::<&gtk::Widget>);
         if let Some((usb_redir, handler)) = imp.usb_redir_signal.take()
             && let Some(usb_redir) = usb_redir.upgrade()
@@ -1329,6 +1329,10 @@ impl FieldMonitorServerScreen {
                 Some("app.new-window"),
             ))));
         }
+        bottom_items.push(Some(MenuObject::Item(gio::MenuItem::new(
+            Some(&gettext("_Preferences")),
+            Some("app.preferences"),
+        ))));
         bottom_items.push(Some(MenuObject::Item(gio::MenuItem::new(
             Some(&gettext("_Keyboard Shortcuts")),
             Some("app.shortcuts"),

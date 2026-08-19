@@ -20,6 +20,7 @@ use adw::prelude::*;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::glib;
+use libfieldmonitor::i18n::gettext_f;
 
 mod imp {
     use super::*;
@@ -49,31 +50,23 @@ glib::wrapper! {
 impl FieldMonitorCloseWarningDialog {
     pub const RESPONSE_CLOSE: &'static str = "close";
 
-    pub fn new(connection_descriptions: impl IntoIterator<Item = (String, String)>) -> Self {
+    pub fn new(conn_title: &str, conn_subtitle: &str) -> Self {
+        let label = if conn_subtitle.is_empty() {
+            conn_title
+        } else {
+            &format!("{conn_title} - {conn_subtitle}")
+        };
+        let body = gettext_f(
+            // Translators: Do NOT translate the content between '{' and '}', this is
+            // a variable name.
+            "This window is still connected to '{label}'. Closing it will disconnect from the server.",
+            &[("label", label)],
+        );
+
         let slf: Self = glib::Object::builder()
             .property("heading", gettext("Close Window?"))
-            .property("body", gettext("The app is still connected to one or more servers. Closing the window will disconnect from all servers."))
+            .property("body", &body)
             .build();
-
-        let list_box = gtk::ListBox::builder().css_classes(["boxed-list"]).build();
-
-        for (title, subtitle) in connection_descriptions.into_iter() {
-            let label = if subtitle.is_empty() {
-                title
-            } else {
-                format!("{title} - {subtitle}")
-            };
-            list_box.append(
-                &adw::ActionRow::builder()
-                    .title(glib::markup_escape_text(&label))
-                    .selectable(false)
-                    .activatable(false)
-                    .focusable(false)
-                    .build(),
-            )
-        }
-
-        slf.set_extra_child(Some(&list_box));
 
         slf.add_response("cancel", &gettext("Cancel"));
         slf.add_response(Self::RESPONSE_CLOSE, &gettext("Close"));

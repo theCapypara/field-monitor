@@ -25,3 +25,14 @@ jobs:
         uses: ./.github/action/run-meson
         with:
           target: cargo-check-clippy
+
+  blueprint:
+    name: Blueprint Format Check
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Run blueprint format
+        uses: ./.github/action/run-meson
+        with:
+          target: blueprint-format-check

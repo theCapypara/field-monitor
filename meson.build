@@ -29,3 +29,13 @@ gnome.post_install(
     gtk_update_icon_cache: true,
   update_desktop_database: true,
 )
+
+blueprint_format_check = alias_target(
+  'blueprint-format-check',
+
+  blueprint_format_check_src,
+  blueprint_format_check_lib,
+  blueprint_format_check_connection_generic_group,
+  blueprint_format_check_connection_libvirt,
+  blueprint_format_check_connection_proxmox,
+)
