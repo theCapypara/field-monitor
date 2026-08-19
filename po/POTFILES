@@ -105,9 +105,9 @@ src/widget/connection_list/connection_stack.rs
 src/widget/connection_list/info_page.blp
 src/widget/connection_list/info_page.rs
 src/widget/connection_list/mod.rs
+src/widget/connection_list/server_actions.rs
 src/widget/connection_list/server_group.blp
 src/widget/connection_list/server_group.rs
-src/widget/connection_list/server_info.rs
 src/widget/connection_list/server_info/icon.blp
 src/widget/connection_list/server_info/icon.rs
 src/widget/connection_list/server_row.rs

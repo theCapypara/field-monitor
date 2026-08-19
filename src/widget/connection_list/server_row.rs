@@ -18,6 +18,7 @@
 use crate::widget::connection_list::server_info::{
     ServerInfoIcon, ServerInfoUpdater, ServerInfoWidget,
 };
+use crate::widget::window::FieldMonitorWindow;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::WeakRef;
@@ -79,6 +80,10 @@ impl FieldMonitorServerRow {
 }
 
 impl ServerInfoWidget for FieldMonitorServerRow {
+    fn window(&self) -> Option<FieldMonitorWindow> {
+        self.root().and_downcast()
+    }
+
     fn set_server_title(&self, title: &str) {
         self.set_title(&glib::markup_escape_text(title))
     }

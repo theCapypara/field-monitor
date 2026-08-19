@@ -21,18 +21,18 @@
 mod icon;
 
 pub use self::icon::ServerInfoIcon;
+use crate::widget::connection_list::DEFAULT_GENERIC_ICON;
+use crate::widget::connection_list::server_actions::FieldMonitorServerActions;
 use crate::widget::connection_list::server_info::icon::IsOnline;
-use crate::widget::connection_list::{DEFAULT_GENERIC_ICON, ServerOrConnection};
+use crate::widget::window::FieldMonitorWindow;
 use adw::prelude::*;
 use futures::future::LocalBoxFuture;
-use gettextrs::gettext;
 use glib::object::{Cast, IsA, ObjectType};
 use glib::{ControlFlow, WeakRef, timeout_future};
-use gtk::gio;
 use libfieldmonitor::connection::{IconSpec, ServerConnection, ServerMetadata};
-use libfieldmonitor::i18n::gettext_f;
-use std::borrow::Cow;
+use log::trace;
 use std::rc::Rc;
+use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::Duration;
 
 pub struct ServerInfoUpdater<T>
@@ -56,71 +56,87 @@ where
             full_path,
         };
 
-        slf.run_updater(Self::update_metadata, Duration::from_secs(3));
-        slf.run_updater(Self::update_actions, Duration::from_secs(45));
+        slf.run_updater(Self::update_server_info, Duration::from_secs(3));
     }
 
-    fn update_metadata(
+    fn update_server_info(
         target: T,
         server: Rc<Box<dyn ServerConnection>>,
         path: Rc<Vec<String>>,
-    ) -> LocalBoxFuture<'static, ()> {
+        call_count: u64,
+    ) -> LocalBoxFuture<'static, bool> {
+        // TODO: Ideally we really shouldn't spawn a future per row, but instead have one
+        //       update loop for all rows, where we also only check once if the list is visible.
         Box::pin(async move {
-            let metadata = server.metadata().await;
-            target.set_server_title(&metadata.title);
-            target.set_server_subtitle(metadata.subtitle.as_deref());
-
-            let container = target.get_icon_container();
-            let new_status = match metadata.is_online {
-                Some(true) => IsOnline::Online,
-                Some(false) => IsOnline::Offline,
-                None => IsOnline::Unknown,
-            };
-
-            // If the online status changed, we should also update the actions
-            let old_status = container.status();
-            if old_status != IsOnline::Unknown
-                && new_status != IsOnline::Unknown
-                && old_status != new_status
+            let window = target.window();
+            if window
+                .as_ref()
+                .map(FieldMonitorWindow::is_connection_list_visible)
+                .unwrap_or_default()
             {
-                glib::spawn_future_local(Self::update_actions(target.clone(), server, path));
+                let metadata = server.metadata().await;
+                let container = target.get_icon_container();
+
+                // -- every three seconds
+                // Check online status
+                let new_status = match metadata.is_online {
+                    Some(true) => IsOnline::Online,
+                    Some(false) => IsOnline::Offline,
+                    None => IsOnline::Unknown,
+                };
+                let old_status = container.status();
+                let online_status_changed = old_status != IsOnline::Unknown
+                    && new_status != IsOnline::Unknown
+                    && old_status != new_status;
+                if online_status_changed {
+                    trace!("{}: online status changed", path.join("/"));
+                }
+
+                if call_count.is_multiple_of(40) {
+                    // -- every two minutes
+                    trace!("{}: update icon", path.join("/"));
+                    Self::update_icon(&target, new_status, &metadata);
+                }
+                if call_count.is_multiple_of(20) {
+                    // -- once per minute
+                    trace!("{}: update title & subtitle", path.join("/"));
+                    target.set_server_title(&metadata.title);
+                    target.set_server_subtitle(metadata.subtitle.as_deref());
+                }
+                if online_status_changed || call_count.is_multiple_of(15) {
+                    // -- every 45 seconds or if online status changed
+                    let path = path.join("/");
+                    trace!("{}: update buttons", path);
+                    FieldMonitorServerActions::update_server_info_widget(&target, &**server, &path)
+                        .await;
+                    trace!("{}: update icon status", path);
+                    container.set_status(new_status);
+                }
+                true
+            } else {
+                // to limit performance impact while connection view is active: delay next update
+                timeout_future(Duration::from_secs(10)).await;
+                false
             }
-
-            Self::update_icon(&target, new_status, metadata);
-        })
-    }
-
-    fn update_actions(
-        target: T,
-        server: Rc<Box<dyn ServerConnection>>,
-        path: Rc<Vec<String>>,
-    ) -> LocalBoxFuture<'static, ()> {
-        Box::pin(async move {
-            let path = path.join("/");
-
-            let suffix = gtk::Box::builder()
-                .spacing(6)
-                .orientation(gtk::Orientation::Horizontal)
-                .build();
-
-            Self::maybe_add_edit_button(&suffix, &**server, &path).await;
-            Self::maybe_add_connect_button(target.get_row(), &suffix, &**server, &path).await;
-            maybe_add_actions_button(&suffix, ServerOrConnection::Server(&**server), &path).await;
-
-            target.get_actions_container().set_child(Some(&suffix));
         })
     }
 
     /// Run the update function in a regular interval until the target widget stops to exist.
     fn run_updater<F>(&self, cb: F, duration: Duration)
     where
-        F: Fn(T, Rc<Box<dyn ServerConnection>>, Rc<Vec<String>>) -> LocalBoxFuture<'static, ()>
+        F: Fn(
+                T,
+                Rc<Box<dyn ServerConnection>>,
+                Rc<Vec<String>>,
+                u64,
+            ) -> LocalBoxFuture<'static, bool>
             + 'static,
     {
         let mut flow = ControlFlow::Continue;
         let target = self.target.clone();
         let server = self.server.clone();
         let full_path = self.full_path.clone();
+        let update_call_count = AtomicU64::new(0);
 
         glib::spawn_future_local(async move {
             while flow == ControlFlow::Continue {
@@ -129,7 +145,20 @@ where
                         flow = ControlFlow::Break;
                     }
                     Some(target) => {
-                        cb(target, server.clone(), full_path.clone()).await;
+                        let cb_result = cb(
+                            target,
+                            server.clone(),
+                            full_path.clone(),
+                            update_call_count.load(Ordering::Relaxed),
+                        )
+                        .await;
+                        if cb_result {
+                            update_call_count.fetch_add(1, Ordering::Relaxed);
+                        } else {
+                            // if we didn't run an update we reset the counter, to cause a full update
+                            // next time
+                            update_call_count.store(0, Ordering::Relaxed);
+                        }
                         timeout_future(duration).await;
                     }
                 }
@@ -137,7 +166,7 @@ where
         });
     }
 
-    fn update_icon(target: &T, status: IsOnline, metadata: ServerMetadata) {
+    fn update_icon(target: &T, status: IsOnline, metadata: &ServerMetadata) {
         let container = target.get_icon_container();
         container.set_status(status);
 
@@ -168,148 +197,19 @@ where
                     .icon_name(name.as_ref())
                     .build()
                     .upcast(),
-                IconSpec::Custom(factory) => factory(&metadata),
+                IconSpec::Custom(factory) => factory(metadata),
             };
 
             container.set_child(wdg);
         }
     }
-
-    async fn maybe_add_connect_button(
-        row: Option<&impl IsA<adw::ActionRow>>,
-        boxx: &gtk::Box,
-        server: &dyn ServerConnection,
-        path: &str,
-    ) {
-        let adapters = server.supported_adapters().await;
-
-        let connect_button = if adapters.len() == 1 {
-            let adapter = adapters.into_iter().next().unwrap();
-            Some(make_single_connect_button(path, adapter))
-        } else if !adapters.is_empty() {
-            Some(make_multi_connection_button(path, adapters))
-        } else {
-            None
-        };
-
-        if let Some(button) = connect_button {
-            if let Some(row) = row {
-                row.set_activatable_widget(Some(&button));
-            }
-            boxx.append(&button);
-        }
-    }
-
-    async fn maybe_add_edit_button(boxx: &gtk::Box, server: &dyn ServerConnection, path: &str) {
-        if server.editable() {
-            let label = gettext("Edit Server");
-            let button = gtk::Button::builder()
-                .action_name("app.edit-connection-server")
-                .action_target(&path.to_variant())
-                .icon_name("edit-symbolic")
-                .tooltip_text(&label)
-                .valign(gtk::Align::Center)
-                .css_classes(["flat"])
-                .build();
-            button.update_property(&[gtk::accessible::Property::Label(&label)]);
-
-            boxx.append(&button);
-        }
-    }
 }
 
 pub trait ServerInfoWidget {
+    fn window(&self) -> Option<FieldMonitorWindow>;
     fn set_server_title(&self, title: &str);
     fn set_server_subtitle(&self, subtitle: Option<&str>);
     fn get_icon_container(&self) -> ServerInfoIcon;
     fn get_actions_container(&self) -> adw::Bin;
     fn get_row(&self) -> Option<&impl IsA<adw::ActionRow>>;
-}
-
-pub async fn maybe_add_actions_button(
-    boxx: &gtk::Box,
-    server_or_connection: ServerOrConnection<'_>,
-    path: &str,
-) {
-    let (actions, is_server) = match server_or_connection {
-        ServerOrConnection::Server(server) => (server.actions().await, true),
-        ServerOrConnection::Connection(connection) => (connection.actions().await, false),
-    };
-
-    if actions.is_empty() {
-        return;
-    }
-    let menu = gio::Menu::new();
-    for (action_id, action_title) in actions {
-        let action_target = (is_server, path, &*action_id).to_variant();
-        menu.append(
-            Some(&*action_title),
-            Some(
-                gio::Action::print_detailed_name(
-                    "app.perform-connection-action",
-                    Some(&action_target),
-                )
-                .as_str(),
-            ),
-        );
-    }
-
-    let label = gettext("Actions");
-    let button = gtk::MenuButton::builder()
-        .menu_model(&menu)
-        .icon_name("view-more-symbolic")
-        .tooltip_text(&label)
-        .valign(gtk::Align::Center)
-        .css_classes(["flat"])
-        .build();
-    button.update_property(&[gtk::accessible::Property::Label(&label)]);
-
-    boxx.append(&button);
-}
-
-fn make_multi_connection_button(path: &str, adapters: Vec<(Cow<str>, Cow<str>)>) -> gtk::Widget {
-    let menu = gio::Menu::new();
-    for (adapter_id, adapter_label) in adapters {
-        let action_target = (path, &*adapter_id).to_variant();
-        menu.append(
-            Some(&*adapter_label),
-            Some(
-                gio::Action::print_detailed_name("app.connect-to-server", Some(&action_target))
-                    .as_str(),
-            ),
-        );
-    }
-
-    let label = gettext("Connect");
-    let button = gtk::MenuButton::builder()
-        .menu_model(&menu)
-        .icon_name("display-with-window-symbolic")
-        .tooltip_text(&label)
-        .valign(gtk::Align::Center)
-        .css_classes(["flat"])
-        .build();
-    button.update_property(&[gtk::accessible::Property::Label(&label)]);
-    button.upcast()
-}
-
-fn make_single_connect_button(
-    path: &str,
-    (adapter_id, adapter_label): (Cow<str>, Cow<str>),
-) -> gtk::Widget {
-    let label = gettext_f(
-        // Translators: Do NOT translate the content between '{' and '}', this is a
-        // variable name.
-        "Connect via {adapter}",
-        &[("adapter", &adapter_label)],
-    );
-    let button = gtk::Button::builder()
-        .action_name("app.connect-to-server")
-        .action_target(&(path, &*adapter_id).to_variant())
-        .icon_name("display-with-window-symbolic")
-        .tooltip_text(&label)
-        .valign(gtk::Align::Center)
-        .css_classes(["flat"])
-        .build();
-    button.update_property(&[gtk::accessible::Property::Label(&label)]);
-    button.upcast()
 }

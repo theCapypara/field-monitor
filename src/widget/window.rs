@@ -290,6 +290,10 @@ impl FieldMonitorWindow {
         &self.imp().mobile_breakpoint
     }
 
+    pub fn is_connection_list_visible(&self) -> bool {
+        self.imp().app_mode_stack.visible_child_name().as_deref() == Some("connection-list")
+    }
+
     /// Try to focus an already open connection view, if a connection view for the given
     /// server is open
     pub fn focus_connection_view(&self, server_path: &str, adapter_id: &str) -> bool {
