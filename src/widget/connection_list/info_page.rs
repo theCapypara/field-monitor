@@ -16,9 +16,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use crate::application::FieldMonitorApplication;
-use crate::widget::connection_list::ServerOrConnection;
+use crate::widget::connection_list::server_actions::FieldMonitorServerActions;
 use crate::widget::connection_list::server_group::FieldMonitorServerGroup;
-use crate::widget::connection_list::server_info::maybe_add_actions_button;
 use crate::widget::connection_list::server_row::FieldMonitorServerRow;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
@@ -50,7 +49,7 @@ mod imp {
         #[template_child]
         pub group_box: TemplateChild<gtk::Box>,
         #[template_child]
-        pub box_for_connection_action: TemplateChild<gtk::Box>,
+        pub bin_for_connection_action: TemplateChild<adw::Bin>,
         #[property(get, set)]
         pub connection: RefCell<Option<ConnectionInstance>>,
         #[property(get, set)]
@@ -109,12 +108,9 @@ impl FieldMonitorConnectionInfoPage {
             #[strong]
             connection,
             async move {
-                maybe_add_actions_button(
-                    &slf.imp().box_for_connection_action,
-                    ServerOrConnection::Connection(&connection),
-                    &connection.connection_id(),
-                )
-                .await;
+                slf.imp().bin_for_connection_action.set_child(Some(
+                    &FieldMonitorServerActions::new_for_connection(&connection).await,
+                ));
             }
         ));
 
