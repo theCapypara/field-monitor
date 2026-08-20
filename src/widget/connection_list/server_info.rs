@@ -70,8 +70,7 @@ where
         Box::pin(async move {
             let window = target.window();
             if window
-                .as_ref()
-                .map(FieldMonitorWindow::is_connection_list_visible)
+                .map(|w| !w.is_connection_view_visible())
                 .unwrap_or_default()
             {
                 let metadata = server.metadata().await;
