@@ -35,6 +35,7 @@
   pkg-config,
   python312Packages,
   libGL,
+  pixman,
 
   editorconfig-checker,
   jq,
@@ -66,6 +67,7 @@ let
     spice-glib
     libepoxy
     libGL
+    pixman
   ];
   libPath = lib.makeLibraryPath extraLibs;
 in
@@ -128,6 +130,7 @@ mkShell {
     desktop-file-utils
     appstream
     gi-docgen
+    pixman
   ]
   ++ (with python312Packages; [
     pygobject3
