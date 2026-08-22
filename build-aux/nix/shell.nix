@@ -39,6 +39,7 @@
 
   editorconfig-checker,
   jq,
+  act,
 }:
 let
   patched-gtk-vnc = (
@@ -150,5 +151,6 @@ mkShell {
   ++ [
     editorconfig-checker
     jq
+    act
   ];
 }
