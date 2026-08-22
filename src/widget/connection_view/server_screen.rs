@@ -502,49 +502,51 @@ impl FieldMonitorServerScreen {
         };
 
         // Create the display and connect to the connection events
-        let display = adapter.create_and_connect_display(
-            // on_connect
-            Rc::new(glib::clone!(
-                #[weak(rename_to = slf)]
-                self,
-                move || if this_generation == *slf.imp().connection_generation.borrow() {
-                    slf.on_connected()
-                } else {
-                    warn!(
-                        "got old generation connection event (gen is: {} - should: {})",
-                        this_generation,
-                        *slf.imp().connection_generation.borrow()
-                    )
-                }
-            )),
-            // on_disconnect
-            Rc::new(glib::clone!(
-                #[weak(rename_to = slf)]
-                self,
-                move |result| if this_generation == *slf.imp().connection_generation.borrow() {
-                    slf.on_disconnected(result)
-                } else {
-                    warn!(
-                        "got old generation disconnection event (gen is: {} - should: {})",
-                        this_generation,
-                        *slf.imp().connection_generation.borrow()
-                    )
-                }
-            )),
-            // tls_verify
-            Rc::new(glib::clone!(
-                #[weak_allow_none(rename_to = slf)]
-                self,
-                move |tls_info| if let Some(slf) = slf
-                    && this_generation == *slf.imp().connection_generation.borrow()
-                {
-                    slf.run_tls_verify(tls_info)
-                } else {
-                    warn!("got old generation tls verify event or slf was destroyed");
-                    VerifyTlsResponse::make_static(tls_info.mode(), false)
-                }
-            )),
-        );
+        let display = adapter
+            .create_and_connect_display(
+                // on_connect
+                Rc::new(glib::clone!(
+                    #[weak(rename_to = slf)]
+                    self,
+                    move || if this_generation == *slf.imp().connection_generation.borrow() {
+                        slf.on_connected()
+                    } else {
+                        warn!(
+                            "got old generation connection event (gen is: {} - should: {})",
+                            this_generation,
+                            *slf.imp().connection_generation.borrow()
+                        )
+                    }
+                )),
+                // on_disconnect
+                Rc::new(glib::clone!(
+                    #[weak(rename_to = slf)]
+                    self,
+                    move |result| if this_generation == *slf.imp().connection_generation.borrow() {
+                        slf.on_disconnected(result)
+                    } else {
+                        warn!(
+                            "got old generation disconnection event (gen is: {} - should: {})",
+                            this_generation,
+                            *slf.imp().connection_generation.borrow()
+                        )
+                    }
+                )),
+                // tls_verify
+                Rc::new(glib::clone!(
+                    #[weak_allow_none(rename_to = slf)]
+                    self,
+                    move |tls_info| if let Some(slf) = slf
+                        && this_generation == *slf.imp().connection_generation.borrow()
+                    {
+                        slf.run_tls_verify(tls_info)
+                    } else {
+                        warn!("got old generation tls verify event or slf was destroyed");
+                        VerifyTlsResponse::make_static(tls_info.mode(), false)
+                    }
+                )),
+            )
+            .await;
 
         let actions = loader.actions().await;
 

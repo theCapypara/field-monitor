@@ -15,11 +15,17 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+use log::error;
+use std::os::fd::FromRawFd;
+use std::os::unix::net::UnixStream;
+use virt::domain::Domain;
+use virt::error::Error;
+use virt::sys::VIR_DOMAIN_OPEN_GRAPHICS_SKIPAUTH;
 
-pub mod qemu_dbus;
-pub mod rdp;
-pub mod spice;
-pub mod types;
-pub mod usbredir;
-pub mod vnc;
-pub mod vte_pty;
+pub fn open_libvirt_fd_stream(domain: &Domain, graphics_idx: usize) -> Result<UnixStream, Error> {
+    domain
+        .open_graphics_fd(graphics_idx as _, VIR_DOMAIN_OPEN_GRAPHICS_SKIPAUTH)
+        // SAFETY: If open_graphics_fd doesn't error, the fd points to a valid file descriptor.
+        .map(|fd| unsafe { UnixStream::from_raw_fd(fd as _) })
+        .inspect_err(|err| error!("libvirt openGraphicsFd failed: {err}"))
+}

@@ -34,13 +34,13 @@ use rdw_spice::spice::{ChannelEvent, Session};
 use secure_string::SecureString;
 use std::borrow::Cow;
 use std::cell::RefCell;
-use std::mem;
 use std::num::NonZeroU32;
 use std::os::fd::AsRawFd;
 use std::os::unix::net::UnixStream;
 use std::rc::Rc;
 use std::str::FromStr;
 use std::sync::Arc;
+use std::{future, mem};
 use x509_cert::name::Name;
 
 pub type MakeChannelSocket = Box<dyn Fn() -> anyhow::Result<UnixStream> + Send + Sync>;
@@ -223,7 +223,7 @@ impl Adapter for SpiceAdapter {
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
         verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
-    ) -> Box<dyn AdapterDisplay> {
+    ) -> LocalBoxFuture<'static, Box<dyn AdapterDisplay>> {
         debug!("creating spice adapter");
         let spice = rdw_spice::Display::new();
 
@@ -276,10 +276,12 @@ impl Adapter for SpiceAdapter {
             }
         });
 
-        Box::new(SpiceAdapterDisplay {
+        let display: Box<dyn AdapterDisplay> = Box::new(SpiceAdapterDisplay {
             display: spice,
             counter: Arc::new(()),
-        })
+        });
+
+        Box::pin(future::ready(display))
     }
 }
 

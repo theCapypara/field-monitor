@@ -17,7 +17,10 @@
  */
 use crate::connection::ConnectionError;
 use crate::connection::graphics::LibvirtConnectable;
+use crate::connection::util::open_libvirt_fd_stream;
 use anyhow::anyhow;
+use futures::TryFutureExt;
+use futures::future::LocalBoxFuture;
 use gettextrs::gettext;
 use gtk::glib;
 use libfieldmonitor::adapter::spice::{MakeChannelSocket, SpiceAdapter};
@@ -28,10 +31,8 @@ use log::{debug, error};
 use secure_string::SecureString;
 use std::marker::PhantomData;
 use std::num::NonZeroU32;
-use std::os::fd::FromRawFd;
 use std::os::unix::net::UnixStream;
 use std::rc::Rc;
-use virt::sys::VIR_DOMAIN_OPEN_GRAPHICS_SKIPAUTH;
 
 /// A wrapper around a base adapter that tries to connect:
 /// - first via direct FD connection
@@ -109,7 +110,7 @@ impl AdapterConstructor for VncAdapter {
 
 #[allow(private_bounds)]
 impl<T: AdapterConstructor> LibvirtDynamicAdapter<T> {
-    fn try_via_fd(
+    async fn try_via_fd(
         mut self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
@@ -117,17 +118,8 @@ impl<T: AdapterConstructor> LibvirtDynamicAdapter<T> {
     ) -> Result<Box<dyn AdapterDisplay>, Box<Self>> {
         debug!("trying fd");
         if let Some((domain, graphics_idx)) = self.0.via_fd.take() {
-            let stream = match domain
-                .open_graphics_fd(graphics_idx as _, VIR_DOMAIN_OPEN_GRAPHICS_SKIPAUTH)
-            {
-                Ok(fd) => {
-                    // SAFETY: If open_graphics_fd doesn't error, the fd points to a valid file descriptor.
-                    unsafe { UnixStream::from_raw_fd(fd as _) }
-                }
-                Err(err) => {
-                    error!("libvirt openGraphicsFd failed: {err}");
-                    return Err(self);
-                }
+            let Ok(stream) = open_libvirt_fd_stream(&domain, graphics_idx) else {
+                return Err(self);
             };
 
             // connect the other end to the spice adapter
@@ -136,26 +128,21 @@ impl<T: AdapterConstructor> LibvirtDynamicAdapter<T> {
                 Box::new(glib::clone!(
                     #[strong]
                     domain,
-                    move || domain
-                        .open_graphics_fd(graphics_idx as _, VIR_DOMAIN_OPEN_GRAPHICS_SKIPAUTH)
-                        .map(|fd_num| {
-                            // SAFETY: If open_graphics_fd doesn't error, the fd points to a valid file descriptor.
-                            unsafe { UnixStream::from_raw_fd(fd_num as _) }
-                        })
-                        .map_err(Into::into)
+                    move || open_libvirt_fd_stream(&domain, graphics_idx).map_err(Into::into)
                 )),
                 // we use skipauth, so no credentials needed.
                 None,
                 None,
             ))
-            .create_and_connect_display(on_connected, on_disconnected, verify_tls))
+            .create_and_connect_display(on_connected, on_disconnected, verify_tls)
+            .await)
         } else {
             debug!("fd not available");
             Err(self)
         }
     }
 
-    fn try_via_socket(
+    async fn try_via_socket(
         mut self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
@@ -178,14 +165,15 @@ impl<T: AdapterConstructor> LibvirtDynamicAdapter<T> {
                 socket_creds.username,
                 socket_creds.password,
             ))
-            .create_and_connect_display(on_connected, on_disconnected, verify_tls))
+            .create_and_connect_display(on_connected, on_disconnected, verify_tls)
+            .await)
         } else {
             debug!("socket not available");
             Err(self)
         }
     }
 
-    fn try_via_network(
+    async fn try_via_network(
         mut self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
@@ -201,7 +189,8 @@ impl<T: AdapterConstructor> LibvirtDynamicAdapter<T> {
                 creds.username.unwrap_or_else(|| "".into()),
                 creds.password.unwrap_or_else(|| "".into()),
             ))
-            .create_and_connect_display(on_connected, on_disconnected, verify_tls))
+            .create_and_connect_display(on_connected, on_disconnected, verify_tls)
+            .await)
         } else {
             debug!("network not available");
             Err(self)
@@ -225,26 +214,25 @@ impl<T> LibvirtDynamicAdapter<T> {
     }
 }
 
-impl<T: AdapterConstructor> Adapter for LibvirtDynamicAdapter<T> {
+impl<T: AdapterConstructor + 'static> Adapter for LibvirtDynamicAdapter<T> {
     fn create_and_connect_display(
         self: Box<Self>,
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
         verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
-    ) -> Box<dyn AdapterDisplay> {
-        self.try_via_fd(
-            on_connected.clone(),
-            on_disconnected.clone(),
-            verify_tls.clone(),
+    ) -> LocalBoxFuture<'static, Box<dyn AdapterDisplay>> {
+        let on_connected2 = on_connected.clone();
+        let on_connected3 = on_connected.clone();
+        let on_disconnected2 = on_disconnected.clone();
+        let on_disconnected3 = on_disconnected.clone();
+        let on_disconnected4 = on_disconnected.clone();
+        let verify_tls2 = verify_tls.clone();
+        let verify_tls3 = verify_tls.clone();
+        Box::pin(
+            self.try_via_fd(on_connected, on_disconnected, verify_tls)
+                .or_else(|slf| slf.try_via_socket(on_connected2, on_disconnected2, verify_tls2))
+                .or_else(|slf| slf.try_via_network(on_connected3, on_disconnected3, verify_tls3))
+                .unwrap_or_else(|slf| slf.not_supported(on_disconnected4)),
         )
-        .or_else(|slf| {
-            slf.try_via_socket(
-                on_connected.clone(),
-                on_disconnected.clone(),
-                verify_tls.clone(),
-            )
-        })
-        .or_else(|slf| slf.try_via_network(on_connected, on_disconnected.clone(), verify_tls))
-        .unwrap_or_else(|slf| slf.not_supported(on_disconnected))
     }
 }

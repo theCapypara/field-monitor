@@ -19,6 +19,7 @@
 use futures::StreamExt;
 mod device;
 mod error;
+pub mod qemu_dbus;
 pub mod spice;
 
 pub use self::device::FieldMonitorUsbDevice;

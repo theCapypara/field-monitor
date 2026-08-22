@@ -23,14 +23,15 @@ use gettextrs::gettext;
 use glib::prelude::*;
 use glib::translate::IntoGlib;
 use log::{debug, warn};
+use rdw_qemu::qemu_display::zbus::export::futures_core::future::LocalBoxFuture;
 use rdw_vnc::gvnc;
 use secure_string::SecureString;
 use std::borrow::Cow;
 use std::cell::RefCell;
-use std::mem;
 use std::os::fd::AsRawFd;
 use std::os::unix::net::UnixStream;
 use std::rc::Rc;
+use std::{future, mem};
 
 trait MakeSession {
     fn connect(self, connection: &gvnc::Connection) -> Result<(), glib::BoolError>;
@@ -141,7 +142,7 @@ impl Adapter for VncAdapter {
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
         verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
-    ) -> Box<dyn AdapterDisplay> {
+    ) -> LocalBoxFuture<'static, Box<dyn AdapterDisplay>> {
         debug!("creating vnc adapter");
         let error_container: Rc<RefCell<Option<ConnectionError>>> = Rc::new(RefCell::new(None));
 
@@ -210,7 +211,9 @@ impl Adapter for VncAdapter {
             }
         ));
 
-        Box::new(VncAdapterDisplay(vnc))
+        let display: Box<dyn AdapterDisplay> = Box::new(VncAdapterDisplay(vnc));
+
+        Box::pin(future::ready(display))
     }
 }
 

@@ -1498,11 +1498,13 @@ dependencies = [
  "libadwaita",
  "libfieldmonitor",
  "log",
+ "nix",
  "num_enum",
  "quick-xml",
  "secure-string",
  "serde",
  "virt",
+ "zbus",
 ]
 
 [[package]]
@@ -3200,6 +3202,7 @@ dependencies = [
  "uuid",
  "vte4",
  "x509-cert 0.3.0",
+ "zbus",
 ]
 
 [[package]]
@@ -3434,6 +3437,7 @@ dependencies = [
  "cfg-if",
  "cfg_aliases",
  "libc",
+ "memoffset",
 ]
 
 [[package]]

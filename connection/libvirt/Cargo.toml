@@ -13,10 +13,12 @@ gtk = { workspace = true }
 adw = { workspace = true }
 num_enum = { workspace = true }
 secure-string = { workspace = true }
+zbus = { workspace = true }
 virt = { version = "0.4", features = ["qemu"] }
 quick-xml = { version = "0.41", features = ["serialize", "serde-types"] }
 serde = { workspace = true }
 indexmap = { workspace = true }
+nix = { version = "0.31", features = ["socket", "user"] }
 
 [lints]
 workspace = true

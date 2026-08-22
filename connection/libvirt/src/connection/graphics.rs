@@ -18,9 +18,11 @@
 
 use crate::connection::VirtArc;
 use crate::connection::adapter::LibvirtDynamicAdapter;
+use crate::connection::qemu_dbus::{LibvirtDbusConnectable, LibvirtQemuDbusAdapter};
 use crate::is_localhost;
 use anyhow::anyhow;
 use gettextrs::gettext;
+use libfieldmonitor::adapter::qemu_dbus::QemuDbusAdapter;
 use libfieldmonitor::adapter::rdp::RdpAdapter;
 use libfieldmonitor::adapter::spice::SpiceAdapter;
 use libfieldmonitor::adapter::vnc::VncAdapter;
@@ -29,7 +31,7 @@ use log::{debug, error, warn};
 use quick_xml::de::from_str;
 use quick_xml::impl_deserialize_for_internally_tagged_enum;
 use secure_string::SecureString;
-use serde::Deserialize;
+use serde::{Deserialize, Deserializer};
 use std::borrow::Cow;
 use std::num::NonZeroU32;
 use virt::domain::Domain;
@@ -145,6 +147,7 @@ impl LibvirtConnectable {
 
 #[derive(Debug, Default, Clone)]
 pub struct LibvirtGraphics {
+    qemu_dbus: Option<LibvirtDbusConnectable>,
     spice: Option<LibvirtConnectable>,
     vnc: Option<LibvirtConnectable>,
     rdp: Option<LibvirtConnectable>,
@@ -190,6 +193,11 @@ impl LibvirtGraphics {
         out: &mut LibvirtGraphics,
     ) -> Result<(), String> {
         match inp {
+            LibvirtXmlGraphics::Dbus { address, p2p } => {
+                debug!("building libvirt qemu/dbus connectable ({idx})");
+                out.qemu_dbus =
+                    LibvirtDbusConnectable::try_make(domain, host, address.as_deref(), *p2p, idx)
+            }
             LibvirtXmlGraphics::Vnc {
                 listen,
                 port,
@@ -243,6 +251,9 @@ impl LibvirtGraphics {
     }
 
     pub fn push_supported_adapters(&self, adapters: &mut Vec<(Cow<str>, Cow<str>)>) {
+        if self.qemu_dbus.is_some() {
+            adapters.push((QemuDbusAdapter::TAG.into(), gettext("D-Bus").into()));
+        }
         if self.spice.is_some() {
             adapters.push((SpiceAdapter::TAG.into(), gettext("SPICE").into()));
         }
@@ -252,6 +263,14 @@ impl LibvirtGraphics {
         if self.vnc.is_some() {
             adapters.push((VncAdapter::TAG.into(), gettext("VNC").into()));
         }
+    }
+
+    pub fn into_qemu_dbus_adapter(self) -> ConnectionResult<LibvirtQemuDbusAdapter> {
+        self.qemu_dbus
+            .map(LibvirtQemuDbusAdapter::new)
+            .ok_or_else(|| {
+                ConnectionError::General(None, anyhow!("qemu/dbus not supported on this domain"))
+            })
     }
 
     pub fn into_spice_adapter(self) -> ConnectionResult<LibvirtDynamicAdapter<SpiceAdapter>> {
@@ -325,6 +344,10 @@ impl_deserialize_for_internally_tagged_enum! {
 
 #[derive(Debug)]
 enum LibvirtXmlGraphics {
+    Dbus {
+        address: Option<String>,
+        p2p: bool,
+    },
     Vnc {
         port: Option<i64>,
         passwd: Option<String>,
@@ -347,6 +370,12 @@ enum LibvirtXmlGraphics {
 
 impl_deserialize_for_internally_tagged_enum! {
     LibvirtXmlGraphics, "@type",
+    ("dbus"   => Dbus {
+        #[serde(rename = "@address", default)]
+        address: Option<String>,
+        #[serde(rename = "@p2p", default, deserialize_with = "deserialize_yes_no")]
+        p2p: bool,
+    }),
     ("vnc"    => Vnc {
         #[serde(rename = "@port", default)]
         port: Option<i64>,
@@ -383,6 +412,21 @@ struct LibvirtXmlDevices {
 #[derive(Debug, Deserialize)]
 struct LibvirtXmlDomain {
     devices: LibvirtXmlDevices,
+}
+
+fn deserialize_yes_no<'de, D>(deserializer: D) -> Result<bool, D::Error>
+where
+    D: Deserializer<'de>,
+{
+    let value = String::deserialize(deserializer)?;
+    match value.to_ascii_lowercase().as_str() {
+        "yes" => Ok(true),
+        "no" => Ok(false),
+        other => {
+            warn!("unknown yes/no value {other:?} in libvirt xml, assuming \"no\"");
+            Ok(false)
+        }
+    }
 }
 
 fn parse_port(candidate: i64) -> Option<NonZeroU32> {

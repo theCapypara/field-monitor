@@ -19,6 +19,7 @@ connection/generic-group/src/util.rs
 connection/libvirt/src/connection/adapter.rs
 connection/libvirt/src/connection/graphics.rs
 connection/libvirt/src/connection/mod.rs
+connection/libvirt/src/connection/qemu_dbus.rs
 connection/libvirt/src/hypervisor/mod.rs
 connection/libvirt/src/hypervisor/qemu.rs
 connection/libvirt/src/lib.rs
