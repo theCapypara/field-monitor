@@ -31,6 +31,7 @@ pub struct SecretManager {
 }
 
 impl SecretManager {
+    #[allow(clippy::result_large_err)] // should be fixed with a future oo7 update
     pub async fn new() -> oo7::Result<Self> {
         let keyring = oo7::Keyring::new().await?;
         Ok(Self { keyring })
