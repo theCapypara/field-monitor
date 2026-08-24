@@ -59,7 +59,7 @@ impl FieldMonitorCloseWarningDialog {
         let body = gettext_f(
             // Translators: Do NOT translate the content between '{' and '}', this is
             // a variable name.
-            "This window is still connected to '{label}'. Closing it will disconnect from the server.",
+            "This window is still connected to “{label}”. Closing it will disconnect from the server.",
             &[("label", label)],
         );
 
