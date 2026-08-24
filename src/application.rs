@@ -50,6 +50,7 @@ use libfieldmonitor::{ManagesSecrets, impl_primitive_enum_param_spec};
 use crate::cert_security::FieldMonitorTrustStore;
 use crate::connection::CONNECTION_PROVIDERS;
 use crate::connection_loader::ConnectionLoader;
+use crate::logging;
 use crate::remote_server_info::RemoteServerInfo;
 use crate::secrets::SecretManager;
 use crate::settings::FieldMonitorSettings;
@@ -583,6 +584,16 @@ impl FieldMonitorApplication {
             "translator-credits",
         ));
         about.set_copyright("© 2026 Marco Köpcke");
+        about.set_debug_info(&logging::debug_info());
+        about.set_debug_info_filename(&format!(
+            "{}-{}-{}.log.jsonl",
+            APP_ID,
+            VERSION,
+            glib::DateTime::now_utc()
+                .and_then(|dt| dt.format("%Y-%m-%d-%H-%M-%S"))
+                .map(|dt| dt.to_string())
+                .unwrap_or_else(|_| "unknown".to_string())
+        ));
 
         about.present(window.as_ref());
     }
