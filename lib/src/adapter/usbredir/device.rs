@@ -15,14 +15,19 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-
+use crate::adapter::usbredir::FmUsbRedirResult;
+use futures::future::LocalBoxFuture;
 use glib;
 use glib::prelude::*;
 use glib::subclass::prelude::*;
+use spice_gtk_usb_portal::devices::DeviceDescription;
 use std::cell::{Cell, OnceCell, RefCell};
-use std::fmt::{Display, Formatter};
+use std::fmt::{Debug, Display, Formatter};
 use std::marker::PhantomData;
-use std::ops::Deref;
+
+pub trait FieldMonitorUsbRedirAttachedDevice: Debug {
+    fn detach(&self) -> LocalBoxFuture<'_, FmUsbRedirResult<()>>;
+}
 
 mod imp {
     use super::*;
@@ -31,11 +36,11 @@ mod imp {
     #[properties(wrapper_type = super::FieldMonitorUsbDevice)]
     #[derive(Debug)]
     pub struct FieldMonitorUsbDevice {
-        /// Inner device information struct. Can be null if not relevant for the implementation.
-        pub(super) inner: OnceCell<glib::Object>,
-        /// Handle to a currently attached device. If not null,
+        /// Device information
+        pub(super) description: OnceCell<DeviceDescription>,
+        /// Handle to a currently attached device. If `Some`,
         /// the device is considered attached.
-        pub(super) attached_handle: RefCell<Option<glib::Object>>,
+        pub(super) attached_device: RefCell<Option<Box<dyn FieldMonitorUsbRedirAttachedDevice>>>,
         #[property(get, set)]
         /// Device model.
         pub(super) model: RefCell<String>,
@@ -66,7 +71,7 @@ mod imp {
 
     impl FieldMonitorUsbDevice {
         fn is_attached(&self) -> bool {
-            self.attached_handle.borrow().is_some()
+            self.attached_device.borrow().is_some()
         }
     }
 }
@@ -83,7 +88,7 @@ impl Display for FieldMonitorUsbDevice {
 
 impl FieldMonitorUsbDevice {
     pub(crate) fn new(
-        inner: Option<&impl IsA<glib::Object>>,
+        desc: Option<&DeviceDescription>,
         model: &str,
         vendor: &str,
         attachable: bool,
@@ -95,24 +100,32 @@ impl FieldMonitorUsbDevice {
             .property("attachable", attachable)
             .property("hub", hub)
             .build();
-        if let Some(inner) = inner {
-            slf.imp().inner.set(inner.upcast_ref().clone()).unwrap();
+        if let Some(desc) = desc {
+            slf.imp().description.set(desc.clone()).unwrap();
         }
         slf
     }
 
-    pub(crate) fn inner(&self) -> Option<&glib::Object> {
-        self.imp().inner.get()
+    pub(crate) fn description(&self) -> Option<&DeviceDescription> {
+        self.imp().description.get()
     }
 
-    pub(crate) fn attached_handle(&self) -> impl Deref<Target = Option<glib::Object>> {
-        self.imp().attached_handle.borrow()
+    pub(crate) async fn detach(&self) -> FmUsbRedirResult<()> {
+        let device_handle_opt = {
+            let brw = &mut *self.imp().attached_device.borrow_mut();
+            brw.take()
+        };
+        let res = if let Some(device_handle) = device_handle_opt {
+            device_handle.detach().await
+        } else {
+            Ok(())
+        };
+        self.notify_attached();
+        res
     }
 
-    pub(crate) fn set_attached_handle(&self, v: Option<glib::Object>) {
-        {
-            *self.imp().attached_handle.borrow_mut() = v;
-        }
+    pub(crate) fn set_attached_device(&self, v: Box<dyn FieldMonitorUsbRedirAttachedDevice>) {
+        self.imp().attached_device.replace(Some(v));
         self.notify_attached();
     }
 

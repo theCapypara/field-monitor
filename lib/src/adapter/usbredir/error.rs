@@ -17,21 +17,24 @@
  */
 use gettextrs::gettext;
 
-pub type UsbRedirResult<T> = Result<T, UsbRedirError>;
+pub type FmUsbRedirResult<T> = Result<T, FmUsbRedirError>;
 
 #[derive(Debug)]
-pub struct UsbRedirError(pub(crate) String);
+pub struct FmUsbRedirError(pub(crate) String);
 
-impl std::error::Error for UsbRedirError {}
+impl std::error::Error for FmUsbRedirError {}
 
-impl std::fmt::Display for UsbRedirError {
+impl std::fmt::Display for FmUsbRedirError {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.0.fmt(f)
     }
 }
 
-impl UsbRedirError {
+impl FmUsbRedirError {
     pub(crate) fn device_not_attachable() -> Self {
         Self(gettext("The device can not be attached to the connection"))
+    }
+    pub(crate) fn device_already_attached() -> Self {
+        Self(gettext("The device was already attached to the connection"))
     }
 }

@@ -86,10 +86,8 @@ rev = "861aedfc6001401b5710667a0b053c16b7fb00e5"
 default-features = false
 
 [workspace.dependencies.spice-gtk-usb-portal]
-# todo: make stable release of that crate and use stable version here
 git = "https://github.com/theCapypara/spice-gtk-usb-portal.git"
-rev = "ceee28f7a113c6214b2ad4cc7a2d024b1f2de3a1"
-features = ["parent_window_gtk4"]
+rev = "6089d7a04ea3673c4086769f8c49db4b7fe0f511"
 
 [workspace.dependencies.vte]
 package = "vte4"

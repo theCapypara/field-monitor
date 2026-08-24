@@ -51,6 +51,8 @@ lib/src/adapter/rdp.rs
 lib/src/adapter/spice.rs
 lib/src/adapter/types.rs
 lib/src/adapter/usbredir/error.rs
+lib/src/adapter/usbredir/portal.rs
+lib/src/adapter/usbredir/qemu_dbus/mod.rs
 lib/src/adapter/usbredir/spice.rs
 lib/src/adapter/vnc.rs
 lib/src/adapter/vte_pty.rs
