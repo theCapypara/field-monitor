@@ -6,13 +6,15 @@ conf.set_quoted('LOCALEDIR', get_option('prefix') / get_option('localedir'))
 conf.set_quoted('PKGDATADIR', get_option('prefix') / get_option('datadir') / meson.project_name())
 conf.set_quoted('LIBEXECDIR', get_option('prefix') / get_option('libexecdir'))
 
+blueprint_compiler = find_program('blueprint-compiler')
+
 pkgdatadir = get_option('prefix') / get_option('datadir') / meson.project_name()
 blueprints = custom_target('blueprints',
   input: files(
     'gtk/save_credentials_button.blp',
   ),
   output: '.',
-  command: [find_program('blueprint-compiler'), 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
+  command: [blueprint_compiler, 'batch-compile', '@OUTPUT@', '@CURRENT_SOURCE_DIR@', '@INPUT@'],
 )
 
 gnome.compile_resources('field-monitor-lib',
@@ -35,4 +37,13 @@ run_command(
   meson.current_build_dir() / 'config.rs',
   meson.current_source_dir() / 'config.rs',
   check: true
+)
+
+blueprint_format_check_lib = run_target(
+  'blueprint-format-check-lib',
+  command: [
+    blueprint_compiler,
+    'format', '-s4',
+    meson.current_source_dir()
+  ]
 )

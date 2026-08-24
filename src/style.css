@@ -31,41 +31,8 @@ window {
     margin: 12px;
 }
 
-.connection-view-navbar {
-    border-radius: var(--box-border-radius);
-    /* colors are same as Adwaita's (old) banner > revealer > widget */
-    background-color: color-mix(in srgb, var(--accent-bg-color) 30%, var(--sidebar-bg-color));
-    color: var(--sidebar-fg-color);
-    margin-top: 12px;
-    margin-left: 12px;
-    margin-right: 12px;
-}
-
-.connection-view-navbar:backdrop {
-    background-color: color-mix(in srgb, var(--accent-bg-color) 15%, var(--sidebar-bg-color));
-}
-
-
-.compact-button {
-    padding: 3px;
-}
-
-.connection-view-navbar .heading {
-    margin-top: 6px;
-    margin-right: 12px;
-}
-
 .connection-info-page:backdrop, .fm-navbar:backdrop {
     opacity: var(--dim-opacity);
-}
-
-.window-title {
-    padding-top: 6px;
-    padding-bottom: 6px;
-}
-
-.window-title button {
-    padding: 6px;
 }
 
 .vte-box {

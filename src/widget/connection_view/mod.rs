@@ -16,9 +16,5 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-mod connection_tab_view;
-mod connection_view_navbar;
 mod server_screen;
-pub use connection_tab_view::*;
-pub use connection_view_navbar::*;
 pub use server_screen::*;

@@ -111,10 +111,6 @@ src/widget/connection_list/server_info.rs
 src/widget/connection_list/server_info/icon.blp
 src/widget/connection_list/server_info/icon.rs
 src/widget/connection_list/server_row.rs
-src/widget/connection_view/connection_tab_view.blp
-src/widget/connection_view/connection_tab_view.rs
-src/widget/connection_view/connection_view_navbar.blp
-src/widget/connection_view/connection_view_navbar.rs
 src/widget/connection_view/mod.rs
 src/widget/connection_view/server_screen.blp
 src/widget/connection_view/server_screen.rs

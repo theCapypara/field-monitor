@@ -6,7 +6,6 @@ template $FieldMonitorNavbarConnectionList: Adw.Bin {
         ListBox list {
             hexpand: true;
             tab-behavior: item;
-
             row-activated => $on_list_row_activated() swapped;
 
             accessibility {
@@ -16,7 +15,7 @@ template $FieldMonitorNavbarConnectionList: Adw.Bin {
 
             styles [
                 "fm-navbar",
-                "navigation-sidebar"
+                "navigation-sidebar",
             ]
         }
 
