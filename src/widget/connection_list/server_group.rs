@@ -19,6 +19,7 @@ use crate::application::FieldMonitorApplication;
 use crate::widget::connection_list::server_info::{
     ServerInfoIcon, ServerInfoUpdater, ServerInfoWidget,
 };
+use crate::widget::window::FieldMonitorWindow;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
 use glib::object::ObjectExt;
@@ -101,6 +102,10 @@ impl FieldMonitorServerGroup {
 }
 
 impl ServerInfoWidget for FieldMonitorServerGroup {
+    fn window(&self) -> Option<FieldMonitorWindow> {
+        self.root().and_downcast()
+    }
+
     fn set_server_title(&self, title: &str) {
         FieldMonitorServerGroup::set_server_title(self, title)
     }

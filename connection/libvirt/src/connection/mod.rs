@@ -30,7 +30,7 @@ use futures::future::LocalBoxFuture;
 use futures::{StreamExt, TryStreamExt, stream};
 use gettextrs::gettext;
 use indexmap::IndexMap;
-use log::{debug, error, warn};
+use log::{debug, error, trace, warn};
 use virt::connect::Connect;
 use virt::domain::Domain;
 use virt::sys::{
@@ -491,6 +491,7 @@ impl LoadCacheObject for LibVirtServerState {
         Self: Sized,
     {
         let (domain, domain_name, hostname) = params;
+        trace!("libvirt: updating state for {domain_name} @ {hostname}");
         let is_active = domain.is_active().ok();
         let is_paused = domain
             .get_state()
