@@ -29,6 +29,7 @@ mod application;
 mod cert_security;
 mod connection;
 mod connection_loader;
+mod logging;
 mod quick_connect;
 mod remote_server_info;
 mod secrets;
@@ -41,15 +42,7 @@ thread_local! {
 }
 
 fn main() -> glib::ExitCode {
-    #[cfg(feature = "devel")] // Setup debug logging
-    {
-        // SAFETY: This is generally safe to call with correct boolean arguments.
-        unsafe {
-            rdw_vnc::gvnc::ffi::vnc_util_set_debug(glib::ffi::GTRUE);
-        }
-    }
-    glib::log_set_default_handler(glib::rust_log_handler);
-    pretty_env_logger::init_timed();
+    logging::init();
 
     // Set up gettext translations
     bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR).expect("Unable to bind the text domain");

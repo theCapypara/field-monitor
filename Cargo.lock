@@ -1309,19 +1309,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "env_logger"
-version = "0.10.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4cd405aab171cb85d6735e5c8d9db038c17d3ca007a4d2c25f337935c3d90580"
-dependencies = [
- "humantime",
- "is-terminal",
- "log",
- "regex",
- "termcolor",
-]
-
-[[package]]
 name = "epoxy"
 version = "0.1.0"
 source = "git+https://github.com/theCapypara/epoxy-rs.git?rev=7d9d88a8dfec2ddedc647b7a8f6c1e5b3e6c6ec0#7d9d88a8dfec2ddedc647b7a8f6c1e5b3e6c6ec0"
@@ -1414,10 +1401,10 @@ dependencies = [
  "libadwaita",
  "libfieldmonitor",
  "log",
+ "logforth",
  "num_enum",
  "oo7",
  "pem",
- "pretty_env_logger",
  "rdw4",
  "rdw4-vnc",
  "secure-string",
@@ -2491,12 +2478,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6dbf3de79e51f3d586ab4cb9d5c3e2c14aa28ed23d180cf89b4df0454a69cc87"
 
 [[package]]
-name = "humantime"
-version = "2.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15cdd26707701c53297e2fa6afb323d55fbc1d0810c3aec078ae3ef0424c3c15"
-
-[[package]]
 name = "hybrid-array"
 version = "0.4.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2949,17 +2930,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "is-terminal"
-version = "0.4.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3640c1c38b8e4e43584d8df18be5fc6b0aa314ce6ebf51b53313d4306cca8e46"
-dependencies = [
- "hermit-abi",
- "libc",
- "windows-sys 0.61.2",
-]
-
-[[package]]
 name = "is_terminal_polyfill"
 version = "1.70.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2997,6 +2967,47 @@ name = "itoa"
 version = "1.0.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
+
+[[package]]
+name = "jiff"
+version = "0.2.24"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f00b5dbd620d61dfdcb6007c9c1f6054ebd75319f163d886a9055cec1155073d"
+dependencies = [
+ "jiff-static",
+ "jiff-tzdb-platform",
+ "log",
+ "portable-atomic",
+ "portable-atomic-util",
+ "serde_core",
+ "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "jiff-static"
+version = "0.2.24"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e000de030ff8022ea1da3f466fbb0f3a809f5e51ed31f6dd931c35181ad8e6d7"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn 2.0.119",
+]
+
+[[package]]
+name = "jiff-tzdb"
+version = "0.1.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c900ef84826f1338a557697dc8fc601df9ca9af4ac137c7fb61d4c6f2dfd3076"
+
+[[package]]
+name = "jiff-tzdb-platform"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "875a5a69ac2bab1a891711cf5eccbec1ce0341ea805560dcd90b7a2e925132e8"
+dependencies = [
+ "jiff-tzdb",
+]
 
 [[package]]
 name = "jni"
@@ -3276,6 +3287,83 @@ name = "log"
 version = "0.4.33"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ceec5bc11778974d1bcb055b18002eba7f4b3518b6a0081b3af5f21666da9ad"
+
+[[package]]
+name = "logforth"
+version = "0.30.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "522000d3921e4b089de59204d2d3ca8792cd53f8ce5a54b5ac8b9a6e867259f0"
+dependencies = [
+ "log",
+ "logforth-append-file",
+ "logforth-bridge-log",
+ "logforth-core",
+ "logforth-filter-rustlog",
+ "logforth-layout-json",
+ "logforth-layout-text",
+]
+
+[[package]]
+name = "logforth-append-file"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "80f4ed78a03a30c12285135d98330f0f5d53cb0019bd1ac6d66863dae72d8d52"
+dependencies = [
+ "jiff",
+ "logforth-core",
+]
+
+[[package]]
+name = "logforth-bridge-log"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9c7224c78547e542572ae4d1f787f96c4395a4c3f24513bf221bd8e49888f610"
+dependencies = [
+ "log",
+ "logforth-core",
+]
+
+[[package]]
+name = "logforth-core"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "400ba5305e0cb6819efa6c2c503020562eb5b47fd53c91c935be55af1ffd374e"
+dependencies = [
+ "anyhow",
+ "serde",
+]
+
+[[package]]
+name = "logforth-filter-rustlog"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5e8431cfa1d3eeca479c363651320a66c7003350528f678b30e8c1474fb0d802"
+dependencies = [
+ "logforth-core",
+]
+
+[[package]]
+name = "logforth-layout-json"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9d86a105f8f32151ca1e0a6d4097d478badb02d5715239ba0fa431a188a5d966"
+dependencies = [
+ "jiff",
+ "logforth-core",
+ "serde",
+ "serde_json",
+]
+
+[[package]]
+name = "logforth-layout-text"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4eafe007ac55293d807e8c7f5a23002e2518d32e476e195443cde23e7845416a"
+dependencies = [
+ "colored",
+ "jiff",
+ "logforth-core",
+]
 
 [[package]]
 name = "lru-slab"
@@ -4119,16 +4207,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "85eae3c4ed2f50dcfe72643da4befc30deadb458a9b590d720cde2f2b1e97da9"
 dependencies = [
  "zerocopy",
-]
-
-[[package]]
-name = "pretty_env_logger"
-version = "0.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "865724d4dbe39d9f3dd3b52b88d859d66bcb2d6a0acfd5ea68a65fb66d4bdc1c"
-dependencies = [
- "env_logger",
- "log",
 ]
 
 [[package]]
@@ -5451,15 +5529,6 @@ dependencies = [
  "once_cell",
  "rustix",
  "windows-sys 0.61.2",
-]
-
-[[package]]
-name = "termcolor"
-version = "1.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "06794f8f6c5c898b3275aebefa6b8a1cb24cd2c6c79397ab15774837a0bc5755"
-dependencies = [
- "winapi-util",
 ]
 
 [[package]]
