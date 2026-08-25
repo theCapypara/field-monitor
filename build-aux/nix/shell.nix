@@ -35,9 +35,11 @@
   pkg-config,
   python312Packages,
   libGL,
+  pixman,
 
   editorconfig-checker,
   jq,
+  act,
 }:
 let
   patched-gtk-vnc = (
@@ -66,6 +68,7 @@ let
     spice-glib
     libepoxy
     libGL
+    pixman
   ];
   libPath = lib.makeLibraryPath extraLibs;
 in
@@ -128,6 +131,7 @@ mkShell {
     desktop-file-utils
     appstream
     gi-docgen
+    pixman
   ]
   ++ (with python312Packages; [
     pygobject3
@@ -147,5 +151,6 @@ mkShell {
   ++ [
     editorconfig-checker
     jq
+    act
   ];
 }

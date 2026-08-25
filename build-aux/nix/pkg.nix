@@ -29,6 +29,7 @@
   libepoxy,
   libGL,
   openssl,
+  pixman,
 }:
 stdenv.mkDerivation rec {
   pname = "field-monitor";
@@ -72,6 +73,7 @@ stdenv.mkDerivation rec {
     libGL
     libvirt
     openssl
+    pixman
     spice-glib
     spice-protocol
     usbredir

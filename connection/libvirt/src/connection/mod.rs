@@ -18,28 +18,22 @@
 
 mod adapter;
 mod graphics;
+pub mod qemu_dbus;
+pub mod util;
 
 use std::borrow::Cow;
 use std::ops::Deref;
 use std::sync::Arc;
 use std::thread;
 
+use crate::connection::graphics::LibvirtGraphics;
 use anyhow::anyhow;
 use futures::channel::oneshot;
 use futures::future::LocalBoxFuture;
 use futures::{StreamExt, TryStreamExt, stream};
 use gettextrs::gettext;
 use indexmap::IndexMap;
-use log::{debug, error, trace, warn};
-use virt::connect::Connect;
-use virt::domain::Domain;
-use virt::sys::{
-    VIR_CONNECT_LIST_DOMAINS_ACTIVE, VIR_CONNECT_LIST_DOMAINS_INACTIVE,
-    VIR_DOMAIN_DESTROY_GRACEFUL, VIR_DOMAIN_PAUSED, VIR_DOMAIN_REBOOT_ACPI_POWER_BTN,
-    VIR_DOMAIN_SHUTDOWN_ACPI_POWER_BTN, VIR_DOMAIN_START_PAUSED,
-};
-
-use crate::connection::graphics::LibvirtGraphics;
+use libfieldmonitor::adapter::qemu_dbus::QemuDbusAdapter;
 use libfieldmonitor::adapter::rdp::RdpAdapter;
 use libfieldmonitor::adapter::spice::SpiceAdapter;
 use libfieldmonitor::adapter::types::Adapter;
@@ -49,6 +43,14 @@ use libfieldmonitor::cache::{Cached, LoadCacheObject};
 use libfieldmonitor::connection::*;
 use libfieldmonitor::i18n::gettext_f;
 use libfieldmonitor::libexec_path;
+use log::{debug, error, trace, warn};
+use virt::connect::Connect;
+use virt::domain::Domain;
+use virt::sys::{
+    VIR_CONNECT_LIST_DOMAINS_ACTIVE, VIR_CONNECT_LIST_DOMAINS_INACTIVE,
+    VIR_DOMAIN_DESTROY_GRACEFUL, VIR_DOMAIN_PAUSED, VIR_DOMAIN_REBOOT_ACPI_POWER_BTN,
+    VIR_DOMAIN_SHUTDOWN_ACPI_POWER_BTN, VIR_DOMAIN_START_PAUSED,
+};
 
 pub const PTY_DRIVER_BIN: &str = "de.capypara.FieldMonitor.PtyDrv.Libvirt";
 
@@ -447,6 +449,7 @@ impl ServerConnection for LibvirtServer {
         Box::pin(async move {
             let graphics = self.state.get().await.graphics.clone();
             let bx: Box<dyn Adapter> = match &*tag {
+                QemuDbusAdapter::TAG => graphics.into_qemu_dbus_adapter().map(Box::new)?,
                 SpiceAdapter::TAG => graphics.into_spice_adapter().map(Box::new)?,
                 RdpAdapter::TAG => graphics.into_rdp_adapter().map(Box::new)?,
                 VncAdapter::TAG => graphics.into_vnc_adapter().map(Box::new)?,

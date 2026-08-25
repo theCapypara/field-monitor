@@ -77,7 +77,7 @@ pub trait Adapter: Send + Sync {
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
         verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
-    ) -> Box<dyn AdapterDisplay>;
+    ) -> LocalBoxFuture<'static, Box<dyn AdapterDisplay>>;
 }
 
 pub struct NullAdapterDisplay;

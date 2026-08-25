@@ -27,6 +27,7 @@ use gtk::glib;
 use gtk::glib::Properties;
 use libfieldmonitor::adapter::usbredir::{
     FieldMonitorUsbDevice, FieldMonitorUsbRedirAdapter, FieldMonitorUsbRedirAdapterExt,
+    USB_REDIR_MAX_CHANNELS_INFINITE,
 };
 use libfieldmonitor::i18n::gettext_f;
 use std::cell::RefCell;
@@ -155,7 +156,7 @@ impl FieldMonitorUsbRedirSettingsDialog {
             move |adapter: &FieldMonitorUsbRedirAdapter,
                   imp: &imp::FieldMonitorUsbRedirSettingsDialog| {
                 let max = adapter.max_channels();
-                if max < 0 {
+                if max == USB_REDIR_MAX_CHANNELS_INFINITE {
                     imp.free_channels_label.set_visible(false);
                 } else {
                     let free = adapter.free_channels();
@@ -239,7 +240,9 @@ impl FieldMonitorUsbRedirSettingsDialog {
             #[weak]
             device,
             move |adapter: &FieldMonitorUsbRedirAdapter| {
-                if adapter.max_channels() >= 0 && adapter.free_channels() == 0 {
+                if adapter.max_channels() != USB_REDIR_MAX_CHANNELS_INFINITE
+                    && adapter.free_channels() == 0
+                {
                     attach_btn.set_sensitive(false);
                 } else {
                     // restore state based on attachable state

@@ -19,6 +19,7 @@ use std::rc::Rc;
 use std::time::Duration;
 
 use anyhow::anyhow;
+use futures::future::LocalBoxFuture;
 use gtk::prelude::*;
 
 use libfieldmonitor::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
@@ -44,29 +45,34 @@ impl Adapter for DebugArbitraryAdapter {
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
         _verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
-    ) -> Box<dyn AdapterDisplay> {
-        glib::timeout_add_local(Duration::from_secs(1), move || {
-            match self.mode {
-                DebugBehaviour::Ok => {
-                    on_connected();
+    ) -> LocalBoxFuture<'static, Box<dyn AdapterDisplay>> {
+        Box::pin(async move {
+            glib::timeout_add_local(Duration::from_secs(4), move || {
+                match self.mode {
+                    DebugBehaviour::Ok => {
+                        on_connected();
+                    }
+                    DebugBehaviour::AuthError => on_disconnected(Err(ConnectionError::AuthFailed(
+                        Some("debug auth error".to_string()),
+                        anyhow!("debug auth error"),
+                    ))),
+                    DebugBehaviour::GeneralError => on_disconnected(Err(ConnectionError::General(
+                        Some("debug general error".to_string()),
+                        anyhow!("debug general error"),
+                    ))),
                 }
-                DebugBehaviour::AuthError => on_disconnected(Err(ConnectionError::AuthFailed(
-                    Some("debug auth error".to_string()),
-                    anyhow!("debug auth error"),
-                ))),
-                DebugBehaviour::GeneralError => on_disconnected(Err(ConnectionError::General(
-                    Some("debug general error".to_string()),
-                    anyhow!("debug general error"),
-                ))),
-            }
-            glib::ControlFlow::Break
-        });
+                glib::ControlFlow::Break
+            });
 
-        Box::new(DebugArbitraryAdapterDisplay(
-            AdapterDisplayWidget::Arbitrary {
-                widget: gtk::Label::new(Some("Debug Arbitrary Display")).upcast(),
-            },
-        ))
+            glib::timeout_future(Duration::from_secs(2)).await;
+
+            let b: Box<dyn AdapterDisplay> = Box::new(DebugArbitraryAdapterDisplay(
+                AdapterDisplayWidget::Arbitrary {
+                    widget: gtk::Label::new(Some("Debug Arbitrary Display")).upcast(),
+                },
+            ));
+            b
+        })
     }
 }
 

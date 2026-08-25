@@ -19,9 +19,11 @@
 use futures::StreamExt;
 mod device;
 mod error;
+pub mod portal;
+pub mod qemu_dbus;
 pub mod spice;
 
-pub use self::device::FieldMonitorUsbDevice;
+pub use self::device::{FieldMonitorUsbDevice, FieldMonitorUsbRedirAttachedDevice};
 pub use self::error::*;
 
 use futures::future::LocalBoxFuture;
@@ -30,6 +32,9 @@ use gtk::gio;
 use gtk::gio::prelude::*;
 use log::{debug, error, trace};
 use std::cell::{Cell, OnceCell};
+
+pub const USB_REDIR_MAX_CHANNELS_INFINITE: i32 = -1;
+pub const USB_REDIR_MAX_CHANNELS_UNKNOWN: i32 = -2;
 
 mod imp {
     use super::*;
@@ -42,12 +47,7 @@ mod imp {
             &'a super::FieldMonitorUsbRedirAdapter,
             &'a FieldMonitorUsbDevice,
             Option<&'a gtk::Window>,
-        ) -> LocalBoxFuture<'a, UsbRedirResult<()>>,
-
-        pub detach_device: for<'a> fn(
-            &'a super::FieldMonitorUsbRedirAdapter,
-            &'a FieldMonitorUsbDevice,
-        ) -> LocalBoxFuture<'a, UsbRedirResult<()>>,
+        ) -> LocalBoxFuture<'a, FmUsbRedirResult<()>>,
     }
 
     unsafe impl ClassStruct for FieldMonitorUsbRedirAdapterClass {
@@ -58,8 +58,11 @@ mod imp {
     #[properties(wrapper_type = super::FieldMonitorUsbRedirAdapter)]
     pub struct FieldMonitorUsbRedirAdapter {
         /// The maximum count of USB devices supported to be redirected.
-        /// If this number is negative, an "infinite" amount of devices is
-        /// supported and `free-channels` is always 0 (irrelevant).
+        /// If this number is `USB_REDIR_MAX_CHANNELS_INFINITE` (-1) an "infinite" amount of
+        /// devices is supported and `free-channels` is always 0 (irrelevant).
+        /// If this number is `USB_REDIR_MAX_CHANNELS_UNKNOWN` (-2), the maximium number of
+        /// channels is unknown.
+        /// All other negative numbers are invalid.
         ///
         /// Not intended to be set, except from the implementation.
         #[property(get, set)]
@@ -89,7 +92,6 @@ mod imp {
 
         fn class_init(klass: &mut Self::Class) {
             klass.attach_device = |_, _, _| unimplemented!();
-            klass.detach_device = |_, _| unimplemented!();
         }
     }
 
@@ -149,17 +151,16 @@ pub trait FieldMonitorUsbRedirAdapterExt: 'static {
         &self,
         device: &FieldMonitorUsbDevice,
         current_window: Option<&impl IsA<gtk::Window>>,
-    ) -> UsbRedirResult<()>;
+    ) -> FmUsbRedirResult<()>;
 
-    /// Try to detach `device` from the connection. `device` must be from
-    /// `self.store()`.
+    /// Try to detach `device` from the connection.
     /// Detaching the device may fail, in that case an error is returned.
     /// It if is not currently attached, this will do nothing.
-    async fn detach_device(&self, device: &FieldMonitorUsbDevice) -> UsbRedirResult<()>;
+    async fn detach_device(&self, device: &FieldMonitorUsbDevice) -> FmUsbRedirResult<()>;
 
     /// Detach all attached devices.
     #[must_use]
-    async fn detach_all(&self) -> Vec<(FieldMonitorUsbDevice, UsbRedirResult<()>)>;
+    async fn detach_all(&self) -> Vec<(FieldMonitorUsbDevice, FmUsbRedirResult<()>)>;
 }
 
 impl<O: IsA<FieldMonitorUsbRedirAdapter>> FieldMonitorUsbRedirAdapterExt for O {
@@ -167,12 +168,12 @@ impl<O: IsA<FieldMonitorUsbRedirAdapter>> FieldMonitorUsbRedirAdapterExt for O {
         &self,
         device: &FieldMonitorUsbDevice,
         current_window: Option<&impl IsA<gtk::Window>>,
-    ) -> UsbRedirResult<()> {
+    ) -> FmUsbRedirResult<()> {
         // Safety: safe because IsA<FieldMonitorUsbRedirAdapter>
         let self_: &FieldMonitorUsbRedirAdapter = unsafe { self.unsafe_cast_ref::<_>() };
 
         if !device.attachable() {
-            return Err(UsbRedirError::device_not_attachable());
+            return Err(FmUsbRedirError::device_not_attachable());
         }
 
         // Check if in self.store()
@@ -190,34 +191,20 @@ impl<O: IsA<FieldMonitorUsbRedirAdapter>> FieldMonitorUsbRedirAdapterExt for O {
         res
     }
 
-    async fn detach_device(&self, device: &FieldMonitorUsbDevice) -> UsbRedirResult<()> {
-        // Safety: safe because IsA<FieldMonitorUsbRedirAdapter>
-        let self_: &FieldMonitorUsbRedirAdapter = unsafe { self.unsafe_cast_ref::<_>() };
-
-        // Check if in self.store()
-        #[cfg(debug_assertions)]
-        {
-            let imp = self_.imp();
-            imp.assert_in_store(device);
-        }
-
+    async fn detach_device(&self, device: &FieldMonitorUsbDevice) -> FmUsbRedirResult<()> {
         if !device.attached() {
             return Ok(());
         }
 
-        let klass = self_.class().as_ref();
         debug!("detaching {device}");
-        let res = (klass.detach_device)(self_, device).await;
+        let res = device.detach().await;
         debug!("detaching {device} result: {res:?}");
         res
     }
 
-    async fn detach_all(&self) -> Vec<(FieldMonitorUsbDevice, UsbRedirResult<()>)> {
+    async fn detach_all(&self) -> Vec<(FieldMonitorUsbDevice, FmUsbRedirResult<()>)> {
         // Safety: safe because IsA<FieldMonitorUsbRedirAdapter>
         let self_: &FieldMonitorUsbRedirAdapter = unsafe { self.unsafe_cast_ref::<_>() };
-
-        let klass = self_.class().as_ref();
-        let detach_device = &klass.detach_device;
 
         let imp = self_.imp();
         let store = imp.store.get();
@@ -229,7 +216,7 @@ impl<O: IsA<FieldMonitorUsbRedirAdapter>> FieldMonitorUsbRedirAdapterExt for O {
             futures::stream::iter(devices)
                 .filter_map(|d| async move {
                     if d.attached() {
-                        let result = detach_device(self_, &d).await;
+                        let result = d.detach().await;
                         Some((d, result))
                     } else {
                         None
@@ -252,16 +239,7 @@ pub trait FieldMonitorUsbRedirAdapterImpl:
         &'a self,
         _device: &'a FieldMonitorUsbDevice,
         _current_window: Option<&'a gtk::Window>,
-    ) -> LocalBoxFuture<'a, UsbRedirResult<()>> {
-        unimplemented!()
-    }
-
-    /// Try to detach `device` from the connection. `device` is currently attached.
-    /// Detaching the device may fail, in that case an error is returned.
-    fn detach_device<'a>(
-        &'a self,
-        _device: &'a FieldMonitorUsbDevice,
-    ) -> LocalBoxFuture<'a, UsbRedirResult<()>> {
+    ) -> LocalBoxFuture<'a, FmUsbRedirResult<()>> {
         unimplemented!()
     }
 }
@@ -276,23 +254,14 @@ unsafe impl<T: FieldMonitorUsbRedirAdapterImpl> IsSubclassable<T> for FieldMonit
             obj: &'a FieldMonitorUsbRedirAdapter,
             device: &'a FieldMonitorUsbDevice,
             current_window: Option<&'a gtk::Window>,
-        ) -> LocalBoxFuture<'a, UsbRedirResult<()>> {
+        ) -> LocalBoxFuture<'a, FmUsbRedirResult<()>> {
             // safety: safe because we know this IsA<FieldMonitorUsbRedirAdapter>
             let imp = unsafe { obj.unsafe_cast_ref::<T::Type>() }.imp();
             FieldMonitorUsbRedirAdapterImpl::attach_device(imp, device, current_window)
-        }
-        fn detach_device_trampoline<'a, T: FieldMonitorUsbRedirAdapterImpl>(
-            obj: &'a FieldMonitorUsbRedirAdapter,
-            device: &'a FieldMonitorUsbDevice,
-        ) -> LocalBoxFuture<'a, UsbRedirResult<()>> {
-            // safety: safe because we know this IsA<FieldMonitorUsbRedirAdapter>
-            let imp = unsafe { obj.unsafe_cast_ref::<T::Type>() }.imp();
-            FieldMonitorUsbRedirAdapterImpl::detach_device(imp, device)
         }
 
         Self::parent_class_init::<T>(class);
         let klass = class.as_mut();
         klass.attach_device = attach_device_trampoline::<T>;
-        klass.detach_device = detach_device_trampoline::<T>;
     }
 }

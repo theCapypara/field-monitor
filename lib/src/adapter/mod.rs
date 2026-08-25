@@ -16,6 +16,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+pub mod qemu_dbus;
 pub mod rdp;
 pub mod spice;
 pub mod types;

@@ -16,18 +16,19 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 use std::borrow::Cow;
+use std::future;
 use std::rc::Rc;
-
-use anyhow::anyhow;
-use gettextrs::gettext;
-use glib::prelude::*;
-use log::{debug, warn};
-use rdw_rdp::ironrdp::connector::ConnectorErrorKind;
-use secure_string::SecureString;
 
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
 use crate::cert_security::{VerifiableCertChain, VerifyTls, VerifyTlsResponse};
 use crate::connection::ConnectionError;
+use anyhow::anyhow;
+use gettextrs::gettext;
+use glib::prelude::*;
+use log::{debug, warn};
+use rdw_qemu::qemu_display::zbus::export::futures_core::future::LocalBoxFuture;
+use rdw_rdp::ironrdp::connector::ConnectorErrorKind;
+use secure_string::SecureString;
 
 pub struct RdpAdapter {
     host: String,
@@ -59,7 +60,7 @@ impl Adapter for RdpAdapter {
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
         verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
-    ) -> Box<dyn AdapterDisplay> {
+    ) -> LocalBoxFuture<'static, Box<dyn AdapterDisplay>> {
         debug!("creating rdp adapter");
         let rdp = rdw_rdp::Display::new(Default::default());
 
@@ -105,7 +106,9 @@ impl Adapter for RdpAdapter {
             }
         ));
 
-        Box::new(RdpAdapterDisplay(rdp))
+        let display: Box<dyn AdapterDisplay> = Box::new(RdpAdapterDisplay(rdp));
+
+        Box::pin(future::ready(display))
     }
 }
 

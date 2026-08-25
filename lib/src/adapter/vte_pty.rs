@@ -15,11 +15,11 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use std::iter;
 use std::ops::Deref;
 use std::path::PathBuf;
 use std::rc::Rc;
 use std::sync::Arc;
+use std::{future, iter};
 
 use anyhow::anyhow;
 use gettextrs::gettext;
@@ -31,13 +31,13 @@ use parking_lot::Mutex;
 use uuid::Uuid;
 use vte::prelude::*;
 
-use field_monitor_vte_driver_lib::DBUS_KEY_ENV_VAR;
-use field_monitor_vte_driver_lib::dbus_server::VtePtyProcMon;
-
 use crate::adapter::types::{Adapter, AdapterDisplay, AdapterDisplayWidget};
 use crate::cert_security::{VerifyTls, VerifyTlsResponse};
 use crate::config::APP_ID;
 use crate::connection::ConnectionError;
+use field_monitor_vte_driver_lib::DBUS_KEY_ENV_VAR;
+use field_monitor_vte_driver_lib::dbus_server::VtePtyProcMon;
+use rdw_qemu::qemu_display::zbus::export::futures_core::future::LocalBoxFuture;
 
 pub struct VtePtyAdapter {
     connection_id: String,
@@ -79,7 +79,7 @@ impl Adapter for VtePtyAdapter {
         on_connected: Rc<dyn Fn()>,
         on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
         _verify_tls: Rc<dyn Fn(VerifyTls) -> VerifyTlsResponse>,
-    ) -> Box<dyn AdapterDisplay> {
+    ) -> LocalBoxFuture<'static, Box<dyn AdapterDisplay>> {
         let vte = vte::Terminal::builder()
             .cursor_blink_mode(vte::CursorBlinkMode::On)
             .build();
@@ -190,7 +190,9 @@ impl Adapter for VtePtyAdapter {
             }
         ));
 
-        Box::new(VtePtyAdapterDisplay(vte, child_pid))
+        let display: Box<dyn AdapterDisplay> = Box::new(VtePtyAdapterDisplay(vte, child_pid));
+
+        Box::pin(future::ready(display))
     }
 }
 

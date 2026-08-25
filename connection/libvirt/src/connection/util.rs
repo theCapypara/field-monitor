@@ -15,26 +15,17 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use gettextrs::gettext;
+use log::error;
+use std::os::fd::FromRawFd;
+use std::os::unix::net::UnixStream;
+use virt::domain::Domain;
+use virt::error::Error;
+use virt::sys::VIR_DOMAIN_OPEN_GRAPHICS_SKIPAUTH;
 
-pub type FmUsbRedirResult<T> = Result<T, FmUsbRedirError>;
-
-#[derive(Debug)]
-pub struct FmUsbRedirError(pub(crate) String);
-
-impl std::error::Error for FmUsbRedirError {}
-
-impl std::fmt::Display for FmUsbRedirError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.0.fmt(f)
-    }
-}
-
-impl FmUsbRedirError {
-    pub(crate) fn device_not_attachable() -> Self {
-        Self(gettext("The device can not be attached to the connection"))
-    }
-    pub(crate) fn device_already_attached() -> Self {
-        Self(gettext("The device was already attached to the connection"))
-    }
+pub fn open_libvirt_fd_stream(domain: &Domain, graphics_idx: usize) -> Result<UnixStream, Error> {
+    domain
+        .open_graphics_fd(graphics_idx as _, VIR_DOMAIN_OPEN_GRAPHICS_SKIPAUTH)
+        // SAFETY: If open_graphics_fd doesn't error, the fd points to a valid file descriptor.
+        .map(|fd| unsafe { UnixStream::from_raw_fd(fd as _) })
+        .inspect_err(|err| error!("libvirt openGraphicsFd failed: {err}"))
 }

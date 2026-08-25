@@ -13,13 +13,15 @@ Field Monitor follows the [GNOME Code of Conduct](https://conduct.gnome.org/).
 
 ### Source Code:
 
-- [/src](src): Crate for the main GTK App
-- [/lib](lib): Library crate, used by all other crates
-- [/connection](connection): Sub-crates that all implement one (or more) type(s) of connection(s)
+- [/src](src): Crate for the main GTK App.
+- [/lib](lib): Library crate, used by all other crates.
+- [/connection](connection): Sub-crates that all implement one (or more) type (s) of connection (s).
 - [/vte-pty-driver](vte-pty-driver):
-  Crates that compile into small binaries to drive the console for some connections, like the Proxmox
-  or libvirt console connections. These are connected/started by VTE as a subprocess via PTY. The
+  Crates that compile into small binaries to drive the console for some connections, like the Proxmox or libvirt console
+  connections. These are connected/started by VTE as a subprocess via PTY. The
   [lib](vte-pty-driver/lib) subdirectory contains shared library code between these libraries.
+- [/gcr-sys-minimal](gcr-sys-minimal): Minimal Rust bindings for gcr4 (used for certificate details).
+- [/rdw4-qemu](rdw4-qemu): Crate to bridge `qemu_display` with `rdw4` for the QEMU/D-Bus connection.
 
 ### Data & Localization:
 
@@ -31,8 +33,7 @@ Field Monitor follows the [GNOME Code of Conduct](https://conduct.gnome.org/).
 - [/.github](.github): GitHub Actions CI system
 - [/build-aux](build-aux)
     - [/dev-connection-servers](build-aux/dev-connection-servers):
-      Useful Docker images to quickly start VNC, RDP and SPICE servers to connect to during
-      development.
+      Useful Docker images to quickly start VNC, RDP and SPICE servers to connect to during development.
     - [/flatpak](build-aux/flatpak): Flatpak definitions
     - [/gettext](build-aux/gettext): Utility configuration for gettext
     - [/nix](build-aux/nix): Nix definitions
@@ -46,8 +47,8 @@ You will need the following dependencies to successfully build and run Field Mon
 
 - Meson
 - Components included in the current stable or nightly
-  [GNOME SDK](https://developer.gnome.org/documentation/introduction/components.html),
-  see the [Flatpak manifests](build-aux/flatpak/de.capypara.FieldMonitor.Devel.json)
+  [GNOME SDK](https://developer.gnome.org/documentation/introduction/components.html), see
+  the [Flatpak manifests](build-aux/flatpak/de.capypara.FieldMonitor.Devel.json)
   for reference on which version should be used.
     - Not all components are used, but a lot are, most importantly GTK 4 and libadwaita and all their dependencies
 - Current Rust stable release, including Cargo
@@ -79,5 +80,5 @@ meson setup build
 meson compile de.capypara.FieldMonitor-pot -C build
 ```
 
-You can then use this pot file to update or generate the po files per locale. Update the `data/LINGUAS` if
-you add a new language.
+You can then use this pot file to update or generate the po files per locale. Update the `data/LINGUAS` if you add a new
+language.

@@ -52,7 +52,8 @@ gnome.compile_resources('field-monitor',
   gresource_bundle: true,
   install: true,
   install_dir: pkgdatadir,
-  dependencies: blueprints,
+  # `appstream_file` is defined in /data/meson.build.
+  dependencies: [blueprints, appstream_file],
 )
 
 cargo_bin  = find_program('cargo')
