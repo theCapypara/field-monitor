@@ -21,7 +21,6 @@ Field Monitor follows the [GNOME Code of Conduct](https://conduct.gnome.org/).
   connections. These are connected/started by VTE as a subprocess via PTY. The
   [lib](vte-pty-driver/lib) subdirectory contains shared library code between these libraries.
 - [/gcr-sys-minimal](gcr-sys-minimal): Minimal Rust bindings for gcr4 (used for certificate details).
-- [/rdw4-qemu](rdw4-qemu): Crate to bridge `qemu_display` with `rdw4` for the QEMU/D-Bus connection.
 
 ### Data & Localization:
 
