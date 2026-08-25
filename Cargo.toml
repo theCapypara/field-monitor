@@ -30,7 +30,7 @@ num_enum = "0.7"
 indexmap = "2.14"
 secure-string = "0.3"
 http = "1.5"
-uuid = { version = "1.24", features = ["v7"] }
+uuid = { version = "1.25", features = ["v7"] }
 parking_lot = "0.12"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 proxmox-api = { path = "connection/proxmox/proxmox-api" }
