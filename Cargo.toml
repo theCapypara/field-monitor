@@ -18,6 +18,7 @@ edition = "2024"
 rust-version = "1.92"
 
 [workspace.dependencies]
+libc = "0.2"
 gettext-rs = { version = "0.8", features = ["gettext-system"] }
 anyhow = "1.0"
 serde = { version = "1.0", features = ["derive"] }
@@ -34,6 +35,7 @@ parking_lot = "0.12"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 proxmox-api = { path = "connection/proxmox/proxmox-api" }
 tokio = { version = "1.53", features = ["parking_lot", "rt-multi-thread"] }
+zbus = "5.19"
 
 [workspace.dependencies.glib]
 features = ["log"]
@@ -53,27 +55,34 @@ version = "0.9"
 package = "rdw4"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "376601e316163f77c57af08a8b282b59e94effb6"
+rev = "861aedfc6001401b5710667a0b053c16b7fb00e5"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "376601e316163f77c57af08a8b282b59e94effb6"
+rev = "861aedfc6001401b5710667a0b053c16b7fb00e5"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "376601e316163f77c57af08a8b282b59e94effb6"
+rev = "861aedfc6001401b5710667a0b053c16b7fb00e5"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "376601e316163f77c57af08a8b282b59e94effb6"
+rev = "861aedfc6001401b5710667a0b053c16b7fb00e5"
+default-features = false
+
+[workspace.dependencies.rdw-qemu]
+package = "rdw4-qemu"
+git = "https://gitlab.gnome.org/theCapypara/rdw.git"
+#branch = "master"
+rev = "861aedfc6001401b5710667a0b053c16b7fb00e5"
 default-features = false
 
 [workspace.dependencies.spice-gtk-usb-portal]

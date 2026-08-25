@@ -1141,6 +1141,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "derive_more"
+version = "2.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d751e9e49156b02b44f9c1815bcb94b984cdcc4396ecc32521c739452808b134"
+dependencies = [
+ "derive_more-impl",
+]
+
+[[package]]
+name = "derive_more-impl"
+version = "2.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "799a97264921d8623a957f6c3b9011f3b5492f557bbb7a5a19b7fa6d06ba8dcb"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "rustc_version",
+ "syn 2.0.119",
+ "unicode-xid",
+]
+
+[[package]]
 name = "des"
 version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3163,6 +3185,7 @@ dependencies = [
  "nix",
  "parking_lot",
  "rdw4",
+ "rdw4-qemu",
  "rdw4-rdp",
  "rdw4-spice",
  "rdw4-vnc",
@@ -3326,6 +3349,15 @@ name = "memchr"
 version = "2.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf8baf1c55e62ffcace7a9f06f4bd9cd3f0c4beb022d3b367256b91b87513d98"
+
+[[package]]
+name = "memmap2"
+version = "0.9.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d1219ed1b7f229ee7104d281dd01d6802fe28bb6e95d292942c4daacdeb798c0"
+dependencies = [
+ "libc",
+]
 
 [[package]]
 name = "memoffset"
@@ -4022,6 +4054,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "pixman-sys"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a1a0483e89e81d7915defe83c51f23f6800594d64f6f4a21253ce87fd8444ada"
+
+[[package]]
 name = "pkcs1"
 version = "0.7.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4191,6 +4229,31 @@ dependencies = [
 ]
 
 [[package]]
+name = "qemu-display"
+version = "0.2.1"
+source = "git+https://gitlab.com/marcandre.lureau/qemu-display.git?rev=8ac3da95abeca92e5bb0aee2c58adf54e86f4482#8ac3da95abeca92e5bb0aee2c58adf54e86f4482"
+dependencies = [
+ "async-broadcast",
+ "async-lock",
+ "async-trait",
+ "cfg-if",
+ "derive_more",
+ "enumflags2",
+ "futures",
+ "futures-util",
+ "libc",
+ "memmap2",
+ "once_cell",
+ "serde",
+ "serde_bytes",
+ "serde_repr",
+ "tracing",
+ "uds_windows",
+ "windows",
+ "zbus",
+]
+
+[[package]]
 name = "quick-xml"
 version = "0.41.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4351,12 +4414,12 @@ dependencies = [
 [[package]]
 name = "rdw-keycodemap"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=376601e316163f77c57af08a8b282b59e94effb6#376601e316163f77c57af08a8b282b59e94effb6"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
 
 [[package]]
 name = "rdw4"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=376601e316163f77c57af08a8b282b59e94effb6#376601e316163f77c57af08a8b282b59e94effb6"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
 dependencies = [
  "derivative",
  "epoxy",
@@ -4383,9 +4446,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "rdw4-qemu"
+version = "0.1.0"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
+dependencies = [
+ "async-trait",
+ "futures",
+ "futures-util",
+ "libc",
+ "log",
+ "pixman-sys",
+ "qemu-display",
+ "rdw4",
+ "uds_windows",
+ "usbredirhost",
+ "windows",
+ "zbus",
+]
+
+[[package]]
 name = "rdw4-rdp"
 version = "0.2.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=376601e316163f77c57af08a8b282b59e94effb6#376601e316163f77c57af08a8b282b59e94effb6"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
 dependencies = [
  "derivative",
  "futures-channel",
@@ -4407,7 +4489,7 @@ dependencies = [
 [[package]]
 name = "rdw4-spice"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=376601e316163f77c57af08a8b282b59e94effb6#376601e316163f77c57af08a8b282b59e94effb6"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
 dependencies = [
  "derivative",
  "futures-channel",
@@ -4421,7 +4503,7 @@ dependencies = [
 [[package]]
 name = "rdw4-vnc"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=376601e316163f77c57af08a8b282b59e94effb6#376601e316163f77c57af08a8b282b59e94effb6"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
 dependencies = [
  "derivative",
  "gvnc",
@@ -5805,6 +5887,12 @@ name = "unicode-ident"
 version = "1.0.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e6e4313cd5fcd3dad5cafa179702e2b244f760991f45397d14d4ebf38247da75"
+
+[[package]]
+name = "unicode-xid"
+version = "0.2.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ebc1c04c71510c7f702b52b7c350734c9ff1295c464a03335b00bb84fc54f853"
 
 [[package]]
 name = "universal-hash"
