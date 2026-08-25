@@ -20,9 +20,7 @@ use crate::adapter::usbredir::FieldMonitorUsbRedirAdapter;
 use crate::adapter::usbredir::qemu_dbus::FieldMonitorUsbRedirQemuDbus;
 use crate::cert_security::{VerifyTls, VerifyTlsResponse};
 use crate::connection::ConnectionError;
-use futures::FutureExt;
-use futures::future::{LocalBoxFuture, OptionFuture};
-use futures::{StreamExt, select};
+use futures::future::LocalBoxFuture;
 use gtk::prelude::*;
 use log::{debug, error, warn};
 use rdw_qemu;
@@ -31,7 +29,6 @@ use std::cell::RefCell;
 use std::future;
 use std::rc::Rc;
 use thiserror::Error;
-use tokio::sync::Notify;
 use zbus;
 
 pub struct QemuDbusAdapter {
@@ -87,68 +84,25 @@ impl Adapter for QemuDbusAdapter {
                             QemuDbusConnectError::InitDisplay(err)
                         })?;
 
-                let poison = Rc::new(Notify::new());
-
-                glib::spawn_future_local(watch_for_owner_change(
-                    qemu_display.clone(),
-                    poison.clone(),
-                    on_disconnected,
-                ));
-
-                let console = qemu_display::Console::new(qemu_display.connection(), 0)
-                    .await
-                    .map_err(|err| {
-                        warn!("failed to construct Console: {}", err);
-                        QemuDbusConnectError::InitConsole(err)
-                    })?;
-                let rdw_display = rdw_qemu::Display::new(console);
-
-                let audio_handler_of: OptionFuture<_> = qemu_display
-                    .audio()
-                    .await
-                    .inspect_err(|err| {
-                        warn!("failed to create audio handler: {}", err);
-                    })
-                    .ok()
-                    .flatten()
-                    .map(rdw_qemu::audio::Handler::new)
-                    .into();
-                let audio_handler = audio_handler_of
-                    .await
-                    .transpose()
-                    .inspect_err(|err| {
-                        warn!("failed to create audio handler: {}", err);
-                    })
-                    .ok()
-                    .flatten();
-
-                let clipboard_handler_of: OptionFuture<_> = qemu_display
-                    .clipboard()
-                    .await
-                    .inspect_err(|err| {
-                        warn!("failed to create clipboard handler: {}", err);
-                    })
-                    .ok()
-                    .flatten()
-                    .map(rdw_qemu::clipboard::Handler::new)
-                    .into();
-                let clipboard_handler = clipboard_handler_of
-                    .await
-                    .transpose()
-                    .inspect_err(|err| {
-                        warn!("failed to create clipboard handler: {}", err);
-                    })
-                    .ok()
-                    .flatten();
+                let rdw_display = rdw_qemu::Display::new_with_qemu_display(
+                    &qemu_display,
+                    Some(move |r: Result<(), qemu_display::Error>| {
+                        on_disconnected(
+                            r.map_err(|err| QemuDbusConnectError::Communication(err).into()),
+                        )
+                    }),
+                )
+                .await
+                .map_err(|err| {
+                    warn!("failed to construct Console: {}", err);
+                    QemuDbusConnectError::InitConsole(err)
+                })?;
 
                 Ok(Box::new(QemuDbusAdapterDisplay(RefCell::new(Some(
                     DisplayInner {
                         connection: Some(conn),
                         qemu_display,
                         rdw_display,
-                        audio_handler,
-                        clipboard_handler,
-                        poison,
                     },
                 )))))
             }
@@ -238,17 +192,11 @@ struct DisplayInner<'a> {
     connection: Option<zbus::Connection>,
     qemu_display: qemu_display::Display<'a>,
     rdw_display: rdw_qemu::Display,
-    #[allow(unused)] // only here to keep it alive
-    audio_handler: Option<rdw_qemu::audio::Handler>,
-    #[allow(unused)] // only here to keep it alive
-    clipboard_handler: Option<rdw_qemu::clipboard::Handler>,
-    poison: Rc<Notify>,
 }
 
 impl Drop for DisplayInner<'_> {
     fn drop(&mut self) {
         debug!("dropping QemuDbusAdapterDisplay/DisplayInner");
-        self.poison.notify_one();
         if let Some(connection) = self.connection.take() {
             glib::spawn_future_local(async move {
                 let result = connection.close().await;
@@ -256,37 +204,4 @@ impl Drop for DisplayInner<'_> {
             });
         }
     }
-}
-
-async fn watch_for_owner_change(
-    display: qemu_display::Display<'static>,
-    poison: Rc<Notify>,
-    on_disconnected: Rc<dyn Fn(Result<(), ConnectionError>)>,
-) {
-    select!(
-        changed_res = Box::pin(display.receive_owner_changed()).fuse() => {
-            let mut changed = match changed_res {
-                Ok(changed) => changed,
-                Err(err) => {
-                    warn!("owner change event raised error: {}", err);
-                    on_disconnected(Err(QemuDbusConnectError::Communication(err).into()));
-                    return;
-                }
-            };
-            select!(
-                _ = changed.next().fuse() => {
-                    debug!("disconnected via owner change");
-                    on_disconnected(Ok(()));
-                }
-                _ = poison.notified().fuse() => {
-                    debug!("ending owner_changed future as display is closing");
-                    on_disconnected(Ok(()));
-                }
-            );
-        }
-        _ = poison.notified().fuse() => {
-            debug!("ending owner_changed future as display is closing");
-            on_disconnected(Ok(()));
-        }
-    );
 }

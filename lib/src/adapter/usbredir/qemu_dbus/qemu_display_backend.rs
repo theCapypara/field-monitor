@@ -22,8 +22,8 @@ use crate::adapter::usbredir::qemu_dbus::portal_backend::QemuDbusAttacher;
 use crate::adapter::usbredir::qemu_dbus::{FieldMonitorUsbRedirQemuDbus, FmDeviceKey};
 use glib::{MainContext, SendWeakRef};
 use log::{error, trace};
+use rdw_qemu::RusbSession;
 use rdw_qemu::qemu_display;
-use rdw_qemu::usbredir::RusbSession;
 use spice_gtk_usb_portal::devices::GenericOwnedUsbDevice;
 use std::os::fd::{AsRawFd, BorrowedFd};
 use std::os::unix::net::UnixStream;
@@ -106,14 +106,14 @@ impl FmRedirectSession {
         let on_disconnected = {
             let implementation = implementation.clone();
             let key = key.clone();
-            Box::new(move || {
+            move || {
                 MainContext::default().spawn_from_within(move || async move {
                     trace!("FmRedirectSession::disconnect");
                     if let Some(implementation) = implementation.upgrade() {
                         implementation.handle_session_disconnected(&key).await;
                     }
                 });
-            })
+            }
         };
 
         let session = RusbSession::from_fd(device_fd, stream, Some(on_disconnected))?;

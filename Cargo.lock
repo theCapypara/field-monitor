@@ -4418,12 +4418,12 @@ dependencies = [
 [[package]]
 name = "rdw-keycodemap"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=142b38353736eefbf66877e90b1d7d5a6fe8e90d#142b38353736eefbf66877e90b1d7d5a6fe8e90d"
 
 [[package]]
 name = "rdw4"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=142b38353736eefbf66877e90b1d7d5a6fe8e90d#142b38353736eefbf66877e90b1d7d5a6fe8e90d"
 dependencies = [
  "derivative",
  "epoxy",
@@ -4452,7 +4452,7 @@ dependencies = [
 [[package]]
 name = "rdw4-qemu"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=142b38353736eefbf66877e90b1d7d5a6fe8e90d#142b38353736eefbf66877e90b1d7d5a6fe8e90d"
 dependencies = [
  "async-trait",
  "futures",
@@ -4471,7 +4471,7 @@ dependencies = [
 [[package]]
 name = "rdw4-rdp"
 version = "0.2.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=142b38353736eefbf66877e90b1d7d5a6fe8e90d#142b38353736eefbf66877e90b1d7d5a6fe8e90d"
 dependencies = [
  "derivative",
  "futures-channel",
@@ -4493,7 +4493,7 @@ dependencies = [
 [[package]]
 name = "rdw4-spice"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=142b38353736eefbf66877e90b1d7d5a6fe8e90d#142b38353736eefbf66877e90b1d7d5a6fe8e90d"
 dependencies = [
  "derivative",
  "futures-channel",
@@ -4507,7 +4507,7 @@ dependencies = [
 [[package]]
 name = "rdw4-vnc"
 version = "0.1.0"
-source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=861aedfc6001401b5710667a0b053c16b7fb00e5#861aedfc6001401b5710667a0b053c16b7fb00e5"
+source = "git+https://gitlab.gnome.org/theCapypara/rdw.git?rev=142b38353736eefbf66877e90b1d7d5a6fe8e90d#142b38353736eefbf66877e90b1d7d5a6fe8e90d"
 dependencies = [
  "derivative",
  "gvnc",
