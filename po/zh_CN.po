@@ -269,11 +269,8 @@ msgid "Add QEMU/KVM Connection"
 msgstr "添加 QEMU/KVM 连接"
 
 #: connection/libvirt/src/hypervisor/qemu.rs:62
-msgid ""
-"QEMU/KVM hypervisor connection via libvirt. Can also be used to connect to "
-"GNOME Boxes VMs."
-msgstr ""
-"通过 libvirt 的 QEMU/KVM 虚拟机连接。也可以用来连接至 GNOME Boxes 虚拟机。"
+msgid "QEMU/KVM hypervisor connection via libvirt."
+msgstr "通过 libvirt 的 QEMU/KVM 虚拟机连接。"
 
 #: connection/libvirt/src/qemu_preferences.blp:13
 #: connection/proxmox/src/preferences.blp:12

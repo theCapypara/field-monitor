@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: de.capypara.FieldMonitor\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-26 16:06+0200\n"
-"PO-Revision-Date: 2026-08-26 16:12+0200\n"
+"POT-Creation-Date: 2026-08-26 23:37+0200\n"
+"PO-Revision-Date: 2026-08-26 23:37+0200\n"
 "Last-Translator: Marco Köpcke <hello@capypara.de>\n"
 "Language-Team: de_DE\n"
 "Language: de_DE\n"
@@ -24,7 +24,7 @@ msgid "Credentials"
 msgstr "Zugangsdaten"
 
 #: connection/generic-group/src/credential_preferences.blp:10
-#: connection/libvirt/src/qemu_preferences.blp:58
+#: connection/libvirt/src/qemu_preferences.blp:57
 #: connection/proxmox/src/credential_preferences.blp:31
 #: src/quick_connect/preferences.blp:9
 msgid "Username"
@@ -135,7 +135,7 @@ msgid "VNC"
 msgstr "VNC"
 
 #: connection/generic-group/src/server_preferences.blp:32
-#: connection/libvirt/src/qemu_preferences.blp:53
+#: connection/libvirt/src/qemu_preferences.blp:52
 #: connection/proxmox/src/preferences.blp:21
 #: src/widget/certificate_trust_dialog.rs:159
 msgid "Hostname"
@@ -153,9 +153,8 @@ msgid ""
 "the adapter is listening on all interfaces."
 msgstr ""
 "Kein unterstützter Grafikmodus verfügbar. Tipp: Falls Sie per SSH verbunden "
-"sind, stellen Sie sicher, dass der »listen«-Typ des Adapters auf "
-"»address« gestellt ist und dass der Adapter auf allen "
-"Netzwerkschnittstellen horcht."
+"sind, stellen Sie sicher, dass der »listen«-Typ des Adapters auf »address« "
+"gestellt ist und dass der Adapter auf allen Netzwerkschnittstellen horcht."
 
 #: connection/libvirt/src/connection/graphics.rs:255
 msgid "D-Bus"
@@ -318,12 +317,8 @@ msgid "Add QEMU/KVM Connection"
 msgstr "QEMU/KVM-Verbindung hinzufügen"
 
 #: connection/libvirt/src/hypervisor/qemu.rs:62
-msgid ""
-"QEMU/KVM hypervisor connection via libvirt. Can also be used to connect to "
-"GNOME Boxes VMs."
-msgstr ""
-"QEMU/KVM-Hypervisorverbindung via libvirt. Kann auch für die Verbindung mit "
-"GNOME-Boxen-VMs verwendet werden."
+msgid "QEMU/KVM hypervisor connection via libvirt."
+msgstr "QEMU/KVM-Hypervisorverbindung via libvirt."
 
 #: connection/libvirt/src/qemu_preferences.blp:13
 #: connection/proxmox/src/preferences.blp:12
@@ -346,15 +341,11 @@ msgstr "Dies ist der QEMU/KVM-Standard."
 msgid "User Session"
 msgstr "Benutzer-Sitzung"
 
-#: connection/libvirt/src/qemu_preferences.blp:34
-msgid "Use this to manage GNOME Boxes VMs."
-msgstr "Verwenden Sie diese Option, um GNOME-Boxen-VMs zu verwalten."
-
-#: connection/libvirt/src/qemu_preferences.blp:45
+#: connection/libvirt/src/qemu_preferences.blp:44
 msgid "Remote Connection"
 msgstr "Entfernte Verbindung"
 
-#: connection/libvirt/src/qemu_preferences.blp:48
+#: connection/libvirt/src/qemu_preferences.blp:47
 msgid "Connect via SSH"
 msgstr "Verbindung via SSH"
 
@@ -541,9 +532,9 @@ msgid ""
 "It is focused on connecting to virtual machines, but can connect to any "
 "server supporting the RDP, SPICE or VNC protocols."
 msgstr ""
-"Feldmonitor kann die Verbindung mit beliebigen RDP-, SPICE- oder "
-"VNC-Servern herstellen und bietet zusätzliche Funktionen zur Steuerung von "
-"virtuellen Maschinen."
+"Feldmonitor kann die Verbindung mit beliebigen RDP-, SPICE- oder VNC-Servern "
+"herstellen und bietet zusätzliche Funktionen zur Steuerung von virtuellen "
+"Maschinen."
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
@@ -558,14 +549,14 @@ msgstr "Proxmox Virtual Environment"
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
-msgid "QEMU/KVM via libvirt (including GNOME Boxes VMs)"
-msgstr "QEMU/KVM via libvirt (inklusive GNOME-Boxen-VMs)"
+msgid "QEMU/KVM via libvirt"
+msgstr "QEMU/KVM via libvirt"
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
 msgid ""
-"For supported VM hypervisors, Field Monitor also offers options to manage the "
-"basic power state of VMs, such as starting, stopping, rebooting, etc."
+"For supported VM hypervisors, Field Monitor also offers options to manage "
+"the basic power state of VMs, such as starting, stopping, rebooting, etc."
 msgstr ""
 "Für diese unterstützten Hypervisoren bietet Feldmonitor unter anderem die "
 "Möglichkeit VMs zu starten, zu stoppen und neuzustarten."
@@ -576,34 +567,33 @@ msgid ""
 "Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
 msgstr ""
-"Außerdem kann Feldmonitor RDP- und Virt-Viewer-Verbindungsdateien öffnen "
-"und schnell Verbindungen zu RDP-, SPICE- und VNC-Servern via URI "
-"herstellen."
+"Außerdem kann Feldmonitor RDP- und Virt-Viewer-Verbindungsdateien öffnen und "
+"schnell Verbindungen zu RDP-, SPICE- und VNC-Servern via URI herstellen."
 
 #. Translators: Caption of the first screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:178
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:175
 msgid "Screen of a connected graphical display"
 msgstr "Bildschirm einer verbundenen graphischen Anzeige"
 
 #. Translators: Caption of the second screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:185
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:182
 msgid "Welcome screen"
 msgstr "Willkommensbildschirm"
 
 #. Translators: Caption of the third screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:192
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:189
 msgid "A list of servers in a Proxmox cluster to connect to"
 msgstr ""
 "Eine Liste von Servern in einem Proxmox-Cluster, mit denen sich verbunden "
 "werden kann"
 
 #. Translators: Caption of the 4th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:199
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:196
 msgid "Screen of a connected console"
 msgstr "Bildschirm einer verbundenen Konsole"
 
 #. Translators: Caption of the 5th screenshot in the metainfo
-#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:206
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:203
 msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
 msgstr ""
 "Hinzufügen einer neuen Proxmox Virtual Environment Hypervisor-Verbindung"
@@ -1128,7 +1118,7 @@ msgid "Actions"
 msgstr "Aktionen"
 
 #: src/widget/connection_list/server_actions.rs:324
-#: src/widget/quick_connect_dialog.blp:39
+#: src/widget/quick_connect_dialog.blp:40
 #: src/widget/usb_redir/settings_dialog.rs:206
 msgid "Connect"
 msgstr "Verbinden"
@@ -1417,8 +1407,8 @@ msgstr "Tastenkombination zum Freigeben der Tastatur anzeigen"
 
 #: src/widget/preferences.blp:67
 msgid ""
-"Show a brief message indicating which key combination ungrabs the mouse "
-"and keyboard, every time input is grabbed from an active connection."
+"Show a brief message indicating which key combination ungrabs the mouse and "
+"keyboard, every time input is grabbed from an active connection."
 msgstr ""
 "Zeige innerhalb von aktiven Verbindungen kurz eine Nachricht, die erklärt, "
 "wie die Maus und Tastatur freigegeben werden kann, sobald diese gefangen "
@@ -1482,8 +1472,8 @@ msgstr ""
 
 #: src/widget/preferences.rs:237
 msgid ""
-"The header bar is shown above the connection screen. In fullscreen mode, "
-"the header bar is instead overlaid and hides whenever input is grabbed."
+"The header bar is shown above the connection screen. In fullscreen mode, the "
+"header bar is instead overlaid and hides whenever input is grabbed."
 msgstr ""
 "Die Titelleiste wird oberhalb des entfernten Bildschirms angezeigt. Im "
 "Vollbildmodus wird die Titelleiste stattdessen über den Inhalt des "
@@ -1526,11 +1516,11 @@ msgstr ""
 "<i>spice://me@localhost:999?password=1234</i>\n"
 "<i>vnc://user@server?VncPassword=password123</i>"
 
-#: src/widget/quick_connect_dialog.blp:22
+#: src/widget/quick_connect_dialog.blp:23
 msgid "Connection URL"
 msgstr "URL der Verbindung"
 
-#: src/widget/quick_connect_dialog.blp:33
+#: src/widget/quick_connect_dialog.blp:34
 msgid "Open File..."
 msgstr "Datei öffnen..."
 
@@ -1709,6 +1699,12 @@ msgid "Connect to your virtual machines and remote servers."
 msgstr ""
 "Verbinden Sie sich mit Ihren virtuellen Maschinen und entfernten Servern."
 
+#~ msgid "Use this to manage GNOME Boxes VMs."
+#~ msgstr "Verwenden Sie diese Option, um GNOME-Boxen-VMs zu verwalten."
+
+#~ msgid "QEMU/KVM via libvirt (including GNOME Boxes VMs)"
+#~ msgstr "QEMU/KVM via libvirt (inklusive GNOME-Boxen-VMs)"
+
 #~ msgctxt "shortcut window"
 #~ msgid "Show Navigation"
 #~ msgstr "Navigation anzeigen"
@@ -1731,9 +1727,6 @@ msgstr ""
 
 #~ msgid "Sidebar"
 #~ msgstr "Seitenleiste"
-
-#~ msgid "QEMU/KVM via libvirt"
-#~ msgstr "QEMU/KVM via libvirt"
 
 #~ msgid "SPICE (Graphical)"
 #~ msgstr "SPICE (graphisch)"

@@ -61,7 +61,7 @@
 		<ul>
 			<li>Proxmox Virtual Environment</li>
 			<!-- Translators: Part of the description of the application in the metainfo. -->
-			<li>QEMU/KVM via libvirt (including GNOME Boxes VMs)</li>
+			<li>QEMU/KVM via libvirt</li>
 		</ul>
 		<!-- Translators: Part of the description of the application in the metainfo. -->
 		<p>
@@ -80,9 +80,6 @@
 			<description translate="no">
 				<p>This release brings some small improvements and bug fixes.</p>
 				<ul>
-					<li>The libvirt connection provider now explicitly mentions GNOME Boxes and indicates that the
-						"User Session" option should be used to manage GNOME Boxes VMs.
-					</li>
 					<li>Added support for more standard GNOME keyboard shortcuts: Ctrl+Q to quit, Ctrl+W to close the
 						window, F9 to toggle the navigation sidebar, and F10 to open the main menu.
 					</li>

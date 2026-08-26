@@ -59,8 +59,7 @@ impl ConnectionProvider for LibvirtQemuConnectionProvider {
     }
 
     fn description(&self) -> Cow<'_, str> {
-        gettext("QEMU/KVM hypervisor connection via libvirt. Can also be used to connect to GNOME Boxes VMs.")
-            .into()
+        gettext("QEMU/KVM hypervisor connection via libvirt.").into()
     }
 
     fn icon(&self) -> IconSpec<()> {
