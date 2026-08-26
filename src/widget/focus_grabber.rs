@@ -16,8 +16,10 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
+use crate::application::FieldMonitorApplication;
 use adw::prelude::*;
 use adw::subclass::prelude::*;
+use gettextrs::gettext;
 use glib::WeakRef;
 use gtk::glib;
 use gtk::{BinLayout, gdk};
@@ -25,8 +27,6 @@ use log::{debug, trace};
 use rdw::DisplayExt;
 use std::cell::Cell;
 use std::cell::RefCell;
-
-use crate::application::FieldMonitorApplication;
 
 mod imp {
     use super::*;
@@ -36,15 +36,16 @@ mod imp {
     pub struct FieldMonitorFocusGrabber {
         #[property(get)]
         pub grabbed: Cell<bool>,
-        pub display: RefCell<Option<WeakRef<rdw::Display>>>,
+        pub display: RefCell<WeakRef<rdw::Display>>,
         pub display_signal_id: RefCell<Option<glib::SignalHandlerId>>,
+        pub window_handler: RefCell<(WeakRef<gtk::Window>, Option<glib::SignalHandlerId>)>,
     }
 
     #[glib::object_subclass]
     impl ObjectSubclass for FieldMonitorFocusGrabber {
         const NAME: &'static str = "FieldMonitorFocusGrabber";
         type Type = super::FieldMonitorFocusGrabber;
-        type ParentType = gtk::Widget;
+        type ParentType = adw::Bin;
 
         fn class_init(klass: &mut Self::Class) {
             klass.set_layout_manager_type::<BinLayout>();
@@ -149,11 +150,15 @@ mod imp {
 
             let root = self.obj().root();
             if let Some(root) = root.map(Cast::downcast::<gtk::Window>).and_then(Result::ok) {
-                root.connect_is_active_notify(glib::clone!(
-                    #[weak(rename_to=slf)]
-                    self,
-                    move |window| slf.obj().on_window_active(window.is_active())
+                let old = self.window_handler.replace((
+                    root.downgrade(),
+                    Some(root.connect_is_active_notify(glib::clone!(
+                        #[weak(rename_to=slf)]
+                        self,
+                        move |window| slf.obj().on_window_active(window.is_active())
+                    ))),
                 ));
+                self.unregister_window_is_active(old);
             }
             // When we are not grabbed the rdw display should not be focusable, but still sensitive
             // so it properly handles things like motion.
@@ -165,14 +170,29 @@ mod imp {
             }
         }
     }
+    impl BinImpl for FieldMonitorFocusGrabber {}
 
     impl Drop for FieldMonitorFocusGrabber {
         fn drop(&mut self) {
             debug!("drop FieldMonitorFocusGrabber");
-            if let Some(display) = self.display.borrow().as_ref().and_then(WeakRef::upgrade)
-                && let Some(display_signal_id) = self.display_signal_id.borrow_mut().take()
+            self.unregister_window_is_active(self.window_handler.take());
+            if let Some(display) = self.display.take().upgrade()
+                && let Some(display_signal_id) = self.display_signal_id.take()
             {
                 display.disconnect(display_signal_id);
+            }
+        }
+    }
+
+    impl FieldMonitorFocusGrabber {
+        fn unregister_window_is_active(
+            &self,
+            (window, signal_handler): (WeakRef<gtk::Window>, Option<glib::SignalHandlerId>),
+        ) {
+            if let Some(window) = window.upgrade()
+                && let Some(signal_handler) = signal_handler
+            {
+                window.disconnect(signal_handler);
             }
         }
     }
@@ -180,21 +200,35 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorFocusGrabber(ObjectSubclass<imp::FieldMonitorFocusGrabber>)
-        @extends gtk::Widget,
+        @extends gtk::Widget, adw::Bin,
         @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
 impl FieldMonitorFocusGrabber {
-    pub fn set_display(&self, value: Option<&rdw::Display>) {
+    pub fn new(child: &impl IsA<gtk::Widget>) -> Self {
+        let child = child.clone().upcast();
+        let slf: Self = glib::Object::builder().build();
+        slf.init_display(child.downcast_ref());
+        slf.set_child(Some(&child));
+
+        slf.update_property(&[
+            gtk::accessible::Property::Label(&gettext("Remote Server Screen")),
+            gtk::accessible::Property::Description(&gettext("Press any key to grab input.")),
+        ]);
+
+        slf
+    }
+
+    fn init_display(&self, display: Option<&rdw::Display>) {
         let imp = self.imp();
         let mut display_opt = imp.display.borrow_mut();
-        if let Some(display) = display_opt.as_ref().and_then(WeakRef::upgrade) {
+        if let Some(display) = display_opt.upgrade() {
             let signal_id_opt = imp.display_signal_id.take();
             if let Some(display_signal_id) = signal_id_opt {
                 display.disconnect(display_signal_id);
             }
         }
-        if let Some(display) = &value {
+        if let Some(display) = &display {
             imp.display_signal_id
                 .replace(Some(display.connect_property_grabbed_notify(glib::clone!(
                     #[weak(rename_to = slf)]
@@ -204,7 +238,7 @@ impl FieldMonitorFocusGrabber {
                     }
                 ))));
         }
-        *display_opt = value.map(ObjectExt::downgrade);
+        *display_opt = display.map(ObjectExt::downgrade).unwrap_or_default();
     }
 
     fn grab(&self) {
@@ -283,11 +317,7 @@ impl FieldMonitorFocusGrabber {
     }
 
     fn display(&self) -> Option<rdw::Display> {
-        self.imp()
-            .display
-            .borrow()
-            .as_ref()
-            .and_then(WeakRef::upgrade)
+        self.imp().display.borrow().upgrade()
     }
 
     fn forward_key_press(&self, key: gdk::Key, keycode: u32) {

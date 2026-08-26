@@ -181,20 +181,9 @@ template $FieldMonitorServerScreen: Adw.Bin {
                         valign: end;
                     }
 
-                    child: $FieldMonitorFocusGrabber focus_grabber {
-                        notify::grabbed => $on_focus_grabber_grabbed_changed() swapped;
+                    child: Adw.Bin display_bin {
                         vexpand: true;
                         hexpand: true;
-
-                        Adw.Bin display_bin {
-                            vexpand: true;
-                            hexpand: true;
-                        }
-
-                        accessibility {
-                            label: _("Remote Server Screen");
-                            description: _("Press any key to grab input.");
-                        }
                     };
                 };
             }

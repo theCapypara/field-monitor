@@ -76,8 +76,6 @@ mod imp {
         #[template_child]
         pub display_bin: TemplateChild<adw::Bin>,
         #[template_child]
-        pub focus_grabber: TemplateChild<FieldMonitorFocusGrabber>,
-        #[template_child]
         pub grab_note: TemplateChild<FieldMonitorGrabNote>,
         #[template_child]
         pub monitor_menu_button_bin: TemplateChild<FieldMonitorPulseAnimBin>,
@@ -137,6 +135,8 @@ mod imp {
                 glib::SignalHandlerId,
             )>,
         >,
+        // Focus grabber for rdw displays
+        pub focus_grabber: RefCell<Option<FieldMonitorFocusGrabber>>,
     }
 
     impl FieldMonitorServerScreen {
@@ -343,8 +343,8 @@ impl FieldMonitorServerScreen {
         slf
     }
 
-    /// Create a version of server screen for a secondary monitor. It does not show the navigation
-    /// sidebar, does not have server actions in its menus and does not manage the connection
+    /// Create a version of server screen for a secondary monitor.
+    /// It does not have server actions in its menus and does not manage the connection
     /// state itself. The display to show must be passed in.
     pub fn new_secondary_monitor(
         app: &FieldMonitorApplication,
@@ -433,6 +433,9 @@ impl FieldMonitorServerScreen {
     /// This is a crutch that will "forget" the DisplayAdapter and remove the adapter widget.
     pub fn force_eject_adapter(&self) {
         let imp = self.imp();
+        if let Some(fg) = imp.focus_grabber.take() {
+            fg.ungrab();
+        }
         imp.adapter.replace(None);
         imp.display_bin.set_child(None::<&gtk::Widget>);
         imp.status_stack.set_visible_child_name("loading");
@@ -469,7 +472,7 @@ impl FieldMonitorServerScreen {
         let mut loader_brw = imp.connection_loader.lock().await;
         trace!("connection loader lock: locked!");
         let Some(loader) = loader_brw.as_mut() else {
-            // Secondary monitor screens have no loader — cannot reset.
+            // Secondary monitor screens have no loader. Cannot reset.
             warn!("reset() called on a screen without a connection loader (secondary monitor?)");
             return;
         };
@@ -581,16 +584,21 @@ impl FieldMonitorServerScreen {
                 .chain(iter::once(key))
                 .collect::<Vec<_>>();
             debug!("processed keys: {keys:?}");
-            let display = self
-                .imp()
-                .display_bin
-                .child()
-                .map(Cast::downcast::<rdw::Display>)
-                .and_then(Result::ok);
-            if let Some(display) = display {
+            if let Some(display) = self.rdw_display() {
                 display.send_keys(&keys);
             }
         }
+    }
+
+    fn rdw_display(&self) -> Option<rdw::Display> {
+        self.imp()
+            .display_bin
+            .child()
+            .map(Cast::downcast::<FieldMonitorFocusGrabber>)
+            .and_then(Result::ok)
+            .and_then(|fg| fg.child())
+            .map(Cast::downcast::<rdw::Display>)
+            .and_then(Result::ok)
     }
 
     fn send_term_command(&self, cmd: TermCommand) {
@@ -613,6 +621,9 @@ impl FieldMonitorServerScreen {
         server_actions: Vec<(Cow<str>, Cow<str>)>,
     ) {
         let imp = self.imp();
+        if let Some(fg) = imp.focus_grabber.take() {
+            fg.ungrab();
+        }
         let display_widget = display.widget();
 
         let widget: gtk::Widget = match &display_widget {
@@ -620,8 +631,6 @@ impl FieldMonitorServerScreen {
                 rdw_display.set_visible(true);
                 rdw_display.set_vexpand(true);
                 rdw_display.set_hexpand(true);
-                imp.focus_grabber.set_display(Some(rdw_display));
-                imp.focus_grabber.grab_focus();
                 self.set_force_disable_overlay_headerbar(false);
 
                 self.add_menu(MenuKind::Rdw, server_actions);
@@ -638,7 +647,8 @@ impl FieldMonitorServerScreen {
 
                 self.remove_css_class("connection-view-vte");
                 rdw_display.add_css_class("rdw-display");
-                rdw_display.clone().upcast()
+
+                self.init_focus_grabber(rdw_display).upcast()
             }
             AdapterDisplayWidget::Vte(terminal) => {
                 terminal.set_vexpand(true);
@@ -663,14 +673,12 @@ impl FieldMonitorServerScreen {
 
                 self.setup_vte_event_controllers(terminal);
                 self.setup_vte_menu_model(terminal);
-                imp.focus_grabber.set_display(None);
                 self.set_force_disable_overlay_headerbar(true);
                 self.add_menu(MenuKind::Vte, server_actions);
                 self.add_css_class("connection-view-vte");
                 bx.upcast()
             }
             AdapterDisplayWidget::Arbitrary { widget } => {
-                imp.focus_grabber.set_display(None);
                 self.add_menu(MenuKind::Other, server_actions);
                 self.remove_css_class("connection-view-vte");
                 self.set_force_disable_overlay_headerbar(false);
@@ -692,6 +700,9 @@ impl FieldMonitorServerScreen {
         ));
 
         imp.display_bin.set_child(Some(&widget));
+        if let Some(fg) = &*imp.focus_grabber.borrow() {
+            fg.grab_focus();
+        }
     }
 
     async fn configure_usb_redir(&self) {
@@ -954,7 +965,9 @@ impl FieldMonitorServerScreen {
             Ok(()) => {
                 imp.status_stack.set_visible_child_name("disconnected");
                 imp.outer_stack.set_visible_child_name("status");
-                imp.focus_grabber.ungrab();
+                if let Some(fg) = &*imp.focus_grabber.borrow() {
+                    fg.ungrab();
+                }
 
                 imp.error_status_page.set_title(&gettext("Disconnected"));
                 imp.error_status_page
@@ -1001,7 +1014,9 @@ impl FieldMonitorServerScreen {
                     imp.status_stack.set_visible_child_name("disconnected");
                     imp.outer_stack.set_visible_child_name("status");
                 }
-                imp.focus_grabber.ungrab();
+                if let Some(fg) = &*imp.focus_grabber.borrow() {
+                    fg.ungrab();
+                }
 
                 warn!("Connection failed: {err}");
                 imp.error_status_page
@@ -1067,12 +1082,7 @@ impl FieldMonitorServerScreen {
     }
 
     fn fit_to_screen(&self) {
-        let display = self
-            .imp()
-            .display_bin
-            .child()
-            .map(Cast::downcast::<rdw::Display>)
-            .and_then(Result::ok);
+        let display = self.rdw_display();
         let window = self
             .root()
             .map(Cast::downcast::<FieldMonitorWindow>)
@@ -1400,70 +1410,27 @@ impl FieldMonitorServerScreen {
             ))),
         ])))])
     }
-}
 
-#[gtk::template_callbacks]
-impl FieldMonitorServerScreen {
-    #[template_callback]
-    fn on_self_reveal_osd_controls_changed(&self) {
-        self.update_header_bar_state();
-    }
+    fn init_focus_grabber(&self, rdw_display: &rdw::Display) -> FieldMonitorFocusGrabber {
+        let imp = self.imp();
 
-    #[template_callback]
-    fn on_force_disable_overlay_headerbar_changed(&self) {
-        self.update_header_bar_state();
-    }
+        let focus_grabber = FieldMonitorFocusGrabber::new(rdw_display);
 
-    #[template_callback]
-    fn on_self_dynamic_resize_changed(&self) {
-        let display = self
-            .imp()
-            .display_bin
-            .child()
-            .map(Cast::downcast::<rdw::Display>)
-            .and_then(Result::ok);
-
-        if let Some(display) = display.as_ref() {
-            display.set_remote_resize(self.dynamic_resize());
-        }
-
-        // Enable or disable scale to window / fit to screen switches based on if dynamic resize is on.
-        if self.dynamic_resize() {
-            self.set_scale_to_window(true); // needs also to be on.
-            self.action_set_enabled("view.scale-to-window", false);
-            //self.action_set_enabled("view.fit-to-screen", false);
-        } else if display.is_some() {
-            self.action_set_enabled("view.scale-to-window", true);
-            //self.action_set_enabled("view.fit-to-screen", true);
-        }
-    }
-
-    #[template_callback]
-    fn on_self_scale_to_window_changed(&self) {
-        let display = self
-            .imp()
-            .display_bin
-            .child()
-            .map(Cast::downcast::<rdw::Display>)
-            .and_then(Result::ok);
-        if let Some(display) = display {
-            if self.scale_to_window() {
-                display.set_hexpand(true);
-                display.set_vexpand(true);
-                display.set_halign(gtk::Align::Fill);
-                display.set_valign(gtk::Align::Fill);
-            } else {
-                display.set_hexpand(false);
-                display.set_vexpand(false);
-                display.set_halign(gtk::Align::Center);
-                display.set_valign(gtk::Align::Center);
+        focus_grabber.set_vexpand(true);
+        focus_grabber.set_hexpand(true);
+        focus_grabber.connect_grabbed_notify(glib::clone!(
+            #[weak(rename_to=slf)]
+            self,
+            move |focus_grabber| {
+                slf.on_focus_grabber_grabbed_changed(focus_grabber);
             }
-        }
+        ));
+
+        imp.focus_grabber.replace(Some(focus_grabber.clone()));
+        focus_grabber
     }
 
-    #[template_callback]
-    fn on_focus_grabber_grabbed_changed(&self) {
-        let grabber = &*self.imp().focus_grabber;
+    fn on_focus_grabber_grabbed_changed(&self, grabber: &FieldMonitorFocusGrabber) {
         let grabbed = grabber.grabbed();
 
         let window = self
@@ -1481,12 +1448,7 @@ impl FieldMonitorServerScreen {
             }
         }
 
-        if let Some(display) = self
-            .imp()
-            .display_bin
-            .child()
-            .and_downcast::<rdw::Display>()
-        {
+        if let Some(display) = grabber.child().and_downcast::<rdw::Display>() {
             if grabbed {
                 let shortcut = display.grab_shortcut().to_label(&self.display());
                 // The shortcut may have alternatives for technical reasons, but only show the
@@ -1526,12 +1488,54 @@ impl FieldMonitorServerScreen {
             }
         }
     }
+}
+
+#[gtk::template_callbacks]
+impl FieldMonitorServerScreen {
+    #[template_callback]
+    fn on_self_reveal_osd_controls_changed(&self) {
+        self.update_header_bar_state();
+    }
 
     #[template_callback]
-    fn on_show_navigation_clicked(&self) {
-        // TODO: A bug somewhere? For some reason clicking this button only partially ungrabs in a
-        //       weird sort of hybrid state. So we ungrab manually.
-        self.imp().focus_grabber.ungrab();
+    fn on_force_disable_overlay_headerbar_changed(&self) {
+        self.update_header_bar_state();
+    }
+
+    #[template_callback]
+    fn on_self_dynamic_resize_changed(&self) {
+        let display = self.rdw_display();
+
+        if let Some(display) = display.as_ref() {
+            display.set_remote_resize(self.dynamic_resize());
+        }
+
+        // Enable or disable scale to window / fit to screen switches based on if dynamic resize is on.
+        if self.dynamic_resize() {
+            self.set_scale_to_window(true); // needs also to be on.
+            self.action_set_enabled("view.scale-to-window", false);
+            //self.action_set_enabled("view.fit-to-screen", false);
+        } else if display.is_some() {
+            self.action_set_enabled("view.scale-to-window", true);
+            //self.action_set_enabled("view.fit-to-screen", true);
+        }
+    }
+
+    #[template_callback]
+    fn on_self_scale_to_window_changed(&self) {
+        if let Some(display) = self.rdw_display() {
+            if self.scale_to_window() {
+                display.set_hexpand(true);
+                display.set_vexpand(true);
+                display.set_halign(gtk::Align::Fill);
+                display.set_valign(gtk::Align::Fill);
+            } else {
+                display.set_hexpand(false);
+                display.set_vexpand(false);
+                display.set_halign(gtk::Align::Center);
+                display.set_valign(gtk::Align::Center);
+            }
+        }
     }
 
     #[template_callback]
@@ -1540,7 +1544,9 @@ impl FieldMonitorServerScreen {
             "connection view unrealized. self ref count: {}",
             self.ref_count()
         );
-        self.imp().focus_grabber.ungrab();
+        if let Some(fg) = &*self.imp().focus_grabber.borrow() {
+            fg.ungrab();
+        }
     }
 
     fn on_window_fullscreened_changed(&self, window: &impl IsA<gtk::Window>) {
