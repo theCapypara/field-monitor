@@ -145,7 +145,7 @@ impl ConnectionProvider for GenericConnectionProvider {
                 // We edited a single server.
                 let Some(server) = server_prefs.make_config() else {
                     return Err(anyhow!(gettext(
-                        "One or more field(s) contain invalid values."
+                        "One or more fields contain invalid values."
                     )));
                 };
                 configuration.transform_update_separate(

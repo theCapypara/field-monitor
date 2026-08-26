@@ -55,7 +55,7 @@ msgid "Connection to one or more RDP, SPICE and VNC servers"
 msgstr "与一个或更多 RDP、SPICE 和 VNC 服务器的连接"
 
 #: connection/generic-group/src/lib.rs:148
-msgid "One or more field(s) contain invalid values."
+msgid "One or more fields contain invalid values."
 msgstr "一个或更多包含无效值的域。"
 
 #: connection/generic-group/src/lib.rs:371
@@ -309,7 +309,7 @@ msgid "Connect via SSH"
 msgstr "通过 SSH 连接"
 
 #: connection/proxmox/src/api/connection.rs:60
-msgid "Was unable to build a valid URL to connect to. Check your settings."
+msgid "Unable to build a valid URL to connect to. Check your settings."
 msgstr "无法构建可连接的有效 URL。请检查您的设置。"
 
 #: connection/proxmox/src/api/connection.rs:72
@@ -505,7 +505,7 @@ msgstr "使用 libvirt 的 QEMU/KVM（包括 GNOME Boxes 虚拟机）"
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
 msgid ""
-"For supported VM hypervisors Field Monitor also offers options to manage the "
+"For supported VM hypervisors, Field Monitor also offers options to manage the "
 "basic power state of VMs, such as starting, stopping, rebooting, etc."
 msgstr ""
 "现场监视器对支持的虚拟机管理程序提供了管理虚拟机基本电源状态的选项，例如启"
@@ -514,7 +514,7 @@ msgstr ""
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
 msgid ""
-"Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
+"Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
 msgstr ""
 "另外，现场监视器支持打开 RDP 和 Virt 查看器连接文件以及通过 URI 快速连接至 "
@@ -827,7 +827,7 @@ msgstr "保存连接失败"
 #: src/widget/add_connection_dialog.rs:206
 #: src/widget/authenticate_connection_dialog.rs:166
 #: src/widget/update_connection_dialog.rs:176
-msgid "An error occurred, while trying to save the connection"
+msgid "An error occurred while trying to save the connection"
 msgstr "尝试保存连接时发生了错误"
 
 #: src/widget/app_status.blp:30
@@ -948,8 +948,8 @@ msgstr "信息"
 #: src/widget/certificate_trust_dialog.rs:207
 msgid ""
 "After you choose to trust the CA, Field Monitor will confirm that the "
-"connection is established using a certificate issued by the CA. If not Field "
-"Monitor will refuse the connection."
+"connection is established using a certificate issued by the CA. If not, "
+"Field Monitor will refuse the connection."
 msgstr ""
 "在您选择信任该认证机构后，现场监视器将确认连接是使用由该机构颁发的证书建立"
 "的。如果不是，现场监视器将拒绝连接。"
@@ -1363,13 +1363,13 @@ msgid "Header bars for active connections"
 msgstr "用于活动连接的标头栏"
 
 #: src/widget/preferences.blp:66
-msgid "Show keyboard shortcut for how to ungrab"
+msgid "Show ungrab key combination"
 msgstr "显示释放输入设备的键盘快捷键"
 
 #: src/widget/preferences.blp:67
 msgid ""
-"Show a message on what key combination can be used to ungrab mouse and "
-"keyboard from an active connection, every time this input is grabbed."
+"Show a brief message indicating which key combination ungrabs the mouse "
+"and keyboard, every time input is grabbed from an active connection."
 msgstr ""
 "每次输入设备已被抓取时，显示消息以提示可用来从活动连接释放鼠标和键盘的按键组"
 "合。"
@@ -1400,7 +1400,7 @@ msgstr "叠加和隐藏"
 
 #: src/widget/preferences.rs:205
 msgid ""
-"Configure whether and when Field Monitor will use sharp, right angle, window "
+"Configure whether and when Field Monitor will use sharp, right-angle window "
 "corners instead of the default corner radius. This is useful to make sure "
 "the corners of connected screens are not cut off."
 msgstr ""
@@ -1409,8 +1409,8 @@ msgstr ""
 
 #: src/widget/preferences.rs:207
 msgid ""
-"Use default corner radius, but make window corners sharp whenever input is "
-"grabbed."
+"Use the default corner radius, but make window corners sharp whenever input "
+"is grabbed."
 msgstr "使用默认圆角，但在抓取输入设备后使窗口夹角锐化。"
 
 #: src/widget/preferences.rs:208
@@ -1427,8 +1427,8 @@ msgstr "更改活动连接屏幕标头栏的呈现方式。"
 
 #: src/widget/preferences.rs:237
 msgid ""
-"The header bar is shown above the connection screen. In fullscreen mode the "
-"header bar is instead overlayed and hides whenever input is grabbed."
+"The header bar is shown above the connection screen. In fullscreen mode, "
+"the header bar is instead overlaid and hides whenever input is grabbed."
 msgstr ""
 "标头栏显示在连接屏幕的上方。全屏模式下在抓取输入设备后会以叠加与隐藏的方式代"
 "替。"
@@ -1442,11 +1442,11 @@ msgstr "标头栏总是显示在连接屏幕的上方，即使在全屏模式下
 #: src/widget/preferences.rs:239
 msgid ""
 "The header bar is always shown as an overlay on top of the connection "
-"screen, it is hidden whenever input is grabbed."
+"screen; it is hidden whenever input is grabbed."
 msgstr "标头栏总是在连接屏幕的顶部显示为叠加层，抓取输入设备后则隐藏。"
 
-#: src/widget/quick_connect_dialog.blp:19
-#, c-format
+#: src/widget/quick_connect_dialog.blp:20
+#, no-c-format
 msgid ""
 "Enter the URL of the server you want to connect to.\n"
 "Supported protocols are: RDP, SPICE, VNC.\n"
@@ -1492,7 +1492,7 @@ msgid "RDP file"
 msgstr "RDP 文件"
 
 #: src/widget/quick_connect_dialog.rs:133
-msgid "Virt Viewer file"
+msgid "Virt-Viewer file"
 msgstr "Virt 查看器文件"
 
 #: src/widget/quick_connect_dialog.rs:137
@@ -1569,7 +1569,7 @@ msgid "{free} channels free"
 msgstr "{free} 个通道闲置"
 
 #: src/widget/usb_redir/settings_dialog.rs:200
-msgid "This device can not be connected, you might be missing permissions."
+msgid "This device can not be connected; you might be missing permissions."
 msgstr "无法连接此设备，您可能缺少权限。"
 
 #: src/widget/usb_redir/settings_dialog.rs:398
@@ -1584,8 +1584,8 @@ msgid ""
 "button to show all devices, but note that USB hubs can not be properly "
 "shared with remote servers.\n"
 "\n"
-"To share a device your user account may need read and write permissions on "
-"the raw device, consult your distribution documentation for more information."
+"To share a device, your user account may need read and write permissions on "
+"the raw device. Consult your distribution documentation for more information."
 msgstr ""
 "此对话框可让您与远程服务器或虚拟机共享 USB 设备。\n"
 "\n"

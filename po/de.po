@@ -52,11 +52,11 @@ msgstr "Generische Verbindungsgruppe hinzufügen"
 
 #: connection/generic-group/src/lib.rs:74
 msgid "Connection to one or more RDP, SPICE and VNC servers"
-msgstr "Verbindung zu RDP, SPICE und/oder VNC Servern"
+msgstr "Verbindung zu RDP-, SPICE- und/oder VNC-Servern"
 
 #: connection/generic-group/src/lib.rs:148
-msgid "One or more field(s) contain invalid values."
-msgstr "Ein oder mehrere Feld(er) enthalten ungültige Werte."
+msgid "One or more fields contain invalid values."
+msgstr "Ein oder mehrere Felder enthalten ungültige Werte."
 
 #: connection/generic-group/src/lib.rs:371
 msgid "Failed to load password."
@@ -85,7 +85,7 @@ msgstr "Es wurde noch kein Server hinzugefügt."
 #: src/widget/update_connection_dialog.rs:102
 #, rust-format
 msgid "Edit “{title}”"
-msgstr "Bearbeite »{title}«"
+msgstr "»{title}« bearbeiten"
 
 #: connection/generic-group/src/preferences.rs:594
 msgid "Update"
@@ -98,7 +98,7 @@ msgstr "Hinzufügen"
 
 #: connection/generic-group/src/preferences.rs:617
 msgid "Remove Server"
-msgstr "Entfernter Server"
+msgstr "Server entfernen"
 
 #: connection/generic-group/src/server_preferences.blp:12
 msgid "Server Name"
@@ -153,8 +153,8 @@ msgid ""
 "the adapter is listening on all interfaces."
 msgstr ""
 "Kein unterstützter Grafikmodus verfügbar. Tipp: Falls Sie per SSH verbunden "
-"sind, stellen Sie sicher, dass der \"listen\"-Typ des Adapters auf "
-"\"address\" gestellt ist und das der Adapter auf allen "
+"sind, stellen Sie sicher, dass der »listen«-Typ des Adapters auf "
+"»address« gestellt ist und dass der Adapter auf allen "
 "Netzwerkschnittstellen horcht."
 
 #: connection/libvirt/src/connection/graphics.rs:255
@@ -163,7 +163,7 @@ msgstr "D-Bus"
 
 #: connection/libvirt/src/connection/mod.rs:162
 msgid "(Unable to load server name)"
-msgstr "(Laden des Servernamen fehlgeschlagen)"
+msgstr "(Laden des Servernamens fehlgeschlagen)"
 
 #: connection/libvirt/src/connection/mod.rs:216
 #: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:66
@@ -217,7 +217,7 @@ msgstr "Herunterfahren fehlgeschlagen: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:309
 msgid "Domain successfully reset."
-msgstr "Befehl zum Zurücksetzen an Domnäne gesendet."
+msgstr "Domäne erfolgreich zurückgesetzt."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -272,7 +272,7 @@ msgstr ""
 
 #: connection/libvirt/src/connection/qemu_dbus.rs:143
 msgid ""
-"If you are connecting to a qemu:///system domain you may not be able to "
+"If you are connecting to a qemu:///system domain, you may not be able to "
 "connect via D-Bus unless you enable the 'p2p' option."
 msgstr ""
 "Falls Sie sich via qemu:///system verbinden ist eine Verbindung über D-Bus "
@@ -315,15 +315,15 @@ msgstr "QEMU/KVM"
 
 #: connection/libvirt/src/hypervisor/qemu.rs:54
 msgid "Add QEMU/KVM Connection"
-msgstr "QEMU/KVM Verbindung hinzufügen"
+msgstr "QEMU/KVM-Verbindung hinzufügen"
 
 #: connection/libvirt/src/hypervisor/qemu.rs:62
 msgid ""
 "QEMU/KVM hypervisor connection via libvirt. Can also be used to connect to "
 "GNOME Boxes VMs."
 msgstr ""
-"QEMU/KVM Hypervisorverbindung via libvirt. Kann auch verwendet werden, für "
-"die Verbindung mit GNOME Boxen VMs."
+"QEMU/KVM-Hypervisorverbindung via libvirt. Kann auch für die Verbindung mit "
+"GNOME-Boxen-VMs verwendet werden."
 
 #: connection/libvirt/src/qemu_preferences.blp:13
 #: connection/proxmox/src/preferences.blp:12
@@ -340,7 +340,7 @@ msgstr "System-Sitzung"
 
 #: connection/libvirt/src/qemu_preferences.blp:23
 msgid "This is the QEMU/KVM default."
-msgstr "Dies ist der QEMU/KVM Standard."
+msgstr "Dies ist der QEMU/KVM-Standard."
 
 #: connection/libvirt/src/qemu_preferences.blp:33
 msgid "User Session"
@@ -348,7 +348,7 @@ msgstr "Benutzer-Sitzung"
 
 #: connection/libvirt/src/qemu_preferences.blp:34
 msgid "Use this to manage GNOME Boxes VMs."
-msgstr "Verwenden Sie diese Option um GNOME Boxen VMs zu verwalten."
+msgstr "Verwenden Sie diese Option, um GNOME-Boxen-VMs zu verwalten."
 
 #: connection/libvirt/src/qemu_preferences.blp:45
 msgid "Remote Connection"
@@ -359,10 +359,10 @@ msgid "Connect via SSH"
 msgstr "Verbindung via SSH"
 
 #: connection/proxmox/src/api/connection.rs:60
-msgid "Was unable to build a valid URL to connect to. Check your settings."
+msgid "Unable to build a valid URL to connect to. Check your settings."
 msgstr ""
-"Es konnte keine gültige URL gebildet werden um eine Verbindung herzustellen. "
-"Bitte überprüfen Sie ihre Einstellungen."
+"Es konnte keine gültige URL gebildet werden, um eine Verbindung "
+"herzustellen. Bitte überprüfen Sie Ihre Einstellungen."
 
 #: connection/proxmox/src/api/connection.rs:72
 msgid "Failed to retrieve API Key or Password from secrets service."
@@ -399,11 +399,11 @@ msgstr "Proxmox"
 
 #: connection/proxmox/src/api/provider.rs:56
 msgid "Add Proxmox Connection"
-msgstr "Proxmox Verbindung hinzufügen"
+msgstr "Proxmox-Verbindung hinzufügen"
 
 #: connection/proxmox/src/api/provider.rs:64
 msgid "Proxmox Virtual Environment hypervisor connection"
-msgstr "Proxmox Virtual Environment Hypervisorverbindung"
+msgstr "Proxmox Virtual Environment Hypervisor-Verbindung"
 
 #: connection/proxmox/src/api/vm.rs:132
 msgid "Reboot command successfully sent to VM."
@@ -419,7 +419,7 @@ msgstr "VM wurde erfolgreich zurückgesetzt."
 
 #: connection/proxmox/src/api/vm.rs:200
 msgid "Failed to send reset command."
-msgstr "Zurücksetzen der VM fehgeschlagen."
+msgstr "Zurücksetzen der VM fehlgeschlagen."
 
 #: connection/proxmox/src/api/vm.rs:230
 msgid "VM is now stopping."
@@ -442,8 +442,8 @@ msgid ""
 "The Proxmox user needs at least the permissions <tt>VM.Console</tt>, "
 "<tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>."
 msgstr ""
-"Der Proxmox Benutzer benötigt die Berechtigungen <tt>VM.Console</tt>, "
-"<tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>."
+"Der Proxmox-Benutzer benötigt die Berechtigungen <tt>VM.Console</tt>, "
+"<tt>VM.Audit</tt> und <tt>VM.PowerMgmt</tt>."
 
 #: connection/proxmox/src/credential_preferences.blp:13
 msgid "Authentication Mode"
@@ -465,14 +465,14 @@ msgstr "Verbindung"
 
 #: connection/proxmox/src/preferences.blp:33
 msgid "Trust Any SSL Certificate"
-msgstr "Unsicheren SSL Zertifikaten vertrauen"
+msgstr "Unsicheren SSL-Zertifikaten vertrauen"
 
 #: connection/proxmox/src/preferences.blp:34
 msgid ""
 "Allows connecting to servers with self-signed and otherwise invalid SSL "
 "certificates. Be careful, as this is a potential security risk."
 msgstr ""
-"Ermöglicht die Verbindung zu Servern mit selbst-signierten SSL Zertifikaten. "
+"Ermöglicht die Verbindung zu Servern mit selbstsignierten SSL-Zertifikaten. "
 "Achtung, dies ist ein mögliches Sicherheitsrisiko."
 
 #. Translators: The name of the application.
@@ -533,7 +533,7 @@ msgid ""
 "Field Monitor is a remote-desktop client designed for the GNOME platform."
 msgstr ""
 "Feldmonitor ist eine Anwendung zur Steuerung von entfernten Bildschirmen, "
-"entworfen für die GNOME Plattform."
+"entworfen für die GNOME-Plattform."
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
@@ -541,9 +541,9 @@ msgid ""
 "It is focused on connecting to virtual machines, but can connect to any "
 "server supporting the RDP, SPICE or VNC protocols."
 msgstr ""
-"Feldmonitor kann die Verbindung mit beliebigen RDP, SPICE oder VNC Servern "
-"herstellen und bietet zusätzliche Funktionen zur Steuerung von virtuellen "
-"Maschinen."
+"Feldmonitor kann die Verbindung mit beliebigen RDP-, SPICE- oder "
+"VNC-Servern herstellen und bietet zusätzliche Funktionen zur Steuerung von "
+"virtuellen Maschinen."
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
@@ -559,12 +559,12 @@ msgstr "Proxmox Virtual Environment"
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
 msgid "QEMU/KVM via libvirt (including GNOME Boxes VMs)"
-msgstr "QEMU/KVM via libvirt (inklusive GNOME Boxen VMs)"
+msgstr "QEMU/KVM via libvirt (inklusive GNOME-Boxen-VMs)"
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
 msgid ""
-"For supported VM hypervisors Field Monitor also offers options to manage the "
+"For supported VM hypervisors, Field Monitor also offers options to manage the "
 "basic power state of VMs, such as starting, stopping, rebooting, etc."
 msgstr ""
 "Für diese unterstützten Hypervisoren bietet Feldmonitor unter anderem die "
@@ -573,11 +573,12 @@ msgstr ""
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
 msgid ""
-"Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
+"Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
 msgstr ""
-"Außerdem kann Feldmonitor RDP und Virt Viewer Verbindungsdateien öffnen und "
-"schnell Verbindungen zu RDP, SPICE und VNC Servern via URI herstellen."
+"Außerdem kann Feldmonitor RDP- und Virt-Viewer-Verbindungsdateien öffnen "
+"und schnell Verbindungen zu RDP-, SPICE- und VNC-Servern via URI "
+"herstellen."
 
 #. Translators: Caption of the first screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:178
@@ -587,13 +588,13 @@ msgstr "Bildschirm einer verbundenen graphischen Anzeige"
 #. Translators: Caption of the second screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:185
 msgid "Welcome screen"
-msgstr "Willkommen-Fenster"
+msgstr "Willkommensbildschirm"
 
 #. Translators: Caption of the third screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:192
 msgid "A list of servers in a Proxmox cluster to connect to"
 msgstr ""
-"Eine Liste von Servern in einem Proxmox Cluster, mit denen sich verbunden "
+"Eine Liste von Servern in einem Proxmox-Cluster, mit denen sich verbunden "
 "werden kann"
 
 #. Translators: Caption of the 4th screenshot in the metainfo
@@ -609,11 +610,11 @@ msgstr ""
 
 #: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
 msgid "Remote Desktop file"
-msgstr "RDP Verbindungsdatei"
+msgstr "RDP-Verbindungsdatei"
 
 #: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
 msgid "Virt-Viewer connection file"
-msgstr "Virt-Viewer Verbindungsdatei"
+msgstr "Virt-Viewer-Verbindungsdatei"
 
 #: lib/src/adapter/usbredir/error.rs:35
 msgid "The device can not be attached to the connection"
@@ -621,7 +622,7 @@ msgstr "Das Gerät kann nicht mit der Verbindung verknüpft werden"
 
 #: lib/src/adapter/usbredir/error.rs:38
 msgid "The device was already attached to the connection"
-msgstr "Das Gerät ist bereits mit der Verbindung verknüpft."
+msgstr "Das Gerät ist bereits mit der Verbindung verknüpft"
 
 #: lib/src/adapter/usbredir/portal.rs:254
 #, rust-format
@@ -755,7 +756,7 @@ msgstr "Fehler beim Lesen der Datei"
 
 #: src/quick_connect/rdp.rs:169
 msgid "Invalid RDP parameters"
-msgstr "Ungültige RDP Parameter"
+msgstr "Ungültige RDP-Parameter"
 
 #: src/quick_connect/spice.rs:208
 msgid "Invalid SPICE URI"
@@ -888,7 +889,7 @@ msgstr "Fehler beim Speichern der Verbindung"
 #: src/widget/add_connection_dialog.rs:206
 #: src/widget/authenticate_connection_dialog.rs:166
 #: src/widget/update_connection_dialog.rs:176
-msgid "An error occurred, while trying to save the connection"
+msgid "An error occurred while trying to save the connection"
 msgstr "Beim Speichern der Verbindung ist ein Fehler aufgetreten"
 
 #: src/widget/app_status.blp:30
@@ -897,7 +898,7 @@ msgstr "Feldmonitor startet..."
 
 #: src/widget/app_status.blp:50
 msgid "Failed to Initialize"
-msgstr "Fehler beim Initalisieren"
+msgstr "Fehler beim Initialisieren"
 
 #: src/widget/app_status.blp:51
 msgid ""
@@ -905,7 +906,7 @@ msgid ""
 "secret service for accessing passwords."
 msgstr ""
 "Feldmonitor konnte nicht gestartet werden, da es sich nicht mit dem Dienst "
-"für Geheimnisse verbinden konnte, um auf Passwörter zuzugrifen."
+"für Geheimnisse verbinden konnte, um auf Passwörter zuzugreifen."
 
 #: src/widget/app_status.blp:56 src/widget/app_status.blp:84
 msgid "Quit"
@@ -913,7 +914,7 @@ msgstr "Anwendung beenden"
 
 #: src/widget/app_status.blp:78
 msgid "Failed to Initialize - Secrets Invalid"
-msgstr "Fehler beim Initalisieren - Ungültige Schlüssel"
+msgstr "Fehler beim Initialisieren - Ungültige Schlüssel"
 
 #: src/widget/app_status.blp:79
 msgid ""
@@ -928,10 +929,10 @@ msgstr ""
 "Feldmonitor konnte nicht starten, da der Systemdienst für Geheimnisse "
 "meldet, dass System-Schlüssel ungültig oder beschädigt sind.\n"
 "\n"
-"Dies kann passieren, falls sie Ihr HOME Verzeichnis auf ein anderes System "
+"Dies kann passieren, falls Sie Ihr HOME Verzeichnis auf ein anderes System "
 "verschoben haben.\n"
 "\n"
-"Sie können diese Situation möglicherweise mit  <a href='https://github.com/"
+"Sie können diese Situation möglicherweise mit <a href='https://github.com/"
 "theCapypara/field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a> "
 "lösen."
 
@@ -966,11 +967,11 @@ msgstr "Schließen"
 
 #: src/widget/certificate_details_window.rs:160
 msgid "PEM Certificate"
-msgstr "PEM Zertifikat"
+msgstr "PEM-Zertifikat"
 
 #: src/widget/certificate_details_window.rs:165
 msgid "DER Certificate"
-msgstr "DER Zertifikat"
+msgstr "DER-Zertifikat"
 
 #: src/widget/certificate_details_window.rs:171
 msgid "Export Certificate..."
@@ -1016,13 +1017,13 @@ msgstr "Info"
 #: src/widget/certificate_trust_dialog.rs:207
 msgid ""
 "After you choose to trust the CA, Field Monitor will confirm that the "
-"connection is established using a certificate issued by the CA. If not Field "
-"Monitor will refuse the connection."
+"connection is established using a certificate issued by the CA. If not, "
+"Field Monitor will refuse the connection."
 msgstr ""
-"Sobald Sie entscheiden dieser CA zu vertrauen wird Feldmonitor "
-"sicherstellen, dass das Zertifikat über das die Verbindung hergestellt wird "
-"tatsächlich von der CA ausgestellt wurde. Falls nicht, wird Feldmonitor die "
-"Verbindung ablehnen."
+"Sobald Sie entscheiden, dieser CA zu vertrauen, wird Feldmonitor "
+"sicherstellen, dass das Zertifikat, über das die Verbindung hergestellt "
+"wird, tatsächlich von der CA ausgestellt wurde. Falls nicht, wird "
+"Feldmonitor die Verbindung ablehnen."
 
 #: src/widget/certificate_trust_dialog.rs:229
 #, rust-format
@@ -1372,7 +1373,7 @@ msgstr "Textgröße zurücksetzen"
 #: src/widget/connection_view/server_screen.rs:1462
 #, rust-format
 msgid "Press {keycombo} to ungrab the mouse and keyboard."
-msgstr "Drücken Sie {keycombo} um Maus und Tastatur freizugeben."
+msgstr "Drücken Sie {keycombo}, um Maus und Tastatur freizugeben."
 
 #: src/widget/connection_view/server_screen.rs:1485
 msgid "Input released."
@@ -1384,7 +1385,7 @@ msgstr "Entfernter Server-Bildschirm"
 
 #: src/widget/focus_grabber.rs:216
 msgid "Press any key to grab input."
-msgstr "Drücken Sie eine beliebige Taste um die Eingabe zu fangen."
+msgstr "Drücken Sie eine beliebige Taste, um die Eingabe zu fangen."
 
 #: src/widget/preferences.blp:12
 msgid "Preferences"
@@ -1411,13 +1412,13 @@ msgid "Header bars for active connections"
 msgstr "Titelleiste für aktive Verbindungen"
 
 #: src/widget/preferences.blp:66
-msgid "Show keyboard shortcut for how to ungrab"
-msgstr "Tastenkombination zum freigeben der Tastatur anzeigen"
+msgid "Show ungrab key combination"
+msgstr "Tastenkombination zum Freigeben der Tastatur anzeigen"
 
 #: src/widget/preferences.blp:67
 msgid ""
-"Show a message on what key combination can be used to ungrab mouse and "
-"keyboard from an active connection, every time this input is grabbed."
+"Show a brief message indicating which key combination ungrabs the mouse "
+"and keyboard, every time input is grabbed from an active connection."
 msgstr ""
 "Zeige innerhalb von aktiven Verbindungen kurz eine Nachricht, die erklärt, "
 "wie die Maus und Tastatur freigegeben werden kann, sobald diese gefangen "
@@ -1449,7 +1450,7 @@ msgstr "Überlagern und Ausblenden"
 
 #: src/widget/preferences.rs:205
 msgid ""
-"Configure whether and when Field Monitor will use sharp, right angle, window "
+"Configure whether and when Field Monitor will use sharp, right-angle window "
 "corners instead of the default corner radius. This is useful to make sure "
 "the corners of connected screens are not cut off."
 msgstr ""
@@ -1459,8 +1460,8 @@ msgstr ""
 
 #: src/widget/preferences.rs:207
 msgid ""
-"Use default corner radius, but make window corners sharp whenever input is "
-"grabbed."
+"Use the default corner radius, but make window corners sharp whenever input "
+"is grabbed."
 msgstr ""
 "Spitze Fensterkanten verwenden, wenn die Eingabe gefangen ist, ansonsten "
 "Standardradius verwenden."
@@ -1481,12 +1482,12 @@ msgstr ""
 
 #: src/widget/preferences.rs:237
 msgid ""
-"The header bar is shown above the connection screen. In fullscreen mode the "
-"header bar is instead overlayed and hides whenever input is grabbed."
+"The header bar is shown above the connection screen. In fullscreen mode, "
+"the header bar is instead overlaid and hides whenever input is grabbed."
 msgstr ""
 "Die Titelleiste wird oberhalb des entfernten Bildschirms angezeigt. Im "
 "Vollbildmodus wird die Titelleiste stattdessen über den Inhalt des "
-"Bildschirms gelegt und ausblendet, sobald die Eingabe gefangen ist."
+"Bildschirms gelegt und ausgeblendet, sobald die Eingabe gefangen ist."
 
 #: src/widget/preferences.rs:238
 msgid ""
@@ -1499,13 +1500,13 @@ msgstr ""
 #: src/widget/preferences.rs:239
 msgid ""
 "The header bar is always shown as an overlay on top of the connection "
-"screen, it is hidden whenever input is grabbed."
+"screen; it is hidden whenever input is grabbed."
 msgstr ""
 "Die Titelleiste wird über den Inhalt des entfernten Bildschirms gelegt und "
-"ausblendet, sobald die Eingabe gefangen ist."
+"ausgeblendet, sobald die Eingabe gefangen ist."
 
-#: src/widget/quick_connect_dialog.blp:19
-#, c-format
+#: src/widget/quick_connect_dialog.blp:20
+#, no-c-format
 msgid ""
 "Enter the URL of the server you want to connect to.\n"
 "Supported protocols are: RDP, SPICE, VNC.\n"
@@ -1553,8 +1554,8 @@ msgid "RDP file"
 msgstr "RDP-Datei"
 
 #: src/widget/quick_connect_dialog.rs:133
-msgid "Virt Viewer file"
-msgstr "Virt Viewer-Datei"
+msgid "Virt-Viewer file"
+msgstr "Virt-Viewer-Datei"
 
 #: src/widget/quick_connect_dialog.rs:137
 msgid "Any file"
@@ -1562,7 +1563,7 @@ msgstr "Alle Dateien"
 
 #: src/widget/quick_connect_dialog.rs:145
 msgid "Open Connection from file..."
-msgstr "Verbindung via URL öffnen..."
+msgstr "Verbindung aus Datei öffnen..."
 
 #: src/widget/quick_connect_dialog.rs:158
 msgid "Field Monitor was unable to open the provided file."
@@ -1630,9 +1631,9 @@ msgid "{free} channels free"
 msgstr "{free} Kanäle frei"
 
 #: src/widget/usb_redir/settings_dialog.rs:201
-msgid "This device can not be connected, you might be missing permissions."
+msgid "This device can not be connected; you might be missing permissions."
 msgstr ""
-"Dieses Gerät kann nicht verbunden werden, Ihnen fehlen möglicherweise "
+"Dieses Gerät kann nicht verbunden werden; Ihnen fehlen möglicherweise "
 "Berechtigungen."
 
 #: src/widget/usb_redir/settings_dialog.rs:401
@@ -1647,8 +1648,8 @@ msgid ""
 "button to show all devices, but note that USB hubs can not be properly "
 "shared with remote servers.\n"
 "\n"
-"To share a device your user account may need read and write permissions on "
-"the raw device, consult your distribution documentation for more information."
+"To share a device, your user account may need read and write permissions on "
+"the raw device. Consult your distribution documentation for more information."
 msgstr ""
 "Mit diesem Dialog können Sie USB-Geräte für den entfernten Server oder die "
 "virtuelle Maschine freigeben.\n"
@@ -1706,7 +1707,7 @@ msgstr "Zeige Verbindungsliste"
 #: src/widget/window.rs:630
 msgid "Connect to your virtual machines and remote servers."
 msgstr ""
-"Verbinden Sie sich mit ihren Virtuellen Maschinen und entfernen Servern."
+"Verbinden Sie sich mit Ihren virtuellen Maschinen und entfernten Servern."
 
 #~ msgctxt "shortcut window"
 #~ msgid "Show Navigation"

@@ -130,7 +130,7 @@ impl FieldMonitorQuickConnectDialog {
         supported_filter.add_suffix("vv");
         virtviewer_filter.add_mime_type("application/x-virt-viewer");
         supported_filter.add_mime_type("application/x-virt-viewer");
-        virtviewer_filter.set_name(Some(&gettext("Virt Viewer file")));
+        virtviewer_filter.set_name(Some(&gettext("Virt-Viewer file")));
 
         let any_filter = gtk::FileFilter::new();
         any_filter.add_pattern("*");

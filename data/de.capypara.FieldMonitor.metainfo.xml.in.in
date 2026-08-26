@@ -65,12 +65,12 @@
 		</ul>
 		<!-- Translators: Part of the description of the application in the metainfo. -->
 		<p>
-			For supported VM hypervisors Field Monitor also offers options to manage the basic
+			For supported VM hypervisors, Field Monitor also offers options to manage the basic
 			power state of VMs, such as starting, stopping, rebooting, etc.
 		</p>
 		<!-- Translators: Part of the description of the application in the metainfo. -->
 		<p>
-			Additionally, Field Monitor supports opening RDP and Virt Viewer connection files
+			Additionally, Field Monitor supports opening RDP and Virt-Viewer connection files
 			and quickly connecting to RDP, SPICE or VNC servers via URI.
 		</p>
 	</description>

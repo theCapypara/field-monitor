@@ -127,7 +127,7 @@ msgstr "QEMU/KVM через libvirt"
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
 msgid ""
-"For supported VM hypervisors Field Monitor also offers options to manage the "
+"For supported VM hypervisors, Field Monitor also offers options to manage the "
 "basic power state of VMs, such as starting, stopping, rebooting, etc."
 msgstr ""
 "Для поддерживаемых гипервизоров Field Monitor также предлагает возможности "
@@ -137,11 +137,12 @@ msgstr ""
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
 msgid ""
-"Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
+"Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
 msgstr ""
-"Кроме того, Field Monitor поддерживает открытие файлов подключения RDP и Virt "
-"Viewer, а также быстрое подключение к серверам RDP, SPICE или VNC через URI."
+"Кроме того, Field Monitor поддерживает открытие файлов подключения RDP и "
+"Virt-Viewer, а также быстрое подключение к серверам RDP, SPICE или VNC "
+"через URI."
 
 #. Translators: Caption of the first screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:89
@@ -424,7 +425,7 @@ msgid "Connect via SSH"
 msgstr "Подключение через SSH"
 
 #: connection/proxmox/src/api/connection.rs:60
-msgid "Was unable to build a valid URL to connect to. Check your settings."
+msgid "Unable to build a valid URL to connect to. Check your settings."
 msgstr "Не удалось создать действительный URL для подключения. Проверьте настройки."
 
 #: connection/proxmox/src/api/connection.rs:72
@@ -775,7 +776,7 @@ msgstr "Не удалось сохранить подключение"
 #: src/widget/add_connection_dialog.rs:204
 #: src/widget/authenticate_connection_dialog.rs:168
 #: src/widget/update_connection_dialog.rs:149
-msgid "An error occurred, while trying to save the connection"
+msgid "An error occurred while trying to save the connection"
 msgstr "Произошла ошибка при попытке сохранить подключение"
 
 #: src/widget/authenticate_connection_dialog.blp:6
@@ -1068,13 +1069,13 @@ msgid "Header bars for active connections"
 msgstr "Заголовки для активных подключений"
 
 #: src/widget/preferences.blp:66
-msgid "Show keyboard shortcut for how to ungrab"
+msgid "Show ungrab key combination"
 msgstr "Показывать комбинацию клавиш для освобождения ввода"
 
 #: src/widget/preferences.blp:67
 msgid ""
-"Show a message on what key combination can be used to ungrab mouse and keyboard "
-"from an active connection, every time this input is grabbed."
+"Show a brief message indicating which key combination ungrabs the mouse "
+"and keyboard, every time input is grabbed from an active connection."
 msgstr ""
 "Показывать сообщение о том, какая комбинация клавиш может быть использована для "
 "освобождения мыши и клавиатуры от активного подключения, каждый раз, когда они "
@@ -1106,7 +1107,7 @@ msgstr "Накладывать и скрывать"
 
 #: src/widget/preferences.rs:204
 msgid ""
-"Configure whether and when Field Monitor will use sharp, right angle, window "
+"Configure whether and when Field Monitor will use sharp, right-angle window "
 "corners instead of the default corner radius. This is useful to make sure "
 "the corners of connected screens are not cut off."
 msgstr ""
@@ -1116,8 +1117,8 @@ msgstr ""
 
 #: src/widget/preferences.rs:206
 msgid ""
-"Use default corner radius, but make window corners sharp whenever input is "
-"grabbed."
+"Use the default corner radius, but make window corners sharp whenever input "
+"is grabbed."
 msgstr ""
 "Использовать скруглённые углы по умолчанию, но делать их острыми, когда ввод "
 "захвачен."
@@ -1136,8 +1137,8 @@ msgstr "Изменить способ отображения заголовка 
 
 #: src/widget/preferences.rs:236
 msgid ""
-"The header bar is shown above the connection screen. In fullscreen mode the "
-"header bar is instead overlayed and hides whenever input is grabbed."
+"The header bar is shown above the connection screen. In fullscreen mode, "
+"the header bar is instead overlaid and hides whenever input is grabbed."
 msgstr ""
 "Заголовок отображается над экраном подключения. В полноэкранном режиме заголовок "
 "накладывается поверх и скрывается, когда ввод захвачен."
@@ -1153,7 +1154,7 @@ msgstr ""
 #: src/widget/preferences.rs:238
 msgid ""
 "The header bar is always shown as an overlay on top of the connection "
-"screen, it is hidden whenever input is grabbed."
+"screen; it is hidden whenever input is grabbed."
 msgstr ""
 "Заголовок всегда отображается поверх экрана подключения и скрывается, когда "
 "ввод захвачен."
@@ -1196,8 +1197,8 @@ msgid "RDP file"
 msgstr "Файл RDP"
 
 #: src/widget/quick_connect_dialog.rs:132
-msgid "Virt Viewer file"
-msgstr "Файл Virt Viewer"
+msgid "Virt-Viewer file"
+msgstr "Файл Virt-Viewer"
 
 #: src/widget/quick_connect_dialog.rs:136
 msgid "Any file"

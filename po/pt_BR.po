@@ -133,7 +133,7 @@ msgstr "QEMU/KVM via libvirt"
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
 msgid ""
-"For supported VM hypervisors Field Monitor also offers options to manage the "
+"For supported VM hypervisors, Field Monitor also offers options to manage the "
 "basic power state of VMs, such as starting, stopping, rebooting, etc."
 msgstr ""
 "Para hipervisores de VM compatíveis, o Field Monitor também oferece opções "
@@ -143,11 +143,11 @@ msgstr ""
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
 msgid ""
-"Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
+"Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
 msgstr ""
 "Além disso, o Field Monitor suporta a abertura de arquivos de conexão RDP e "
-"Virt Viewer e a conexão rápida com servidores RDP, SPICE ou VNC via URI."
+"Virt-Viewer e a conexão rápida com servidores RDP, SPICE ou VNC via URI."
 
 #. Translators: Caption of the first screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:89
@@ -204,7 +204,7 @@ msgstr "Senha"
 
 #: connection/generic-group/src/lib.rs:57
 msgid "Generic Connection Group"
-msgstr "Grupo de conexão genérico "
+msgstr "Grupo de conexão genérico"
 
 #: connection/generic-group/src/lib.rs:61
 msgid "Generic Connection Groups"
@@ -286,7 +286,7 @@ msgstr "(Não foi possível carregar o nome do servidor)"
 #: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:66
 #: connection/proxmox/src/api/vm.rs:71
 msgid "Reboot"
-msgstr "Reiniciar "
+msgstr "Reiniciar"
 
 #: connection/libvirt/src/connection.rs:279
 #: connection/proxmox/src/api/node.rs:61 connection/proxmox/src/api/vm.rs:67
@@ -296,17 +296,17 @@ msgstr "Desligar"
 
 #: connection/libvirt/src/connection.rs:280 connection/proxmox/src/api/vm.rs:73
 msgid "Force Reset"
-msgstr "Forçar reinicialização "
+msgstr "Forçar reinicialização"
 
 #: connection/libvirt/src/connection.rs:281 connection/proxmox/src/api/vm.rs:68
 #: connection/proxmox/src/api/vm.rs:74
 msgid "Force Poweroff"
-msgstr "Forçar desligamento "
+msgstr "Forçar desligamento"
 
 #. TRANSLATORS: Verb
 #: connection/libvirt/src/connection.rs:288 connection/proxmox/src/api/vm.rs:82
 msgid "Start"
-msgstr "Iniciar "
+msgstr "Iniciar"
 
 #: connection/libvirt/src/connection.rs:319
 msgid "Reboot command successfully sent to domain."
@@ -360,16 +360,16 @@ msgstr "Falha ao criar: {err}"
 
 #: connection/libvirt/src/connection.rs:460
 msgid "Domain is not running."
-msgstr "O domínio não está sendo executado. "
+msgstr "O domínio não está sendo executado."
 
 #: connection/libvirt/src/connection.rs:467
 msgid "Domain is already running."
-msgstr "O domínio já está sendo executado. "
+msgstr "O domínio já está sendo executado."
 
 #: connection/libvirt/src/connection.rs:476
 #: connection/proxmox/src/api/mod.rs:84
 msgid "Internal error while trying to execute command."
-msgstr "Erro interno ao tentar executar o comando. "
+msgstr "Erro interno ao tentar executar o comando."
 
 #: connection/libvirt/src/connection.rs:506
 msgid "SPICE (Graphical)"
@@ -415,7 +415,7 @@ msgstr "Sessão do sistema"
 
 #: connection/libvirt/src/qemu_preferences.blp:22
 msgid "This is the QEMU/KVM default."
-msgstr "Esse é o padrão para o QEMU/KVM. "
+msgstr "Esse é o padrão para o QEMU/KVM."
 
 #: connection/libvirt/src/qemu_preferences.blp:32
 msgid "User Session"
@@ -430,10 +430,10 @@ msgid "Connect via SSH"
 msgstr "Conectar via SSH"
 
 #: connection/proxmox/src/api/connection.rs:60
-msgid "Was unable to build a valid URL to connect to. Check your settings."
+msgid "Unable to build a valid URL to connect to. Check your settings."
 msgstr ""
 "Não foi possível criar um URL válido para conexão. Verifique suas "
-"configurações. "
+"configurações."
 
 #: connection/proxmox/src/api/connection.rs:72
 msgid "Failed to retrieve API Key or Password from secrets service."
@@ -569,7 +569,7 @@ msgstr "Abrir o aplicativo em uma nova janela"
 #: src/application.rs:195 src/widget/quick_connect_dialog.rs:93
 #: src/widget/quick_connect_dialog.rs:155
 msgid "Failed to open"
-msgstr "Falha ao abrir "
+msgstr "Falha ao abrir"
 
 #: src/application.rs:198 src/widget/quick_connect_dialog.rs:96
 msgid ""
@@ -636,7 +636,7 @@ msgstr "Informações de autenticação atualizadas com sucesso"
 
 #: src/connection_loader.rs:83 src/connection_loader.rs:93
 msgid "Connection not found."
-msgstr "Conexão não encontrada. "
+msgstr "Conexão não encontrada."
 
 #: src/connection_loader.rs:193 src/connection_loader.rs:204
 msgid "Server not found."
@@ -788,8 +788,8 @@ msgstr "Falha ao salvar a conexão"
 #: src/widget/add_connection_dialog.rs:204
 #: src/widget/authenticate_connection_dialog.rs:168
 #: src/widget/update_connection_dialog.rs:149
-msgid "An error occurred, while trying to save the connection"
-msgstr "Ocorreu um erro ao tentar salvar a conexão "
+msgid "An error occurred while trying to save the connection"
+msgstr "Ocorreu um erro ao tentar salvar a conexão"
 
 #: src/widget/authenticate_connection_dialog.blp:6
 #: src/widget/connection_list/info_page.blp:70
@@ -845,7 +845,7 @@ msgstr "Essa conexão requer informações adicionais para autenticação."
 
 #: src/widget/connection_list/info_page.blp:74
 msgid "Authenticate"
-msgstr "Autenticar "
+msgstr "Autenticar"
 
 #: src/widget/connection_list/info_page.rs:183
 msgid "No servers available"
@@ -1081,13 +1081,13 @@ msgid "Header bars for active connections"
 msgstr "Barra de título para conexões ativas"
 
 #: src/widget/preferences.blp:66
-msgid "Show keyboard shortcut for how to ungrab"
+msgid "Show ungrab key combination"
 msgstr "Exibir a combinação de teclas para soltar o teclado"
 
 #: src/widget/preferences.blp:67
 msgid ""
-"Show a message on what key combination can be used to ungrab mouse and "
-"keyboard from an active connection, every time this input is grabbed."
+"Show a brief message indicating which key combination ungrabs the mouse "
+"and keyboard, every time input is grabbed from an active connection."
 msgstr ""
 "Exibir uma mensagem explicando como soltar o mouse e o teclado assim que "
 "eles forem capturados."
@@ -1118,7 +1118,7 @@ msgstr "Sobrepor e ocultar"
 
 #: src/widget/preferences.rs:204
 msgid ""
-"Configure whether and when Field Monitor will use sharp, right angle, window "
+"Configure whether and when Field Monitor will use sharp, right-angle window "
 "corners instead of the default corner radius. This is useful to make sure "
 "the corners of connected screens are not cut off."
 msgstr ""
@@ -1128,8 +1128,8 @@ msgstr ""
 
 #: src/widget/preferences.rs:206
 msgid ""
-"Use default corner radius, but make window corners sharp whenever input is "
-"grabbed."
+"Use the default corner radius, but make window corners sharp whenever input "
+"is grabbed."
 msgstr ""
 "Utilize os cantos de janela padrão, mas exiba cantos de janela não "
 "arredondados sempre que a entrada for capturada."
@@ -1146,12 +1146,12 @@ msgstr "Nunca utilize cantos de janela não arredondados."
 msgid "Change how the header bar is presented for active connection screens."
 msgstr ""
 "Essa configuração controla como a barra de título da janela para conexões "
-"ativas é apresentada. "
+"ativas é apresentada."
 
 #: src/widget/preferences.rs:236
 msgid ""
-"The header bar is shown above the connection screen. In fullscreen mode the "
-"header bar is instead overlayed and hides whenever input is grabbed."
+"The header bar is shown above the connection screen. In fullscreen mode, "
+"the header bar is instead overlaid and hides whenever input is grabbed."
 msgstr ""
 "A barra de título é exibida acima da tela remota. No modo de tela cheia, a "
 "barra de título é colocada sobre o conteúdo da tela e desaparece assim que a "
@@ -1168,7 +1168,7 @@ msgstr ""
 #: src/widget/preferences.rs:238
 msgid ""
 "The header bar is always shown as an overlay on top of the connection "
-"screen, it is hidden whenever input is grabbed."
+"screen; it is hidden whenever input is grabbed."
 msgstr ""
 "A barra de título é sobreposta ao conteúdo da tela remota e é ocultada assim "
 "que a entrada é capturada."
@@ -1211,8 +1211,8 @@ msgid "RDP file"
 msgstr "Arquivo RDP"
 
 #: src/widget/quick_connect_dialog.rs:132
-msgid "Virt Viewer file"
-msgstr "Arquivo do Virt Viewer"
+msgid "Virt-Viewer file"
+msgstr "Arquivo do Virt-Viewer"
 
 #: src/widget/quick_connect_dialog.rs:136
 msgid "Any file"

@@ -173,7 +173,7 @@ impl FieldMonitorUpdateConnectionDialog {
                         .title(gettext("Failed to save connection"))
                         .body(format!(
                             "{}:\n{}",
-                            gettext("An error occurred, while trying to save the connection"),
+                            gettext("An error occurred while trying to save the connection"),
                             err
                         ))
                         .build();

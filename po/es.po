@@ -131,7 +131,7 @@ msgstr "QEMU/KVM vía libvirt"
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:66
 msgid ""
-"For supported VM hypervisors Field Monitor also offers options to manage the "
+"For supported VM hypervisors, Field Monitor also offers options to manage the "
 "basic power state of VMs, such as starting, stopping, rebooting, etc."
 msgstr ""
 "Para los hipervisores de máquinas virtuales compatibles, Monitor de campo "
@@ -141,11 +141,11 @@ msgstr ""
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:71
 msgid ""
-"Additionally, Field Monitor supports opening RDP and Virt Viewer connection "
+"Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
 msgstr ""
 "Además, Monitor de campo admite la apertura de archivos de conexión RDP y "
-"Virt Viewer, así como la conexión rápida a servidores RDP, SPICE o VNC "
+"Virt-Viewer, así como la conexión rápida a servidores RDP, SPICE o VNC "
 "mediante URI."
 
 #. Translators: Caption of the first screenshot in the metainfo
@@ -218,7 +218,7 @@ msgid "Connection to one or more RDP, SPICE and VNC servers"
 msgstr "Conexión a uno o más servidores RDP, SPICE y VNC"
 
 #: connection/generic-group/src/lib.rs:148
-msgid "One or more field(s) contain invalid values."
+msgid "One or more fields contain invalid values."
 msgstr "Uno o más campos contienen valores no válidos."
 
 #: connection/generic-group/src/lib.rs:371
@@ -439,7 +439,7 @@ msgid "Connect via SSH"
 msgstr "Conectar vía SSH"
 
 #: connection/proxmox/src/api/connection.rs:60
-msgid "Was unable to build a valid URL to connect to. Check your settings."
+msgid "Unable to build a valid URL to connect to. Check your settings."
 msgstr ""
 "No fue posible construir una URL válida para conectar. Revise su "
 "configuración."
@@ -766,7 +766,7 @@ msgstr "Fallo al guardar la conexión"
 #: src/widget/add_connection_dialog.rs:206
 #: src/widget/authenticate_connection_dialog.rs:169
 #: src/widget/update_connection_dialog.rs:176
-msgid "An error occurred, while trying to save the connection"
+msgid "An error occurred while trying to save the connection"
 msgstr "Ocurrió un error al intentar guardar la conexión"
 
 #: src/widget/app_status.blp:30
@@ -1116,13 +1116,13 @@ msgid "Header bars for active connections"
 msgstr "Barras de cabecera para conexiones activas"
 
 #: src/widget/preferences.blp:66
-msgid "Show keyboard shortcut for how to ungrab"
+msgid "Show ungrab key combination"
 msgstr "Mostrar atajo de teclado para liberar el control"
 
 #: src/widget/preferences.blp:67
 msgid ""
-"Show a message on what key combination can be used to ungrab mouse and "
-"keyboard from an active connection, every time this input is grabbed."
+"Show a brief message indicating which key combination ungrabs the mouse "
+"and keyboard, every time input is grabbed from an active connection."
 msgstr ""
 "Muestra un mensaje indicando qué combinación de teclas se puede usar para "
 "liberar el ratón y el teclado de una conexión activa cada vez que se captura "
@@ -1154,7 +1154,7 @@ msgstr "Superponer y ocultar"
 
 #: src/widget/preferences.rs:205
 msgid ""
-"Configure whether and when Field Monitor will use sharp, right angle, window "
+"Configure whether and when Field Monitor will use sharp, right-angle window "
 "corners instead of the default corner radius. This is useful to make sure "
 "the corners of connected screens are not cut off."
 msgstr ""
@@ -1165,8 +1165,8 @@ msgstr ""
 
 #: src/widget/preferences.rs:207
 msgid ""
-"Use default corner radius, but make window corners sharp whenever input is "
-"grabbed."
+"Use the default corner radius, but make window corners sharp whenever input "
+"is grabbed."
 msgstr ""
 "Usar el radio de esquina predeterminado, pero hacer que las esquinas de la "
 "ventana sean rectangulares siempre que se capture la entrada."
@@ -1187,8 +1187,8 @@ msgstr ""
 
 #: src/widget/preferences.rs:237
 msgid ""
-"The header bar is shown above the connection screen. In fullscreen mode the "
-"header bar is instead overlayed and hides whenever input is grabbed."
+"The header bar is shown above the connection screen. In fullscreen mode, "
+"the header bar is instead overlaid and hides whenever input is grabbed."
 msgstr ""
 "La barra de cabecera se muestra encima de la pantalla de conexión. En modo "
 "pantalla completa, la barra se superpone y se oculta cuando se captura la "
@@ -1205,13 +1205,13 @@ msgstr ""
 #: src/widget/preferences.rs:239
 msgid ""
 "The header bar is always shown as an overlay on top of the connection "
-"screen, it is hidden whenever input is grabbed."
+"screen; it is hidden whenever input is grabbed."
 msgstr ""
 "La barra de cabecera siempre se muestra superpuesta sobre la pantalla de "
 "conexión; se oculta siempre que se captura la entrada."
 
-#: src/widget/quick_connect_dialog.blp:19
-#, c-format
+#: src/widget/quick_connect_dialog.blp:20
+#, no-c-format
 msgid ""
 "Enter the URL of the server you want to connect to.\n"
 "Supported protocols are: RDP, SPICE, VNC.\n"
@@ -1259,8 +1259,8 @@ msgid "RDP file"
 msgstr "Archivo RDP"
 
 #: src/widget/quick_connect_dialog.rs:133
-msgid "Virt Viewer file"
-msgstr "Archivo Virt Viewer"
+msgid "Virt-Viewer file"
+msgstr "Archivo Virt-Viewer"
 
 #: src/widget/quick_connect_dialog.rs:137
 msgid "Any file"

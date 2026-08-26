@@ -57,7 +57,7 @@ impl ProxmoxConnection {
             .map_err(|err| {
                 ConnectionError::General(
                     Some(gettext(
-                        "Was unable to build a valid URL to connect to. Check your settings.",
+                        "Unable to build a valid URL to connect to. Check your settings.",
                     )),
                     anyhow!(err),
                 )

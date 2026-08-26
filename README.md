@@ -16,10 +16,10 @@ It has support for directly connecting to VMs of the following hypervisors:
 - Proxmox
 - QEMU/KVM via libvirt
 
-For supported VM hypervisors Field Monitor also offers options to manage the basic
+For supported VM hypervisors, Field Monitor also offers options to manage the basic
 power state of VMs, such as starting, stopping, rebooting, etc.
 
-Additionally, Field Monitor supports opening RDP and Virt Viewer connection files
+Additionally, Field Monitor supports opening RDP and Virt-Viewer connection files
 and quickly connecting to RDP, SPICE or VNC servers via URI.
 
 ## Installation

@@ -198,7 +198,7 @@ impl FieldMonitorUsbRedirSettingsDialog {
         let warning_icon = gtk::Image::from_icon_name("dialog-warning-symbolic");
         warning_icon.add_css_class("warning");
         warning_icon.set_tooltip_text(Some(&gettext(
-            "This device can not be connected, you might be missing permissions.",
+            "This device can not be connected; you might be missing permissions.",
         )));
 
         let attach_btn = gtk::Button::builder()
@@ -398,7 +398,7 @@ impl FieldMonitorUsbRedirSettingsDialog {
         let dialog = adw::AlertDialog::builder()
             .heading(gettext("USB Devices"))
             .body_use_markup(true)
-            .body(gettext("This dialog allows you to share USB devices with the remote server or virtual machine.\n\nThe number of devices that can be shared may be limited by the remote server.\n\nThe list hides some devices (USB hubs, etc.) by default. Use the toggle button to show all devices, but note that USB hubs can not be properly shared with remote servers.\n\nTo share a device your user account may need read and write permissions on the raw device, consult your distribution documentation for more information."))
+            .body(gettext("This dialog allows you to share USB devices with the remote server or virtual machine.\n\nThe number of devices that can be shared may be limited by the remote server.\n\nThe list hides some devices (USB hubs, etc.) by default. Use the toggle button to show all devices, but note that USB hubs can not be properly shared with remote servers.\n\nTo share a device, your user account may need read and write permissions on the raw device. Consult your distribution documentation for more information."))
             .build();
         dialog.add_response("ok", &gettext("OK"));
         dialog.set_default_response(Some("ok"));

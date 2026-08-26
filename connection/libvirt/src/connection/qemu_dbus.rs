@@ -140,7 +140,7 @@ impl LibvirtQemuDbusAdapter {
         // not the nicest check, but good enough for this heuristic help message.
         if connect.get_uri().unwrap_or_default().ends_with("system") {
             error_hints.push(gettext(
-                "If you are connecting to a qemu:///system domain you may not be able to connect via D-Bus unless you enable the 'p2p' option."
+                "If you are connecting to a qemu:///system domain, you may not be able to connect via D-Bus unless you enable the 'p2p' option."
             ));
         }
 

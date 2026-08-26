@@ -202,9 +202,9 @@ impl FieldMonitorPreferencesDialog {
                 SettingSharpWindowCorners::Never => 2
             },
             gettext("Sharp window corners"),
-            Some(gettext("Configure whether and when Field Monitor will use sharp, right angle, window corners instead of the default corner radius. This is useful to make sure the corners of connected screens are not cut off.")),
+            Some(gettext("Configure whether and when Field Monitor will use sharp, right-angle window corners instead of the default corner radius. This is useful to make sure the corners of connected screens are not cut off.")),
             &[
-                (gettext("Automatic"), Some(gettext("Use default corner radius, but make window corners sharp whenever input is grabbed."))),
+                (gettext("Automatic"), Some(gettext("Use the default corner radius, but make window corners sharp whenever input is grabbed."))),
                 (gettext("Always"), Some(gettext("Always use sharp window corners."))),
                 (gettext("Never"), Some(gettext("Never use sharp window corners."))),
             ],
@@ -234,9 +234,9 @@ impl FieldMonitorPreferencesDialog {
             gettext("Header bars for active connections"),
             Some(gettext("Change how the header bar is presented for active connection screens.")),
             &[
-                (gettext("Default"), Some(gettext("The header bar is shown above the connection screen. In fullscreen mode the header bar is instead overlayed and hides whenever input is grabbed."))),
+                (gettext("Default"), Some(gettext("The header bar is shown above the connection screen. In fullscreen mode, the header bar is instead overlaid and hides whenever input is grabbed."))),
                 (gettext("Show Above"), Some(gettext("The header bar is always shown above the connection screen, even in fullscreen mode."))),
-                (gettext("Overlay and Hide"), Some(gettext("The header bar is always shown as an overlay on top of the connection screen, it is hidden whenever input is grabbed."))),
+                (gettext("Overlay and Hide"), Some(gettext("The header bar is always shown as an overlay on top of the connection screen; it is hidden whenever input is grabbed."))),
             ],
             Rc::new(glib::clone!(
                 #[weak(rename_to=slf)]

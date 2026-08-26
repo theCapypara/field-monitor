@@ -204,7 +204,7 @@ impl FieldMonitorCertificateTrustDialog {
 
             // XXX: Moving this string inside the closure, makes gettext not pick it up...
             let explanation = gettext(
-                "After you choose to trust the CA, Field Monitor will confirm that the connection is established using a certificate issued by the CA. If not Field Monitor will refuse the connection.",
+                "After you choose to trust the CA, Field Monitor will confirm that the connection is established using a certificate issued by the CA. If not, Field Monitor will refuse the connection.",
             );
             info_ca_btn.connect_clicked(glib::clone!(
                 #[weak]

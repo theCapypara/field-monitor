@@ -16,6 +16,7 @@ template $FieldMonitorQuickConnectDialog: Adw.Dialog {
 
             Adw.PreferencesPage {
                 Adw.PreferencesGroup {
+                    // xgettext:no-c-format
                     description: _("Enter the URL of the server you want to connect to.\nSupported protocols are: RDP, SPICE, VNC.\n\n<b>Examples:</b>\n<i>rdp://full%20address=s:mypc:3389</i>\n<i>spice://server:15900</i>\n<i>spice://me@localhost:999?password=1234</i>\n<i>vnc://user@server?VncPassword=password123</i>");
 
                     Adw.EntryRow url_entry {
