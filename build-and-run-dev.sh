@@ -8,11 +8,14 @@ cd build-aux/flatpak
 flatpak-builder \
   --user \
   --force-clean \
-  --repo=/tmp/fm-repo \
-  --state-dir /tmp/fm-state-dir \
-  /tmp/fm-build-dir \
+  --repo=../../build/flatpak/fm-repo \
+  --state-dir ../../build/flatpak/fm-state-dir \
+  ../../build/flatpak/fm-build-dir \
   de.capypara.FieldMonitor.Devel.json
-flatpak --user install --reinstall --noninteractive --include-debug /tmp/fm-repo/ \
+
+cd ../..
+
+flatpak --user install --reinstall --noninteractive --include-debug ./build/flatpak/fm-repo/ \
   de.capypara.FieldMonitor.Devel
 
 exec flatpak run de.capypara.FieldMonitor.Devel

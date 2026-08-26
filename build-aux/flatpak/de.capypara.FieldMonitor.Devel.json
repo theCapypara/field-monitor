@@ -1,7 +1,7 @@
 {
   "id": "de.capypara.FieldMonitor.Devel",
   "runtime": "org.gnome.Platform",
-  "runtime-version": "50",
+  "runtime-version": "51beta",
   "sdk": "org.gnome.Sdk",
   "sdk-extensions": [
     "org.freedesktop.Sdk.Extension.rust-stable"
@@ -48,6 +48,7 @@
   ],
   "cleanup-commands": [
     "rm -rf /app/var/run/libvirt",
+    "mkdir -p /app/var/run",
     "ln -s /var/run/libvirt /app/var/run/libvirt"
   ],
   "modules": [
@@ -95,12 +96,13 @@
         {
           "type": "git",
           "url": "https://gitlab.freedesktop.org/spice/spice-gtk.git",
-          "commit": "470c494a379a4d955c0b56c68a407e0f28c587a3"
+          "tag": "v0.43",
+          "commit": "f028f45a573926736223548887e18ac65dabb50b"
         },
         {
           "type": "shell",
           "commands": [
-            "echo 0.43-dirty > .tarball-version"
+            "echo 0.43 > .tarball-version"
           ]
         }
       ],
@@ -135,27 +137,13 @@
           "name": "python-pyparsing",
           "buildsystem": "simple",
           "build-commands": [
-            "pip3 install --prefix=/app pyparsing-2.4.6-py2.py3-none-any.whl"
+            "pip3 install --prefix=/app pyparsing-3.3.2-py3-none-any.whl"
           ],
           "sources": [
             {
               "type": "file",
-              "url": "https://files.pythonhosted.org/packages/5d/bc/1e58593167fade7b544bfe9502a26dc860940a79ab306e651e7f13be68c2/pyparsing-2.4.6-py2.py3-none-any.whl",
-              "sha256": "c342dccb5250c08d45fd6f8b4a559613ca603b57498511740e65cd11a2e7dcec"
-            }
-          ]
-        },
-        {
-          "name": "python-six",
-          "buildsystem": "simple",
-          "build-commands": [
-            "pip3 install --prefix=/app six-1.17.0-py2.py3-none-any.whl"
-          ],
-          "sources": [
-            {
-              "type": "file",
-              "url": "https://files.pythonhosted.org/packages/b7/ce/149a00dd41f10bc29e5921b496af8b574d8413afcd5e30dfa0ed46c2cc5e/six-1.17.0-py2.py3-none-any.whl",
-              "sha256": "4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"
+              "url": "https://files.pythonhosted.org/packages/10/bd/c038d7cc38edc1aa5bf91ab8068b63d4308c66c4c8bb3cbba7dfbc049f9c/pyparsing-3.3.2-py3-none-any.whl",
+              "sha256": "850ba148bd908d7e2411587e247a1e4f0327839c40e2e5e6d05a007ecc69911d"
             }
           ]
         },
@@ -164,8 +152,8 @@
           "sources": [
             {
               "type": "archive",
-              "url": "https://www.spice-space.org/download/libcacard/libcacard-2.8.1.tar.xz",
-              "sha256": "fbbf4de8cb7db5bdff5ecb672ff0dbe6939fb9f344b900d51ba6295329a332e7"
+              "url": "https://www.spice-space.org/download/libcacard/libcacard-2.8.2.tar.xz",
+              "sha256": "45fc28a6ff3c7a359d4448132ca190f0a9c760540c445dba4597a5b71de40f68"
             }
           ]
         },
@@ -197,8 +185,8 @@
         {
           "type": "git",
           "url": "https://github.com/simdutf/simdutf.git",
-          "tag": "v8.2.0",
-          "commit": "fd476229424b40ae71a58dd5a205795c3d76b5f1"
+          "tag": "v9.1.0",
+          "commit": "2d4e249dcfd978b39dd567b156f20a43db97377b"
         }
       ]
     },
@@ -215,8 +203,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://download.gnome.org/sources/vte/0.83/vte-0.83.91.tar.xz",
-          "sha256": "9ee8f5011d2856c5dae80bde3c11d7fc942fa479c2e2d08b07f2a7af351379c5"
+          "url": "https://download.gnome.org/sources/vte/0.84/vte-0.84.1.tar.xz",
+          "sha256": "aca1caa8478aebcdbb1d67897fb3511eb7601debae6810e16a15b6fa25f31ac8"
         }
       ]
     },
@@ -229,8 +217,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://github.com/json-c/json-c/archive/refs/tags/json-c-0.18-20240915.tar.gz",
-          "sha256": "3112c1f25d39eca661fe3fc663431e130cc6e2f900c081738317fba49d29e298"
+          "url": "https://github.com/json-c/json-c/archive/refs/tags/json-c-0.19-20260627.tar.gz",
+          "sha256": "f17a6d7d265cf840dfd8f0f46a606d98c6b5b26dc7cfe27275d1546a213086c8"
         }
       ]
     },
@@ -258,8 +246,8 @@
       "sources": [
         {
           "type": "archive",
-          "url": "https://download.libvirt.org/libvirt-11.10.0.tar.xz",
-          "sha256": "66154fee836235678b712676b2589c45f66e3d6a8721ee0697c9f20a66cad0d8"
+          "url": "https://download.libvirt.org/libvirt-12.6.0.tar.xz",
+          "sha256": "1592256deb76fc94028ff083a4d9f06a74f3b92a66a1794f37bc26f21430c888"
         }
       ]
     },
