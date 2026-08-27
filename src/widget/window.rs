@@ -458,7 +458,9 @@ impl FieldMonitorWindow {
             self.close_connection_view();
 
             false
-        } else if let Some(screen) = self.current_server_screen() {
+        } else if let Some(screen) = self.current_server_screen()
+            && !screen.is_disconnected()
+        {
             // Handle still open connection and ask user to confirm.
 
             let dialog = FieldMonitorCloseWarningDialog::new(&screen.title(), &screen.subtitle());
