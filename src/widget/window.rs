@@ -48,8 +48,6 @@ mod imp {
         #[template_child]
         pub app_mode_stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub initial_welcome_page_bin: TemplateChild<adw::Bin>,
-        #[template_child]
         pub main_split_view: TemplateChild<adw::NavigationSplitView>,
         #[template_child]
         pub connection_list_content_stack: TemplateChild<gtk::Stack>,
@@ -60,6 +58,8 @@ mod imp {
         #[template_child]
         pub button_fullscreen: TemplateChild<gtk::Button>,
         #[template_child]
+        pub initial_welcome_status_page: TemplateChild<adw::StatusPage>,
+        #[template_child]
         pub welcome_status_page: TemplateChild<adw::StatusPage>,
         #[template_child]
         pub connection_list_stack: TemplateChild<FieldMonitorConnectionStack>,
@@ -69,12 +69,6 @@ mod imp {
         pub navbar_connection_list: TemplateChild<FieldMonitorNavbarConnectionList>,
         #[template_child]
         pub connection_list_navbar_stack: TemplateChild<gtk::Stack>,
-        #[template_child]
-        pub welcome_page_bin: TemplateChild<adw::Bin>,
-        #[template_child]
-        pub welcome_button_box: TemplateChild<gtk::Box>,
-        #[template_child]
-        pub welcome_window_title: TemplateChild<adw::WindowTitle>,
         #[template_child]
         pub menu_button_main: TemplateChild<gtk::MenuButton>,
         pub tab_title_notify_binding:
@@ -125,10 +119,15 @@ impl FieldMonitorWindow {
 
         #[cfg(feature = "devel")]
         {
+            const DEVEL_ICON: &str = "de.capypara.FieldMonitor.Devel";
+
             slf.add_css_class("devel");
             slf.imp()
+                .initial_welcome_status_page
+                .set_icon_name(Some(DEVEL_ICON));
+            slf.imp()
                 .welcome_status_page
-                .set_icon_name(Some("de.capypara.FieldMonitor.Devel"));
+                .set_icon_name(Some(DEVEL_ICON));
         }
 
         // Connect app state with the status widget
@@ -170,7 +169,11 @@ impl FieldMonitorWindow {
                 move |_| {
                     // If a connection was updated then we now no longer have 0 connections if we
                     // did before, so in that case switch to the normal app mode
-                    slf.disable_initial_welcome();
+                    let imp = slf.imp();
+                    if imp.app_mode_stack.visible_child_name().as_deref() == Some("initial-welcome")
+                    {
+                        imp.app_mode_stack.set_visible_child_name("connection-list");
+                    }
                     None
                 }
             ),
@@ -577,7 +580,9 @@ impl FieldMonitorWindow {
                 self.unselect_connection_view();
                 imp.connection_list_content_stack
                     .set_visible_child_name("server-list");
-                self.disable_initial_welcome();
+                if imp.app_mode_stack.visible_child_name().as_deref() == Some("initial-welcome") {
+                    imp.app_mode_stack.set_visible_child_name("connection-list");
+                }
             }
             self.maybe_clicked_item_on_sidebar();
         }
@@ -620,28 +625,14 @@ impl FieldMonitorWindow {
             imp.connection_list_navbar_stack
                 .set_visible_child_name("list");
 
-            if imp.connection_list_stack.is_empty() {
-                // enable initial welcome (if not already enabled)
-                if let Some(content) = imp.welcome_page_bin.child() {
-                    imp.welcome_page_bin.set_child(None::<&gtk::Widget>);
-                    imp.initial_welcome_page_bin.set_child(Some(&content));
-                    imp.welcome_button_box.set_visible(true);
-                    imp.welcome_status_page.set_description(Some(&gettext(
-                        "Connect to your virtual machines and remote servers.",
-                    )));
-                }
-                if switch
-                    || imp.app_mode_stack.visible_child_name().as_deref() == Some("connection-list")
-                {
-                    imp.app_mode_stack.set_visible_child_name("initial-welcome");
-                }
+            let (check, target) = if imp.connection_list_stack.is_empty() {
+                ("connection-list", "initial-welcome")
             } else {
-                self.disable_initial_welcome();
-                if switch
-                    || imp.app_mode_stack.visible_child_name().as_deref() == Some("initial-welcome")
-                {
-                    imp.app_mode_stack.set_visible_child_name("connection-list");
-                }
+                ("initial-welcome", "connection-list")
+            };
+
+            if switch || imp.app_mode_stack.visible_child_name().as_deref() == Some(check) {
+                imp.app_mode_stack.set_visible_child_name(target);
             }
         }
     }
@@ -700,18 +691,6 @@ impl FieldMonitorWindow {
         let imp = self.imp();
         if !imp.inhibit_possible_sidebar_click.get() {
             imp.main_split_view.set_show_content(true);
-        }
-    }
-
-    /// Disable the initial welcome if active (moving the welcome page back to the connection list content).
-    fn disable_initial_welcome(&self) {
-        let imp = self.imp();
-        if let Some(content) = imp.initial_welcome_page_bin.child() {
-            debug!("initial welcome disabled");
-            imp.welcome_button_box.set_visible(false);
-            imp.welcome_status_page.set_description(None);
-            imp.initial_welcome_page_bin.set_child(None::<&gtk::Widget>);
-            imp.welcome_page_bin.set_child(Some(&content));
         }
     }
 }

@@ -15,7 +15,6 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
 
         setters {
             main_split_view.collapsed: true;
-            welcome_window_title.visible: true;
         }
     }
 
@@ -51,8 +50,58 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
 
             StackPage {
                 name: "initial-welcome";
-                // welcome_page_bin's child is moved here on the very first launch.
-                child: Adw.Bin initial_welcome_page_bin {};
+                child: Adw.Bin {
+                    Adw.ToolbarView {
+                        [top]
+                        Adw.HeaderBar {
+                            show-title: false;
+
+                            title-widget: Adw.WindowTitle {
+                                title: _("Field Monitor");
+                            };
+                        }
+
+                        content: Adw.StatusPage initial_welcome_status_page {
+                            icon-name: "de.capypara.FieldMonitor";
+                            title: _("Field Monitor");
+                            description: _("Connect to your virtual machines and remote servers.");
+
+                            Box {
+                                orientation: vertical;
+                                hexpand: false;
+                                halign: center;
+                                spacing: 12;
+
+                                Button {
+                                    action-name: "app.add-connection";
+
+                                    child: Adw.ButtonContent {
+                                        icon-name: "list-add-symbolic";
+                                        label: _("Add Connection");
+                                    };
+
+                                    styles [
+                                        "suggested-action",
+                                        "pill",
+                                    ]
+                                }
+
+                                Button {
+                                    action-name: "win.open-quick-connect";
+
+                                    child: Adw.ButtonContent {
+                                        icon-name: "camera-flash-symbolic";
+                                        label: _("Quick Connect");
+                                    };
+
+                                    styles [
+                                        "pill",
+                                    ]
+                                }
+                            }
+                        };
+                    }
+                };
             }
 
             StackPage {
@@ -63,13 +112,11 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                     notify::show-content => $on_main_split_view_show_content_changed() swapped;
 
                     sidebar: Adw.NavigationPage {
+                        title: _("Field Monitor");
+
                         child: Adw.ToolbarView {
                             [top]
                             Adw.HeaderBar {
-                                title-widget: Adw.WindowTitle {
-                                    title: _("Field Monitor");
-                                };
-
                                 Button button_fullscreen {
                                     icon-name: "arrows-pointing-outward-symbolic";
                                     tooltip-text: _("Toggle Fullscreen");
@@ -167,60 +214,24 @@ template $FieldMonitorWindow: Adw.ApplicationWindow {
                     };
 
                     content: Adw.NavigationPage {
+                        title: _("Field Monitor");
+
                         child: Stack connection_list_content_stack {
                             notify::visible-child-name => $on_connection_list_content_stack_visible_child_name_changed() swapped;
 
                             StackPage {
                                 name: "welcome";
 
-                                child: Adw.Bin welcome_page_bin {
+                                child: Adw.Bin {
                                     Adw.ToolbarView {
                                         [top]
-                                        Adw.HeaderBar welcome_header_bar {
-                                            title-widget: Adw.WindowTitle welcome_window_title {
-                                                visible: false;
-                                                title: _("Field Monitor");
-                                            };
+                                        Adw.HeaderBar {
+                                            show-title: false;
                                         }
 
                                         content: Adw.StatusPage welcome_status_page {
                                             icon-name: "de.capypara.FieldMonitor";
                                             title: _("Field Monitor");
-                                            // TODO: Show recent connections if any?
-                                            Box welcome_button_box {
-                                                visible: false;
-                                                orientation: vertical;
-                                                hexpand: false;
-                                                halign: center;
-                                                spacing: 12;
-
-                                                Button {
-                                                    action-name: "app.add-connection";
-
-                                                    child: Adw.ButtonContent {
-                                                        icon-name: "list-add-symbolic";
-                                                        label: _("Add Connection");
-                                                    };
-
-                                                    styles [
-                                                        "suggested-action",
-                                                        "pill",
-                                                    ]
-                                                }
-
-                                                Button {
-                                                    action-name: "win.open-quick-connect";
-
-                                                    child: Adw.ButtonContent {
-                                                        icon-name: "camera-flash-symbolic";
-                                                        label: _("Quick Connect");
-                                                    };
-
-                                                    styles [
-                                                        "pill",
-                                                    ]
-                                                }
-                                            }
                                         };
                                     }
                                 };
