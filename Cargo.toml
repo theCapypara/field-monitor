@@ -30,7 +30,7 @@ num_enum = "0.7"
 indexmap = "2.14"
 secure-string = "0.3"
 http = "1.5"
-uuid = { version = "1.25", features = ["v7"] }
+uuid = { version = "1.26", features = ["v7"] }
 parking_lot = "0.12"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 proxmox-api = { path = "connection/proxmox/proxmox-api" }
@@ -55,34 +55,34 @@ version = "0.9"
 package = "rdw4"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "142b38353736eefbf66877e90b1d7d5a6fe8e90d"
+rev = "a84b580e8d39a07b56dd60b0c9c4ccaf98fb10c1"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "142b38353736eefbf66877e90b1d7d5a6fe8e90d"
+rev = "a84b580e8d39a07b56dd60b0c9c4ccaf98fb10c1"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "142b38353736eefbf66877e90b1d7d5a6fe8e90d"
+rev = "a84b580e8d39a07b56dd60b0c9c4ccaf98fb10c1"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "142b38353736eefbf66877e90b1d7d5a6fe8e90d"
+rev = "a84b580e8d39a07b56dd60b0c9c4ccaf98fb10c1"
 default-features = false
 
 [workspace.dependencies.rdw-qemu]
 package = "rdw4-qemu"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "142b38353736eefbf66877e90b1d7d5a6fe8e90d"
+rev = "a84b580e8d39a07b56dd60b0c9c4ccaf98fb10c1"
 default-features = false
 
 [workspace.dependencies.spice-gtk-usb-portal]

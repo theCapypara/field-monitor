@@ -20,14 +20,8 @@
         builtins.mapAttrs fn (
           eachSystem (
             system:
-            #todo, uncomment when overlay gone: nixpkgs.legacyPackages.${system} or
-            (import nixpkgs {
+            nixpkgs.legacyPackages.${system} or (import nixpkgs {
               inherit system;
-              overlays = [
-                (final: prev: {
-                  spice-glib = final.callPackage ./build-aux/nix/spice-glib.nix { };
-                })
-              ];
             })
           )
         );
