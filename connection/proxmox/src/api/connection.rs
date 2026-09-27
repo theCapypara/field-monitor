@@ -107,15 +107,14 @@ impl ProxmoxConnection {
         } else {
             "ticket"
         };
-        if let Some(client) = clients.get(config.id()) {
-            if client.clientconfig_root().trim_end_matches('/') == api_root.to_string()
-                && client.clientconfig_connection_type() == tag
-                && client.clientconfig_user_or_tokenid() == user
-                && client.clientconfig_password_or_apikey() == &pass
-                && client.clientconfig_ignore_ssl_errors() == config.ignore_ssl_cert_error()
-            {
-                return Ok(client.clone());
-            }
+        if let Some(client) = clients.get(config.id())
+            && client.clientconfig_root().trim_end_matches('/') == api_root
+            && client.clientconfig_connection_type() == tag
+            && client.clientconfig_user_or_tokenid() == user
+            && client.clientconfig_password_or_apikey() == &pass
+            && client.clientconfig_ignore_ssl_errors() == config.ignore_ssl_cert_error()
+        {
+            return Ok(client.clone());
         }
         let client = if config.use_apikey() {
             ProxmoxApiClient::connect_with_apikey(
