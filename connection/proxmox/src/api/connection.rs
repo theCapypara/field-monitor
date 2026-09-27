@@ -90,6 +90,7 @@ impl ProxmoxConnection {
                 &api_root,
                 config.username().unwrap_or_default(),
                 pass,
+                None,
                 config.ignore_ssl_cert_error(),
             )
             .await
