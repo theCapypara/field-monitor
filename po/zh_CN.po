@@ -2,6 +2,7 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the de.capypara.FieldMonitor package.
 # lumingzh <lumingzh@qq.com>, 2026.
+# Modified and improved by: lingyicute / lyi 梨 <lingyicute@gmail.com>, 2026.
 #
 msgid ""
 msgstr ""
@@ -52,11 +53,11 @@ msgstr "添加通用连接分组"
 
 #: connection/generic-group/src/lib.rs:74
 msgid "Connection to one or more RDP, SPICE and VNC servers"
-msgstr "与一个或更多 RDP、SPICE 和 VNC 服务器的连接"
+msgstr "连接一个或更多 RDP、SPICE 和 VNC 服务器"
 
 #: connection/generic-group/src/lib.rs:148
 msgid "One or more fields contain invalid values."
-msgstr "一个或更多包含无效值的域。"
+msgstr "一个或更多的字段包含无效值。"
 
 #: connection/generic-group/src/lib.rs:371
 msgid "Failed to load password."
@@ -77,7 +78,7 @@ msgstr "添加服务器"
 
 #: connection/generic-group/src/preferences.rs:473
 msgid "No servers added yet."
-msgstr "未添加服务器。"
+msgstr "还没有添加任何服务器。"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -152,8 +153,8 @@ msgid ""
 "sure that the graphics adapter's listen type is set to 'address' and that "
 "the adapter is listening on all interfaces."
 msgstr ""
-"无可用的已支持图形端点。提示：如果通过 SSH 连接，请确保图形适配器的监听类型设"
-"为“地址”且该适配器在所有接口监听。"
+"未找到受支持的图形端点。提示：如果您是通过 SSH 连接的，请确保图形适配器的监听类型已设"
+"置为“地址 (address)”，且该适配器正在监听所有网络接口。"
 
 #: connection/libvirt/src/connection/mod.rs:160
 msgid "(Unable to load server name)"
@@ -174,7 +175,7 @@ msgstr "关机"
 #: connection/libvirt/src/connection/mod.rs:216
 #: connection/proxmox/src/api/vm.rs:73
 msgid "Force Reset"
-msgstr "强制重置"
+msgstr "强制复位"
 
 #: connection/libvirt/src/connection/mod.rs:217
 #: connection/proxmox/src/api/vm.rs:68 connection/proxmox/src/api/vm.rs:74
@@ -189,7 +190,7 @@ msgstr "启动"
 
 #: connection/libvirt/src/connection/mod.rs:255
 msgid "Reboot command successfully sent to domain."
-msgstr "重启命令成功发送至虚拟机。"
+msgstr "重启命令已成功发送至虚拟机。"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -200,7 +201,7 @@ msgstr "发送重启命令失败：{err}"
 
 #: connection/libvirt/src/connection/mod.rs:281
 msgid "Shutdown command successfully sent to domain."
-msgstr "关机命令成功发送至虚拟机。"
+msgstr "关机命令已成功发送至虚拟机。"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -211,18 +212,18 @@ msgstr "发送关机命令失败：{err}"
 
 #: connection/libvirt/src/connection/mod.rs:307
 msgid "Domain successfully reset."
-msgstr "虚拟机成功重置。"
+msgstr "虚拟机已成功复位。"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/mod.rs:312
 #, rust-format
 msgid "Failed to reset domain: {err}"
-msgstr "重置虚拟机失败：{err}"
+msgstr "复位虚拟机失败：{err}"
 
 #: connection/libvirt/src/connection/mod.rs:333
 msgid "Domain successfully shut down."
-msgstr "虚拟机成功关机。"
+msgstr "虚拟机已成功关机。"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -233,7 +234,7 @@ msgstr "发送终止命令失败：{err}"
 
 #: connection/libvirt/src/connection/mod.rs:364
 msgid "Domain successfully started."
-msgstr "虚拟机成功启动。"
+msgstr "虚拟机已成功启动。"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -270,7 +271,7 @@ msgstr "添加 QEMU/KVM 连接"
 
 #: connection/libvirt/src/hypervisor/qemu.rs:62
 msgid "QEMU/KVM hypervisor connection via libvirt."
-msgstr "通过 libvirt 的 QEMU/KVM 虚拟机连接。"
+msgstr "通过 libvirt 连接 QEMU/KVM 虚拟机。"
 
 #: connection/libvirt/src/qemu_preferences.blp:13
 #: connection/proxmox/src/preferences.blp:12
@@ -311,11 +312,11 @@ msgstr "无法构建可连接的有效 URL。请检查您的设置。"
 
 #: connection/proxmox/src/api/connection.rs:72
 msgid "Failed to retrieve API Key or Password from secrets service."
-msgstr "从保密服务获取 API 密钥或密码失败。"
+msgstr "从保密服务获取 API 密钥或密码时出现问题。"
 
 #: connection/proxmox/src/api/node.rs:100
 msgid "Reboot command successfully sent to server."
-msgstr "重启命令成功发送至服务器。"
+msgstr "重启命令已成功发送至服务器。"
 
 #: connection/proxmox/src/api/node.rs:103 connection/proxmox/src/api/vm.rs:135
 msgid "Failed to send reboot command."
@@ -323,7 +324,7 @@ msgstr "发送重启命令失败。"
 
 #: connection/proxmox/src/api/node.rs:125
 msgid "Shutdown command successfully sent to server."
-msgstr "关机命令成功发送至服务器。"
+msgstr "关机命令已成功发送至服务器。"
 
 #: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:168
 msgid "Failed to send shutdown command."
@@ -346,27 +347,27 @@ msgstr "添加 Proxmox 连接"
 
 #: connection/proxmox/src/api/provider.rs:64
 msgid "Proxmox Virtual Environment hypervisor connection"
-msgstr "Proxmox 虚拟环境管理程序连接"
+msgstr "连接 Proxmox 虚拟环境管理程序"
 
 #: connection/proxmox/src/api/vm.rs:132
 msgid "Reboot command successfully sent to VM."
-msgstr "重启命令成功发送至虚拟机。"
+msgstr "重启命令已成功发送至虚拟机。"
 
 #: connection/proxmox/src/api/vm.rs:165
 msgid "Shutdown command successfully sent to VM."
-msgstr "关机命令成功发送至虚拟机。"
+msgstr "关机命令已成功发送至虚拟机。"
 
 #: connection/proxmox/src/api/vm.rs:197
 msgid "VM was successfully reset."
-msgstr "虚拟机成功重置。"
+msgstr "虚拟机已成功复位。"
 
 #: connection/proxmox/src/api/vm.rs:200
 msgid "Failed to send reset command."
-msgstr "发送重置命令失败。"
+msgstr "发送复位命令失败。"
 
 #: connection/proxmox/src/api/vm.rs:230
 msgid "VM is now stopping."
-msgstr "虚拟机未停止。"
+msgstr "虚拟机正在停止。"
 
 #: connection/proxmox/src/api/vm.rs:233
 msgid "Failed to send stop command."
@@ -399,7 +400,7 @@ msgstr "API 密钥"
 
 #: connection/proxmox/src/credential_preferences.blp:26
 msgid "Token ID"
-msgstr "口令 ID"
+msgstr "令牌 ID"
 
 #: connection/proxmox/src/preferences.blp:18
 msgid "Connection"
@@ -414,8 +415,8 @@ msgid ""
 "Allows connecting to servers with self-signed and otherwise invalid SSL "
 "certificates. Be careful, as this is a potential security risk."
 msgstr ""
-"允许连接至使用自签名或其它无效 SSL 证书的服务器。请注意，这是存在潜在安全风险"
-"的行为。"
+"允许连接至使用自签名或其它无效 SSL 证书的服务器。请注意，这存在潜在"
+"安全风险。"
 
 #. Translators: The name of the application.
 #: data/de.capypara.FieldMonitor.desktop.in.in:2
@@ -423,7 +424,7 @@ msgstr ""
 #: src/widget/window.blp:63 src/widget/window.blp:181 src/widget/window.blp:187
 #: src/widget/window.rs:341
 msgid "Field Monitor"
-msgstr "现场监视器"
+msgstr "Field Monitor"
 
 #: data/de.capypara.FieldMonitor.desktop.in.in:3
 msgid "Remote Desktop Viewer"
@@ -473,7 +474,7 @@ msgstr "GNOME"
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:49
 msgid ""
 "Field Monitor is a remote-desktop client designed for the GNOME platform."
-msgstr "现场监视器是为 GNOME 平台设计的一款远程桌面客户端。"
+msgstr "Field Monitor 是为 GNOME 平台设计的一款远程桌面客户端。"
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
@@ -488,7 +489,7 @@ msgstr ""
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
 msgid ""
 "It has support for directly connecting to VMs of the following hypervisors:"
-msgstr "支持直接连接至以下管理程序的虚拟机："
+msgstr "支持直接连接至以下管理程序中的虚拟机："
 
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
 msgid "Proxmox Virtual Environment"
@@ -505,7 +506,7 @@ msgid ""
 "For supported VM hypervisors, Field Monitor also offers options to manage the "
 "basic power state of VMs, such as starting, stopping, rebooting, etc."
 msgstr ""
-"现场监视器对支持的虚拟机管理程序提供了管理虚拟机基本电源状态的选项，例如启"
+"Field Monitor 对支持的虚拟机管理程序提供了管理虚拟机基本电源状态的选项，例如启"
 "动、停止、重启等。"
 
 #. Translators: Part of the description of the application in the metainfo.
@@ -514,7 +515,7 @@ msgid ""
 "Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
 msgstr ""
-"另外，现场监视器支持打开 RDP 和 Virt 查看器连接文件以及通过 URI 快速连接至 "
+"另外，Field Monitor 支持打开 RDP 和 Virt 查看器连接文件，以及通过 URI 快速连接至 "
 "RDP、SPICE 或 VNC 服务器。"
 
 #. Translators: Caption of the first screenshot in the metainfo
@@ -553,7 +554,7 @@ msgstr "Virt 查看器连接文件"
 
 #: lib/src/adapter/usbredir/error.rs:35
 msgid "The device can not be attached to the connection"
-msgstr "该设备无法附加至连接"
+msgstr "该设备无法附加到此连接"
 
 #: lib/src/adapter/usbredir/spice.rs:239
 #, rust-format
@@ -609,7 +610,9 @@ msgstr "使用新窗口打开应用"
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
 #: src/application.rs:580
 msgid "translator-credits"
-msgstr "lumingzh <lumingzh@qq.com>, 2026"
+msgstr ""
+"lingyicute / lyi 梨 <lingyicute@gmail.com>, 2026\n"
+"lumingzh <lumingzh@qq.com>, 2026"
 
 #: src/application.rs:589 src/connection_loader.rs:437
 #: src/widget/add_connection_dialog.rs:210
@@ -637,7 +640,7 @@ msgstr "已成功更新连接。"
 #: src/application.rs:724
 #, rust-format
 msgid "Permanently Remove “{title}”?"
-msgstr "永久移除“{title}”吗？"
+msgstr "确定要永久移除“{title}”吗？"
 
 #: src/application.rs:728 src/widget/connection_view/connection_tab_view.rs:271
 msgid "No"
@@ -665,11 +668,11 @@ msgstr "未找到服务器。"
 
 #: src/connection_loader.rs:246 src/connection_loader.rs:364
 msgid "Failed to load or connect to server"
-msgstr "加载或连接至服务器失败"
+msgstr "加载或连接至服务器时出现问题"
 
 #: src/quick_connect/mod.rs:118
 msgid "Untitled Server"
-msgstr "无标题服务器"
+msgstr "未命名服务器"
 
 #: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
 #: src/widget/window.blp:153 src/widget/window.blp:214
@@ -702,19 +705,19 @@ msgstr "无效的 VNC URI"
 
 #: src/remote_server_info.rs:47
 msgid "Field Monitor does not support this URI scheme"
-msgstr "现场监视器不支持此 URI 方案"
+msgstr "Field Monitor 不支持此 URI 方案"
 
 #: src/remote_server_info.rs:61
 msgid "Unable to detect supported file format"
-msgstr "无法检测支持的文件格式"
+msgstr "未检测到支持的文件格式"
 
 #: src/remote_server_info.rs:69
 msgid "Field Monitor was unable to read the file"
-msgstr "现场监视器无法读取该文件"
+msgstr "Field Monitor 无法读取该文件"
 
 #: src/secrets.rs:90
 msgid "A secret value used by Field Monitor"
-msgstr "现场监视器使用的保密值"
+msgstr "Field Monitor 使用的保密值"
 
 #: src/shortcuts-dialog.blp:6
 msgctxt "shortcut window"
@@ -825,11 +828,11 @@ msgstr "保存连接失败"
 #: src/widget/authenticate_connection_dialog.rs:166
 #: src/widget/update_connection_dialog.rs:176
 msgid "An error occurred while trying to save the connection"
-msgstr "尝试保存连接时发生了错误"
+msgstr "尝试保存连接时出现错误"
 
 #: src/widget/app_status.blp:30
 msgid "Field Monitor is starting..."
-msgstr "现场监视器正在启动…"
+msgstr "Field Monitor 正在启动…"
 
 #: src/widget/app_status.blp:50
 msgid "Failed to Initialize"
@@ -839,7 +842,7 @@ msgstr "初始化失败"
 msgid ""
 "Field Monitor could not start, because it could not connect to your system's "
 "secret service for accessing passwords."
-msgstr "现场监视器无法启动，因为其无法连接至您的系统保密服务以获取访问密码。"
+msgstr "Field Monitor 无法启动，因为它无法连接到您的系统保密服务以获取访问密码。"
 
 #: src/widget/app_status.blp:56 src/widget/app_status.blp:84
 msgid "Quit"
@@ -847,7 +850,7 @@ msgstr "退出"
 
 #: src/widget/app_status.blp:78
 msgid "Failed to Initialize - Secrets Invalid"
-msgstr "初始化失败 - 保密无效"
+msgstr "初始化失败 - 保密值无效"
 
 #: src/widget/app_status.blp:79
 msgid ""
@@ -859,9 +862,9 @@ msgid ""
 "You may be able to resolve this with <a href='https://github.com/theCapypara/"
 "field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
 msgstr ""
-"现场监视器无法启动，因为保密后端报告系统保密服务无效或已损坏。\n"
+"Field Monitor 无法启动，因为保密后端报告系统保密服务无效或已损坏。\n"
 "\n"
-"如果您将 home 目录移动至另一个系统可能会发生该情况。\n"
+"如果您将 home 目录移动到了另一个系统，就可能会发生该情况。\n"
 "\n"
 "您可以通过 <a href='https://github.com/theCapypara/field-monitor/issues/"
 "18#issuecomment-2763807003'>oo7-cli</a> 解决此问题。"
@@ -878,7 +881,7 @@ msgstr "应用"
 
 #: src/widget/authenticate_connection_dialog.rs:105
 msgid "This connection needs additional authentication to proceed."
-msgstr "此连接需要额外认证以继续。"
+msgstr "此连接需要额外的认证才能继续。"
 
 #: src/widget/certificate_details_window.blp:5
 msgid "Certificate Viewer"
@@ -914,7 +917,7 @@ msgstr "保存失败"
 
 #: src/widget/certificate_details_window.rs:232
 msgid "Field Monitor was unable to save the provided file."
-msgstr "现场监视器无法保存提供的文件。"
+msgstr "Field Monitor 无法保存提供的文件。"
 
 #: src/widget/certificate_trust_dialog.rs:136
 msgid "Trust this server?"
@@ -922,7 +925,7 @@ msgstr "信任此服务器吗？"
 
 #: src/widget/certificate_trust_dialog.rs:139
 msgid "Do you trust this certificate and want to establish a connection?"
-msgstr "您信任此服务器并想要建立连接吗？"
+msgstr "您是否信任此证书并希望建立连接？"
 
 #: src/widget/certificate_trust_dialog.rs:167
 msgid "Fingerprint"
@@ -948,8 +951,8 @@ msgid ""
 "connection is established using a certificate issued by the CA. If not, "
 "Field Monitor will refuse the connection."
 msgstr ""
-"在您选择信任该认证机构后，现场监视器将确认连接是使用由该机构颁发的证书建立"
-"的。如果不是，现场监视器将拒绝连接。"
+"在您选择信任该认证机构后，Field Monitor 将确认连接是使用由该机构颁发的证书建立"
+"的。如果不是，Field Monitor 将拒绝连接。"
 
 #: src/widget/certificate_trust_dialog.rs:229
 #, rust-format
@@ -957,7 +960,7 @@ msgid ""
 "If you choose to trust this certificate, your choice will be remembered for "
 "future connections to <tt>{host}</tt>."
 msgstr ""
-"如果您选择信任此证书，您的选择将会被记住以用于未来与 <tt>{host}</tt> 的连接。"
+"如果您选择信任此证书，软件将记住您的选择，以便日后连接到 <tt>{host}</tt> 时使用。"
 
 #: src/widget/certificate_trust_dialog.rs:239
 #: src/widget/close_warning_dialog.rs:78
@@ -976,7 +979,7 @@ msgstr "关闭窗口吗？"
 msgid ""
 "The app is still connected to one or more servers. Closing the window will "
 "disconnect from all servers."
-msgstr "应用仍连接至一个或更多服务器。关闭窗口将与所有服务器断开连接。"
+msgstr "此应用仍保持着与一个或更多服务器的连接。关闭窗口将与所有服务器断开连接。"
 
 #: src/widget/connection_list/connection_list_navbar.blp:13
 msgid "Connections"
@@ -1117,7 +1120,7 @@ msgstr "USB 设备"
 #: src/widget/connection_view/server_screen.blp:91
 #: src/widget/connection_view/server_screen.blp:94
 msgid "Open Monitor in New Window"
-msgstr "在新窗口打开监视器"
+msgstr "在新窗口中打开监视器"
 
 #: src/widget/connection_view/server_screen.blp:134
 msgid "Connecting..."
@@ -1137,7 +1140,7 @@ msgstr "远程服务器屏幕"
 
 #: src/widget/connection_view/server_screen.blp:211
 msgid "Press any key to grab input."
-msgstr "按任意键以抓取输入设备。"
+msgstr "按任意键以捕获输入设备。"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -1174,7 +1177,7 @@ msgstr "连接失败"
 
 #: src/widget/connection_view/server_screen.rs:1007
 msgid "The connection was closed due to an error."
-msgstr "该连接已因发生错误而关闭。"
+msgstr "由于出现错误，该连接已关闭。"
 
 #: src/widget/connection_view/server_screen.rs:1014
 msgid "Connection failed"
@@ -1293,7 +1296,7 @@ msgstr "键盘快捷键(_K)"
 
 #: src/widget/connection_view/server_screen.rs:1337 src/widget/window.blp:334
 msgid "_About Field Monitor"
-msgstr "关于现场监视器(_A)"
+msgstr "关于 Field Monitor(_A)"
 
 #: src/widget/connection_view/server_screen.rs:1356
 #, rust-format
@@ -1357,7 +1360,7 @@ msgstr "锐利窗口夹角"
 
 #: src/widget/preferences.blp:46 src/widget/preferences.rs:234
 msgid "Header bars for active connections"
-msgstr "用于活动连接的标头栏"
+msgstr "用于活动连接的顶栏"
 
 #: src/widget/preferences.blp:66
 msgid "Show ungrab key combination"
@@ -1368,7 +1371,7 @@ msgid ""
 "Show a brief message indicating which key combination ungrabs the mouse "
 "and keyboard, every time input is grabbed from an active connection."
 msgstr ""
-"每次输入设备已被抓取时，显示消息以提示可用来从活动连接释放鼠标和键盘的按键组"
+"每当输入设备被捕获时，显示一条简短消息，提示用于释放鼠标和键盘的按键组"
 "合。"
 
 #: src/widget/preferences.rs:180 src/widget/preferences.rs:207
@@ -1401,14 +1404,14 @@ msgid ""
 "corners instead of the default corner radius. This is useful to make sure "
 "the corners of connected screens are not cut off."
 msgstr ""
-"配置现场监视器是否以及何时使用锐利角度的窗口夹角而不是默认的圆角。此选项对确"
+"配置 Field Monitor 是否以及何时使用锐利角度的窗口夹角而非默认的圆角。此选项对确"
 "保已连接屏幕不会因圆角而被裁剪比较有用。"
 
 #: src/widget/preferences.rs:207
 msgid ""
 "Use the default corner radius, but make window corners sharp whenever input "
 "is grabbed."
-msgstr "使用默认圆角，但在抓取输入设备后使窗口夹角锐化。"
+msgstr "使用默认圆角，但在捕获输入设备后使窗口夹角锐化。"
 
 #: src/widget/preferences.rs:208
 msgid "Always use sharp window corners."
@@ -1420,27 +1423,27 @@ msgstr "永不使用锐利的窗口夹角。"
 
 #: src/widget/preferences.rs:235
 msgid "Change how the header bar is presented for active connection screens."
-msgstr "更改活动连接屏幕标头栏的呈现方式。"
+msgstr "更改活动连接屏幕中顶栏的呈现方式。"
 
 #: src/widget/preferences.rs:237
 msgid ""
 "The header bar is shown above the connection screen. In fullscreen mode, "
 "the header bar is instead overlaid and hides whenever input is grabbed."
 msgstr ""
-"标头栏显示在连接屏幕的上方。全屏模式下在抓取输入设备后会以叠加与隐藏的方式代"
-"替。"
+"顶栏显示在连接屏幕的上方。在全屏模式下，顶栏会悬浮显示，并在鼠标和键盘"
+"输入被捕获时自动隐藏。"
 
 #: src/widget/preferences.rs:238
 msgid ""
 "The header bar is always shown above the connection screen, even in "
 "fullscreen mode."
-msgstr "标头栏总是显示在连接屏幕的上方，即使在全屏模式下也如此。"
+msgstr "顶栏总是显示在连接屏幕的上方，即使在全屏模式下也是如此。"
 
 #: src/widget/preferences.rs:239
 msgid ""
 "The header bar is always shown as an overlay on top of the connection "
 "screen; it is hidden whenever input is grabbed."
-msgstr "标头栏总是在连接屏幕的顶部显示为叠加层，抓取输入设备后则隐藏。"
+msgstr "顶栏总是在连接屏幕的顶部悬浮显示，并在输入被捕获时自动隐藏。"
 
 #: src/widget/quick_connect_dialog.blp:20
 #, no-c-format
@@ -1478,7 +1481,7 @@ msgstr "打开失败"
 #: src/widget/quick_connect_dialog.rs:97
 msgid ""
 "Field Monitor could not connect to the server using the specified file or URI"
-msgstr "现场监视器无法使用指定的文件或 URI 连接至服务器"
+msgstr "Field Monitor 无法使用指定的文件或 URI 连接至服务器"
 
 #: src/widget/quick_connect_dialog.rs:119
 msgid "Supported files"
@@ -1502,7 +1505,7 @@ msgstr "从文件打开连接…"
 
 #: src/widget/quick_connect_dialog.rs:158
 msgid "Field Monitor was unable to open the provided file."
-msgstr "现场监视器无法打开提供的文件。"
+msgstr "Field Monitor 无法打开您所提供的文件。"
 
 #: src/widget/update_connection_dialog.blp:34
 msgid "Save"
@@ -1591,12 +1594,12 @@ msgstr ""
 "该列表默认隐藏部分设备（USB 集线器等）。使用切换按钮来显示所有设备，但请注意 "
 "USB 集线器无法正确与远程服务器共享。\n"
 "\n"
-"要共享设备，您的用户账户可能需要在原始设备上的读写权限，查阅您的发行版文档获"
+"要共享设备，您的用户账户可能需要拥有该原始设备的读写权限。请查阅您的发行版文档以获"
 "取更多信息。"
 
 #: src/widget/window.blp:37 src/widget/window.blp:41
 msgid "About Field Monitor"
-msgstr "关于现场监视器"
+msgstr "关于 Field Monitor"
 
 #: src/widget/window.blp:84
 msgid "Main menu"
