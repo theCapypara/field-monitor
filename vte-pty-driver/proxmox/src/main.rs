@@ -155,6 +155,12 @@ async fn run_console(client: &Arc<PtyClient>) -> Result<(), anyhow::Error> {
     debug!(&client, "setup sigaction");
 
     let proxmox_client = match connection_type.deref() {
+        "session" => ProxmoxApiClient::connect_with_session(
+            &root,
+            user_tokenid,
+            pass_apikey.into(),
+            ignore_ssl_errors == "1",
+        )?,
         "apikey" => {
             ProxmoxApiClient::connect_with_apikey(
                 &root,
@@ -169,6 +175,7 @@ async fn run_console(client: &Arc<PtyClient>) -> Result<(), anyhow::Error> {
                 &root,
                 user_tokenid,
                 pass_apikey.into(),
+                None,
                 ignore_ssl_errors == "1",
             )
             .await?

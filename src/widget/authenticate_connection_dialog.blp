@@ -10,13 +10,30 @@ template $FieldMonitorAuthenticateConnectionDialog: Adw.Dialog {
         [top]
         Adw.HeaderBar header_bar {}
 
-        Adw.ToastOverlay toast_overlay {}
+        Box {
+            orientation: vertical;
+
+            Label auth_message {
+                visible: false;
+                wrap: true;
+                xalign: 0;
+                selectable: true;
+                margin-start: 24;
+                margin-end: 24;
+                margin-top: 12;
+            }
+
+            Box preferences_container {
+                orientation: vertical;
+                vexpand: true;
+            }
+        }
 
         [bottom]
         ActionBar {
             [end]
             Button apply_button {
-                label: _("Apply");
+                label: _("Continue");
                 clicked => $on_connection_update() swapped;
 
                 styles [
