@@ -27,13 +27,13 @@
   ninja,
   cmake,
   flatpak-builder,
-  python312,
+  python314,
+  python314Packages,
   libvirt,
   clang,
   rustup,
   openssl,
   pkg-config,
-  python312Packages,
   libGL,
   pixman,
 
@@ -125,7 +125,7 @@ mkShell {
     spice-glib
     libepoxy
     flatpak-builder
-    python312
+    python314
     libvirt
     libGL
     desktop-file-utils
@@ -133,7 +133,7 @@ mkShell {
     gi-docgen
     pixman
   ]
-  ++ (with python312Packages; [
+  ++ (with python314Packages; [
     pygobject3
     # Flatpak Builder Tools requirements
     aiohttp
