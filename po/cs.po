@@ -611,7 +611,7 @@ msgstr "Otevřít aplikaci s novým oknem"
 #: src/application.rs:580
 msgid "translator-credits"
 msgstr ""
-"Pavel Borecki <pavel@borecki.cz>, 2026\n"
+"Pavel Borecki <pavel@borecki.cz>, 2026"
 
 #: src/application.rs:589 src/connection_loader.rs:437
 #: src/widget/add_connection_dialog.rs:210
