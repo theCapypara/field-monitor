@@ -1,0 +1,1652 @@
+# Czech translation for FieldMonitor.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the de.capypara.FieldMonitor package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: de.capypara.FieldMonitor\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-07 09:46+0800\n"
+"PO-Revision-Date: 2026-10-10 10:45+0800\n"
+"Last-Translator: p-bo <pavel@borecki.cz>\n"
+"Language-Team: Czech\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n>=2 && n<=4 ? 1 : 2);\n"
+
+#: connection/generic-group/src/credential_preferences.blp:5
+#: connection/proxmox/src/credential_preferences.blp:5
+msgid "Credentials"
+msgstr "Přihlašovací údaje"
+
+#: connection/generic-group/src/credential_preferences.blp:10
+#: connection/libvirt/src/qemu_preferences.blp:58
+#: connection/proxmox/src/credential_preferences.blp:31
+#: src/quick_connect/preferences.blp:9
+msgid "Username"
+msgstr "Uživatelské jméno"
+
+#: connection/generic-group/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:36
+#: connection/proxmox/src/credential_preferences.rs:197
+#: src/quick_connect/preferences.blp:14
+msgid "Password"
+msgstr "Heslo"
+
+#: connection/generic-group/src/lib.rs:58
+msgid "Generic Connection Group"
+msgstr "Obecná skupina připojení"
+
+#: connection/generic-group/src/lib.rs:62
+msgid "Generic Connection Groups"
+msgstr "Obecné skupiny připojení"
+
+#: connection/generic-group/src/lib.rs:66
+msgid "Add Generic Connection Group"
+msgstr "Přidat obecnou skupinu připojení"
+
+#: connection/generic-group/src/lib.rs:74
+msgid "Connection to one or more RDP, SPICE and VNC servers"
+msgstr "Připojení k jednomu nebo vícero RDP, SPICE nebo VNC serverům"
+
+#: connection/generic-group/src/lib.rs:148
+msgid "One or more fields contain invalid values."
+msgstr "Jedna nebo více kolonek obsahuje neplatné hodnoty"
+
+#: connection/generic-group/src/lib.rs:371
+msgid "Failed to load password."
+msgstr "Heslo se nepodařilo načíst"
+
+#: connection/generic-group/src/preferences.blp:20
+msgid "Group Name"
+msgstr "Název skupiny"
+
+#: connection/generic-group/src/preferences.blp:26
+msgid "Servers"
+msgstr "Servery"
+
+#: connection/generic-group/src/preferences.blp:32
+#: connection/generic-group/src/preferences.rs:586
+msgid "Add Server"
+msgstr "Přidat server"
+
+#: connection/generic-group/src/preferences.rs:473
+msgid "No servers added yet."
+msgstr "Zatím ještě nepřidány žádné servery"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/generic-group/src/preferences.rs:582
+#: src/widget/update_connection_dialog.rs:102
+#, rust-format
+msgid "Edit “{title}”"
+msgstr "Upravit “{title}”"
+
+#: connection/generic-group/src/preferences.rs:594
+msgid "Update"
+msgstr "Aktualizovat"
+
+#: connection/generic-group/src/preferences.rs:596
+#: src/widget/add_connection_dialog.rs:133
+msgid "Add"
+msgstr "Přidat"
+
+#: connection/generic-group/src/preferences.rs:617
+msgid "Remove Server"
+msgstr "Odebrat server"
+
+#: connection/generic-group/src/server_preferences.blp:12
+msgid "Server Name"
+msgstr "Název serveru"
+
+#: connection/generic-group/src/server_preferences.blp:17
+msgid "Server Type"
+msgstr "Typ serveru"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:22
+#: connection/libvirt/src/connection/graphics.rs:250
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
+#: lib/src/adapter/rdp.rs:52
+msgid "RDP"
+msgstr "RDP"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:23
+#: connection/libvirt/src/connection/graphics.rs:247
+#: connection/proxmox/src/api/node.rs:162
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
+#: lib/src/adapter/spice.rs:216
+msgid "SPICE"
+msgstr "SPICE"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:24
+#: connection/libvirt/src/connection/graphics.rs:253
+#: connection/proxmox/src/api/node.rs:163
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
+#: lib/src/adapter/vnc.rs:134
+msgid "VNC"
+msgstr "VNC"
+
+#: connection/generic-group/src/server_preferences.blp:32
+#: connection/libvirt/src/qemu_preferences.blp:53
+#: connection/proxmox/src/preferences.blp:21
+#: src/widget/certificate_trust_dialog.rs:159
+msgid "Hostname"
+msgstr "Název hostitele"
+
+#: connection/generic-group/src/server_preferences.blp:37
+#: connection/proxmox/src/preferences.blp:26
+msgid "Port"
+msgstr "Port"
+
+#: connection/libvirt/src/connection/adapter.rs:220
+msgid ""
+"No supported graphics endpoint available. Tip: If connected via SSH, make "
+"sure that the graphics adapter's listen type is set to 'address' and that "
+"the adapter is listening on all interfaces."
+msgstr ""
+"Není k dispozici žádný podporovaný koncový bod grafiky. Tip: pokud jste "
+"připojení přes SSH, zajistěte, že typ očekávání spojení grafického adaptéru "
+"nastavený na „adresa“ a že spojení je očekáváno na všech rozhraních."
+
+#: connection/libvirt/src/connection/mod.rs:160
+msgid "(Unable to load server name)"
+msgstr "(Nebylo možné načíst název serveru)"
+
+#: connection/libvirt/src/connection/mod.rs:214
+#: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:66
+#: connection/proxmox/src/api/vm.rs:71
+msgid "Reboot"
+msgstr "Restartovat"
+
+#: connection/libvirt/src/connection/mod.rs:215
+#: connection/proxmox/src/api/node.rs:61 connection/proxmox/src/api/vm.rs:67
+#: connection/proxmox/src/api/vm.rs:72
+msgid "Shutdown"
+msgstr "Vypnout"
+
+#: connection/libvirt/src/connection/mod.rs:216
+#: connection/proxmox/src/api/vm.rs:73
+msgid "Force Reset"
+msgstr "Vynutit restart"
+
+#: connection/libvirt/src/connection/mod.rs:217
+#: connection/proxmox/src/api/vm.rs:68 connection/proxmox/src/api/vm.rs:74
+msgid "Force Poweroff"
+msgstr "Vynutit vypnutí"
+
+#. TRANSLATORS: Verb
+#: connection/libvirt/src/connection/mod.rs:224
+#: connection/proxmox/src/api/vm.rs:82
+msgid "Start"
+msgstr "Spustit"
+
+#: connection/libvirt/src/connection/mod.rs:255
+msgid "Reboot command successfully sent to domain."
+msgstr "Příkaz pro restart úspěšně zaslán doméně"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:260
+#, rust-format
+msgid "Failed to send reboot command: {err}"
+msgstr "Nepodařilo se odeslat příkaz k restartování: {err}"
+
+#: connection/libvirt/src/connection/mod.rs:281
+msgid "Shutdown command successfully sent to domain."
+msgstr "Příkaz pro restart úspěšně zaslán doméně."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:286
+#, rust-format
+msgid "Failed to send shutdown command: {err}"
+msgstr "Nepodařilo se odeslat příkaz k vypnutí: {err}"
+
+#: connection/libvirt/src/connection/mod.rs:307
+msgid "Domain successfully reset."
+msgstr "Doména úspěšně restartována."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:312
+#, rust-format
+msgid "Failed to reset domain: {err}"
+msgstr "Nepodařilo se restartovat doménu: {err}"
+
+#: connection/libvirt/src/connection/mod.rs:333
+msgid "Domain successfully shut down."
+msgstr "Doména úspěšně vypnuta."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:338
+#, rust-format
+msgid "Failed to send destroy command: {err}"
+msgstr "Nepodařilo se odeslat příkaz k likvidaci: {err}"
+
+#: connection/libvirt/src/connection/mod.rs:364
+msgid "Domain successfully started."
+msgstr "Doména úspěšně spuštěna."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:369
+#, rust-format
+msgid "Failed to send create command: {err}"
+msgstr "Nepodařilo se odeslat příkaz pro vytvoření: {err}"
+
+#: connection/libvirt/src/connection/mod.rs:396
+msgid "Domain is not running."
+msgstr "Doména není spuštěná."
+
+#: connection/libvirt/src/connection/mod.rs:403
+msgid "Domain is already running."
+msgstr "Doména už je spuštěná"
+
+#: connection/libvirt/src/connection/mod.rs:412
+#: connection/proxmox/src/api/mod.rs:84
+msgid "Internal error while trying to execute command."
+msgstr "Vnitřní chyba při pokusu o vykonání příkazu."
+
+#: connection/libvirt/src/connection/mod.rs:440
+msgid "Serial Console"
+msgstr "Sériová konzole"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:46
+#: connection/libvirt/src/hypervisor/qemu.rs:50
+msgid "QEMU/KVM"
+msgstr "QEMU/KVM"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:54
+msgid "Add QEMU/KVM Connection"
+msgstr "Přidat QEMU/KVM připojení"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:62
+msgid "QEMU/KVM hypervisor connection via libvirt."
+msgstr "Připojení ke QEMU/KVM hypervizoru prostřednictvím libvirt."
+
+#: connection/libvirt/src/qemu_preferences.blp:13
+#: connection/proxmox/src/preferences.blp:12
+msgid "Connection Name"
+msgstr "Název připojení"
+
+#: connection/libvirt/src/qemu_preferences.blp:19
+msgid "Session Type"
+msgstr "Typ relace"
+
+#: connection/libvirt/src/qemu_preferences.blp:22
+msgid "System Session"
+msgstr "Systémová relace"
+
+#: connection/libvirt/src/qemu_preferences.blp:23
+msgid "This is the QEMU/KVM default."
+msgstr "Toto je pro QEMU/KVM výchozí."
+
+#: connection/libvirt/src/qemu_preferences.blp:33
+msgid "User Session"
+msgstr "Uživatelská relace"
+
+#: connection/libvirt/src/qemu_preferences.blp:34
+msgid "Use this to manage GNOME Boxes VMs."
+msgstr "Toto použijte pro správu virt. strojů v GNOME Boxes."
+
+#: connection/libvirt/src/qemu_preferences.blp:45
+msgid "Remote Connection"
+msgstr "Vzdálená připojení"
+
+#: connection/libvirt/src/qemu_preferences.blp:48
+msgid "Connect via SSH"
+msgstr "Připojit přes SSH"
+
+#: connection/proxmox/src/api/connection.rs:60
+msgid "Unable to build a valid URL to connect to. Check your settings."
+msgstr "Nebylo možné sestavit platnou URL ke které se připojit. Zkontrolujte svá nastavení."
+
+#: connection/proxmox/src/api/connection.rs:72
+msgid "Failed to retrieve API Key or Password from secrets service."
+msgstr "Nepodařilo se získat klíč k API nebo heslo ze služby tajností."
+
+#: connection/proxmox/src/api/node.rs:100
+msgid "Reboot command successfully sent to server."
+msgstr "Příkaz pro restartování úspěšně odeslán serveru."
+
+#: connection/proxmox/src/api/node.rs:103 connection/proxmox/src/api/vm.rs:135
+msgid "Failed to send reboot command."
+msgstr "Nepodařilo se odeslat příkaz k restartování."
+
+#: connection/proxmox/src/api/node.rs:125
+msgid "Shutdown command successfully sent to server."
+msgstr "Příkaz pro vypnutí úspěšně odeslán serveru."
+
+#: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:168
+msgid "Failed to send shutdown command."
+msgstr "Nepodařilo se odeslat příkaz k vypnutí."
+
+#: connection/proxmox/src/api/node.rs:164
+msgid "Console"
+msgstr "Konzole"
+
+#. Translators: Keyword in the metainfo.
+#: connection/proxmox/src/api/provider.rs:48
+#: connection/proxmox/src/api/provider.rs:52
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
+msgid "Proxmox"
+msgstr "Proxmox"
+
+#: connection/proxmox/src/api/provider.rs:56
+msgid "Add Proxmox Connection"
+msgstr "Přidat Proxmox připojení"
+
+#: connection/proxmox/src/api/provider.rs:64
+msgid "Proxmox Virtual Environment hypervisor connection"
+msgstr "Připojení k Proxmox (Virtual Environment) hypervizoru"
+
+#: connection/proxmox/src/api/vm.rs:132
+msgid "Reboot command successfully sent to VM."
+msgstr "Příkaz pro restartování úspěšně zaslán virt. stroji."
+
+#: connection/proxmox/src/api/vm.rs:165
+msgid "Shutdown command successfully sent to VM."
+msgstr "Příkaz pro vypnutí úspěšně zaslán virt. stroji."
+
+#: connection/proxmox/src/api/vm.rs:197
+msgid "VM was successfully reset."
+msgstr "Virt. stroj byl úspěšně restartován."
+
+#: connection/proxmox/src/api/vm.rs:200
+msgid "Failed to send reset command."
+msgstr "Nepodařilo se poslat příkaz k restartování."
+
+#: connection/proxmox/src/api/vm.rs:230
+msgid "VM is now stopping."
+msgstr "Virt. stroj je nyní zastavován."
+
+#: connection/proxmox/src/api/vm.rs:233
+msgid "Failed to send stop command."
+msgstr "Nepodařilo se poslat příkaz k zastavení."
+
+#: connection/proxmox/src/api/vm.rs:263
+msgid "VM is now starting."
+msgstr "Virt. stroj je nyní spouštěn."
+
+#: connection/proxmox/src/api/vm.rs:266
+msgid "Failed to send start command."
+msgstr "Nepodařilo se poslat příkaz ke spuštění."
+
+#: connection/proxmox/src/credential_preferences.blp:10
+msgid ""
+"The Proxmox user needs at least the permissions <tt>VM.Console</tt>, "
+"<tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>."
+msgstr ""
+"Uživatel v rámci Proxmox potřebuje oprávnění alespoň pro "
+"<tt>VM.Console</tt>、<tt>VM.Audit</tt>a <tt>VM.PowerMgmt</tt>"
+
+#: connection/proxmox/src/credential_preferences.blp:13
+msgid "Authentication Mode"
+msgstr "Režim ověřování"
+
+#: connection/proxmox/src/credential_preferences.blp:19
+#: connection/proxmox/src/credential_preferences.rs:195
+msgid "API Key"
+msgstr "Klíč k API"
+
+#: connection/proxmox/src/credential_preferences.blp:26
+msgid "Token ID"
+msgstr "Identif. tokenu"
+
+#: connection/proxmox/src/preferences.blp:18
+msgid "Connection"
+msgstr "Připojení"
+
+#: connection/proxmox/src/preferences.blp:33
+msgid "Trust Any SSL Certificate"
+msgstr "Důvěřovat jakémukoli SSL certifikátu"
+
+#: connection/proxmox/src/preferences.blp:34
+msgid ""
+"Allows connecting to servers with self-signed and otherwise invalid SSL "
+"certificates. Be careful, as this is a potential security risk."
+msgstr ""
+"Umožní připojování k serverům, které využívají samy sebou podepsané a nebo "
+"jinak neplatné SSL certifikáty. Buďte opatrní, protože toto je potenciální "
+"bezpečnostní riziko."
+
+#. Translators: The name of the application.
+#: data/de.capypara.FieldMonitor.desktop.in.in:2
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/widget/window.blp:9
+#: src/widget/window.blp:63 src/widget/window.blp:181 src/widget/window.blp:187
+#: src/widget/window.rs:341
+msgid "Field Monitor"
+msgstr "Field Monitor"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:3
+msgid "Remote Desktop Viewer"
+msgstr "Zobrazování vzdálené plochy"
+
+#. Translators: The summary of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.desktop.in.in:4
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
+msgid "Access VMs and external screens"
+msgstr "Přistupujte k virt. strojům a externím obrazovkám"
+
+#. Translators: The keywords from the desktop file.
+#: data/de.capypara.FieldMonitor.desktop.in.in:12
+msgid "proxmox;vnc;spice;rdp;kvm;qemu;"
+msgstr "proxmox;vnc;spice;rdp;kvm;qemu;"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:17
+msgid "New Window"
+msgstr "Nové okno"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:24
+msgid "remote desktop"
+msgstr "vzdálená plocha"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:32
+msgid "KVM"
+msgstr "KVM"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:34
+msgid "QEMU"
+msgstr "QEMU"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:36
+msgid "libvirt"
+msgstr "libvirt"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:40
+msgid "GNOME"
+msgstr "GNOME"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:49
+msgid ""
+"Field Monitor is a remote-desktop client designed for the GNOME platform."
+msgstr "Field Monitor je klient vzdálené plochy navržený pro GNOME platformy."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
+msgid ""
+"It is focused on connecting to virtual machines, but can connect to any "
+"server supporting the RDP, SPICE or VNC protocols."
+msgstr ""
+"Je zaměřený na připojování k virtuálním strojům, ale umí se připojit k "
+"libovolnému serveru podporujícímu protokoly RDP, SPICE nebo VNC."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
+msgid ""
+"It has support for directly connecting to VMs of the following hypervisors:"
+msgstr "Má podporu pro přímé připojování k virt. strojům na následujících hypervizorech:"
+
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
+msgid "Proxmox Virtual Environment"
+msgstr "Proxmox Virtual Environment"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
+msgid "QEMU/KVM via libvirt (including GNOME Boxes VMs)"
+msgstr "QEMU/KVM prostřednictvím libvirt (včetně virt. strojům v GNOME Boxes)"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
+msgid ""
+"For supported VM hypervisors, Field Monitor also offers options to manage the "
+"basic power state of VMs, such as starting, stopping, rebooting, etc."
+msgstr ""
+"Pro podporované hypervizory virt. strojů Field Monitor také nabízí možnosti pro "
+"základní správu jejich stavů napájení, jako např. spouštění, zastavování, "
+"restartování, atd."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
+msgid ""
+"Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
+"files and quickly connecting to RDP, SPICE or VNC servers via URI."
+msgstr ""
+"Field Monitor dále podporuje otevírání souborů s RDP nebo Virt-Viewer "
+"připojeními a jednorázové připojování k RDP, SPICE nebo VNC serverům přes URI."
+
+#. Translators: Caption of the first screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:178
+msgid "Screen of a connected graphical display"
+msgstr "Obrazovka připojeného grafického displeje"
+
+#. Translators: Caption of the second screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:185
+#: src/widget/window.rs:470
+msgid "Welcome screen"
+msgstr "Uvítací obrazovka"
+
+#. Translators: Caption of the third screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:192
+msgid "A list of servers in a Proxmox cluster to connect to"
+msgstr "Seznam serverů v Promxox klastru ke kterým se připojit"
+
+#. Translators: Caption of the 4th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:199
+msgid "Screen of a connected console"
+msgstr "Obrazovka připojené konzole"
+
+#. Translators: Caption of the 5th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:206
+msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
+msgstr "Přidávání nového připojení k hypervizoru Proxmox Virtual Environment"
+
+#: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
+msgid "Remote Desktop file"
+msgstr "Soubor Remote Desktop"
+
+#: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
+msgid "Virt-Viewer connection file"
+msgstr "Soubor s Virt-Viewer připojením"
+
+#: lib/src/adapter/usbredir/error.rs:35
+msgid "The device can not be attached to the connection"
+msgstr "Zařízení není možné připojit ke spojení"
+
+#: lib/src/adapter/usbredir/spice.rs:239
+#, rust-format
+msgid "Failed to communicate with the system portal: {details}"
+msgstr "Nepodařilo se komunikovat se systémovým portálem: {details}"
+
+#: lib/src/adapter/usbredir/spice.rs:243
+#, rust-format
+msgid "USB portal request failed: {details}"
+msgstr "Požadavek na USB portál se nezdařil: {details}"
+
+#: lib/src/adapter/usbredir/spice.rs:247
+#, rust-format
+msgid "USB redirection initialization failed: {details}"
+msgstr "Inicializace přesměrování USB se nezdařila: {details}"
+
+#: lib/src/adapter/usbredir/spice.rs:261
+msgid "Failed to attach the USB device"
+msgstr "Nepodařilo se přiložit USB zařízení"
+
+#: lib/src/cert_security.rs:134
+msgid "Server certificate verification failed"
+msgstr "Ověření certifikátu serveru se nezdařilo"
+
+#: lib/src/connection/instance.rs:191
+msgid "Unknown error"
+msgstr "Neznámá chyba"
+
+#: lib/src/connection/types.rs:49
+msgid "Authentication failed"
+msgstr "Ověření se nezdařilo"
+
+#: lib/src/connection/types.rs:50
+msgid "General Error"
+msgstr "Obecná chyba"
+
+#: lib/src/gtk/save_credentials_button.blp:22
+msgid "Save and remember"
+msgstr "Uložit a zapamatovat"
+
+#: lib/src/gtk/save_credentials_button.blp:28
+msgid "Ask for this every time"
+msgstr "Zeptat se na toto pokaždé"
+
+#: lib/src/lib.rs:43
+msgid "The connection configuration is invalid"
+msgstr "Nastavení připojení není platné"
+
+#: src/application.rs:127
+msgid "Open the app with a new window"
+msgstr "Otevřít aplikaci s novým oknem"
+
+#. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
+#: src/application.rs:580
+msgid "translator-credits"
+msgstr ""
+"Pavel Borecki <pavel@borecki.cz>, 2026"
+
+#: src/application.rs:589 src/connection_loader.rs:437
+#: src/widget/add_connection_dialog.rs:210
+#: src/widget/authenticate_connection_dialog.rs:170
+#: src/widget/certificate_details_window.rs:235
+#: src/widget/quick_connect_dialog.rs:101
+#: src/widget/quick_connect_dialog.rs:161
+#: src/widget/update_connection_dialog.rs:180
+#: src/widget/usb_redir/settings.rs:214
+#: src/widget/usb_redir/settings_dialog.rs:384
+#: src/widget/usb_redir/settings_dialog.rs:400
+msgid "OK"
+msgstr "OK"
+
+#: src/application.rs:631
+msgid "Connection successfully added."
+msgstr "Připojení úspěšně přidáno"
+
+#: src/application.rs:686
+msgid "Connection successfully updated."
+msgstr "Připojení úspěšně aktualizováno"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/application.rs:724
+#, rust-format
+msgid "Permanently Remove “{title}”?"
+msgstr "Nevratně odebrat “{title}”?"
+
+#: src/application.rs:728 src/widget/connection_view/connection_tab_view.rs:271
+msgid "No"
+msgstr "Ne"
+
+#: src/application.rs:729 src/widget/connection_view/connection_tab_view.rs:272
+msgid "Yes"
+msgstr "Ano"
+
+#: src/application.rs:734
+msgid "Connection successfully removed."
+msgstr "Připojení úspěšně odebráno."
+
+#: src/application.rs:795
+msgid "Authentication successfully updated"
+msgstr "Ověřování úspěšně aktualizováno"
+
+#: src/connection_loader.rs:83 src/connection_loader.rs:93
+msgid "Connection not found."
+msgstr "Připojení nenalezeno."
+
+#: src/connection_loader.rs:193 src/connection_loader.rs:204
+msgid "Server not found."
+msgstr "Server nenalezen."
+
+#: src/connection_loader.rs:246 src/connection_loader.rs:364
+msgid "Failed to load or connect to server"
+msgstr "Nepodařilo se připojit k serveru"
+
+#: src/quick_connect/mod.rs:118
+msgid "Untitled Server"
+msgstr "Nenazvaný server"
+
+#: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
+#: src/widget/window.blp:153 src/widget/window.blp:214
+msgid "Quick Connect"
+msgstr "Jednorázové připojení"
+
+#: src/quick_connect/mod.rs:320
+msgid "via Quick Connect"
+msgstr "prostřednictvím jednorázového připojení"
+
+#: src/quick_connect/rdp.rs:78
+msgid "Failed to read file"
+msgstr "Nepodařilo se číst soubor"
+
+#: src/quick_connect/rdp.rs:169
+msgid "Invalid RDP parameters"
+msgstr "Neplatné RDP parametry"
+
+#: src/quick_connect/spice.rs:208
+msgid "Invalid SPICE URI"
+msgstr "Neplatná SPICE URI"
+
+#: src/quick_connect/util.rs:58 src/quick_connect/util.rs:63
+msgid "Invalid port in URI"
+msgstr "Neplatný port v URI"
+
+#: src/quick_connect/vnc.rs:111
+msgid "Invalid VNC URI"
+msgstr "Neplatná VNC URI"
+
+#: src/remote_server_info.rs:47
+msgid "Field Monitor does not support this URI scheme"
+msgstr "Field Monitor nepodporuje toto schéma URI"
+
+#: src/remote_server_info.rs:61
+msgid "Unable to detect supported file format"
+msgstr "Nebylo možné zjistit podporovaný formát souboru"
+
+#: src/remote_server_info.rs:69
+msgid "Field Monitor was unable to read the file"
+msgstr "Field Monitor se nepodařilo číst ze souboru"
+
+#: src/secrets.rs:90
+msgid "A secret value used by Field Monitor"
+msgstr "Tajná hodnota používaná Field Monitor"
+
+#: src/shortcuts-dialog.blp:6
+msgctxt "shortcut window"
+msgid "Window"
+msgstr "Okno"
+
+#: src/shortcuts-dialog.blp:9
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Zavřít okno"
+
+#: src/shortcuts-dialog.blp:14
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "Nové okno"
+
+#: src/shortcuts-dialog.blp:19
+msgctxt "shortcut window"
+msgid "Show Navigation"
+msgstr "Zobrazit navigaci"
+
+#: src/shortcuts-dialog.blp:24
+msgctxt "shortcut window"
+msgid "Open Menu"
+msgstr "Otevřít nabídku"
+
+#: src/shortcuts-dialog.blp:29
+msgctxt "shortcut window"
+msgid "Toggle Fullscreen"
+msgstr "Zap/vyp. na celou obrazovku"
+
+#: src/shortcuts-dialog.blp:35
+msgctxt "shortcut window"
+msgid "Connection"
+msgstr "Připojení"
+
+#: src/shortcuts-dialog.blp:38
+msgctxt "shortcut window"
+msgid "Close Connection"
+msgstr "Zavřít spojení"
+
+#: src/shortcuts-dialog.blp:44
+msgctxt "shortcut window"
+msgid "Terminal"
+msgstr "Terminál"
+
+#: src/shortcuts-dialog.blp:47
+msgctxt "shortcut window"
+msgid "Copy"
+msgstr "Zkopírovat"
+
+#: src/shortcuts-dialog.blp:52
+msgctxt "shortcut window"
+msgid "Paste"
+msgstr "Vložit"
+
+#: src/shortcuts-dialog.blp:57
+msgctxt "shortcut window"
+msgid "Select All"
+msgstr "Vybrat vše"
+
+#: src/shortcuts-dialog.blp:62
+msgctxt "shortcut window"
+msgid "Zoom In"
+msgstr "Přiblížit"
+
+#: src/shortcuts-dialog.blp:67
+msgctxt "shortcut window"
+msgid "Zoom Out"
+msgstr "Oddálit"
+
+#: src/shortcuts-dialog.blp:72
+msgctxt "shortcut window"
+msgid "Reset Zoom"
+msgstr "Vrátit výchozí přiblížení"
+
+#: src/shortcuts-dialog.blp:78
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Obecné"
+
+#: src/shortcuts-dialog.blp:81
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "Předvolby"
+
+#: src/shortcuts-dialog.blp:86
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Zobrazit zkratky"
+
+#: src/shortcuts-dialog.blp:91
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Ukončit"
+
+#: src/widget/add_connection_dialog.blp:11 src/widget/window.blp:307
+msgid "Add New Connection"
+msgstr "Přidat nové připojení"
+
+#: src/widget/add_connection_dialog.rs:203
+#: src/widget/authenticate_connection_dialog.rs:163
+#: src/widget/update_connection_dialog.rs:173
+msgid "Failed to save connection"
+msgstr "Nepodařilo se uložit připojení"
+
+#: src/widget/add_connection_dialog.rs:206
+#: src/widget/authenticate_connection_dialog.rs:166
+#: src/widget/update_connection_dialog.rs:176
+msgid "An error occurred while trying to save the connection"
+msgstr "Při pokusu o uložení připojení došlo k chybě"
+
+#: src/widget/app_status.blp:30
+msgid "Field Monitor is starting..."
+msgstr "Spouštění Fielt Monitor…"
+
+#: src/widget/app_status.blp:50
+msgid "Failed to Initialize"
+msgstr "Inicializace se nezdařila"
+
+#: src/widget/app_status.blp:51
+msgid ""
+"Field Monitor could not start, because it could not connect to your system's "
+"secret service for accessing passwords."
+msgstr "Field Monitor nebylo možné spustit, protože se nemohlo připojit ke "
+"službě správy tajností ve vašem systému, ze které potřebuje přistupovat k heslům."
+
+#: src/widget/app_status.blp:56 src/widget/app_status.blp:84
+msgid "Quit"
+msgstr "Ukončit"
+
+#: src/widget/app_status.blp:78
+msgid "Failed to Initialize - Secrets Invalid"
+msgstr "Nepodařilo se inicializovat – tajemství neplatná"
+
+#: src/widget/app_status.blp:79
+msgid ""
+"Field Monitor could not start, because the secrets backend reports that the "
+"system secrets are invalid or corrupted.\n"
+"\n"
+"This can happen if you moved your HOME directory to another system.\n"
+"\n"
+"You may be able to resolve this with <a href='https://github.com/theCapypara/"
+"field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
+msgstr ""
+"Field Monitor nebylo možné spustit, protože podpůrná vrstva pro tajemství \n"
+"hlásí, že systémová tajemství jsou neplatná nebo poškozená.\n"
+"\n"
+"Toto se může stát, pokud jste přesunuli svou domovskou složku na jiný systém.\n"
+"\n"
+"Možná toto půjde vyřešit pomocí <a href='https://github.com/theCapypara/field-monitor/issues/"
+"18#issuecomment-2763807003'>oo7-cli</a>."
+
+#: src/widget/authenticate_connection_dialog.blp:6
+#: src/widget/connection_list/info_page.blp:74
+#: src/widget/connection_list/info_page.rs:277
+msgid "Authentication required"
+msgstr "Vyžadováno ověření"
+
+#: src/widget/authenticate_connection_dialog.blp:19
+msgid "Apply"
+msgstr "Použít"
+
+#: src/widget/authenticate_connection_dialog.rs:105
+msgid "This connection needs additional authentication to proceed."
+msgstr "Aby bylo možné v něm pokračovat, toto připojení potřebuje další ověření."
+
+#: src/widget/certificate_details_window.blp:5
+msgid "Certificate Viewer"
+msgstr "Prohlížeč certifikátů"
+
+#: src/widget/certificate_details_window.blp:23
+msgid "Export"
+msgstr "Exportovat"
+
+#: src/widget/certificate_details_window.blp:32
+#: src/widget/close_warning_dialog.rs:79
+#: src/widget/connection_view/connection_view_navbar.blp:53
+#: src/widget/connection_view/connection_view_navbar.rs:179
+#: src/widget/connection_view/server_screen.blp:155
+msgid "Close"
+msgstr "Zavřít"
+
+#: src/widget/certificate_details_window.rs:160
+msgid "PEM Certificate"
+msgstr "PEM certifikát"
+
+#: src/widget/certificate_details_window.rs:165
+msgid "DER Certificate"
+msgstr "DER certifikát"
+
+#: src/widget/certificate_details_window.rs:171
+msgid "Export Certificate..."
+msgstr "Exportovat certifikát…"
+
+#: src/widget/certificate_details_window.rs:230
+msgid "Failed to save"
+msgstr "Nepodařilo se uložit"
+
+#: src/widget/certificate_details_window.rs:232
+msgid "Field Monitor was unable to save the provided file."
+msgstr "Field Monitor se nepodařilo poskytnutý soubor uložit."
+
+#: src/widget/certificate_trust_dialog.rs:136
+msgid "Trust this server?"
+msgstr "Důvěřovat tomuto serveru?"
+
+#: src/widget/certificate_trust_dialog.rs:139
+msgid "Do you trust this certificate and want to establish a connection?"
+msgstr "Důvěřujete tomuto certifikátu a chcete navázat spojení?"
+
+#: src/widget/certificate_trust_dialog.rs:167
+msgid "Fingerprint"
+msgstr "Otisk"
+
+#: src/widget/certificate_trust_dialog.rs:177
+msgid "Show Certificate"
+msgstr "Zobrazit certifikát"
+
+#: src/widget/certificate_trust_dialog.rs:197
+msgid ""
+"This certificate is the certificate authority (CA) issuing the connection "
+"certificate."
+msgstr "Tento certifikát je certifikační autoritou (CA), vydávající certifikát "
+"připojení"
+
+#: src/widget/certificate_trust_dialog.rs:202
+msgid "Info"
+msgstr "Info"
+
+#: src/widget/certificate_trust_dialog.rs:207
+msgid ""
+"After you choose to trust the CA, Field Monitor will confirm that the "
+"connection is established using a certificate issued by the CA. If not, "
+"Field Monitor will refuse the connection."
+msgstr ""
+"Poté co zvolíte důvěřovat cert. autoritě, Field Monitor potvrdí, že "
+"je spojení navázáno pomocí certifikátu vydaného cert. autoritou. Pokud ne, "
+"Field Monitor spojení odmítne."
+
+#: src/widget/certificate_trust_dialog.rs:229
+#, rust-format
+msgid ""
+"If you choose to trust this certificate, your choice will be remembered for "
+"future connections to <tt>{host}</tt>."
+msgstr ""
+"Pokud zvolíte důvěřovat tomuto certifikátu, vaše volba bude zapamatována pro "
+"budoucí připojení k <tt>{host}</tt>"
+
+#: src/widget/certificate_trust_dialog.rs:239
+#: src/widget/close_warning_dialog.rs:78
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: src/widget/certificate_trust_dialog.rs:240
+msgid "Trust Certificate"
+msgstr "Důvěřovat certifikátu"
+
+#: src/widget/close_warning_dialog.rs:54
+msgid "Close Window?"
+msgstr "Zavřít okno?"
+
+#: src/widget/close_warning_dialog.rs:55
+msgid ""
+"The app is still connected to one or more servers. Closing the window will "
+"disconnect from all servers."
+msgstr ""
+"Aplikace je pořád ještě připojená k jednomu nebo více serverům. Zavření okna "
+"odpojí od všech z nich."
+
+#: src/widget/connection_list/connection_list_navbar.blp:13
+msgid "Connections"
+msgstr "Připojení"
+
+#: src/widget/connection_list/connection_list_navbar.blp:14
+msgid "List of configured connections."
+msgstr "Seznam nastavených připojení"
+
+#: src/widget/connection_list/connection_list_navbar.blp:34
+#: src/widget/connection_list/info_page.blp:17
+#: src/widget/connection_list/info_page.blp:21
+msgid "Edit Connection"
+msgstr "Upravit připojení"
+
+#: src/widget/connection_list/connection_list_navbar.blp:39
+#: src/widget/update_connection_dialog.blp:21
+#: src/widget/update_connection_dialog.blp:26
+msgid "Remove Connection"
+msgstr "Odebrat připojení"
+
+#: src/widget/connection_list/info_page.blp:65
+#: src/widget/connection_list/info_page.rs:261
+msgid "Failed to load connection"
+msgstr "Nepodařilo se načíst připojení"
+
+#: src/widget/connection_list/info_page.blp:75
+msgid "This connection requires additional authentication."
+msgstr "Toto připojení vyžaduje další ověření."
+
+#: src/widget/connection_list/info_page.blp:78
+msgid "Authenticate"
+msgstr "Ověřit"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/info_page.rs:142
+#, rust-format
+msgid "Loading connection: {title}"
+msgstr "Načítání připojení：{title}"
+
+#: src/widget/connection_list/info_page.rs:196
+msgid "No servers available"
+msgstr "Nejsou k dispozici žádné servery"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/info_page.rs:237
+#, rust-format
+msgid "Loaded connection: {title}"
+msgstr "Načtená připojení：{title}"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_list/info_page.rs:266
+#, rust-format
+msgid "Failed to load connection: {detail}"
+msgstr "Nepodařilo se načíst připojení：{detail}"
+
+#. TODO: Getting the server name here isn't really easy...
+#: src/widget/connection_list/server_info.rs:205
+#: src/widget/update_connection_dialog.rs:97
+msgid "Edit Server"
+msgstr "Upravit server"
+
+#: src/widget/connection_list/server_info.rs:257
+msgid "Actions"
+msgstr "Akce"
+
+#: src/widget/connection_list/server_info.rs:283
+#: src/widget/quick_connect_dialog.blp:39
+#: src/widget/usb_redir/settings_dialog.rs:205
+msgid "Connect"
+msgstr "Připojit"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/server_info.rs:302
+#, rust-format
+msgid "Connect via {adapter}"
+msgstr "Připojit přes {adapter}"
+
+#: src/widget/connection_view/connection_tab_view.rs:266
+msgid "Close Connection?"
+msgstr "Zavřít spojení"
+
+#: src/widget/connection_view/connection_tab_view.rs:268
+msgid "Closing the connection will disconnect from the remote server."
+msgstr "Zavření spojení odpojí od vzdáleného serveru."
+
+#: src/widget/connection_view/connection_view_navbar.blp:12
+#: src/widget/connection_view/connection_view_navbar.blp:23
+msgid "Active Connections"
+msgstr "Aktivní připojení"
+
+#: src/widget/connection_view/connection_view_navbar.blp:24
+msgid "List of currently open connections."
+msgstr "Seznam v tuto chvíli otevřených spojení."
+
+#: src/widget/connection_view/connection_view_navbar.blp:48
+msgid "Move to New Window"
+msgstr "Přesunout do nového okna"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/connection_view_navbar.rs:262
+#, rust-format
+msgid "Switched to {title}"
+msgstr "Přepnuto na {title}"
+
+#: src/widget/connection_view/server_screen.blp:30
+#: src/widget/connection_view/server_screen.blp:34 src/widget/window.blp:68
+#: src/widget/window.blp:72
+msgid "Toggle Fullscreen"
+msgstr "Zap/vyp. na celou obrazovku"
+
+#: src/widget/connection_view/server_screen.blp:44
+#: src/widget/connection_view/server_screen.blp:49
+msgid "Show Navigation"
+msgstr "Zobrazit navigaci"
+
+#: src/widget/connection_view/server_screen.blp:60 src/widget/window.blp:80
+msgid "Menu"
+msgstr "Nabídka"
+
+#: src/widget/connection_view/server_screen.blp:63
+msgid "Connection menu"
+msgstr "Nabídka připojení"
+
+#: src/widget/connection_view/server_screen.blp:73
+#: src/widget/connection_view/server_screen.blp:76
+#: src/widget/usb_redir/settings_dialog.blp:7
+#: src/widget/usb_redir/settings_dialog.blp:13
+#: src/widget/usb_redir/settings_dialog.rs:396
+msgid "USB Devices"
+msgstr "USB zařízení"
+
+#: src/widget/connection_view/server_screen.blp:91
+#: src/widget/connection_view/server_screen.blp:94
+msgid "Open Monitor in New Window"
+msgstr "Otevřít monitor v novém okně"
+
+#: src/widget/connection_view/server_screen.blp:134
+msgid "Connecting..."
+msgstr "Připojování…"
+
+#: src/widget/connection_view/server_screen.blp:165
+msgid "Reconnect"
+msgstr "Připojit znovu"
+
+#: src/widget/connection_view/server_screen.blp:172
+msgid "Show Output"
+msgstr "Zobrazit výstup"
+
+#: src/widget/connection_view/server_screen.blp:210
+msgid "Remote Server Screen"
+msgstr "Obrazovka vzdáleného serveru"
+
+#: src/widget/connection_view/server_screen.blp:211
+msgid "Press any key to grab input."
+msgstr "Uchopte vstup stisknutím libovolné klávesy."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:462
+#, rust-format
+msgid "Connecting to {title}"
+msgstr "Připojování k {title}"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:779
+#, rust-format
+msgid "Connected to {title}"
+msgstr "Připojeno k {title}"
+
+#: src/widget/connection_view/server_screen.rs:957
+msgid "Disconnected"
+msgstr "Odpojeno"
+
+#: src/widget/connection_view/server_screen.rs:959
+msgid "The connection to the server was closed."
+msgstr "Připojení k serveru bylo zavřeno."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_view/server_screen.rs:964
+#, rust-format
+msgid "Disconnected from {title}"
+msgstr "Odpojit od {title}"
+
+#: src/widget/connection_view/server_screen.rs:1006
+msgid "Connection Failed"
+msgstr "Připojení se nezdařilo"
+
+#: src/widget/connection_view/server_screen.rs:1007
+msgid "The connection was closed due to an error."
+msgstr "Připojení bylo zavřeno kvůli chybě."
+
+#: src/widget/connection_view/server_screen.rs:1014
+msgid "Connection failed"
+msgstr "Připojení se nezdařilo"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_view/server_screen.rs:1018
+#, rust-format
+msgid "Connection failed: {detail}"
+msgstr "Připojení se nezdařilo：{detail}"
+
+#: src/widget/connection_view/server_screen.rs:1185
+msgid "_Dynamic Resize"
+msgstr "_Dynamická změna rozlišení"
+
+#: src/widget/connection_view/server_screen.rs:1189
+msgid "_Scale to Window"
+msgstr "Přizpů_sobit měřítko oknu"
+
+#: src/widget/connection_view/server_screen.rs:1199
+msgid "_Resize Window to Screen"
+msgstr "_Změnit velikost okna podle obrazu"
+
+#: src/widget/connection_view/server_screen.rs:1203
+msgid "Send _Keys"
+msgstr "Odeslat _klávesy"
+
+#: src/widget/connection_view/server_screen.rs:1207
+msgid "Ctrl+Alt L"
+msgstr "Ctrl+Alt L"
+
+#: src/widget/connection_view/server_screen.rs:1211
+msgid "Ctrl+Alt+Backspace"
+msgstr "Ctrl+Alt+Backspace"
+
+#: src/widget/connection_view/server_screen.rs:1215
+msgid "Ctrl+Alt+Delete"
+msgstr "Ctrl+Alt+Delete"
+
+#: src/widget/connection_view/server_screen.rs:1221
+msgid "Ctrl+Alt+F1"
+msgstr "Ctrl+Alt+F1"
+
+#: src/widget/connection_view/server_screen.rs:1225
+msgid "Ctrl+Alt+F2"
+msgstr "Ctrl+Alt+F2"
+
+#: src/widget/connection_view/server_screen.rs:1229
+msgid "Ctrl+Alt+F3"
+msgstr "Ctrl+Alt+F3"
+
+#: src/widget/connection_view/server_screen.rs:1233
+msgid "Ctrl+Alt+F4"
+msgstr "Ctrl+Alt+F4"
+
+#: src/widget/connection_view/server_screen.rs:1237
+msgid "Ctrl+Alt+F5"
+msgstr "Ctrl+Alt+F5"
+
+#: src/widget/connection_view/server_screen.rs:1241
+msgid "Ctrl+Alt+F6"
+msgstr "Ctrl+Alt+F6"
+
+#: src/widget/connection_view/server_screen.rs:1245
+msgid "Ctrl+Alt+F7"
+msgstr "Ctrl+Alt+F7"
+
+#: src/widget/connection_view/server_screen.rs:1249
+msgid "Ctrl+Alt+F8"
+msgstr "Ctrl+Alt+F8"
+
+#: src/widget/connection_view/server_screen.rs:1253
+msgid "Ctrl+Alt+F9"
+msgstr "Ctrl+Alt+F9"
+
+#: src/widget/connection_view/server_screen.rs:1257
+msgid "Ctrl+Alt+F10"
+msgstr "Ctrl+Alt+F10"
+
+#: src/widget/connection_view/server_screen.rs:1261
+msgid "Ctrl+Alt+F11"
+msgstr "Ctrl+Alt+F11"
+
+#: src/widget/connection_view/server_screen.rs:1265
+msgid "Ctrl+Alt+F12"
+msgstr "Ctrl+Alt+F12"
+
+#: src/widget/connection_view/server_screen.rs:1271
+msgid "Print"
+msgstr "Tisk"
+
+#: src/widget/connection_view/server_screen.rs:1282
+msgid "_Zoom"
+msgstr "_Přiblížit"
+
+#: src/widget/connection_view/server_screen.rs:1305
+msgid "Server _Actions"
+msgstr "_Akce ohledně serveru"
+
+#: src/widget/connection_view/server_screen.rs:1309
+msgid "_Close Window"
+msgstr "_Zavřít okno"
+
+#: src/widget/connection_view/server_screen.rs:1311
+msgid "_Close Connection"
+msgstr "_Zavřít spojení"
+
+#: src/widget/connection_view/server_screen.rs:1328 src/widget/window.blp:319
+msgid "_New Window"
+msgstr "_Nové okno"
+
+#: src/widget/connection_view/server_screen.rs:1333 src/widget/window.blp:329
+msgid "_Keyboard Shortcuts"
+msgstr "_Klávesové zkratky"
+
+#: src/widget/connection_view/server_screen.rs:1337 src/widget/window.blp:334
+msgid "_About Field Monitor"
+msgstr "_O aplikaci Field Monitor"
+
+#: src/widget/connection_view/server_screen.rs:1356
+#, rust-format
+msgid "Show Monitor {number}"
+msgstr "Zobrazit monitor {number}"
+
+#: src/widget/connection_view/server_screen.rs:1367
+msgid "_Copy"
+msgstr "_Zkopírovat"
+
+#: src/widget/connection_view/server_screen.rs:1371
+msgid "_Paste"
+msgstr "_Vložit"
+
+#: src/widget/connection_view/server_screen.rs:1375
+msgid "Select _All"
+msgstr "_Vybrat vše"
+
+#: src/widget/connection_view/server_screen.rs:1384
+msgid "Zoom In"
+msgstr "Přiblížit"
+
+#: src/widget/connection_view/server_screen.rs:1388
+msgid "Zoom Out"
+msgstr "Oddálit"
+
+#: src/widget/connection_view/server_screen.rs:1392
+msgid "Reset Zoom"
+msgstr "Vrátit přiblížení na výchozí"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:1494
+#, rust-format
+msgid "Press {keycombo} to ungrab the mouse and keyboard."
+msgstr "Stiskněte {keycombo} pro zrušení uchopení myši a klávesnice."
+
+#: src/widget/connection_view/server_screen.rs:1517
+msgid "Input released."
+msgstr "Vstup uvolněn."
+
+#: src/widget/preferences.blp:12
+msgid "Preferences"
+msgstr "Předvolby"
+
+#: src/widget/preferences.blp:15
+msgid "Behavior"
+msgstr "Chování"
+
+#: src/widget/preferences.blp:18
+msgid "Open connections in new windows"
+msgstr "Otevírat připojení v nových oknech"
+
+#: src/widget/preferences.blp:23
+msgid "Appearance"
+msgstr "Vzhled"
+
+#: src/widget/preferences.blp:26 src/widget/preferences.rs:204
+msgid "Sharp window corners"
+msgstr "Ostré rohy oken"
+
+#: src/widget/preferences.blp:46 src/widget/preferences.rs:234
+msgid "Header bars for active connections"
+msgstr "Pruhy záhlaví pro aktivní spojení"
+
+#: src/widget/preferences.blp:66
+msgid "Show ungrab key combination"
+msgstr "Zobrazovat kombinace kláves pro zrušení uchopení"
+
+#: src/widget/preferences.blp:67
+msgid ""
+"Show a brief message indicating which key combination ungrabs the mouse "
+"and keyboard, every time input is grabbed from an active connection."
+msgstr ""
+"Pokaždé, když je vstup uchopen z aktivního spojení, zobrazovat krátkou "
+"zprávu informujíící o kombinaci kláves pro zrušení uchopení."
+
+#: src/widget/preferences.rs:180 src/widget/preferences.rs:207
+msgid "Automatic"
+msgstr "Automaticky"
+
+#: src/widget/preferences.rs:181 src/widget/preferences.rs:208
+msgid "Always"
+msgstr "Vždy"
+
+#: src/widget/preferences.rs:182 src/widget/preferences.rs:209
+msgid "Never"
+msgstr "Nikdy"
+
+#: src/widget/preferences.rs:190 src/widget/preferences.rs:237
+msgid "Default"
+msgstr "Výchozí"
+
+#: src/widget/preferences.rs:191 src/widget/preferences.rs:238
+msgid "Show Above"
+msgstr "Zobrazit nad"
+
+#: src/widget/preferences.rs:192 src/widget/preferences.rs:239
+msgid "Overlay and Hide"
+msgstr "Překrýt a skrýt"
+
+#: src/widget/preferences.rs:205
+msgid ""
+"Configure whether and when Field Monitor will use sharp, right-angle window "
+"corners instead of the default corner radius. This is useful to make sure "
+"the corners of connected screens are not cut off."
+msgstr ""
+"Nastavte zda a kdy Field Monitor použije ostré, pravoúhlé rohy okna "
+"namísto výchozích zaoblených. Toto se hodí proto, aby rohy připojených "
+"obrazovek nebyly useknuté."
+
+#: src/widget/preferences.rs:207
+msgid ""
+"Use the default corner radius, but make window corners sharp whenever input "
+"is grabbed."
+msgstr ""
+"Použít výchozí zaoblení rohů, ale když je uchopen vstup, udělat rohy oken ostrými."
+
+#: src/widget/preferences.rs:208
+msgid "Always use sharp window corners."
+msgstr "Vždy použít ostré rohy oken."
+
+#: src/widget/preferences.rs:209
+msgid "Never use sharp window corners."
+msgstr "Nikdy nepoužívat ostré rohy oken."
+
+#: src/widget/preferences.rs:235
+msgid "Change how the header bar is presented for active connection screens."
+msgstr "Změnit jak je pruh záhlaví prezentován pro obrazovky aktivních spojení."
+
+#: src/widget/preferences.rs:237
+msgid ""
+"The header bar is shown above the connection screen. In fullscreen mode, "
+"the header bar is instead overlaid and hides whenever input is grabbed."
+msgstr ""
+"Pruh záhlaví je zobrazován nad obrazovkou psojení. V režimu na celou obrazovku "
+" je tento pruh namísto toho jako překryv a skrýván pokaždé, když je uchopen vstup."
+
+#: src/widget/preferences.rs:238
+msgid ""
+"The header bar is always shown above the connection screen, even in "
+"fullscreen mode."
+msgstr ""
+"Pruh záhlaví je zobrazován vždy nad obrazovkou spojení, i v režimu na "
+"celou obrazovku."
+
+#: src/widget/preferences.rs:239
+msgid ""
+"The header bar is always shown as an overlay on top of the connection "
+"screen; it is hidden whenever input is grabbed."
+msgstr ""
+"Pruh záhlaví je zobrzován vždy jako překryv v horní části obrazovyk "
+"spojení a skryt pokaždé, když je uchopen vstup."
+
+#: src/widget/quick_connect_dialog.blp:20
+#, no-c-format
+msgid ""
+"Enter the URL of the server you want to connect to.\n"
+"Supported protocols are: RDP, SPICE, VNC.\n"
+"\n"
+"<b>Examples:</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://server:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://user@server?VncPassword=password123</i>"
+msgstr ""
+"Zadejte URL serveru, ke kterému se chcete připojit.\n"
+"Podporované protokoly jsou：RDP、SPICE、VNC.\n"
+"\n"
+"<b>Příklady:</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://server:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://user@server?VncPassword=password123</i>"
+
+#: src/widget/quick_connect_dialog.blp:22
+msgid "Connection URL"
+msgstr "URL připojení"
+
+#: src/widget/quick_connect_dialog.blp:33
+msgid "Open File..."
+msgstr "Otevřít soubor…"
+
+#: src/widget/quick_connect_dialog.rs:94 src/widget/quick_connect_dialog.rs:156
+msgid "Failed to open"
+msgstr "Nepodařilo se otevřít"
+
+#: src/widget/quick_connect_dialog.rs:97
+msgid ""
+"Field Monitor could not connect to the server using the specified file or URI"
+msgstr "Field Monitor se nepodařilo připojit k serveru pomocí zadaného souboru nebo URI"
+
+#: src/widget/quick_connect_dialog.rs:119
+msgid "Supported files"
+msgstr "Podporované soubory"
+
+#: src/widget/quick_connect_dialog.rs:126
+msgid "RDP file"
+msgstr "RDP soubor"
+
+#: src/widget/quick_connect_dialog.rs:133
+msgid "Virt-Viewer file"
+msgstr "Virt-Viewer soubor"
+
+#: src/widget/quick_connect_dialog.rs:137
+msgid "Any file"
+msgstr "Libovolný soubor"
+
+#: src/widget/quick_connect_dialog.rs:145
+msgid "Open Connection from file..."
+msgstr "Otevřít připojení ze souboru…"
+
+#: src/widget/quick_connect_dialog.rs:158
+msgid "Field Monitor was unable to open the provided file."
+msgstr "Field Monitor se nepodařilo otevřít poskytnutý soubor."
+
+#: src/widget/update_connection_dialog.blp:34
+msgid "Save"
+msgstr "Uložit"
+
+#. XXX: These are here because (1) some of them we need in multiple places and (2) they are used inside
+#. glib::clone where they can't be picked up by gettext's scanner
+#: src/widget/usb_redir/mod.rs:23
+msgid "USB device connected"
+msgstr "USB zařízení připojeno"
+
+#: src/widget/usb_redir/mod.rs:25
+msgid "Failed to connect device"
+msgstr "Nepodařilo se připojit zařízení"
+
+#: src/widget/usb_redir/mod.rs:26
+msgid "USB device disconnected"
+msgstr "USB zařízení odpojeno"
+
+#: src/widget/usb_redir/mod.rs:28
+msgid "Failed to disconnect device"
+msgstr "Nepodařilo se odpojit zařízení"
+
+#: src/widget/usb_redir/mod.rs:29
+msgid "No devices available."
+msgstr "Nejsou k dispozici žádná zařízení."
+
+#: src/widget/usb_redir/settings.blp:23
+msgid "No devices connected."
+msgstr "Nepřipojena žádná zařízení."
+
+#: src/widget/usb_redir/settings.blp:48
+msgid "Manage Devices..."
+msgstr "Spravovat zařízení…"
+
+#: src/widget/usb_redir/settings.rs:167
+#: src/widget/usb_redir/settings_dialog.rs:212
+msgid "Disconnect"
+msgstr "Odpojit"
+
+#: src/widget/usb_redir/settings_dialog.blp:19
+msgid "Help"
+msgstr "Nápověda"
+
+#: src/widget/usb_redir/settings_dialog.blp:31
+msgid "Devices"
+msgstr "Zařízení"
+
+#: src/widget/usb_redir/settings_dialog.blp:45
+msgid "Show All Devices"
+msgstr "Zobrazit veškerá zařízení"
+
+#: src/widget/usb_redir/settings_dialog.rs:163
+msgid "1 channel free"
+msgstr "1 kanál volný"
+
+#. Translators: {free} = number of free USB redirection channels
+#: src/widget/usb_redir/settings_dialog.rs:166
+#, rust-format
+msgid "{free} channels free"
+msgstr "{free} kanálů volných"
+
+#: src/widget/usb_redir/settings_dialog.rs:200
+msgid "This device can not be connected; you might be missing permissions."
+msgstr "Toto zařízení není možné připojit – je možné, že chybí oprávnění."
+
+#: src/widget/usb_redir/settings_dialog.rs:398
+msgid ""
+"This dialog allows you to share USB devices with the remote server or "
+"virtual machine.\n"
+"\n"
+"The number of devices that can be shared may be limited by the remote "
+"server.\n"
+"\n"
+"The list hides some devices (USB hubs, etc.) by default. Use the toggle "
+"button to show all devices, but note that USB hubs can not be properly "
+"shared with remote servers.\n"
+"\n"
+"To share a device, your user account may need read and write permissions on "
+"the raw device. Consult your distribution documentation for more information."
+msgstr ""
+"Tento dialog vám umožňuje nasdílet USB zařízení vzdálenému serveru "
+"nebo virtuálnímu stroji.\n."
+"\n"
+"Počet zařízení, které je možné nasdílet je omezený vzdáleným serverem,.\n"
+"\n"
+"Ve výchozím stavu seznam některá zařízení skrývá (USB huby, atd.). Pokud "
+"chcete zobrazit všechna zařízení, použijte tlačítko přepínání. Ale mějte "
+"na paměti, že USB huby nelze řádně nasdílet vzdáleným serverům.\n"
+"\n"
+"Pro nasdílení zařízení je třeba, aby uživatelský účet měl oprávnění pro čtení "
+"a záápis na holé zařízení. Ohledně dalších informací konzultujte dokumentaci "
+"k vámi využívané distribuci."
+
+#: src/widget/window.blp:37 src/widget/window.blp:41
+msgid "About Field Monitor"
+msgstr "O aplikaci Field Monitor"
+
+#: src/widget/window.blp:84
+msgid "Main menu"
+msgstr "Hlavní nabídka"
+
+#: src/widget/window.blp:138 src/widget/window.blp:200
+msgid "Add Connection"
+msgstr "Přidat připojení"
+
+#: src/widget/window.blp:312
+msgid "_Reload Connections"
+msgstr "_Znovunačíst připojení"
+
+#: src/widget/window.blp:324
+msgid "_Preferences"
+msgstr "_Předvolby"
+
+#: src/widget/window.rs:459
+msgid "Showing active connection"
+msgstr "Zobrazující aktivní spojení"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/window.rs:464
+#, rust-format
+msgid "Showing connection: {title}"
+msgstr "Zobrazující připojení：{title}"
+
+#: src/widget/window.rs:469
+msgid "Showing connection list"
+msgstr "Zobrazující seznam připojení"
+
+#: src/widget/window.rs:599
+msgid "Připojujte se k vašim virtuálním strojům a vzdáleným serverům."
+msgstr "连接至您的虚拟机和远程服务器。"
