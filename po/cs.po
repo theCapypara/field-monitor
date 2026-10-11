@@ -488,7 +488,7 @@ msgstr ""
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
 msgid ""
 "It has support for directly connecting to VMs of the following hypervisors:"
-msgstr "Má podporu pro přímé připojování k virt. strojům na následujících hypervizorech:
+msgstr "Má podporu pro přímé připojování k virt. strojům na následujících hypervizorech:"
 
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
 msgid "Proxmox Virtual Environment"
@@ -1412,7 +1412,7 @@ msgid ""
 msgstr ""
 "Nastavte zda a kdy Field Monitor použije ostré, pravoúhlé rohy okna "
 "namísto výchozích zaoblených. Toto se hodí proto, aby rohy připojených "
-"obrazovek nebyly useknuté." 
+"obrazovek nebyly useknuté."
 
 #: src/widget/preferences.rs:207
 msgid ""
