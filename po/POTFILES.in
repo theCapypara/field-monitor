@@ -59,7 +59,6 @@ lib/src/adapter/vte_pty.rs
 lib/src/busy.rs
 lib/src/cache.rs
 lib/src/cert_security.rs
-lib/src/config.rs
 lib/src/connection/config_value.rs
 lib/src/connection/configuration.rs
 lib/src/connection/instance.rs
