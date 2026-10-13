@@ -2,7 +2,7 @@ on:
   push:
     branches: [ main ]
   pull_request:
-name: POTFILES
+name: POTFILES.in
 jobs:
   pot-generation:
     name: POTFILE Generation
@@ -18,46 +18,10 @@ jobs:
           target: de.capypara.FieldMonitor-pot
 
   potfiles-completeness:
-    name: POTFILES Completeness
+    name: POTFILES.in Completeness
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v7
 
-      - name: Check POTFILES contains all translatable sources
-        run: |
-          missing=0
-
-          # Check all .blp files in project source dirs are listed
-          for f in $(find src/ lib/ connection/ -name '*.blp' | sort); do
-            if ! grep -qxF "$f" po/POTFILES; then
-              echo "::error::Missing from po/POTFILES: $f"
-              missing=1
-            fi
-          done
-
-          # Check all .rs files containing "gettext" are listed
-          for f in $(grep -rl 'gettext' --include='*.rs' src/ lib/ connection/ | sort); do
-            if ! grep -qxF "$f" po/POTFILES; then
-              echo "::error::Missing from po/POTFILES: $f"
-              missing=1
-            fi
-          done
-
-          if [ "$missing" -eq 1 ]; then
-            echo ""
-            echo "Add the missing files to po/POTFILES and keep it sorted alphabetically."
-            exit 1
-          fi
-
-          echo "All translatable sources are listed in po/POTFILES."
-
-      - name: Check POTFILES is sorted alphabetically
-        run: |
-          # Extract non-empty, non-comment lines
-          grep -v '^\s*#' po/POTFILES | grep -v '^\s*$' > /tmp/potfiles_entries
-          LC_ALL=C sort /tmp/potfiles_entries > /tmp/potfiles_sorted
-          if ! diff -u /tmp/potfiles_entries /tmp/potfiles_sorted; then
-            echo "::error::po/POTFILES is not sorted alphabetically. Please sort it."
-            exit 1
-          fi
-          echo "po/POTFILES is sorted correctly."
+      - name: Check POTFILES.in
+        run: build-aux/check-potfiles.sh
