@@ -41,6 +41,11 @@
         default = field-monitor;
       });
 
+      overlays.default = final: _prev: {
+        field-monitor = final.callPackage ./build-aux/nix/pkg.nix { };
+        field-monitor-devel = final.callPackage ./build-aux/nix/pkg-devel.nix { };
+      };
+
       checks = eachPkgs (pkgs: rec {
         field-monitor = pkgs.callPackage ./build-aux/nix/pkg.nix { };
         field-monitor-devel = pkgs.callPackage ./build-aux/nix/pkg-devel.nix { inherit field-monitor; };
