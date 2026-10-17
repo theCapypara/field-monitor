@@ -21,6 +21,7 @@ use crate::api::node::ProxmoxNode;
 use crate::preferences::ProxmoxConfiguration;
 use anyhow::anyhow;
 use futures::future::LocalBoxFuture;
+use futures::lock::Mutex;
 use gettextrs::gettext;
 use http::Uri;
 use libfieldmonitor::connection::{
@@ -30,10 +31,13 @@ use libfieldmonitor::connection::{
 use libfieldmonitor::tokiort::run_on_tokio;
 use proxmox_api::ProxmoxApiClient;
 use secure_string::SecureString;
+use std::collections::HashMap;
 use std::mem::transmute;
 use std::num::NonZeroU32;
 use std::str::FromStr;
 use std::sync::Arc;
+
+pub(super) type ClientCache = Arc<Mutex<HashMap<String, Arc<ProxmoxApiClient>>>>;
 
 pub struct ProxmoxConnection {
     connection_id: String,
@@ -42,7 +46,22 @@ pub struct ProxmoxConnection {
 }
 
 impl ProxmoxConnection {
-    pub(super) async fn connect(config: ConnectionConfiguration) -> ConnectionResult<Self> {
+    pub(super) async fn connect(
+        config: ConnectionConfiguration,
+        clients: ClientCache,
+    ) -> ConnectionResult<Self> {
+        let client = Self::client_for(&config, clients).await?;
+        Ok(Self {
+            connection_id: config.id().to_string(),
+            title: config.title().unwrap_or_default().to_string(),
+            info_fetcher: Arc::new(InfoFetcher::new(client)),
+        })
+    }
+
+    pub(super) async fn client_for(
+        config: &ConnectionConfiguration,
+        clients: ClientCache,
+    ) -> ConnectionResult<Arc<ProxmoxApiClient>> {
         let authority = format!(
             "{}:{}",
             config.hostname().unwrap_or_default(),
@@ -76,6 +95,27 @@ impl ProxmoxConnection {
             })?
             .unwrap_or_else(|| SecureString::from_str("").unwrap());
 
+        let mut clients = clients.lock().await;
+        let user = if config.use_apikey() {
+            config.tokenid()
+        } else {
+            config.username()
+        }
+        .unwrap_or_default();
+        let tag = if config.use_apikey() {
+            "apikey"
+        } else {
+            "ticket"
+        };
+        if let Some(client) = clients.get(config.id())
+            && client.clientconfig_root().trim_end_matches('/') == api_root
+            && client.clientconfig_connection_type() == tag
+            && client.clientconfig_user_or_tokenid() == user
+            && client.clientconfig_password_or_apikey() == &pass
+            && client.clientconfig_ignore_ssl_errors() == config.ignore_ssl_cert_error()
+        {
+            return Ok(client.clone());
+        }
         let client = if config.use_apikey() {
             ProxmoxApiClient::connect_with_apikey(
                 &api_root,
@@ -90,17 +130,16 @@ impl ProxmoxConnection {
                 &api_root,
                 config.username().unwrap_or_default(),
                 pass,
+                None,
                 config.ignore_ssl_cert_error(),
             )
             .await
             .map_err(api::map_proxmox_error)
         }?;
 
-        Ok(Self {
-            connection_id: config.id().to_string(),
-            title: config.title().unwrap_or_default().to_string(),
-            info_fetcher: Arc::new(InfoFetcher::new(Arc::new(client))),
-        })
+        let client = Arc::new(client);
+        clients.insert(config.id().to_string(), client.clone());
+        Ok(client)
     }
 }
 

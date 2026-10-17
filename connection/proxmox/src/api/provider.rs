@@ -15,7 +15,7 @@
  *
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
-use crate::api::connection::ProxmoxConnection;
+use crate::api::connection::{ClientCache, ProxmoxConnection};
 use crate::credential_preferences::ProxmoxCredentialPreferences;
 use crate::preferences::{ProxmoxConfiguration, ProxmoxPreferences};
 use adw::prelude::Cast;
@@ -33,11 +33,14 @@ pub struct ProxmoxConnectionProviderConstructor;
 
 impl ConnectionProviderConstructor for ProxmoxConnectionProviderConstructor {
     fn new(&self) -> Box<dyn ConnectionProvider> {
-        Box::new(ProxmoxConnectionProvider {})
+        Box::new(ProxmoxConnectionProvider::default())
     }
 }
 
-pub struct ProxmoxConnectionProvider {}
+#[derive(Default)]
+pub struct ProxmoxConnectionProvider {
+    clients: ClientCache,
+}
 
 impl ConnectionProvider for ProxmoxConnectionProvider {
     fn tag(&self) -> &'static str {
@@ -118,10 +121,38 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
                 .downcast::<ProxmoxCredentialPreferences>()
                 .expect("store_credentials got invalid widget type");
 
-            configuration.transform_update_separate(
-                |c_session| preferences.apply_persistent_config(c_session),
-                |c_persistent| preferences.apply_session_config(c_persistent),
-            )
+            let configuration = configuration.transform_update_separate(
+                |c_session| preferences.apply_session_config(c_session),
+                |c_persistent| preferences.apply_persistent_config(c_persistent),
+            )?;
+            if preferences.use_temporary_credentials() && !preferences.use_apikey() {
+                let config = configuration.session().clone();
+                let clients = self.clients.clone();
+                let code = secure_string::SecureString::from(preferences.tfa_response().trim());
+                preferences.set_tfa_response("");
+                let result = run_on_tokio::<_, _, libfieldmonitor::connection::ConnectionError>(
+                    async move {
+                        let client = ProxmoxConnection::client_for(&config, clients).await?;
+                        let result = if code.unsecure().is_empty() {
+                            client.authenticate().await
+                        } else {
+                            client.submit_totp(code).await
+                        };
+                        result.map_err(crate::api::map_proxmox_error)
+                    },
+                )
+                .await;
+                if let Err(err) = result {
+                    if matches!(
+                        err.inner().downcast_ref::<proxmox_api::Error>(),
+                        Some(proxmox_api::Error::TfaRequired | proxmox_api::Error::TfaRejected)
+                    ) {
+                        preferences.show_tfa_prompt();
+                    }
+                    return Err(anyhow::anyhow!("{}", err));
+                }
+            }
+            Ok(configuration)
         })
     }
 
@@ -130,8 +161,11 @@ impl ConnectionProvider for ProxmoxConnectionProvider {
         configuration: ConnectionConfiguration,
     ) -> LocalBoxFuture<'_, ConnectionResult<Box<dyn Connection>>> {
         Box::pin(async move {
-            let con: ProxmoxConnection =
-                run_on_tokio(ProxmoxConnection::connect(configuration)).await?;
+            let con: ProxmoxConnection = run_on_tokio(ProxmoxConnection::connect(
+                configuration,
+                self.clients.clone(),
+            ))
+            .await?;
             let conbx: Box<dyn Connection> = Box::new(con);
             Ok(conbx)
         })
