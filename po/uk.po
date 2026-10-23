@@ -1,0 +1,1602 @@
+# Ukrainian translation for FieldMonitor.
+# Copyright (C) 2026 FieldMonitor's COPYRIGHT HOLDER
+# This file is distributed under the same license as the FieldMonitor package.
+# SPDX-FileCopyrightText: 2026 Yuri Chornoivan <yurchor@ukr.net>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: FieldMonitor main\n"
+"Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
+"POT-Creation-Date: 2026-10-13 12:31+0000\n"
+"PO-Revision-Date: 2026-10-23 21:31+0300\n"
+"Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
+"Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=n==1 ? 3 : n%10==1 && n%100!=11 ? 0 : n%10>="
+"2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"X-Generator: Lokalize 25.12.1\n"
+
+#: connection/generic-group/src/credential_preferences.blp:5
+#: connection/proxmox/src/credential_preferences.blp:5
+msgid "Credentials"
+msgstr "Реєстраційні дані"
+
+#: connection/generic-group/src/credential_preferences.blp:10
+#: connection/libvirt/src/qemu_preferences.blp:57
+#: connection/proxmox/src/credential_preferences.blp:31
+#: src/quick_connect/preferences.blp:9
+msgid "Username"
+msgstr "Користувач"
+
+#: connection/generic-group/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:36
+#: connection/proxmox/src/credential_preferences.rs:197
+#: src/quick_connect/preferences.blp:14
+msgid "Password"
+msgstr "Пароль"
+
+#: connection/generic-group/src/lib.rs:58
+msgid "Generic Connection Group"
+msgstr ""
+
+#: connection/generic-group/src/lib.rs:62
+msgid "Generic Connection Groups"
+msgstr ""
+
+#: connection/generic-group/src/lib.rs:66
+msgid "Add Generic Connection Group"
+msgstr ""
+
+#: connection/generic-group/src/lib.rs:74
+msgid "Connection to one or more RDP, SPICE and VNC servers"
+msgstr ""
+
+#: connection/generic-group/src/lib.rs:148
+msgid "One or more fields contain invalid values."
+msgstr ""
+
+#: connection/generic-group/src/lib.rs:371
+msgid "Failed to load password."
+msgstr ""
+
+#: connection/generic-group/src/preferences.blp:20
+msgid "Group Name"
+msgstr "Назва групи"
+
+#: connection/generic-group/src/preferences.blp:26
+msgid "Servers"
+msgstr "Сервери"
+
+#: connection/generic-group/src/preferences.blp:32
+#: connection/generic-group/src/preferences.rs:586
+msgid "Add Server"
+msgstr "Додати сервер"
+
+#: connection/generic-group/src/preferences.rs:473
+msgid "No servers added yet."
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/generic-group/src/preferences.rs:582
+#: src/widget/update_connection_dialog.rs:102
+#, rust-format
+msgid "Edit “{title}”"
+msgstr "Змінити «{title}»"
+
+#: connection/generic-group/src/preferences.rs:594
+msgid "Update"
+msgstr ""
+
+#: connection/generic-group/src/preferences.rs:596
+#: src/widget/add_connection_dialog.rs:133
+msgid "Add"
+msgstr "Додати"
+
+#: connection/generic-group/src/preferences.rs:617
+msgid "Remove Server"
+msgstr "Вилучити сервер"
+
+#: connection/generic-group/src/server_preferences.blp:12
+msgid "Server Name"
+msgstr "Назва сервера"
+
+#: connection/generic-group/src/server_preferences.blp:17
+msgid "Server Type"
+msgstr "Тип сервера"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:22
+#: connection/libvirt/src/connection/graphics.rs:261
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
+#: lib/src/adapter/rdp.rs:53
+msgid "RDP"
+msgstr "RDP"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:23
+#: connection/libvirt/src/connection/graphics.rs:258
+#: connection/proxmox/src/api/node.rs:162
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
+#: lib/src/adapter/spice.rs:216
+msgid "SPICE"
+msgstr "SPICE"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:24
+#: connection/libvirt/src/connection/graphics.rs:264
+#: connection/proxmox/src/api/node.rs:163
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
+#: lib/src/adapter/vnc.rs:135
+msgid "VNC"
+msgstr "VNC"
+
+#: connection/generic-group/src/server_preferences.blp:32
+#: connection/libvirt/src/qemu_preferences.blp:52
+#: connection/proxmox/src/preferences.blp:21
+#: src/widget/certificate_trust_dialog.rs:159
+msgid "Hostname"
+msgstr "Назва вузла"
+
+#: connection/generic-group/src/server_preferences.blp:37
+#: connection/proxmox/src/preferences.blp:26
+msgid "Port"
+msgstr "Порт"
+
+#: connection/libvirt/src/connection/adapter.rs:209
+msgid ""
+"No supported graphics endpoint available. Tip: If connected via SSH, make "
+"sure that the graphics adapter's listen type is set to 'address' and that "
+"the adapter is listening on all interfaces."
+msgstr ""
+
+#: connection/libvirt/src/connection/graphics.rs:255
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: connection/libvirt/src/connection/mod.rs:162
+msgid "(Unable to load server name)"
+msgstr ""
+
+#: connection/libvirt/src/connection/mod.rs:216
+#: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:66
+#: connection/proxmox/src/api/vm.rs:71
+msgid "Reboot"
+msgstr "Перезавантажити"
+
+#: connection/libvirt/src/connection/mod.rs:217
+#: connection/proxmox/src/api/node.rs:61 connection/proxmox/src/api/vm.rs:67
+#: connection/proxmox/src/api/vm.rs:72
+msgid "Shutdown"
+msgstr "Вимкнути"
+
+#: connection/libvirt/src/connection/mod.rs:218
+#: connection/proxmox/src/api/vm.rs:73
+msgid "Force Reset"
+msgstr ""
+
+#: connection/libvirt/src/connection/mod.rs:219
+#: connection/proxmox/src/api/vm.rs:68 connection/proxmox/src/api/vm.rs:74
+msgid "Force Poweroff"
+msgstr ""
+
+#. TRANSLATORS: Verb
+#: connection/libvirt/src/connection/mod.rs:226
+#: connection/proxmox/src/api/vm.rs:82
+msgid "Start"
+msgstr "Запуск"
+
+#: connection/libvirt/src/connection/mod.rs:257
+msgid "Reboot command successfully sent to domain."
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:262
+#, rust-format
+msgid "Failed to send reboot command: {err}"
+msgstr ""
+
+#: connection/libvirt/src/connection/mod.rs:283
+msgid "Shutdown command successfully sent to domain."
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:288
+#, rust-format
+msgid "Failed to send shutdown command: {err}"
+msgstr ""
+
+#: connection/libvirt/src/connection/mod.rs:309
+msgid "Domain successfully reset."
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:314
+#, rust-format
+msgid "Failed to reset domain: {err}"
+msgstr ""
+
+#: connection/libvirt/src/connection/mod.rs:335
+msgid "Domain successfully shut down."
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:340
+#, rust-format
+msgid "Failed to send destroy command: {err}"
+msgstr ""
+
+#: connection/libvirt/src/connection/mod.rs:366
+msgid "Domain successfully started."
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:371
+#, rust-format
+msgid "Failed to send create command: {err}"
+msgstr ""
+
+#: connection/libvirt/src/connection/mod.rs:398
+msgid "Domain is not running."
+msgstr "Домен не запущено."
+
+#: connection/libvirt/src/connection/mod.rs:405
+msgid "Domain is already running."
+msgstr "Домен вже запущено."
+
+#: connection/libvirt/src/connection/mod.rs:414
+#: connection/proxmox/src/api/mod.rs:84
+msgid "Internal error while trying to execute command."
+msgstr ""
+
+#: connection/libvirt/src/connection/mod.rs:442
+msgid "Serial Console"
+msgstr "Послідовна консоль"
+
+#: connection/libvirt/src/connection/qemu_dbus.rs:130
+msgid "Try enabling the 'p2p' option for the D-Bus graphics adapter."
+msgstr ""
+
+#: connection/libvirt/src/connection/qemu_dbus.rs:143
+msgid ""
+"If you are connecting to a qemu:///system domain, you may not be able to "
+"connect via D-Bus unless you enable the 'p2p' option."
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/qemu_dbus.rs:170
+#, rust-format
+msgid ""
+"Your user account does not have permission to connect to the bus.{group_hint}"
+msgstr ""
+
+#: connection/libvirt/src/connection/qemu_dbus.rs:194
+msgid "The following information may help you to troubleshoot the issue:"
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/qemu_dbus.rs:206
+#, rust-format
+msgid "Failed to connect via D-Bus.{extra_info}"
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/qemu_dbus.rs:253
+#, rust-format
+msgid "Try adding your account to the '{group_name}' group."
+msgstr ""
+
+#: connection/libvirt/src/hypervisor/qemu.rs:46
+#: connection/libvirt/src/hypervisor/qemu.rs:50
+msgid "QEMU/KVM"
+msgstr "QEMU/KVM"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:54
+msgid "Add QEMU/KVM Connection"
+msgstr ""
+
+#: connection/libvirt/src/hypervisor/qemu.rs:62
+msgid "QEMU/KVM hypervisor connection via libvirt."
+msgstr ""
+
+#: connection/libvirt/src/qemu_preferences.blp:13
+#: connection/proxmox/src/preferences.blp:12
+msgid "Connection Name"
+msgstr "Назва з’єднання"
+
+#: connection/libvirt/src/qemu_preferences.blp:19
+msgid "Session Type"
+msgstr "Тип сеансу"
+
+#: connection/libvirt/src/qemu_preferences.blp:22
+msgid "System Session"
+msgstr ""
+
+#: connection/libvirt/src/qemu_preferences.blp:23
+msgid "This is the QEMU/KVM default."
+msgstr ""
+
+#: connection/libvirt/src/qemu_preferences.blp:33
+msgid "User Session"
+msgstr "Сеанс користувача"
+
+#: connection/libvirt/src/qemu_preferences.blp:44
+msgid "Remote Connection"
+msgstr "Віддалене з'єднання"
+
+#: connection/libvirt/src/qemu_preferences.blp:47
+msgid "Connect via SSH"
+msgstr ""
+
+#: connection/proxmox/src/api/connection.rs:60
+msgid "Unable to build a valid URL to connect to. Check your settings."
+msgstr ""
+
+#: connection/proxmox/src/api/connection.rs:72
+msgid "Failed to retrieve API Key or Password from secrets service."
+msgstr ""
+
+#: connection/proxmox/src/api/node.rs:100
+msgid "Reboot command successfully sent to server."
+msgstr ""
+
+#: connection/proxmox/src/api/node.rs:103 connection/proxmox/src/api/vm.rs:135
+msgid "Failed to send reboot command."
+msgstr ""
+
+#: connection/proxmox/src/api/node.rs:125
+msgid "Shutdown command successfully sent to server."
+msgstr ""
+
+#: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:168
+msgid "Failed to send shutdown command."
+msgstr ""
+
+#: connection/proxmox/src/api/node.rs:164
+msgid "Console"
+msgstr "Консоль"
+
+#. Translators: Keyword in the metainfo.
+#: connection/proxmox/src/api/provider.rs:48
+#: connection/proxmox/src/api/provider.rs:52
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
+msgid "Proxmox"
+msgstr ""
+
+#: connection/proxmox/src/api/provider.rs:56
+msgid "Add Proxmox Connection"
+msgstr ""
+
+#: connection/proxmox/src/api/provider.rs:64
+msgid "Proxmox Virtual Environment hypervisor connection"
+msgstr ""
+
+#: connection/proxmox/src/api/vm.rs:132
+msgid "Reboot command successfully sent to VM."
+msgstr ""
+
+#: connection/proxmox/src/api/vm.rs:165
+msgid "Shutdown command successfully sent to VM."
+msgstr ""
+
+#: connection/proxmox/src/api/vm.rs:197
+msgid "VM was successfully reset."
+msgstr ""
+
+#: connection/proxmox/src/api/vm.rs:200
+msgid "Failed to send reset command."
+msgstr ""
+
+#: connection/proxmox/src/api/vm.rs:230
+msgid "VM is now stopping."
+msgstr ""
+
+#: connection/proxmox/src/api/vm.rs:233
+msgid "Failed to send stop command."
+msgstr ""
+
+#: connection/proxmox/src/api/vm.rs:263
+msgid "VM is now starting."
+msgstr ""
+
+#: connection/proxmox/src/api/vm.rs:266
+msgid "Failed to send start command."
+msgstr ""
+
+#: connection/proxmox/src/credential_preferences.blp:10
+msgid ""
+"The Proxmox user needs at least the permissions <tt>VM.Console</tt>, "
+"<tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>."
+msgstr ""
+
+#: connection/proxmox/src/credential_preferences.blp:13
+msgid "Authentication Mode"
+msgstr ""
+
+#: connection/proxmox/src/credential_preferences.blp:19
+#: connection/proxmox/src/credential_preferences.rs:195
+msgid "API Key"
+msgstr "Ключ до програмного інтерфейсу"
+
+#: connection/proxmox/src/credential_preferences.blp:26
+msgid "Token ID"
+msgstr "Ідентифікатор жетона"
+
+#: connection/proxmox/src/preferences.blp:18
+msgid "Connection"
+msgstr "З'єднання"
+
+#: connection/proxmox/src/preferences.blp:33
+msgid "Trust Any SSL Certificate"
+msgstr ""
+
+#: connection/proxmox/src/preferences.blp:34
+msgid ""
+"Allows connecting to servers with self-signed and otherwise invalid SSL "
+"certificates. Be careful, as this is a potential security risk."
+msgstr ""
+
+#. Translators: The name of the application.
+#: data/de.capypara.FieldMonitor.desktop.in.in:2
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/widget/window.blp:9
+#: src/widget/window.blp:61 src/widget/window.blp:67 src/widget/window.blp:116
+#: src/widget/window.blp:218 src/widget/window.blp:235 src/widget/window.rs:405
+msgid "Field Monitor"
+msgstr ""
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:3
+msgid "Remote Desktop Viewer"
+msgstr "Перегляд віддалених стільниць"
+
+#. Translators: The summary of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.desktop.in.in:4
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
+msgid "Access VMs and external screens"
+msgstr ""
+
+#. Translators: The keywords from the desktop file.
+#: data/de.capypara.FieldMonitor.desktop.in.in:12
+msgid "proxmox;vnc;spice;rdp;kvm;qemu;"
+msgstr ""
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:17
+msgid "New Window"
+msgstr "Нове вікно"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:24
+msgid "remote desktop"
+msgstr "віддалена стільниця"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:32
+msgid "KVM"
+msgstr "KVM"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:34
+msgid "QEMU"
+msgstr ""
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:36
+msgid "libvirt"
+msgstr "libvirt"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:40
+msgid "GNOME"
+msgstr "GNOME"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:49
+msgid ""
+"Field Monitor is a remote-desktop client designed for the GNOME platform."
+msgstr ""
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
+msgid ""
+"It is focused on connecting to virtual machines, but can connect to any "
+"server supporting the RDP, SPICE or VNC protocols."
+msgstr ""
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
+msgid ""
+"It has support for directly connecting to VMs of the following hypervisors:"
+msgstr ""
+
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
+msgid "Proxmox Virtual Environment"
+msgstr ""
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
+msgid "QEMU/KVM via libvirt"
+msgstr ""
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
+msgid ""
+"For supported VM hypervisors, Field Monitor also offers options to manage "
+"the basic power state of VMs, such as starting, stopping, rebooting, etc."
+msgstr ""
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
+msgid ""
+"Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
+"files and quickly connecting to RDP, SPICE or VNC servers via URI."
+msgstr ""
+
+#. Translators: Caption of the first screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:204
+msgid "Screen of a connected graphical display"
+msgstr ""
+
+#. Translators: Caption of the second screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:214
+msgid "Welcome screen"
+msgstr "Вікно вітання"
+
+#. Translators: Caption of the third screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:221
+msgid "A list of servers in a Proxmox cluster to connect to"
+msgstr ""
+
+#. Translators: Caption of the 4th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:231
+msgid "Screen of a connected console"
+msgstr ""
+
+#. Translators: Caption of the 5th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:241
+msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
+msgstr ""
+
+#: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
+msgid "Remote Desktop file"
+msgstr ""
+
+#: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
+msgid "Virt-Viewer connection file"
+msgstr ""
+
+#: lib/src/adapter/usbredir/error.rs:35
+msgid "The device can not be attached to the connection"
+msgstr ""
+
+#: lib/src/adapter/usbredir/error.rs:38
+msgid "The device was already attached to the connection"
+msgstr ""
+
+#: lib/src/adapter/usbredir/portal.rs:254
+#, rust-format
+msgid "Failed to communicate with the system portal: {details}"
+msgstr ""
+
+#: lib/src/adapter/usbredir/portal.rs:258
+#, rust-format
+msgid "USB portal request failed: {details}"
+msgstr ""
+
+#: lib/src/adapter/usbredir/portal.rs:262
+#, rust-format
+msgid "USB redirection initialization failed: {details}"
+msgstr ""
+
+#: lib/src/adapter/usbredir/qemu_dbus/mod.rs:258
+#: lib/src/adapter/usbredir/spice.rs:132
+msgid "Failed to attach the USB device"
+msgstr ""
+
+#: lib/src/cert_security.rs:134
+msgid "Server certificate verification failed"
+msgstr ""
+
+#: lib/src/connection/instance.rs:191
+msgid "Unknown error"
+msgstr "Невідома помилка"
+
+#: lib/src/connection/types.rs:49
+msgid "Authentication failed"
+msgstr "Не вдалось пройти розпізнавання"
+
+#: lib/src/connection/types.rs:50
+msgid "General Error"
+msgstr "Загальна помилка"
+
+#: lib/src/gtk/save_credentials_button.blp:23
+msgid "Save and remember"
+msgstr ""
+
+#: lib/src/gtk/save_credentials_button.blp:29
+msgid "Ask for this every time"
+msgstr ""
+
+#: lib/src/lib.rs:43
+msgid "The connection configuration is invalid"
+msgstr ""
+
+#: src/application.rs:131
+msgid "Open the app with a new window"
+msgstr ""
+
+#. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
+#: src/application.rs:584
+msgid "translator-credits"
+msgstr "Юрій Чорноіван <yurchor@ukr.net>, 2026"
+
+#: src/application.rs:603 src/connection_loader.rs:437
+#: src/widget/add_connection_dialog.rs:210
+#: src/widget/authenticate_connection_dialog.rs:170
+#: src/widget/certificate_details_window.rs:235
+#: src/widget/quick_connect_dialog.rs:101
+#: src/widget/quick_connect_dialog.rs:161
+#: src/widget/update_connection_dialog.rs:180
+#: src/widget/usb_redir/settings.rs:214
+#: src/widget/usb_redir/settings_dialog.rs:387
+#: src/widget/usb_redir/settings_dialog.rs:403
+msgid "OK"
+msgstr "Гаразд"
+
+#: src/application.rs:645
+msgid "Connection successfully added."
+msgstr ""
+
+#: src/application.rs:700
+msgid "Connection successfully updated."
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/application.rs:738
+#, rust-format
+msgid "Permanently Remove “{title}”?"
+msgstr ""
+
+#: src/application.rs:742 src/widget/window.rs:339
+msgid "No"
+msgstr "Ні"
+
+#: src/application.rs:743 src/widget/window.rs:340
+msgid "Yes"
+msgstr "Так"
+
+#: src/application.rs:748
+msgid "Connection successfully removed."
+msgstr ""
+
+#: src/application.rs:809
+msgid "Authentication successfully updated"
+msgstr ""
+
+#: src/connection_loader.rs:83 src/connection_loader.rs:93
+msgid "Connection not found."
+msgstr ""
+
+#: src/connection_loader.rs:193 src/connection_loader.rs:204
+msgid "Server not found."
+msgstr "Сервер не знайдено."
+
+#: src/connection_loader.rs:246 src/connection_loader.rs:364
+msgid "Failed to load or connect to server"
+msgstr ""
+
+#: src/quick_connect/mod.rs:118
+msgid "Untitled Server"
+msgstr ""
+
+#: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
+#: src/widget/window.blp:95 src/widget/window.blp:204
+msgid "Quick Connect"
+msgstr "Швидке з’єднання"
+
+#: src/quick_connect/mod.rs:320
+msgid "via Quick Connect"
+msgstr ""
+
+#: src/quick_connect/rdp.rs:78
+msgid "Failed to read file"
+msgstr "Не вдалося прочитати файл"
+
+#: src/quick_connect/rdp.rs:169
+msgid "Invalid RDP parameters"
+msgstr ""
+
+#: src/quick_connect/spice.rs:208
+msgid "Invalid SPICE URI"
+msgstr ""
+
+#: src/quick_connect/util.rs:58 src/quick_connect/util.rs:63
+msgid "Invalid port in URI"
+msgstr ""
+
+#: src/quick_connect/vnc.rs:111
+msgid "Invalid VNC URI"
+msgstr ""
+
+#: src/remote_server_info.rs:47
+msgid "Field Monitor does not support this URI scheme"
+msgstr ""
+
+#: src/remote_server_info.rs:61
+msgid "Unable to detect supported file format"
+msgstr ""
+
+#: src/remote_server_info.rs:69
+msgid "Field Monitor was unable to read the file"
+msgstr ""
+
+#: src/secrets.rs:91
+msgid "A secret value used by Field Monitor"
+msgstr ""
+
+#: src/shortcuts-dialog.blp:6
+msgctxt "shortcut window"
+msgid "Window"
+msgstr "Вікно"
+
+#: src/shortcuts-dialog.blp:9
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Закрити вікно"
+
+#: src/shortcuts-dialog.blp:14
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "Нове вікно"
+
+#: src/shortcuts-dialog.blp:19
+msgctxt "shortcut window"
+msgid "Open Menu"
+msgstr "Відкрити меню"
+
+#: src/shortcuts-dialog.blp:24
+msgctxt "shortcut window"
+msgid "Toggle Fullscreen"
+msgstr "Перемикач повноекранного режиму"
+
+#: src/shortcuts-dialog.blp:30
+msgctxt "shortcut window"
+msgid "Connection"
+msgstr "З'єднання"
+
+#: src/shortcuts-dialog.blp:33
+msgctxt "shortcut window"
+msgid "Close Connection"
+msgstr "Закрити з'єднання"
+
+#: src/shortcuts-dialog.blp:39
+msgctxt "shortcut window"
+msgid "Terminal"
+msgstr "Термінал"
+
+#: src/shortcuts-dialog.blp:42
+msgctxt "shortcut window"
+msgid "Copy"
+msgstr "Копіювати"
+
+#: src/shortcuts-dialog.blp:47
+msgctxt "shortcut window"
+msgid "Paste"
+msgstr "Вставити"
+
+#: src/shortcuts-dialog.blp:52
+msgctxt "shortcut window"
+msgid "Select All"
+msgstr "Позначити все"
+
+#: src/shortcuts-dialog.blp:57
+msgctxt "shortcut window"
+msgid "Zoom In"
+msgstr "Збільшити"
+
+#: src/shortcuts-dialog.blp:62
+msgctxt "shortcut window"
+msgid "Zoom Out"
+msgstr "Зменшити"
+
+#: src/shortcuts-dialog.blp:67
+msgctxt "shortcut window"
+msgid "Reset Zoom"
+msgstr "Відновити початковий масштаб"
+
+#: src/shortcuts-dialog.blp:73
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Загальне"
+
+#: src/shortcuts-dialog.blp:76
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "Налаштування"
+
+#: src/shortcuts-dialog.blp:81
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Показати клавіатурні скорочення"
+
+#: src/shortcuts-dialog.blp:86
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Вийти"
+
+#: src/widget/add_connection_dialog.blp:11 src/widget/window.blp:266
+msgid "Add New Connection"
+msgstr "Додати нове з'єднання"
+
+#: src/widget/add_connection_dialog.rs:203
+#: src/widget/authenticate_connection_dialog.rs:163
+#: src/widget/update_connection_dialog.rs:173
+msgid "Failed to save connection"
+msgstr ""
+
+#: src/widget/add_connection_dialog.rs:206
+#: src/widget/authenticate_connection_dialog.rs:166
+#: src/widget/update_connection_dialog.rs:176
+msgid "An error occurred while trying to save the connection"
+msgstr ""
+
+#: src/widget/app_status.blp:30
+msgid "Field Monitor is starting..."
+msgstr ""
+
+#: src/widget/app_status.blp:50
+msgid "Failed to Initialize"
+msgstr "Не вдалося ініціалізувати"
+
+#: src/widget/app_status.blp:51
+msgid ""
+"Field Monitor could not start, because it could not connect to your system's "
+"secret service for accessing passwords."
+msgstr ""
+
+#: src/widget/app_status.blp:56 src/widget/app_status.blp:84
+msgid "Quit"
+msgstr "Вийти"
+
+#: src/widget/app_status.blp:78
+msgid "Failed to Initialize - Secrets Invalid"
+msgstr ""
+
+#: src/widget/app_status.blp:79
+msgid ""
+"Field Monitor could not start, because the secrets backend reports that the "
+"system secrets are invalid or corrupted.\n"
+"\n"
+"This can happen if you moved your HOME directory to another system.\n"
+"\n"
+"You may be able to resolve this with <a href='https://github.com/theCapypara/"
+"field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
+msgstr ""
+
+#: src/widget/authenticate_connection_dialog.blp:6
+#: src/widget/connection_list/info_page.blp:74
+#: src/widget/connection_list/info_page.rs:273
+msgid "Authentication required"
+msgstr "Слід пройти розпізнавання"
+
+#: src/widget/authenticate_connection_dialog.blp:19
+msgid "Apply"
+msgstr "Застосувати"
+
+#: src/widget/authenticate_connection_dialog.rs:105
+msgid "This connection needs additional authentication to proceed."
+msgstr ""
+
+#: src/widget/certificate_details_window.blp:5
+msgid "Certificate Viewer"
+msgstr "Переглядач сертифікатів"
+
+#: src/widget/certificate_details_window.blp:23
+msgid "Export"
+msgstr "Експортувати"
+
+#: src/widget/certificate_details_window.blp:32
+#: src/widget/close_warning_dialog.rs:72
+#: src/widget/connection_view/server_screen.blp:140
+msgid "Close"
+msgstr "Закрити"
+
+#: src/widget/certificate_details_window.rs:160
+msgid "PEM Certificate"
+msgstr ""
+
+#: src/widget/certificate_details_window.rs:165
+msgid "DER Certificate"
+msgstr ""
+
+#: src/widget/certificate_details_window.rs:171
+msgid "Export Certificate..."
+msgstr "Експортувати сертифікат…"
+
+#: src/widget/certificate_details_window.rs:230
+msgid "Failed to save"
+msgstr "Не вдалося зберегти"
+
+#: src/widget/certificate_details_window.rs:232
+msgid "Field Monitor was unable to save the provided file."
+msgstr ""
+
+#: src/widget/certificate_trust_dialog.rs:136
+msgid "Trust this server?"
+msgstr ""
+
+#: src/widget/certificate_trust_dialog.rs:139
+msgid "Do you trust this certificate and want to establish a connection?"
+msgstr ""
+
+#: src/widget/certificate_trust_dialog.rs:167
+msgid "Fingerprint"
+msgstr "Відбиток"
+
+#: src/widget/certificate_trust_dialog.rs:177
+msgid "Show Certificate"
+msgstr "Показати сертифікат"
+
+#: src/widget/certificate_trust_dialog.rs:197
+msgid ""
+"This certificate is the certificate authority (CA) issuing the connection "
+"certificate."
+msgstr ""
+
+#: src/widget/certificate_trust_dialog.rs:202
+msgid "Info"
+msgstr "Відомості"
+
+#: src/widget/certificate_trust_dialog.rs:207
+msgid ""
+"After you choose to trust the CA, Field Monitor will confirm that the "
+"connection is established using a certificate issued by the CA. If not, "
+"Field Monitor will refuse the connection."
+msgstr ""
+
+#: src/widget/certificate_trust_dialog.rs:229
+#, rust-format
+msgid ""
+"If you choose to trust this certificate, your choice will be remembered for "
+"future connections to <tt>{host}</tt>."
+msgstr ""
+
+#: src/widget/certificate_trust_dialog.rs:239
+#: src/widget/close_warning_dialog.rs:71
+msgid "Cancel"
+msgstr "Скасувати"
+
+#: src/widget/certificate_trust_dialog.rs:240
+msgid "Trust Certificate"
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/close_warning_dialog.rs:62
+#, rust-format
+msgid ""
+"This window is still connected to “{label}”. Closing it will disconnect from "
+"the server."
+msgstr ""
+
+#: src/widget/close_warning_dialog.rs:67
+msgid "Close Window?"
+msgstr "Закрити вікно?"
+
+#: src/widget/connection_list/connection_list_navbar.blp:12
+msgid "Connections"
+msgstr "З'єднання"
+
+#: src/widget/connection_list/connection_list_navbar.blp:13
+msgid "List of configured connections."
+msgstr ""
+
+#: src/widget/connection_list/connection_list_navbar.blp:33
+#: src/widget/connection_list/info_page.blp:17
+#: src/widget/connection_list/info_page.blp:21
+msgid "Edit Connection"
+msgstr "Редагувати з'єднання"
+
+#: src/widget/connection_list/connection_list_navbar.blp:38
+#: src/widget/update_connection_dialog.blp:19
+#: src/widget/update_connection_dialog.blp:23
+msgid "Remove Connection"
+msgstr "Вилучити з'єднання"
+
+#: src/widget/connection_list/info_page.blp:65
+#: src/widget/connection_list/info_page.rs:257
+msgid "Failed to load connection"
+msgstr ""
+
+#: src/widget/connection_list/info_page.blp:75
+msgid "This connection requires additional authentication."
+msgstr ""
+
+#: src/widget/connection_list/info_page.blp:78
+msgid "Authenticate"
+msgstr "Розпізнавання"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/info_page.rs:138
+#, rust-format
+msgid "Loading connection: {title}"
+msgstr ""
+
+#: src/widget/connection_list/info_page.rs:192
+msgid "No servers available"
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/info_page.rs:233
+#, rust-format
+msgid "Loaded connection: {title}"
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_list/info_page.rs:262
+#, rust-format
+msgid "Failed to load connection: {detail}"
+msgstr ""
+
+#. TODO: Getting the server name here isn't really easy...
+#: src/widget/connection_list/server_actions.rs:124
+#: src/widget/update_connection_dialog.rs:97
+msgid "Edit Server"
+msgstr "Змінити сервер"
+
+#: src/widget/connection_list/server_actions.rs:226
+msgid "Actions"
+msgstr "Дії"
+
+#: src/widget/connection_list/server_actions.rs:324
+#: src/widget/quick_connect_dialog.blp:40
+#: src/widget/usb_redir/settings_dialog.rs:206
+msgid "Connect"
+msgstr "З'єднатися"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/server_actions.rs:343
+#, rust-format
+msgid "Connect via {adapter}"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.blp:30
+#: src/widget/connection_view/server_screen.blp:34 src/widget/window.blp:123
+#: src/widget/window.blp:127
+msgid "Toggle Fullscreen"
+msgstr "Увімкнути/Вимкнути повноекранний режим"
+
+#: src/widget/connection_view/server_screen.blp:45 src/widget/window.blp:135
+msgid "Menu"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.blp:48
+msgid "Connection menu"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.blp:58
+#: src/widget/connection_view/server_screen.blp:61
+#: src/widget/usb_redir/settings_dialog.blp:7
+#: src/widget/usb_redir/settings_dialog.blp:13
+#: src/widget/usb_redir/settings_dialog.rs:399
+msgid "USB Devices"
+msgstr "Пристрої USB"
+
+#: src/widget/connection_view/server_screen.blp:76
+#: src/widget/connection_view/server_screen.blp:79
+msgid "Open Monitor in New Window"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.blp:119
+msgid "Connecting..."
+msgstr "Встановлення з'єднання…"
+
+#: src/widget/connection_view/server_screen.blp:150
+msgid "Reconnect"
+msgstr "Перез'єднатись"
+
+#: src/widget/connection_view/server_screen.blp:157
+msgid "Show Output"
+msgstr "Показати виведені дані"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:465
+#, rust-format
+msgid "Connecting to {title}"
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:792
+#, rust-format
+msgid "Connected to {title}"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:972
+msgid "Disconnected"
+msgstr "Від'єднано"
+
+#: src/widget/connection_view/server_screen.rs:974
+msgid "The connection to the server was closed."
+msgstr "З'єднання з сервером було розірвано."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_view/server_screen.rs:979
+#, rust-format
+msgid "Disconnected from {title}"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1023
+msgid "Connection Failed"
+msgstr "Невдала спроба з'єднання"
+
+#: src/widget/connection_view/server_screen.rs:1024
+msgid "The connection was closed due to an error."
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1031
+msgid "Connection failed"
+msgstr "Не вдалося встановити з'єднання"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_view/server_screen.rs:1035
+#, rust-format
+msgid "Connection failed: {detail}"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1197
+msgid "_Dynamic Resize"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1201
+msgid "_Scale to Window"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1211
+msgid "_Resize Window to Screen"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1215
+msgid "Send _Keys"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1219
+msgid "Ctrl+Alt L"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1223
+msgid "Ctrl+Alt+Backspace"
+msgstr "Ctrl+Alt+Backspace"
+
+#: src/widget/connection_view/server_screen.rs:1227
+msgid "Ctrl+Alt+Delete"
+msgstr "Ctrl+Alt+Delete"
+
+#: src/widget/connection_view/server_screen.rs:1233
+msgid "Ctrl+Alt+F1"
+msgstr "Ctrl+Alt+F1"
+
+#: src/widget/connection_view/server_screen.rs:1237
+msgid "Ctrl+Alt+F2"
+msgstr "Ctrl+Alt+F2"
+
+#: src/widget/connection_view/server_screen.rs:1241
+msgid "Ctrl+Alt+F3"
+msgstr "Ctrl+Alt+F3"
+
+#: src/widget/connection_view/server_screen.rs:1245
+msgid "Ctrl+Alt+F4"
+msgstr "Ctrl+Alt+F4"
+
+#: src/widget/connection_view/server_screen.rs:1249
+msgid "Ctrl+Alt+F5"
+msgstr "Ctrl+Alt+F5"
+
+#: src/widget/connection_view/server_screen.rs:1253
+msgid "Ctrl+Alt+F6"
+msgstr "Ctrl+Alt+F6"
+
+#: src/widget/connection_view/server_screen.rs:1257
+msgid "Ctrl+Alt+F7"
+msgstr "Ctrl+Alt+F7"
+
+#: src/widget/connection_view/server_screen.rs:1261
+msgid "Ctrl+Alt+F8"
+msgstr "Ctrl+Alt+F8"
+
+#: src/widget/connection_view/server_screen.rs:1265
+msgid "Ctrl+Alt+F9"
+msgstr "Ctrl+Alt+F9"
+
+#: src/widget/connection_view/server_screen.rs:1269
+msgid "Ctrl+Alt+F10"
+msgstr "Ctrl+Alt+F10"
+
+#: src/widget/connection_view/server_screen.rs:1273
+msgid "Ctrl+Alt+F11"
+msgstr "Ctrl+Alt+F11"
+
+#: src/widget/connection_view/server_screen.rs:1277
+msgid "Ctrl+Alt+F12"
+msgstr "Ctrl+Alt+F12"
+
+#: src/widget/connection_view/server_screen.rs:1283
+msgid "Print"
+msgstr "Надрукувати"
+
+#: src/widget/connection_view/server_screen.rs:1294
+msgid "_Zoom"
+msgstr "_Масштаб"
+
+#: src/widget/connection_view/server_screen.rs:1317
+msgid "Server _Actions"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1321
+msgid "_Close Window"
+msgstr "_Закрити вікно"
+
+#: src/widget/connection_view/server_screen.rs:1323
+msgid "_Close Connection"
+msgstr "З_акрити з'єднання"
+
+#: src/widget/connection_view/server_screen.rs:1340 src/widget/window.blp:278
+msgid "_New Window"
+msgstr "_Створити вікно"
+
+#: src/widget/connection_view/server_screen.rs:1345 src/widget/window.blp:283
+msgid "_Preferences"
+msgstr "_Налаштування"
+
+#: src/widget/connection_view/server_screen.rs:1349 src/widget/window.blp:288
+msgid "_Keyboard Shortcuts"
+msgstr "_Клавіатурні скорочення"
+
+#: src/widget/connection_view/server_screen.rs:1353 src/widget/window.blp:293
+msgid "_About Field Monitor"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1372
+#, rust-format
+msgid "Show Monitor {number}"
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1383
+msgid "_Copy"
+msgstr "_Копіювати"
+
+#: src/widget/connection_view/server_screen.rs:1387
+msgid "_Paste"
+msgstr "Вст_авити"
+
+#: src/widget/connection_view/server_screen.rs:1391
+msgid "Select _All"
+msgstr "Позначити _всі"
+
+#: src/widget/connection_view/server_screen.rs:1400
+msgid "Zoom In"
+msgstr "Збільшити"
+
+#: src/widget/connection_view/server_screen.rs:1404
+msgid "Zoom Out"
+msgstr "Зменшити"
+
+#: src/widget/connection_view/server_screen.rs:1408
+msgid "Reset Zoom"
+msgstr "Відновити початковий масштаб"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:1462
+#, rust-format
+msgid "Press {keycombo} to ungrab the mouse and keyboard."
+msgstr ""
+
+#: src/widget/connection_view/server_screen.rs:1485
+msgid "Input released."
+msgstr ""
+
+#: src/widget/focus_grabber.rs:215
+msgid "Remote Server Screen"
+msgstr ""
+
+#: src/widget/focus_grabber.rs:216
+msgid "Press any key to grab input."
+msgstr ""
+
+#: src/widget/preferences.blp:12
+msgid "Preferences"
+msgstr "Налаштування"
+
+#: src/widget/preferences.blp:15
+msgid "Behavior"
+msgstr "Поведінка"
+
+#: src/widget/preferences.blp:18
+msgid "Open connections in new windows"
+msgstr ""
+
+#: src/widget/preferences.blp:23
+msgid "Appearance"
+msgstr "Вигляд"
+
+#: src/widget/preferences.blp:26 src/widget/preferences.rs:204
+msgid "Sharp window corners"
+msgstr ""
+
+#: src/widget/preferences.blp:46 src/widget/preferences.rs:234
+msgid "Header bars for active connections"
+msgstr ""
+
+#: src/widget/preferences.blp:66
+msgid "Show ungrab key combination"
+msgstr ""
+
+#: src/widget/preferences.blp:67
+msgid ""
+"Show a brief message indicating which key combination ungrabs the mouse and "
+"keyboard, every time input is grabbed from an active connection."
+msgstr ""
+
+#: src/widget/preferences.rs:180 src/widget/preferences.rs:207
+msgid "Automatic"
+msgstr "Автоматично"
+
+#: src/widget/preferences.rs:181 src/widget/preferences.rs:208
+msgid "Always"
+msgstr "Завжди"
+
+#: src/widget/preferences.rs:182 src/widget/preferences.rs:209
+msgid "Never"
+msgstr "Ніколи"
+
+#: src/widget/preferences.rs:190 src/widget/preferences.rs:237
+msgid "Default"
+msgstr ""
+
+#: src/widget/preferences.rs:191 src/widget/preferences.rs:238
+msgid "Show Above"
+msgstr ""
+
+#: src/widget/preferences.rs:192 src/widget/preferences.rs:239
+msgid "Overlay and Hide"
+msgstr ""
+
+#: src/widget/preferences.rs:205
+msgid ""
+"Configure whether and when Field Monitor will use sharp, right-angle window "
+"corners instead of the default corner radius. This is useful to make sure "
+"the corners of connected screens are not cut off."
+msgstr ""
+
+#: src/widget/preferences.rs:207
+msgid ""
+"Use the default corner radius, but make window corners sharp whenever input "
+"is grabbed."
+msgstr ""
+
+#: src/widget/preferences.rs:208
+msgid "Always use sharp window corners."
+msgstr ""
+
+#: src/widget/preferences.rs:209
+msgid "Never use sharp window corners."
+msgstr ""
+
+#: src/widget/preferences.rs:235
+msgid "Change how the header bar is presented for active connection screens."
+msgstr ""
+
+#: src/widget/preferences.rs:237
+msgid ""
+"The header bar is shown above the connection screen. In fullscreen mode, the "
+"header bar is instead overlaid and hides whenever input is grabbed."
+msgstr ""
+
+#: src/widget/preferences.rs:238
+msgid ""
+"The header bar is always shown above the connection screen, even in "
+"fullscreen mode."
+msgstr ""
+
+#: src/widget/preferences.rs:239
+msgid ""
+"The header bar is always shown as an overlay on top of the connection "
+"screen; it is hidden whenever input is grabbed."
+msgstr ""
+
+#: src/widget/quick_connect_dialog.blp:20
+#, no-c-format
+msgid ""
+"Enter the URL of the server you want to connect to.\n"
+"Supported protocols are: RDP, SPICE, VNC.\n"
+"\n"
+"<b>Examples:</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://server:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://user@server?VncPassword=password123</i>"
+msgstr ""
+
+#: src/widget/quick_connect_dialog.blp:23
+msgid "Connection URL"
+msgstr "Адреса з'єднання"
+
+#: src/widget/quick_connect_dialog.blp:34
+msgid "Open File..."
+msgstr "Відкрити файл…"
+
+#: src/widget/quick_connect_dialog.rs:94 src/widget/quick_connect_dialog.rs:156
+msgid "Failed to open"
+msgstr "Не вдалося відкрити"
+
+#: src/widget/quick_connect_dialog.rs:97
+msgid ""
+"Field Monitor could not connect to the server using the specified file or URI"
+msgstr ""
+
+#: src/widget/quick_connect_dialog.rs:119
+msgid "Supported files"
+msgstr "підтримувані файли"
+
+#: src/widget/quick_connect_dialog.rs:126
+msgid "RDP file"
+msgstr ""
+
+#: src/widget/quick_connect_dialog.rs:133
+msgid "Virt-Viewer file"
+msgstr ""
+
+#: src/widget/quick_connect_dialog.rs:137
+msgid "Any file"
+msgstr "Будь-який файл"
+
+#: src/widget/quick_connect_dialog.rs:145
+msgid "Open Connection from file..."
+msgstr ""
+
+#: src/widget/quick_connect_dialog.rs:158
+msgid "Field Monitor was unable to open the provided file."
+msgstr ""
+
+#: src/widget/update_connection_dialog.blp:33
+msgid "Save"
+msgstr "Зберегти"
+
+#. XXX: These are here because (1) some of them we need in multiple places and (2) they are used inside
+#. glib::clone where they can't be picked up by gettext's scanner
+#: src/widget/usb_redir/mod.rs:23
+msgid "USB device connected"
+msgstr ""
+
+#: src/widget/usb_redir/mod.rs:25
+msgid "Failed to connect device"
+msgstr ""
+
+#: src/widget/usb_redir/mod.rs:26
+msgid "USB device disconnected"
+msgstr ""
+
+#: src/widget/usb_redir/mod.rs:28
+msgid "Failed to disconnect device"
+msgstr ""
+
+#: src/widget/usb_redir/mod.rs:29
+msgid "No devices available."
+msgstr "Не виявлено жодного пристрою."
+
+#: src/widget/usb_redir/settings.blp:23
+msgid "No devices connected."
+msgstr "Немає з'єднаних пристроїв."
+
+#: src/widget/usb_redir/settings.blp:48
+msgid "Manage Devices..."
+msgstr ""
+
+#: src/widget/usb_redir/settings.rs:167
+#: src/widget/usb_redir/settings_dialog.rs:213
+msgid "Disconnect"
+msgstr "Від’єднатися"
+
+#: src/widget/usb_redir/settings_dialog.blp:19
+msgid "Help"
+msgstr "Довідка"
+
+#: src/widget/usb_redir/settings_dialog.blp:31
+msgid "Devices"
+msgstr "Пристрої"
+
+#: src/widget/usb_redir/settings_dialog.blp:45
+msgid "Show All Devices"
+msgstr "Показати всі пристрої"
+
+#: src/widget/usb_redir/settings_dialog.rs:164
+msgid "1 channel free"
+msgstr ""
+
+#. Translators: {free} = number of free USB redirection channels
+#: src/widget/usb_redir/settings_dialog.rs:167
+#, rust-format
+msgid "{free} channels free"
+msgstr ""
+
+#: src/widget/usb_redir/settings_dialog.rs:201
+msgid "This device can not be connected; you might be missing permissions."
+msgstr ""
+
+#: src/widget/usb_redir/settings_dialog.rs:401
+msgid ""
+"This dialog allows you to share USB devices with the remote server or "
+"virtual machine.\n"
+"\n"
+"The number of devices that can be shared may be limited by the remote "
+"server.\n"
+"\n"
+"The list hides some devices (USB hubs, etc.) by default. Use the toggle "
+"button to show all devices, but note that USB hubs can not be properly "
+"shared with remote servers.\n"
+"\n"
+"To share a device, your user account may need read and write permissions on "
+"the raw device. Consult your distribution documentation for more information."
+msgstr ""
+
+#: src/widget/window.blp:37 src/widget/window.blp:41
+msgid "About Field Monitor"
+msgstr ""
+
+#: src/widget/window.blp:68
+msgid "Connect to your virtual machines and remote servers."
+msgstr ""
+
+#: src/widget/window.blp:81 src/widget/window.blp:189
+msgid "Add Connection"
+msgstr "Додати з'єднання"
+
+#: src/widget/window.blp:139
+msgid "Main menu"
+msgstr "Головне меню"
+
+#: src/widget/window.blp:271
+msgid "_Reload Connections"
+msgstr ""
+
+#: src/widget/window.rs:334
+msgid "Close Connection?"
+msgstr "Закрити з'єднання?"
+
+#: src/widget/window.rs:336
+msgid "Closing the connection will disconnect from the remote server."
+msgstr ""
+
+#: src/widget/window.rs:527
+msgid "Showing active connection"
+msgstr ""
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/window.rs:532
+#, rust-format
+msgid "Showing connection: {title}"
+msgstr ""
+
+#: src/widget/window.rs:537
+msgid "Showing connection list"
+msgstr ""
