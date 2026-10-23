@@ -1,0 +1,1666 @@
+# Norwegian Nynorsk translation for FieldMonitor.
+# Copyright (C) 2026 FieldMonitor's COPYRIGHT HOLDER
+# This file is distributed under the same license as the FieldMonitor package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: FieldMonitor main\n"
+"Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
+"POT-Creation-Date: 2026-10-13 12:31+0000\n"
+"PO-Revision-Date: 2026-10-23 12:29+0200\n"
+"Last-Translator: Roy-Magne Mo <rmo@sunnmore.net>\n"
+"Language-Team: Norwegian Nynorsk <nn@li.org>\n"
+"Language: nn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: connection/generic-group/src/credential_preferences.blp:5
+#: connection/proxmox/src/credential_preferences.blp:5
+msgid "Credentials"
+msgstr "Innloggingsinformasjon"
+
+#: connection/generic-group/src/credential_preferences.blp:10
+#: connection/libvirt/src/qemu_preferences.blp:57
+#: connection/proxmox/src/credential_preferences.blp:31
+#: src/quick_connect/preferences.blp:9
+msgid "Username"
+msgstr "Brukarnamn"
+
+#: connection/generic-group/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:36
+#: connection/proxmox/src/credential_preferences.rs:197
+#: src/quick_connect/preferences.blp:14
+msgid "Password"
+msgstr "Passord"
+
+#: connection/generic-group/src/lib.rs:58
+msgid "Generic Connection Group"
+msgstr "Generell tilkoplingsgruppe"
+
+#: connection/generic-group/src/lib.rs:62
+msgid "Generic Connection Groups"
+msgstr "Generelle tilkoplingsgrupper"
+
+#: connection/generic-group/src/lib.rs:66
+msgid "Add Generic Connection Group"
+msgstr "Legg til generisk tilkoplingsgruppe"
+
+#: connection/generic-group/src/lib.rs:74
+msgid "Connection to one or more RDP, SPICE and VNC servers"
+msgstr "Tilkopling til ein eller fleire RDP-, SPICE- og VNC-tenarar"
+
+#: connection/generic-group/src/lib.rs:148
+msgid "One or more fields contain invalid values."
+msgstr "Eitt eller fleire felt inneheld ugyldige verdiar."
+
+#: connection/generic-group/src/lib.rs:371
+msgid "Failed to load password."
+msgstr "Klarte ikkje laste passordet."
+
+#: connection/generic-group/src/preferences.blp:20
+msgid "Group Name"
+msgstr "Gruppenamn"
+
+#: connection/generic-group/src/preferences.blp:26
+msgid "Servers"
+msgstr "Tenarar"
+
+#: connection/generic-group/src/preferences.blp:32
+#: connection/generic-group/src/preferences.rs:586
+msgid "Add Server"
+msgstr "Legg til tenar"
+
+#: connection/generic-group/src/preferences.rs:473
+msgid "No servers added yet."
+msgstr "Ingen tenarar er lagde til enno."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/generic-group/src/preferences.rs:582
+#: src/widget/update_connection_dialog.rs:102
+#, rust-format
+msgid "Edit “{title}”"
+msgstr "Rediger «{title}»"
+
+#: connection/generic-group/src/preferences.rs:594
+msgid "Update"
+msgstr "Oppdater"
+
+#: connection/generic-group/src/preferences.rs:596
+#: src/widget/add_connection_dialog.rs:133
+msgid "Add"
+msgstr "Legg til"
+
+#: connection/generic-group/src/preferences.rs:617
+msgid "Remove Server"
+msgstr "Fjern tenar"
+
+#: connection/generic-group/src/server_preferences.blp:12
+msgid "Server Name"
+msgstr "Tenarnamn"
+
+#: connection/generic-group/src/server_preferences.blp:17
+msgid "Server Type"
+msgstr "Tenartype"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:22
+#: connection/libvirt/src/connection/graphics.rs:261
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
+#: lib/src/adapter/rdp.rs:53
+msgid "RDP"
+msgstr "RDP"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:23
+#: connection/libvirt/src/connection/graphics.rs:258
+#: connection/proxmox/src/api/node.rs:162
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
+#: lib/src/adapter/spice.rs:216
+msgid "SPICE"
+msgstr "SPICE"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:24
+#: connection/libvirt/src/connection/graphics.rs:264
+#: connection/proxmox/src/api/node.rs:163
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
+#: lib/src/adapter/vnc.rs:135
+msgid "VNC"
+msgstr "VNC"
+
+#: connection/generic-group/src/server_preferences.blp:32
+#: connection/libvirt/src/qemu_preferences.blp:52
+#: connection/proxmox/src/preferences.blp:21
+#: src/widget/certificate_trust_dialog.rs:159
+msgid "Hostname"
+msgstr "Vertsnamn"
+
+#: connection/generic-group/src/server_preferences.blp:37
+#: connection/proxmox/src/preferences.blp:26
+msgid "Port"
+msgstr "Port"
+
+#: connection/libvirt/src/connection/adapter.rs:209
+msgid ""
+"No supported graphics endpoint available. Tip: If connected via SSH, make "
+"sure that the graphics adapter's listen type is set to 'address' and that "
+"the adapter is listening on all interfaces."
+msgstr ""
+"Ingen støtta grafikkendepunkt er tilgjengeleg. Tips: Viss du er kopla til "
+"via SSH, sørg for at lyttetypen til grafikkadapteren er sett til «adresse» "
+"og at adapteren lyttar på alle grensesnitt."
+
+#: connection/libvirt/src/connection/graphics.rs:255
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: connection/libvirt/src/connection/mod.rs:162
+msgid "(Unable to load server name)"
+msgstr "(Klarte ikkje laste tenarnamnet)"
+
+#: connection/libvirt/src/connection/mod.rs:216
+#: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:66
+#: connection/proxmox/src/api/vm.rs:71
+msgid "Reboot"
+msgstr "Start på nytt"
+
+#: connection/libvirt/src/connection/mod.rs:217
+#: connection/proxmox/src/api/node.rs:61 connection/proxmox/src/api/vm.rs:67
+#: connection/proxmox/src/api/vm.rs:72
+msgid "Shutdown"
+msgstr "Slå av"
+
+#: connection/libvirt/src/connection/mod.rs:218
+#: connection/proxmox/src/api/vm.rs:73
+msgid "Force Reset"
+msgstr "Tving tilbakestilling"
+
+#: connection/libvirt/src/connection/mod.rs:219
+#: connection/proxmox/src/api/vm.rs:68 connection/proxmox/src/api/vm.rs:74
+msgid "Force Poweroff"
+msgstr "Tving avslåing"
+
+#. TRANSLATORS: Verb
+#: connection/libvirt/src/connection/mod.rs:226
+#: connection/proxmox/src/api/vm.rs:82
+msgid "Start"
+msgstr "Start"
+
+#: connection/libvirt/src/connection/mod.rs:257
+msgid "Reboot command successfully sent to domain."
+msgstr "Omstartskommandoen vart sendt til domenet."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:262
+#, rust-format
+msgid "Failed to send reboot command: {err}"
+msgstr "Klarte ikkje sende omstartskommando: {err}"
+
+#: connection/libvirt/src/connection/mod.rs:283
+msgid "Shutdown command successfully sent to domain."
+msgstr "Avslutningskommandoen vart sendt til domenet."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:288
+#, rust-format
+msgid "Failed to send shutdown command: {err}"
+msgstr "Klarte ikkje sende avslutningskommando: {err}"
+
+#: connection/libvirt/src/connection/mod.rs:309
+msgid "Domain successfully reset."
+msgstr "Domenet vart tilbakestilt."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:314
+#, rust-format
+msgid "Failed to reset domain: {err}"
+msgstr "Klarte ikkje tilbakestille domene: {err}"
+
+#: connection/libvirt/src/connection/mod.rs:335
+msgid "Domain successfully shut down."
+msgstr "Domenet vart avslutta."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:340
+#, rust-format
+msgid "Failed to send destroy command: {err}"
+msgstr "Klarte ikkje sende kommando for tvungen avslåing: {err}"
+
+#: connection/libvirt/src/connection/mod.rs:366
+msgid "Domain successfully started."
+msgstr "Domenet er starta."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:371
+#, rust-format
+msgid "Failed to send create command: {err}"
+msgstr "Klarte ikkje sende startkommando: {err}"
+
+#: connection/libvirt/src/connection/mod.rs:398
+msgid "Domain is not running."
+msgstr "Domenet køyrer ikkje."
+
+#: connection/libvirt/src/connection/mod.rs:405
+msgid "Domain is already running."
+msgstr "Domenet køyrer allereie."
+
+#: connection/libvirt/src/connection/mod.rs:414
+#: connection/proxmox/src/api/mod.rs:84
+msgid "Internal error while trying to execute command."
+msgstr "Intern feil under køyring av kommandoen."
+
+#: connection/libvirt/src/connection/mod.rs:442
+msgid "Serial Console"
+msgstr "Seriell konsoll"
+
+#: connection/libvirt/src/connection/qemu_dbus.rs:130
+msgid "Try enabling the 'p2p' option for the D-Bus graphics adapter."
+msgstr "Prøv å slå på «p2p»-valet for D-Bus-grafikkadapteren."
+
+#: connection/libvirt/src/connection/qemu_dbus.rs:143
+msgid ""
+"If you are connecting to a qemu:///system domain, you may not be able to "
+"connect via D-Bus unless you enable the 'p2p' option."
+msgstr ""
+"Viss du koplar til eit qemu:///system-domene, kan det hende du ikkje kan "
+"kople til via D-Bus med mindre du slår på «p2p»-valet."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/qemu_dbus.rs:170
+#, rust-format
+msgid ""
+"Your user account does not have permission to connect to the bus.{group_hint}"
+msgstr ""
+"Brukarkontoen din har ikkje løyve til å kople seg til bussen.{group_hint}"
+
+#: connection/libvirt/src/connection/qemu_dbus.rs:194
+msgid "The following information may help you to troubleshoot the issue:"
+msgstr "Følgjande informasjon kan hjelpe deg med å feilsøkje problemet:"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/qemu_dbus.rs:206
+#, rust-format
+msgid "Failed to connect via D-Bus.{extra_info}"
+msgstr "Klarte ikkje kople til via D-Bus.{extra_info}"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/qemu_dbus.rs:253
+#, rust-format
+msgid "Try adding your account to the '{group_name}' group."
+msgstr "Prøv å leggje til kontoen din i gruppa «{group_name}»."
+
+#: connection/libvirt/src/hypervisor/qemu.rs:46
+#: connection/libvirt/src/hypervisor/qemu.rs:50
+msgid "QEMU/KVM"
+msgstr "QEMU/KVM"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:54
+msgid "Add QEMU/KVM Connection"
+msgstr "Legg til QEMU/KVM-tilkopling"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:62
+msgid "QEMU/KVM hypervisor connection via libvirt."
+msgstr "Tilkopling til QEMU/KVM-hypervisor via libvirt."
+
+#: connection/libvirt/src/qemu_preferences.blp:13
+#: connection/proxmox/src/preferences.blp:12
+msgid "Connection Name"
+msgstr "Namn på tilkopling"
+
+#: connection/libvirt/src/qemu_preferences.blp:19
+msgid "Session Type"
+msgstr "Type økt"
+
+#: connection/libvirt/src/qemu_preferences.blp:22
+msgid "System Session"
+msgstr "Systemøkt"
+
+#: connection/libvirt/src/qemu_preferences.blp:23
+msgid "This is the QEMU/KVM default."
+msgstr "Dette er standard for QEMU/KVM."
+
+#: connection/libvirt/src/qemu_preferences.blp:33
+msgid "User Session"
+msgstr "Brukarsøkt"
+
+#: connection/libvirt/src/qemu_preferences.blp:44
+msgid "Remote Connection"
+msgstr "Ekstern tilkopling"
+
+#: connection/libvirt/src/qemu_preferences.blp:47
+msgid "Connect via SSH"
+msgstr "Kople til via SSH"
+
+#: connection/proxmox/src/api/connection.rs:60
+msgid "Unable to build a valid URL to connect to. Check your settings."
+msgstr ""
+"Klarte ikkje lage ei gyldig URL å kople til. Sjekk innstillingane dine."
+
+#: connection/proxmox/src/api/connection.rs:72
+msgid "Failed to retrieve API Key or Password from secrets service."
+msgstr "Klarte ikkje hente API-nøkkel eller passord frå løyndomstenesta."
+
+#: connection/proxmox/src/api/node.rs:100
+msgid "Reboot command successfully sent to server."
+msgstr "Omstartskommandoen vart sendt til tenaren."
+
+#: connection/proxmox/src/api/node.rs:103 connection/proxmox/src/api/vm.rs:135
+msgid "Failed to send reboot command."
+msgstr "Klarte ikkje sende omstartskommando."
+
+#: connection/proxmox/src/api/node.rs:125
+msgid "Shutdown command successfully sent to server."
+msgstr "Avslutningskommandoen vart sendt til tenaren."
+
+#: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:168
+msgid "Failed to send shutdown command."
+msgstr "Klarte ikkje sende avslutningskommando."
+
+#: connection/proxmox/src/api/node.rs:164
+msgid "Console"
+msgstr "Konsoll"
+
+#. Translators: Keyword in the metainfo.
+#: connection/proxmox/src/api/provider.rs:48
+#: connection/proxmox/src/api/provider.rs:52
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
+msgid "Proxmox"
+msgstr "Proxmox"
+
+#: connection/proxmox/src/api/provider.rs:56
+msgid "Add Proxmox Connection"
+msgstr "Legg til Proxmox-tilkopling"
+
+#: connection/proxmox/src/api/provider.rs:64
+msgid "Proxmox Virtual Environment hypervisor connection"
+msgstr "Tilkopling til Proxmox Virtual Environment-hypervisor"
+
+#: connection/proxmox/src/api/vm.rs:132
+msgid "Reboot command successfully sent to VM."
+msgstr "Omstartskommandoen vart sendt til VM-en."
+
+#: connection/proxmox/src/api/vm.rs:165
+msgid "Shutdown command successfully sent to VM."
+msgstr "Avslutningskommandoen vart sendt til VM-en."
+
+#: connection/proxmox/src/api/vm.rs:197
+msgid "VM was successfully reset."
+msgstr "VM-en vart tilbakestilt."
+
+#: connection/proxmox/src/api/vm.rs:200
+msgid "Failed to send reset command."
+msgstr "Klarte ikkje sende tilbakestillingskommando."
+
+#: connection/proxmox/src/api/vm.rs:230
+msgid "VM is now stopping."
+msgstr "VM-en stoppar no."
+
+#: connection/proxmox/src/api/vm.rs:233
+msgid "Failed to send stop command."
+msgstr "Klarte ikkje sende stoppkommando."
+
+#: connection/proxmox/src/api/vm.rs:263
+msgid "VM is now starting."
+msgstr "VM-en startar no."
+
+#: connection/proxmox/src/api/vm.rs:266
+msgid "Failed to send start command."
+msgstr "Klarte ikkje sende startkommando."
+
+#: connection/proxmox/src/credential_preferences.blp:10
+msgid ""
+"The Proxmox user needs at least the permissions <tt>VM.Console</tt>, "
+"<tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>."
+msgstr ""
+"Proxmox-brukaren treng minst løyva <tt>VM.Console</tt>, <tt>VM.Audit</tt> og"
+" <tt>VM.PowerMgmt</tt>."
+
+#: connection/proxmox/src/credential_preferences.blp:13
+msgid "Authentication Mode"
+msgstr "Autentiseringsmodus"
+
+#: connection/proxmox/src/credential_preferences.blp:19
+#: connection/proxmox/src/credential_preferences.rs:195
+msgid "API Key"
+msgstr "API-nøkkel"
+
+#: connection/proxmox/src/credential_preferences.blp:26
+msgid "Token ID"
+msgstr "Token-ID"
+
+#: connection/proxmox/src/preferences.blp:18
+msgid "Connection"
+msgstr "Tilkopling"
+
+#: connection/proxmox/src/preferences.blp:33
+msgid "Trust Any SSL Certificate"
+msgstr "Stol på alle SSL-sertifikat"
+
+#: connection/proxmox/src/preferences.blp:34
+msgid ""
+"Allows connecting to servers with self-signed and otherwise invalid SSL "
+"certificates. Be careful, as this is a potential security risk."
+msgstr ""
+"Gjer det mogleg å kople til tenarar med sjølvsignerte og elles ugyldige SSL-"
+"sertifikat. Ver forsiktig, då dette er ein potensiell tryggleiksrisiko."
+
+#. Translators: The name of the application.
+#: data/de.capypara.FieldMonitor.desktop.in.in:2
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/widget/window.blp:9
+#: src/widget/window.blp:61 src/widget/window.blp:67 src/widget/window.blp:116
+#: src/widget/window.blp:218 src/widget/window.blp:235 src/widget/window.rs:405
+msgid "Field Monitor"
+msgstr "Field Monitor"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:3
+msgid "Remote Desktop Viewer"
+msgstr "Visar for fjernskrivebord"
+
+#. Translators: The summary of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.desktop.in.in:4
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
+msgid "Access VMs and external screens"
+msgstr "Få tilgang til virtuelle maskiner og eksterne skjermar"
+
+#. Translators: The keywords from the desktop file.
+#: data/de.capypara.FieldMonitor.desktop.in.in:12
+msgid "proxmox;vnc;spice;rdp;kvm;qemu;"
+msgstr "proxmox;vnc;spice;rdp;kvm;qemu;"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:17
+msgid "New Window"
+msgstr "Nytt vindauge"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:24
+msgid "remote desktop"
+msgstr "fjernskrivebord"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:32
+msgid "KVM"
+msgstr "KVM"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:34
+msgid "QEMU"
+msgstr "QEMU"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:36
+msgid "libvirt"
+msgstr "libvirt"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:40
+msgid "GNOME"
+msgstr "GNOME"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:49
+msgid ""
+"Field Monitor is a remote-desktop client designed for the GNOME platform."
+msgstr ""
+"Field Monitor er ein klient for fjernskrivebord laga for GNOME-plattforma."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
+msgid ""
+"It is focused on connecting to virtual machines, but can connect to any "
+"server supporting the RDP, SPICE or VNC protocols."
+msgstr ""
+"Han er retta mot å kople til virtuelle maskinar, men kan kople til kva tenar"
+" som helst som støttar protokollane RDP, SPICE eller VNC."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
+msgid ""
+"It has support for directly connecting to VMs of the following hypervisors:"
+msgstr "Han støttar direkte tilkopling til VM-ar frå desse hypervisorane:"
+
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
+msgid "Proxmox Virtual Environment"
+msgstr "Proxmox Virtual Environment"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
+msgid "QEMU/KVM via libvirt"
+msgstr "QEMU/KVM via libvirt"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
+msgid ""
+"For supported VM hypervisors, Field Monitor also offers options to manage "
+"the basic power state of VMs, such as starting, stopping, rebooting, etc."
+msgstr ""
+"For hypervisorar som er støtta, tilbyr Field Monitor også val for å styre "
+"grunnleggjande straumstatus for VM-ar, som å starte, stoppe og starte på "
+"nytt."
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
+msgid ""
+"Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
+"files and quickly connecting to RDP, SPICE or VNC servers via URI."
+msgstr ""
+"I tillegg kan Field Monitor opne RDP- og Virt Viewer-tilkoplingsfiler og "
+"raskt kople til RDP-, SPICE- eller VNC-tenarar via URI."
+
+#. Translators: Caption of the first screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:204
+msgid "Screen of a connected graphical display"
+msgstr "Skjermbilete av ein tilkopla grafisk skjerm"
+
+#. Translators: Caption of the second screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:214
+msgid "Welcome screen"
+msgstr "Velkomstskjerm"
+
+#. Translators: Caption of the third screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:221
+msgid "A list of servers in a Proxmox cluster to connect to"
+msgstr "Ei liste over tenarar i ein Proxmox-klynge du kan kople til"
+
+#. Translators: Caption of the 4th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:231
+msgid "Screen of a connected console"
+msgstr "Skjermbilete av ein tilkopla konsoll"
+
+#. Translators: Caption of the 5th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:241
+msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
+msgstr "Legg til ei ny tilkopling til Proxmox Virtual Environment-hypervisor"
+
+#: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
+msgid "Remote Desktop file"
+msgstr "Fjernskrivebordsfil"
+
+#: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
+msgid "Virt-Viewer connection file"
+msgstr "Virt-Viewer-tilkoplingsfil"
+
+#: lib/src/adapter/usbredir/error.rs:35
+msgid "The device can not be attached to the connection"
+msgstr "Eininga kan ikkje koplast til tilkoplinga"
+
+#: lib/src/adapter/usbredir/error.rs:38
+msgid "The device was already attached to the connection"
+msgstr "Eininga var alt kopla til tilkoplinga"
+
+#: lib/src/adapter/usbredir/portal.rs:254
+#, rust-format
+msgid "Failed to communicate with the system portal: {details}"
+msgstr "Klarte ikkje kommunisere med systemportalen: {details}"
+
+#: lib/src/adapter/usbredir/portal.rs:258
+#, rust-format
+msgid "USB portal request failed: {details}"
+msgstr "Førespurnaden til USB-portalen feila: {details}"
+
+#: lib/src/adapter/usbredir/portal.rs:262
+#, rust-format
+msgid "USB redirection initialization failed: {details}"
+msgstr "Initialisering av USB-omdirigering feila: {details}"
+
+#: lib/src/adapter/usbredir/qemu_dbus/mod.rs:258
+#: lib/src/adapter/usbredir/spice.rs:132
+msgid "Failed to attach the USB device"
+msgstr "Klarte ikkje kople til USB-eininga"
+
+#: lib/src/cert_security.rs:134
+msgid "Server certificate verification failed"
+msgstr "Verifisering av tenarsertifikatet feila"
+
+#: lib/src/connection/instance.rs:191
+msgid "Unknown error"
+msgstr "Ukjend feil"
+
+#: lib/src/connection/types.rs:49
+msgid "Authentication failed"
+msgstr "Autentiseringa feila"
+
+#: lib/src/connection/types.rs:50
+msgid "General Error"
+msgstr "Generell feil"
+
+#: lib/src/gtk/save_credentials_button.blp:23
+msgid "Save and remember"
+msgstr "Lagre og hugs"
+
+#: lib/src/gtk/save_credentials_button.blp:29
+msgid "Ask for this every time"
+msgstr "Spør kvar gong"
+
+#: lib/src/lib.rs:43
+msgid "The connection configuration is invalid"
+msgstr "Oppsettet for tilkoplinga er ugyldig"
+
+#: src/application.rs:131
+msgid "Open the app with a new window"
+msgstr "Opne appen i eit nytt vindauge"
+
+#. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
+#: src/application.rs:584
+msgid "translator-credits"
+msgstr "Roy-Magne Mo <rmo@sunnmore.net>"
+
+#: src/application.rs:603 src/connection_loader.rs:437
+#: src/widget/add_connection_dialog.rs:210
+#: src/widget/authenticate_connection_dialog.rs:170
+#: src/widget/certificate_details_window.rs:235
+#: src/widget/quick_connect_dialog.rs:101
+#: src/widget/quick_connect_dialog.rs:161
+#: src/widget/update_connection_dialog.rs:180
+#: src/widget/usb_redir/settings.rs:214
+#: src/widget/usb_redir/settings_dialog.rs:387
+#: src/widget/usb_redir/settings_dialog.rs:403
+msgid "OK"
+msgstr "OK"
+
+#: src/application.rs:645
+msgid "Connection successfully added."
+msgstr "Tilkoplinga vart lagd til."
+
+#: src/application.rs:700
+msgid "Connection successfully updated."
+msgstr "Tilkoplinga vart oppdatert."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/application.rs:738
+#, rust-format
+msgid "Permanently Remove “{title}”?"
+msgstr "Fjern «{title}» for godt?"
+
+#: src/application.rs:742 src/widget/window.rs:339
+msgid "No"
+msgstr "Nei"
+
+#: src/application.rs:743 src/widget/window.rs:340
+msgid "Yes"
+msgstr "Ja"
+
+#: src/application.rs:748
+msgid "Connection successfully removed."
+msgstr "Tilkoplinga vart fjerna."
+
+#: src/application.rs:809
+msgid "Authentication successfully updated"
+msgstr "Autentiseringa vart oppdatert"
+
+#: src/connection_loader.rs:83 src/connection_loader.rs:93
+msgid "Connection not found."
+msgstr "Fann ikkje tilkoplinga."
+
+#: src/connection_loader.rs:193 src/connection_loader.rs:204
+msgid "Server not found."
+msgstr "Fann ikkje tenaren."
+
+#: src/connection_loader.rs:246 src/connection_loader.rs:364
+msgid "Failed to load or connect to server"
+msgstr "Klarte ikkje laste eller kople til tenaren"
+
+#: src/quick_connect/mod.rs:118
+msgid "Untitled Server"
+msgstr "Tenar utan namn"
+
+#: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
+#: src/widget/window.blp:95 src/widget/window.blp:204
+msgid "Quick Connect"
+msgstr "Hurtigtilkopling"
+
+#: src/quick_connect/mod.rs:320
+msgid "via Quick Connect"
+msgstr "via hurtigtilkopling"
+
+#: src/quick_connect/rdp.rs:78
+msgid "Failed to read file"
+msgstr "Klarte ikkje lese fila"
+
+#: src/quick_connect/rdp.rs:169
+msgid "Invalid RDP parameters"
+msgstr "Ugyldige RDP-parameter"
+
+#: src/quick_connect/spice.rs:208
+msgid "Invalid SPICE URI"
+msgstr "Ugyldig SPICE-URI"
+
+#: src/quick_connect/util.rs:58 src/quick_connect/util.rs:63
+msgid "Invalid port in URI"
+msgstr "Ugyldig port i URI"
+
+#: src/quick_connect/vnc.rs:111
+msgid "Invalid VNC URI"
+msgstr "Ugyldig VNC-URI"
+
+#: src/remote_server_info.rs:47
+msgid "Field Monitor does not support this URI scheme"
+msgstr "Field Monitor støttar ikkje dette URI-skjemaet"
+
+#: src/remote_server_info.rs:61
+msgid "Unable to detect supported file format"
+msgstr "Klarte ikkje finne eit støtta filformat"
+
+#: src/remote_server_info.rs:69
+msgid "Field Monitor was unable to read the file"
+msgstr "Field Monitor klarte ikkje lese fila"
+
+#: src/secrets.rs:91
+msgid "A secret value used by Field Monitor"
+msgstr "Ein løynd verdi som Field Monitor brukar"
+
+#: src/shortcuts-dialog.blp:6
+msgctxt "shortcut window"
+msgid "Window"
+msgstr "Vindauge"
+
+#: src/shortcuts-dialog.blp:9
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Lukk vindauget"
+
+#: src/shortcuts-dialog.blp:14
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "Nytt vindauge"
+
+#: src/shortcuts-dialog.blp:19
+msgctxt "shortcut window"
+msgid "Open Menu"
+msgstr "Opne meny"
+
+#: src/shortcuts-dialog.blp:24
+msgctxt "shortcut window"
+msgid "Toggle Fullscreen"
+msgstr "Slå fullskjerm av/på"
+
+#: src/shortcuts-dialog.blp:30
+msgctxt "shortcut window"
+msgid "Connection"
+msgstr "Tilkopling"
+
+#: src/shortcuts-dialog.blp:33
+msgctxt "shortcut window"
+msgid "Close Connection"
+msgstr "Lukk tilkoplinga"
+
+#: src/shortcuts-dialog.blp:39
+msgctxt "shortcut window"
+msgid "Terminal"
+msgstr "Terminal"
+
+#: src/shortcuts-dialog.blp:42
+msgctxt "shortcut window"
+msgid "Copy"
+msgstr "Kopier"
+
+#: src/shortcuts-dialog.blp:47
+msgctxt "shortcut window"
+msgid "Paste"
+msgstr "Lim inn"
+
+#: src/shortcuts-dialog.blp:52
+msgctxt "shortcut window"
+msgid "Select All"
+msgstr "Vel alle"
+
+#: src/shortcuts-dialog.blp:57
+msgctxt "shortcut window"
+msgid "Zoom In"
+msgstr "Forstørr"
+
+#: src/shortcuts-dialog.blp:62
+msgctxt "shortcut window"
+msgid "Zoom Out"
+msgstr "Forminsk"
+
+#: src/shortcuts-dialog.blp:67
+msgctxt "shortcut window"
+msgid "Reset Zoom"
+msgstr "Tilbakestill forstørring"
+
+#: src/shortcuts-dialog.blp:73
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Generelt"
+
+#: src/shortcuts-dialog.blp:76
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "Innstillingar"
+
+#: src/shortcuts-dialog.blp:81
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Vis snarvegar"
+
+#: src/shortcuts-dialog.blp:86
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Avslutt"
+
+#: src/widget/add_connection_dialog.blp:11 src/widget/window.blp:266
+msgid "Add New Connection"
+msgstr "Legg til ny tilkopling"
+
+#: src/widget/add_connection_dialog.rs:203
+#: src/widget/authenticate_connection_dialog.rs:163
+#: src/widget/update_connection_dialog.rs:173
+msgid "Failed to save connection"
+msgstr "Klarte ikkje lagre tilkoplinga"
+
+#: src/widget/add_connection_dialog.rs:206
+#: src/widget/authenticate_connection_dialog.rs:166
+#: src/widget/update_connection_dialog.rs:176
+msgid "An error occurred while trying to save the connection"
+msgstr "Det oppstod ein feil under forsøket på å lagre tilkoplinga"
+
+#: src/widget/app_status.blp:30
+msgid "Field Monitor is starting..."
+msgstr "Field Monitor startar …"
+
+#: src/widget/app_status.blp:50
+msgid "Failed to Initialize"
+msgstr "Klarte ikkje starte opp"
+
+#: src/widget/app_status.blp:51
+msgid ""
+"Field Monitor could not start, because it could not connect to your system's "
+"secret service for accessing passwords."
+msgstr ""
+"Field Monitor klarte ikkje starte fordi han ikkje fekk kontakt med "
+"løyndomstenesta på systemet, som gir tilgang til passord."
+
+#: src/widget/app_status.blp:56 src/widget/app_status.blp:84
+msgid "Quit"
+msgstr "Avslutt"
+
+#: src/widget/app_status.blp:78
+msgid "Failed to Initialize - Secrets Invalid"
+msgstr "Klarte ikkje starte – ugyldige løyndomar"
+
+#: src/widget/app_status.blp:79
+msgid ""
+"Field Monitor could not start, because the secrets backend reports that the "
+"system secrets are invalid or corrupted.\n"
+"\n"
+"This can happen if you moved your HOME directory to another system.\n"
+"\n"
+"You may be able to resolve this with <a href='https://github.com/theCapypara/"
+"field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
+msgstr ""
+"Field Monitor klarte ikkje starte fordi løyndomstenesta melder at systemløyndomane er ugyldige eller skadde.\n"
+"\n"
+"Dette kan skje viss du har flytta HOME-mappa til eit anna system.\n"
+"\n"
+"Du kan kanskje løyse dette med <a href='https://github.com/theCapypara/field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
+
+#: src/widget/authenticate_connection_dialog.blp:6
+#: src/widget/connection_list/info_page.blp:74
+#: src/widget/connection_list/info_page.rs:273
+msgid "Authentication required"
+msgstr "Autentisering krevst"
+
+#: src/widget/authenticate_connection_dialog.blp:19
+msgid "Apply"
+msgstr "Bruk"
+
+#: src/widget/authenticate_connection_dialog.rs:105
+msgid "This connection needs additional authentication to proceed."
+msgstr "Denne tilkoplinga treng ekstra autentisering for å gå vidare."
+
+#: src/widget/certificate_details_window.blp:5
+msgid "Certificate Viewer"
+msgstr "Sertifikatvisar"
+
+#: src/widget/certificate_details_window.blp:23
+msgid "Export"
+msgstr "Eksporter"
+
+#: src/widget/certificate_details_window.blp:32
+#: src/widget/close_warning_dialog.rs:72
+#: src/widget/connection_view/server_screen.blp:140
+msgid "Close"
+msgstr "Lukk"
+
+#: src/widget/certificate_details_window.rs:160
+msgid "PEM Certificate"
+msgstr "PEM-sertifikat"
+
+#: src/widget/certificate_details_window.rs:165
+msgid "DER Certificate"
+msgstr "DER-sertifikat"
+
+#: src/widget/certificate_details_window.rs:171
+msgid "Export Certificate..."
+msgstr "Eksporter sertifikat …"
+
+#: src/widget/certificate_details_window.rs:230
+msgid "Failed to save"
+msgstr "Klarte ikkje lagre"
+
+#: src/widget/certificate_details_window.rs:232
+msgid "Field Monitor was unable to save the provided file."
+msgstr "Field Monitor klarte ikkje lagre fila."
+
+#: src/widget/certificate_trust_dialog.rs:136
+msgid "Trust this server?"
+msgstr "Stol på denne tenaren?"
+
+#: src/widget/certificate_trust_dialog.rs:139
+msgid "Do you trust this certificate and want to establish a connection?"
+msgstr "Stolar du på dette sertifikatet og vil opprette tilkoplinga?"
+
+#: src/widget/certificate_trust_dialog.rs:167
+msgid "Fingerprint"
+msgstr "Fingeravtrykk"
+
+#: src/widget/certificate_trust_dialog.rs:177
+msgid "Show Certificate"
+msgstr "Vis sertifikat"
+
+#: src/widget/certificate_trust_dialog.rs:197
+msgid ""
+"This certificate is the certificate authority (CA) issuing the connection "
+"certificate."
+msgstr ""
+"Dette sertifikatet er sertifikatutferdar (CA) som utferdar "
+"tilkoplingssertifikatet."
+
+#: src/widget/certificate_trust_dialog.rs:202
+msgid "Info"
+msgstr "Informasjon"
+
+#: src/widget/certificate_trust_dialog.rs:207
+msgid ""
+"After you choose to trust the CA, Field Monitor will confirm that the "
+"connection is established using a certificate issued by the CA. If not, "
+"Field Monitor will refuse the connection."
+msgstr ""
+"Etter at du har valt å stole på CA, stadfestar Field Monitor at tilkoplinga "
+"er oppretta ved hjelp av eit sertifikat utferda av CA. Viss ikkje, vil Field"
+" Monitor avvise tilkoplinga."
+
+#: src/widget/certificate_trust_dialog.rs:229
+#, rust-format
+msgid ""
+"If you choose to trust this certificate, your choice will be remembered for "
+"future connections to <tt>{host}</tt>."
+msgstr ""
+"Dersom du vel å stole på dette sertifikatet, vil valet ditt verte hugsa for "
+"framtidige tilkoplingar til <tt>{host}</tt>."
+
+#: src/widget/certificate_trust_dialog.rs:239
+#: src/widget/close_warning_dialog.rs:71
+msgid "Cancel"
+msgstr "Avbryt"
+
+#: src/widget/certificate_trust_dialog.rs:240
+msgid "Trust Certificate"
+msgstr "Stol på sertifikatet"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/close_warning_dialog.rs:62
+#, rust-format
+msgid ""
+"This window is still connected to “{label}”. Closing it will disconnect from "
+"the server."
+msgstr ""
+"Dette vindauget er framleis kopla til «{label}». Om du lukkar det, vert "
+"koplinga til tenaren broten."
+
+#: src/widget/close_warning_dialog.rs:67
+msgid "Close Window?"
+msgstr "Lukk vindauget?"
+
+#: src/widget/connection_list/connection_list_navbar.blp:12
+msgid "Connections"
+msgstr "Tilkoplingar"
+
+#: src/widget/connection_list/connection_list_navbar.blp:13
+msgid "List of configured connections."
+msgstr "Liste over oppsette tilkoplingar."
+
+#: src/widget/connection_list/connection_list_navbar.blp:33
+#: src/widget/connection_list/info_page.blp:17
+#: src/widget/connection_list/info_page.blp:21
+msgid "Edit Connection"
+msgstr "Rediger tilkopling"
+
+#: src/widget/connection_list/connection_list_navbar.blp:38
+#: src/widget/update_connection_dialog.blp:19
+#: src/widget/update_connection_dialog.blp:23
+msgid "Remove Connection"
+msgstr "Fjern tilkopling"
+
+#: src/widget/connection_list/info_page.blp:65
+#: src/widget/connection_list/info_page.rs:257
+msgid "Failed to load connection"
+msgstr "Klarte ikkje laste tilkopling"
+
+#: src/widget/connection_list/info_page.blp:75
+msgid "This connection requires additional authentication."
+msgstr "Denne tilkoplinga krev tilleggsautentisering."
+
+#: src/widget/connection_list/info_page.blp:78
+msgid "Authenticate"
+msgstr "Autentiser"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/info_page.rs:138
+#, rust-format
+msgid "Loading connection: {title}"
+msgstr "Lastar tilkopling: {title}"
+
+#: src/widget/connection_list/info_page.rs:192
+msgid "No servers available"
+msgstr "Ingen tenarar tilgjengelege"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/info_page.rs:233
+#, rust-format
+msgid "Loaded connection: {title}"
+msgstr "Tilkoplinga er lasta: {title}"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_list/info_page.rs:262
+#, rust-format
+msgid "Failed to load connection: {detail}"
+msgstr "Klarte ikkje laste tilkopling: {detail}"
+
+#. TODO: Getting the server name here isn't really easy...
+#: src/widget/connection_list/server_actions.rs:124
+#: src/widget/update_connection_dialog.rs:97
+msgid "Edit Server"
+msgstr "Rediger tenar"
+
+#: src/widget/connection_list/server_actions.rs:226
+msgid "Actions"
+msgstr "Handlingar"
+
+#: src/widget/connection_list/server_actions.rs:324
+#: src/widget/quick_connect_dialog.blp:40
+#: src/widget/usb_redir/settings_dialog.rs:206
+msgid "Connect"
+msgstr "Kople til"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/server_actions.rs:343
+#, rust-format
+msgid "Connect via {adapter}"
+msgstr "Kople til via {adapter}"
+
+#: src/widget/connection_view/server_screen.blp:30
+#: src/widget/connection_view/server_screen.blp:34 src/widget/window.blp:123
+#: src/widget/window.blp:127
+msgid "Toggle Fullscreen"
+msgstr "Slå fullskjerm av/på"
+
+#: src/widget/connection_view/server_screen.blp:45 src/widget/window.blp:135
+msgid "Menu"
+msgstr "Meny"
+
+#: src/widget/connection_view/server_screen.blp:48
+msgid "Connection menu"
+msgstr "Tilkoplingsmeny"
+
+#: src/widget/connection_view/server_screen.blp:58
+#: src/widget/connection_view/server_screen.blp:61
+#: src/widget/usb_redir/settings_dialog.blp:7
+#: src/widget/usb_redir/settings_dialog.blp:13
+#: src/widget/usb_redir/settings_dialog.rs:399
+msgid "USB Devices"
+msgstr "USB-einingar"
+
+#: src/widget/connection_view/server_screen.blp:76
+#: src/widget/connection_view/server_screen.blp:79
+msgid "Open Monitor in New Window"
+msgstr "Opne skjerm i nytt vindauge"
+
+#: src/widget/connection_view/server_screen.blp:119
+msgid "Connecting..."
+msgstr "Koplar til …"
+
+#: src/widget/connection_view/server_screen.blp:150
+msgid "Reconnect"
+msgstr "Kople til på nytt"
+
+#: src/widget/connection_view/server_screen.blp:157
+msgid "Show Output"
+msgstr "Vis utdata"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:465
+#, rust-format
+msgid "Connecting to {title}"
+msgstr "Koplar til {title}"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:792
+#, rust-format
+msgid "Connected to {title}"
+msgstr "Kopla til {title}"
+
+#: src/widget/connection_view/server_screen.rs:972
+msgid "Disconnected"
+msgstr "Fråkopla"
+
+#: src/widget/connection_view/server_screen.rs:974
+msgid "The connection to the server was closed."
+msgstr "Tilkoplinga til tenaren vart lukka."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_view/server_screen.rs:979
+#, rust-format
+msgid "Disconnected from {title}"
+msgstr "Fråkopla frå {title}"
+
+#: src/widget/connection_view/server_screen.rs:1023
+msgid "Connection Failed"
+msgstr "Tilkopling feila"
+
+#: src/widget/connection_view/server_screen.rs:1024
+msgid "The connection was closed due to an error."
+msgstr "Tilkoplinga vart lukka på grunn av ein feil."
+
+#: src/widget/connection_view/server_screen.rs:1031
+msgid "Connection failed"
+msgstr "Tilkopling feila"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_view/server_screen.rs:1035
+#, rust-format
+msgid "Connection failed: {detail}"
+msgstr "Tilkopling feila: {detail}"
+
+#: src/widget/connection_view/server_screen.rs:1197
+msgid "_Dynamic Resize"
+msgstr "_Dynamisk storleiksendring"
+
+#: src/widget/connection_view/server_screen.rs:1201
+msgid "_Scale to Window"
+msgstr "_Skaler til vindauget"
+
+#: src/widget/connection_view/server_screen.rs:1211
+msgid "_Resize Window to Screen"
+msgstr "_Tilpass vindauget til skjermen"
+
+#: src/widget/connection_view/server_screen.rs:1215
+msgid "Send _Keys"
+msgstr "_Send tastar"
+
+#: src/widget/connection_view/server_screen.rs:1219
+msgid "Ctrl+Alt L"
+msgstr "Ctrl+Alt L"
+
+#: src/widget/connection_view/server_screen.rs:1223
+msgid "Ctrl+Alt+Backspace"
+msgstr "Ctrl+Alt+Backspace"
+
+#: src/widget/connection_view/server_screen.rs:1227
+msgid "Ctrl+Alt+Delete"
+msgstr "Ctrl+Alt+Delete"
+
+#: src/widget/connection_view/server_screen.rs:1233
+msgid "Ctrl+Alt+F1"
+msgstr "Ctrl+Alt+F1"
+
+#: src/widget/connection_view/server_screen.rs:1237
+msgid "Ctrl+Alt+F2"
+msgstr "Ctrl+Alt+F2"
+
+#: src/widget/connection_view/server_screen.rs:1241
+msgid "Ctrl+Alt+F3"
+msgstr "Ctrl+Alt+F3"
+
+#: src/widget/connection_view/server_screen.rs:1245
+msgid "Ctrl+Alt+F4"
+msgstr "Ctrl+Alt+F4"
+
+#: src/widget/connection_view/server_screen.rs:1249
+msgid "Ctrl+Alt+F5"
+msgstr "Ctrl+Alt+F5"
+
+#: src/widget/connection_view/server_screen.rs:1253
+msgid "Ctrl+Alt+F6"
+msgstr "Ctrl+Alt+F6"
+
+#: src/widget/connection_view/server_screen.rs:1257
+msgid "Ctrl+Alt+F7"
+msgstr "Ctrl+Alt+F7"
+
+#: src/widget/connection_view/server_screen.rs:1261
+msgid "Ctrl+Alt+F8"
+msgstr "Ctrl+Alt+F8"
+
+#: src/widget/connection_view/server_screen.rs:1265
+msgid "Ctrl+Alt+F9"
+msgstr "Ctrl+Alt+F9"
+
+#: src/widget/connection_view/server_screen.rs:1269
+msgid "Ctrl+Alt+F10"
+msgstr "Ctrl+Alt+F10"
+
+#: src/widget/connection_view/server_screen.rs:1273
+msgid "Ctrl+Alt+F11"
+msgstr "Ctrl+Alt+F11"
+
+#: src/widget/connection_view/server_screen.rs:1277
+msgid "Ctrl+Alt+F12"
+msgstr "Ctrl+Alt+F12"
+
+#: src/widget/connection_view/server_screen.rs:1283
+msgid "Print"
+msgstr "Print"
+
+#: src/widget/connection_view/server_screen.rs:1294
+msgid "_Zoom"
+msgstr "_Zoom"
+
+#: src/widget/connection_view/server_screen.rs:1317
+msgid "Server _Actions"
+msgstr "_Tenarhandlingar"
+
+#: src/widget/connection_view/server_screen.rs:1321
+msgid "_Close Window"
+msgstr "_Lukk vindauget"
+
+#: src/widget/connection_view/server_screen.rs:1323
+msgid "_Close Connection"
+msgstr "_Lukk tilkoplinga"
+
+#: src/widget/connection_view/server_screen.rs:1340 src/widget/window.blp:278
+msgid "_New Window"
+msgstr "_Nytt vindauge"
+
+#: src/widget/connection_view/server_screen.rs:1345 src/widget/window.blp:283
+msgid "_Preferences"
+msgstr "_Innstillingar"
+
+#: src/widget/connection_view/server_screen.rs:1349 src/widget/window.blp:288
+msgid "_Keyboard Shortcuts"
+msgstr "_Tastatursnarvegar"
+
+#: src/widget/connection_view/server_screen.rs:1353 src/widget/window.blp:293
+msgid "_About Field Monitor"
+msgstr "_Om Field Monitor"
+
+#: src/widget/connection_view/server_screen.rs:1372
+#, rust-format
+msgid "Show Monitor {number}"
+msgstr "Vis skjerm {number}"
+
+#: src/widget/connection_view/server_screen.rs:1383
+msgid "_Copy"
+msgstr "_Kopier"
+
+#: src/widget/connection_view/server_screen.rs:1387
+msgid "_Paste"
+msgstr "_Lim inn"
+
+#: src/widget/connection_view/server_screen.rs:1391
+msgid "Select _All"
+msgstr "Vel _alle"
+
+#: src/widget/connection_view/server_screen.rs:1400
+msgid "Zoom In"
+msgstr "Forstørr"
+
+#: src/widget/connection_view/server_screen.rs:1404
+msgid "Zoom Out"
+msgstr "Forminsk"
+
+#: src/widget/connection_view/server_screen.rs:1408
+msgid "Reset Zoom"
+msgstr "Tilbakestill zoom"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:1462
+#, rust-format
+msgid "Press {keycombo} to ungrab the mouse and keyboard."
+msgstr "Trykk {keycombo} for å sleppe musa og tastaturet."
+
+#: src/widget/connection_view/server_screen.rs:1485
+msgid "Input released."
+msgstr "Inndata sleppt."
+
+#: src/widget/focus_grabber.rs:215
+msgid "Remote Server Screen"
+msgstr "Skjerm frå ekstern tenar"
+
+#: src/widget/focus_grabber.rs:216
+msgid "Press any key to grab input."
+msgstr "Trykk på ein tast for å fange inndata."
+
+#: src/widget/preferences.blp:12
+msgid "Preferences"
+msgstr "Innstillingar"
+
+#: src/widget/preferences.blp:15
+msgid "Behavior"
+msgstr "Åtferd"
+
+#: src/widget/preferences.blp:18
+msgid "Open connections in new windows"
+msgstr "Opne tilkoplingar i nye vindauge"
+
+#: src/widget/preferences.blp:23
+msgid "Appearance"
+msgstr "Utsjånad"
+
+#: src/widget/preferences.blp:26 src/widget/preferences.rs:204
+msgid "Sharp window corners"
+msgstr "Skarpe vindaugshjørne"
+
+#: src/widget/preferences.blp:46 src/widget/preferences.rs:234
+msgid "Header bars for active connections"
+msgstr "Topplinjer for aktive tilkoplingar"
+
+#: src/widget/preferences.blp:66
+msgid "Show ungrab key combination"
+msgstr "Vis tastekombinasjon for å sleppe inndata"
+
+#: src/widget/preferences.blp:67
+msgid ""
+"Show a brief message indicating which key combination ungrabs the mouse and "
+"keyboard, every time input is grabbed from an active connection."
+msgstr ""
+"Vis ei kort melding om kva tastekombinasjon som slepper musa og tastaturet, "
+"kvar gong inndata vert fanga frå ei aktiv tilkopling."
+
+#: src/widget/preferences.rs:180 src/widget/preferences.rs:207
+msgid "Automatic"
+msgstr "Automatisk"
+
+#: src/widget/preferences.rs:181 src/widget/preferences.rs:208
+msgid "Always"
+msgstr "Alltid"
+
+#: src/widget/preferences.rs:182 src/widget/preferences.rs:209
+msgid "Never"
+msgstr "Aldri"
+
+#: src/widget/preferences.rs:190 src/widget/preferences.rs:237
+msgid "Default"
+msgstr "Standard"
+
+#: src/widget/preferences.rs:191 src/widget/preferences.rs:238
+msgid "Show Above"
+msgstr "Vis over"
+
+#: src/widget/preferences.rs:192 src/widget/preferences.rs:239
+msgid "Overlay and Hide"
+msgstr "Overlegg og gøym"
+
+#: src/widget/preferences.rs:205
+msgid ""
+"Configure whether and when Field Monitor will use sharp, right-angle window "
+"corners instead of the default corner radius. This is useful to make sure "
+"the corners of connected screens are not cut off."
+msgstr ""
+"Vel om og når Field Monitor skal bruke skarpe, rette hjørne i staden "
+"for standard hjørneradius. Dette er nyttig for å sikre at hjørna på tilkopla"
+" skjermar ikkje vert kutta."
+
+#: src/widget/preferences.rs:207
+msgid ""
+"Use the default corner radius, but make window corners sharp whenever input "
+"is grabbed."
+msgstr ""
+"Bruk standard hjørneradius, men gjer vindaugshjørna skarpe kvar gong inndata"
+" vert fanga."
+
+#: src/widget/preferences.rs:208
+msgid "Always use sharp window corners."
+msgstr "Bruk alltid skarpe vindaugshjørne."
+
+#: src/widget/preferences.rs:209
+msgid "Never use sharp window corners."
+msgstr "Bruk aldri skarpe vindaugshjørne."
+
+#: src/widget/preferences.rs:235
+msgid "Change how the header bar is presented for active connection screens."
+msgstr "Endre korleis topplinja vert vist for aktive tilkoplingsskjermar."
+
+#: src/widget/preferences.rs:237
+msgid ""
+"The header bar is shown above the connection screen. In fullscreen mode, the "
+"header bar is instead overlaid and hides whenever input is grabbed."
+msgstr ""
+"Topplinja vert vist over tilkoplingsskjermen. I fullskjermmodus ligg "
+"topplinja i staden som eit overlegg og vert gøymd kvar gong inndata vert "
+"fanga."
+
+#: src/widget/preferences.rs:238
+msgid ""
+"The header bar is always shown above the connection screen, even in "
+"fullscreen mode."
+msgstr ""
+"Topplinja vert alltid vist over tilkoplingsskjermen, sjølv i "
+"fullskjermmodus."
+
+#: src/widget/preferences.rs:239
+msgid ""
+"The header bar is always shown as an overlay on top of the connection "
+"screen; it is hidden whenever input is grabbed."
+msgstr ""
+"Topplinja vert alltid vist som eit overlegg over tilkoplingsskjermen; ho "
+"vert gøymd kvar gong inndata vert fanga."
+
+#: src/widget/quick_connect_dialog.blp:20
+#, no-c-format
+msgid ""
+"Enter the URL of the server you want to connect to.\n"
+"Supported protocols are: RDP, SPICE, VNC.\n"
+"\n"
+"<b>Examples:</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://server:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://user@server?VncPassword=password123</i>"
+msgstr ""
+"Skriv inn URL-en til tenaren du vil kople til.\n"
+"Støtta protokollar er: RDP, SPICE, VNC.\n"
+"\n"
+"<b>Døme:</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://server:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://user@server?VncPassword=password123</i>"
+
+#: src/widget/quick_connect_dialog.blp:23
+msgid "Connection URL"
+msgstr "Tilkoplings-URL"
+
+#: src/widget/quick_connect_dialog.blp:34
+msgid "Open File..."
+msgstr "Opne fil …"
+
+#: src/widget/quick_connect_dialog.rs:94 src/widget/quick_connect_dialog.rs:156
+msgid "Failed to open"
+msgstr "Klarte ikkje opne"
+
+#: src/widget/quick_connect_dialog.rs:97
+msgid ""
+"Field Monitor could not connect to the server using the specified file or URI"
+msgstr ""
+"Field Monitor klarte ikkje kople til tenaren med den oppgitte fila eller "
+"URI-en"
+
+#: src/widget/quick_connect_dialog.rs:119
+msgid "Supported files"
+msgstr "Støtta filer"
+
+#: src/widget/quick_connect_dialog.rs:126
+msgid "RDP file"
+msgstr "RDP-fil"
+
+#: src/widget/quick_connect_dialog.rs:133
+msgid "Virt-Viewer file"
+msgstr "Virt-Viewer-fil"
+
+#: src/widget/quick_connect_dialog.rs:137
+msgid "Any file"
+msgstr "Alle filer"
+
+#: src/widget/quick_connect_dialog.rs:145
+msgid "Open Connection from file..."
+msgstr "Opne tilkopling frå fil …"
+
+#: src/widget/quick_connect_dialog.rs:158
+msgid "Field Monitor was unable to open the provided file."
+msgstr "Field Monitor klarte ikkje opne fila."
+
+#: src/widget/update_connection_dialog.blp:33
+msgid "Save"
+msgstr "Lagre"
+
+#. XXX: These are here because (1) some of them we need in multiple places and (2) they are used inside
+#. glib::clone where they can't be picked up by gettext's scanner
+#: src/widget/usb_redir/mod.rs:23
+msgid "USB device connected"
+msgstr "USB-eining kopla til"
+
+#: src/widget/usb_redir/mod.rs:25
+msgid "Failed to connect device"
+msgstr "Klarte ikkje kople til eininga"
+
+#: src/widget/usb_redir/mod.rs:26
+msgid "USB device disconnected"
+msgstr "USB-eining fråkopla"
+
+#: src/widget/usb_redir/mod.rs:28
+msgid "Failed to disconnect device"
+msgstr "Klarte ikkje kople frå eininga"
+
+#: src/widget/usb_redir/mod.rs:29
+msgid "No devices available."
+msgstr "Ingen einingar er tilgjengelege."
+
+#: src/widget/usb_redir/settings.blp:23
+msgid "No devices connected."
+msgstr "Ingen einingar er tilkopla."
+
+#: src/widget/usb_redir/settings.blp:48
+msgid "Manage Devices..."
+msgstr "Handter einingar …"
+
+#: src/widget/usb_redir/settings.rs:167
+#: src/widget/usb_redir/settings_dialog.rs:213
+msgid "Disconnect"
+msgstr "Kople frå"
+
+#: src/widget/usb_redir/settings_dialog.blp:19
+msgid "Help"
+msgstr "Hjelp"
+
+#: src/widget/usb_redir/settings_dialog.blp:31
+msgid "Devices"
+msgstr "Einingar"
+
+#: src/widget/usb_redir/settings_dialog.blp:45
+msgid "Show All Devices"
+msgstr "Vis alle einingar"
+
+#: src/widget/usb_redir/settings_dialog.rs:164
+msgid "1 channel free"
+msgstr "1 ledig kanal"
+
+#. Translators: {free} = number of free USB redirection channels
+#: src/widget/usb_redir/settings_dialog.rs:167
+#, rust-format
+msgid "{free} channels free"
+msgstr "{free} ledige kanalar"
+
+#: src/widget/usb_redir/settings_dialog.rs:201
+msgid "This device can not be connected; you might be missing permissions."
+msgstr "Denne eininga kan ikkje koplast til; du manglar kanskje løyve."
+
+#: src/widget/usb_redir/settings_dialog.rs:401
+msgid ""
+"This dialog allows you to share USB devices with the remote server or "
+"virtual machine.\n"
+"\n"
+"The number of devices that can be shared may be limited by the remote "
+"server.\n"
+"\n"
+"The list hides some devices (USB hubs, etc.) by default. Use the toggle "
+"button to show all devices, but note that USB hubs can not be properly "
+"shared with remote servers.\n"
+"\n"
+"To share a device, your user account may need read and write permissions on "
+"the raw device. Consult your distribution documentation for more information."
+msgstr ""
+"Dette vindauget let deg dele USB-einingar med den eksterne tenaren eller den virtuelle maskina.\n"
+"\n"
+"Talet på einingar som kan delast, kan vere avgrensa av den eksterne tenaren.\n"
+"\n"
+"Lista gøymer enkelte einingar (USB-hubar, etc.) som standard. Bruk veksleknappen for å vise alle einingar, men merk at USB-hubar ikkje kan delast skikkeleg med eksterne tenarar.\n"
+"\n"
+"For å dele ei eining kan brukarkontoen din trenge lese- og skrivetilgang til einingsfila. Sjå dokumentasjonen til distribusjonen din for meir informasjon."
+
+#: src/widget/window.blp:37 src/widget/window.blp:41
+msgid "About Field Monitor"
+msgstr "Om Field Monitor"
+
+#: src/widget/window.blp:68
+msgid "Connect to your virtual machines and remote servers."
+msgstr "Kople til virtuelle maskinar og eksterne tenarar."
+
+#: src/widget/window.blp:81 src/widget/window.blp:189
+msgid "Add Connection"
+msgstr "Legg til tilkopling"
+
+#: src/widget/window.blp:139
+msgid "Main menu"
+msgstr "Hovudmeny"
+
+#: src/widget/window.blp:271
+msgid "_Reload Connections"
+msgstr "_Last tilkoplingar på nytt"
+
+#: src/widget/window.rs:334
+msgid "Close Connection?"
+msgstr "Lukk tilkopling?"
+
+#: src/widget/window.rs:336
+msgid "Closing the connection will disconnect from the remote server."
+msgstr "Å stengje tilkoplinga vil kople frå den eksterne tenaren."
+
+#: src/widget/window.rs:527
+msgid "Showing active connection"
+msgstr "Viser aktiv tilkopling"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/window.rs:532
+#, rust-format
+msgid "Showing connection: {title}"
+msgstr "Viser tilkopling: {title}"
+
+#: src/widget/window.rs:537
+msgid "Showing connection list"
+msgstr "Viser tilkoplingsliste"
