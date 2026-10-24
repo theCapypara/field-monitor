@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: FieldMonitor main\n"
 "Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
 "POT-Creation-Date: 2026-10-13 12:31+0000\n"
-"PO-Revision-Date: 2026-10-24 21:21+0300\n"
+"PO-Revision-Date: 2026-10-24 22:16+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -894,6 +894,8 @@ msgid ""
 "Field Monitor could not start, because it could not connect to your system's "
 "secret service for accessing passwords."
 msgstr ""
+"Не вдалося запустити Field Monitor, оскільки програма не змогла встановити з'"
+"єднання із загальносистемною службою, призначеної для доступу до паролів."
 
 #: src/widget/app_status.blp:56 src/widget/app_status.blp:84
 msgid "Quit"
@@ -913,6 +915,14 @@ msgid ""
 "You may be able to resolve this with <a href='https://github.com/theCapypara/"
 "field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
 msgstr ""
+"Не вдалося запустити Field Monitor, оскільки модуль зберігання паролів повідо"
+"мив, що загальносистемні дані паролів є некоректними або пошкодженими.\n"
+"\n"
+"Це може статися, якщо ви перенесли свій домашній каталог (HOME) до іншої сист"
+"еми.\n"
+"\n"
+"Ви можете вирішити цю проблему за допомогою <a href='https://github.com/theCa"
+"pypara/field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
 
 #: src/widget/authenticate_connection_dialog.blp:6
 #: src/widget/connection_list/info_page.blp:74
@@ -927,6 +937,8 @@ msgstr "Застосувати"
 #: src/widget/authenticate_connection_dialog.rs:105
 msgid "This connection needs additional authentication to proceed."
 msgstr ""
+"Для продовження процедури встановлення цього з'єднання слід пройти додаткове "
+"розпізнавання."
 
 #: src/widget/certificate_details_window.blp:5
 msgid "Certificate Viewer"
@@ -968,7 +980,7 @@ msgstr "Довіряти цьому серверу?"
 
 #: src/widget/certificate_trust_dialog.rs:139
 msgid "Do you trust this certificate and want to establish a connection?"
-msgstr ""
+msgstr "Чи довіряєте ви цьому сертифікату і хочете встановити з'єднання?"
 
 #: src/widget/certificate_trust_dialog.rs:167
 msgid "Fingerprint"
@@ -983,6 +995,8 @@ msgid ""
 "This certificate is the certificate authority (CA) issuing the connection "
 "certificate."
 msgstr ""
+"Цей сертифікат є сертифікатом центру сертифікації (CA), що видає сертифікат д"
+"ля з'єднання."
 
 #: src/widget/certificate_trust_dialog.rs:202
 msgid "Info"
@@ -994,6 +1008,9 @@ msgid ""
 "connection is established using a certificate issued by the CA. If not, "
 "Field Monitor will refuse the connection."
 msgstr ""
+"Після того, як ви вирішите довіряти центру сертифікації (CA), Field Monitor п"
+"ідтвердить, що з'єднання встановлено з використанням сертифіката, виданого ци"
+"м центром. Якщо це не так, Field Monitor відхилить спробу з'єднання."
 
 #: src/widget/certificate_trust_dialog.rs:229
 #, rust-format
@@ -1001,6 +1018,8 @@ msgid ""
 "If you choose to trust this certificate, your choice will be remembered for "
 "future connections to <tt>{host}</tt>."
 msgstr ""
+"Якщо ви вирішите довіряти цьому сертифікату, ваш вибір буде збережено для май"
+"бутніх з'єднань із <tt>{host}</tt>."
 
 #: src/widget/certificate_trust_dialog.rs:239
 #: src/widget/close_warning_dialog.rs:71
@@ -1009,7 +1028,7 @@ msgstr "Скасувати"
 
 #: src/widget/certificate_trust_dialog.rs:240
 msgid "Trust Certificate"
-msgstr ""
+msgstr "Довіряти сертифікату"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is
 #. a variable name.
@@ -1019,6 +1038,8 @@ msgid ""
 "This window is still connected to “{label}”. Closing it will disconnect from "
 "the server."
 msgstr ""
+"Це вікно все ще з'єднано з «{label}». Його закриття призведе до від'єднання в"
+"ід сервера."
 
 #: src/widget/close_warning_dialog.rs:67
 msgid "Close Window?"
@@ -1030,7 +1051,7 @@ msgstr "З'єднання"
 
 #: src/widget/connection_list/connection_list_navbar.blp:13
 msgid "List of configured connections."
-msgstr ""
+msgstr "Вивести список налаштованих з'єднань."
 
 #: src/widget/connection_list/connection_list_navbar.blp:33
 #: src/widget/connection_list/info_page.blp:17
@@ -1047,11 +1068,11 @@ msgstr "Вилучити з'єднання"
 #: src/widget/connection_list/info_page.blp:65
 #: src/widget/connection_list/info_page.rs:257
 msgid "Failed to load connection"
-msgstr ""
+msgstr "Не вдалося завантажити з'єднання"
 
 #: src/widget/connection_list/info_page.blp:75
 msgid "This connection requires additional authentication."
-msgstr ""
+msgstr "Це з'єднання потребує додаткового розпізнавання."
 
 #: src/widget/connection_list/info_page.blp:78
 msgid "Authenticate"
@@ -1062,25 +1083,25 @@ msgstr "Розпізнавання"
 #: src/widget/connection_list/info_page.rs:138
 #, rust-format
 msgid "Loading connection: {title}"
-msgstr ""
+msgstr "Завантаження з'єднання: {title}"
 
 #: src/widget/connection_list/info_page.rs:192
 msgid "No servers available"
-msgstr ""
+msgstr "Немає доступних серверів"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/widget/connection_list/info_page.rs:233
 #, rust-format
 msgid "Loaded connection: {title}"
-msgstr ""
+msgstr "Завантажено з'єднання: {title}"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is
 #. a variable name.
 #: src/widget/connection_list/info_page.rs:262
 #, rust-format
 msgid "Failed to load connection: {detail}"
-msgstr ""
+msgstr "Не вдалося завантажити з'єднання: {detail}"
 
 #. TODO: Getting the server name here isn't really easy...
 #: src/widget/connection_list/server_actions.rs:124
@@ -1103,7 +1124,7 @@ msgstr "З'єднатися"
 #: src/widget/connection_list/server_actions.rs:343
 #, rust-format
 msgid "Connect via {adapter}"
-msgstr ""
+msgstr "З'єднання з використанням {adapter}"
 
 #: src/widget/connection_view/server_screen.blp:30
 #: src/widget/connection_view/server_screen.blp:34 src/widget/window.blp:123
@@ -1113,11 +1134,11 @@ msgstr "Увімкнути/Вимкнути повноекранний режи�
 
 #: src/widget/connection_view/server_screen.blp:45 src/widget/window.blp:135
 msgid "Menu"
-msgstr ""
+msgstr "Меню"
 
 #: src/widget/connection_view/server_screen.blp:48
 msgid "Connection menu"
-msgstr ""
+msgstr "Меню з'єднання"
 
 #: src/widget/connection_view/server_screen.blp:58
 #: src/widget/connection_view/server_screen.blp:61
@@ -1130,7 +1151,7 @@ msgstr "Пристрої USB"
 #: src/widget/connection_view/server_screen.blp:76
 #: src/widget/connection_view/server_screen.blp:79
 msgid "Open Monitor in New Window"
-msgstr ""
+msgstr "Відкрити монітор у новому вікні"
 
 #: src/widget/connection_view/server_screen.blp:119
 msgid "Connecting..."
@@ -1149,14 +1170,14 @@ msgstr "Показати виведені дані"
 #: src/widget/connection_view/server_screen.rs:465
 #, rust-format
 msgid "Connecting to {title}"
-msgstr ""
+msgstr "З'єднання з {title}"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/widget/connection_view/server_screen.rs:792
 #, rust-format
 msgid "Connected to {title}"
-msgstr ""
+msgstr "З'єднано з {title}"
 
 #: src/widget/connection_view/server_screen.rs:972
 msgid "Disconnected"
@@ -1171,7 +1192,7 @@ msgstr "З'єднання з сервером було розірвано."
 #: src/widget/connection_view/server_screen.rs:979
 #, rust-format
 msgid "Disconnected from {title}"
-msgstr ""
+msgstr "Від'єднано від {title}"
 
 #: src/widget/connection_view/server_screen.rs:1023
 msgid "Connection Failed"
@@ -1179,7 +1200,7 @@ msgstr "Невдала спроба з'єднання"
 
 #: src/widget/connection_view/server_screen.rs:1024
 msgid "The connection was closed due to an error."
-msgstr ""
+msgstr "З'єднання закрито через помилку."
 
 #: src/widget/connection_view/server_screen.rs:1031
 msgid "Connection failed"
@@ -1190,27 +1211,27 @@ msgstr "Не вдалося встановити з'єднання"
 #: src/widget/connection_view/server_screen.rs:1035
 #, rust-format
 msgid "Connection failed: {detail}"
-msgstr ""
+msgstr "Помилка з'єднання: {detail}"
 
 #: src/widget/connection_view/server_screen.rs:1197
 msgid "_Dynamic Resize"
-msgstr ""
+msgstr "_Динамічна зміна розмірів"
 
 #: src/widget/connection_view/server_screen.rs:1201
 msgid "_Scale to Window"
-msgstr ""
+msgstr "_Масштабувати за вікном"
 
 #: src/widget/connection_view/server_screen.rs:1211
 msgid "_Resize Window to Screen"
-msgstr ""
+msgstr "З_мінити розміри вікна за екраном"
 
 #: src/widget/connection_view/server_screen.rs:1215
 msgid "Send _Keys"
-msgstr ""
+msgstr "Надіслати _натискання клавіш"
 
 #: src/widget/connection_view/server_screen.rs:1219
 msgid "Ctrl+Alt L"
-msgstr ""
+msgstr "Ctrl+Alt L"
 
 #: src/widget/connection_view/server_screen.rs:1223
 msgid "Ctrl+Alt+Backspace"
@@ -1278,7 +1299,7 @@ msgstr "_Масштаб"
 
 #: src/widget/connection_view/server_screen.rs:1317
 msgid "Server _Actions"
-msgstr ""
+msgstr "Д_ії з сервером"
 
 #: src/widget/connection_view/server_screen.rs:1321
 msgid "_Close Window"
@@ -1302,12 +1323,12 @@ msgstr "_Клавіатурні скорочення"
 
 #: src/widget/connection_view/server_screen.rs:1353 src/widget/window.blp:293
 msgid "_About Field Monitor"
-msgstr ""
+msgstr "_Про Field Monitor"
 
 #: src/widget/connection_view/server_screen.rs:1372
 #, rust-format
 msgid "Show Monitor {number}"
-msgstr ""
+msgstr "Показати монітор {number}"
 
 #: src/widget/connection_view/server_screen.rs:1383
 msgid "_Copy"
@@ -1338,19 +1359,19 @@ msgstr "Відновити початковий масштаб"
 #: src/widget/connection_view/server_screen.rs:1462
 #, rust-format
 msgid "Press {keycombo} to ungrab the mouse and keyboard."
-msgstr ""
+msgstr "Натисніть {keycombo}, щоб скасувати захоплення миші і клавіатури."
 
 #: src/widget/connection_view/server_screen.rs:1485
 msgid "Input released."
-msgstr ""
+msgstr "Введення випущено."
 
 #: src/widget/focus_grabber.rs:215
 msgid "Remote Server Screen"
-msgstr ""
+msgstr "Екран віддаленого сервера"
 
 #: src/widget/focus_grabber.rs:216
 msgid "Press any key to grab input."
-msgstr ""
+msgstr "Натисніть будь-яку клавішу, щоб захопити введення."
 
 #: src/widget/preferences.blp:12
 msgid "Preferences"
@@ -1362,7 +1383,7 @@ msgstr "Поведінка"
 
 #: src/widget/preferences.blp:18
 msgid "Open connections in new windows"
-msgstr ""
+msgstr "Відкривати з'єднання у нових вікнах"
 
 #: src/widget/preferences.blp:23
 msgid "Appearance"
@@ -1370,21 +1391,24 @@ msgstr "Вигляд"
 
 #: src/widget/preferences.blp:26 src/widget/preferences.rs:204
 msgid "Sharp window corners"
-msgstr ""
+msgstr "Різкі кути вікон"
 
 #: src/widget/preferences.blp:46 src/widget/preferences.rs:234
 msgid "Header bars for active connections"
-msgstr ""
+msgstr "Смужки заголовка для активних з'єднань"
 
 #: src/widget/preferences.blp:66
 msgid "Show ungrab key combination"
-msgstr ""
+msgstr "Показати комбінацію клавіш для скасування захоплення"
 
 #: src/widget/preferences.blp:67
 msgid ""
 "Show a brief message indicating which key combination ungrabs the mouse and "
 "keyboard, every time input is grabbed from an active connection."
 msgstr ""
+"Щоразу, коли здійснюється захоплення введення активним з’єднанням, показувати"
+" коротке повідомлення, яке вказує, за допомогою якої комбінації клавіш можна "
+"звільнити мишу та клавіатуру."
 
 #: src/widget/preferences.rs:180 src/widget/preferences.rs:207
 msgid "Automatic"
@@ -1400,15 +1424,15 @@ msgstr "Ніколи"
 
 #: src/widget/preferences.rs:190 src/widget/preferences.rs:237
 msgid "Default"
-msgstr ""
+msgstr "Типовий"
 
 #: src/widget/preferences.rs:191 src/widget/preferences.rs:238
 msgid "Show Above"
-msgstr ""
+msgstr "Показати згори"
 
 #: src/widget/preferences.rs:192 src/widget/preferences.rs:239
 msgid "Overlay and Hide"
-msgstr ""
+msgstr "Накласти і приховати"
 
 #: src/widget/preferences.rs:205
 msgid ""
@@ -1416,42 +1440,54 @@ msgid ""
 "corners instead of the default corner radius. This is useful to make sure "
 "the corners of connected screens are not cut off."
 msgstr ""
+"Налаштувати, чи використовуватиме Field Monitor гострі, прямокутні кути вікон"
+" замість стандартних заокруглених кутів, і коли саме це робити. Це корисно дл"
+"я того, щоб кути з'єднаних екранів не було обрізано."
 
 #: src/widget/preferences.rs:207
 msgid ""
 "Use the default corner radius, but make window corners sharp whenever input "
 "is grabbed."
 msgstr ""
+"Використовувати типовий радіус заокруглення кутів, але робити кути вікна гост"
+"рими, коли здійснюється захоплення введення."
 
 #: src/widget/preferences.rs:208
 msgid "Always use sharp window corners."
-msgstr ""
+msgstr "Завжди використовувати різкі кути вікон."
 
 #: src/widget/preferences.rs:209
 msgid "Never use sharp window corners."
-msgstr ""
+msgstr "Ніколи не використовувати різкі кути вікон."
 
 #: src/widget/preferences.rs:235
 msgid "Change how the header bar is presented for active connection screens."
-msgstr ""
+msgstr "Змінити спосіб показу смужки заголовка для екранів активних з'єднань."
 
 #: src/widget/preferences.rs:237
 msgid ""
 "The header bar is shown above the connection screen. In fullscreen mode, the "
 "header bar is instead overlaid and hides whenever input is grabbed."
 msgstr ""
+"Смужку заголовка буде показано над екраном з'єднання. У повноекранному режимі"
+" смужка заголовка накладається на вміст і приховується, щойно здійснюється за"
+"хоплення введення."
 
 #: src/widget/preferences.rs:238
 msgid ""
 "The header bar is always shown above the connection screen, even in "
 "fullscreen mode."
 msgstr ""
+"Смужку заголовка завжди буде показано над екраном з'єднання, навіть у повноек"
+"ранному режимі."
 
 #: src/widget/preferences.rs:239
 msgid ""
 "The header bar is always shown as an overlay on top of the connection "
 "screen; it is hidden whenever input is grabbed."
 msgstr ""
+"Смужку заголовка завжди буде показано над екраном з'єднання; її буде прихован"
+"о, коли виконуватиметься захоплення введення."
 
 #: src/widget/quick_connect_dialog.blp:20
 #, no-c-format
@@ -1465,6 +1501,14 @@ msgid ""
 "<i>spice://me@localhost:999?password=1234</i>\n"
 "<i>vnc://user@server?VncPassword=password123</i>"
 msgstr ""
+"Введіть адресу сервера, з яким хочете встановити з'єднання.\n"
+"Підтримувані протоколи: RDP, SPICE, VNC.\n"
+"\n"
+"<b>Приклади:</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://server:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://user@server?VncPassword=password123</i>"
 
 #: src/widget/quick_connect_dialog.blp:23
 msgid "Connection URL"
@@ -1482,6 +1526,8 @@ msgstr "Не вдалося відкрити"
 msgid ""
 "Field Monitor could not connect to the server using the specified file or URI"
 msgstr ""
+"Field Monitor не вдалося встановити з'єднання з сервером, використовуючи вказ"
+"аний файл або адресу"
 
 #: src/widget/quick_connect_dialog.rs:119
 msgid "Supported files"
@@ -1489,11 +1535,11 @@ msgstr "підтримувані файли"
 
 #: src/widget/quick_connect_dialog.rs:126
 msgid "RDP file"
-msgstr ""
+msgstr "файл RDP"
 
 #: src/widget/quick_connect_dialog.rs:133
 msgid "Virt-Viewer file"
-msgstr ""
+msgstr "файл Virt-Viewer"
 
 #: src/widget/quick_connect_dialog.rs:137
 msgid "Any file"
@@ -1501,11 +1547,11 @@ msgstr "Будь-який файл"
 
 #: src/widget/quick_connect_dialog.rs:145
 msgid "Open Connection from file..."
-msgstr ""
+msgstr "Відкрити з'єднання з файла…"
 
 #: src/widget/quick_connect_dialog.rs:158
 msgid "Field Monitor was unable to open the provided file."
-msgstr ""
+msgstr "Field Monitor не вдалося відкрити наданий файл."
 
 #: src/widget/update_connection_dialog.blp:33
 msgid "Save"
@@ -1515,19 +1561,19 @@ msgstr "Зберегти"
 #. glib::clone where they can't be picked up by gettext's scanner
 #: src/widget/usb_redir/mod.rs:23
 msgid "USB device connected"
-msgstr ""
+msgstr "З'єднано пристрій USB"
 
 #: src/widget/usb_redir/mod.rs:25
 msgid "Failed to connect device"
-msgstr ""
+msgstr "Не вдалося встановити з'єднання з пристроєм"
 
 #: src/widget/usb_redir/mod.rs:26
 msgid "USB device disconnected"
-msgstr ""
+msgstr "Від'єднано пристрій USB"
 
 #: src/widget/usb_redir/mod.rs:28
 msgid "Failed to disconnect device"
-msgstr ""
+msgstr "Не вдалося від'єднати пристрій"
 
 #: src/widget/usb_redir/mod.rs:29
 msgid "No devices available."
@@ -1539,7 +1585,7 @@ msgstr "Немає з'єднаних пристроїв."
 
 #: src/widget/usb_redir/settings.blp:48
 msgid "Manage Devices..."
-msgstr ""
+msgstr "Керування пристроями…"
 
 #: src/widget/usb_redir/settings.rs:167
 #: src/widget/usb_redir/settings_dialog.rs:213
@@ -1560,17 +1606,19 @@ msgstr "Показати всі пристрої"
 
 #: src/widget/usb_redir/settings_dialog.rs:164
 msgid "1 channel free"
-msgstr ""
+msgstr "1 вільний канал"
 
 #. Translators: {free} = number of free USB redirection channels
 #: src/widget/usb_redir/settings_dialog.rs:167
 #, rust-format
 msgid "{free} channels free"
-msgstr ""
+msgstr "{free} вільних каналів"
 
 #: src/widget/usb_redir/settings_dialog.rs:201
 msgid "This device can not be connected; you might be missing permissions."
 msgstr ""
+"З'єднання з цим пристроєм не може бути встановлено; можливо, у вас недостатні"
+" права доступу."
 
 #: src/widget/usb_redir/settings_dialog.rs:401
 msgid ""
@@ -1587,14 +1635,27 @@ msgid ""
 "To share a device, your user account may need read and write permissions on "
 "the raw device. Consult your distribution documentation for more information."
 msgstr ""
+"Це діалогове вікно надає змогу надавати доступ до пристроїв USB для віддалено"
+"го сервера або віртуальної машини.\n"
+"\n"
+"Кількість пристроїв, до яких можна надати доступ, може бути обмежена віддален"
+"им сервером.\n"
+"\n"
+"Типово деякі пристрої (наприклад, концентратори USB) приховано у списку. Скор"
+"истайтеся перемикачем, щоб переглянути список усіх пристроїв, але врахуйте, щ"
+"о концентратори USB неможливо коректно з'єднати з віддаленими серверами.\n"
+"\n"
+"Щоб надати доступ до пристрою, ваш обліковий запис користувача може потребува"
+"ти прав на читання та запис безпосередньо для цього пристрою. Додаткові відом"
+"ості можна знайти у документації до вашого дистрибутива."
 
 #: src/widget/window.blp:37 src/widget/window.blp:41
 msgid "About Field Monitor"
-msgstr ""
+msgstr "Про Field Monitor"
 
 #: src/widget/window.blp:68
 msgid "Connect to your virtual machines and remote servers."
-msgstr ""
+msgstr "З'єднання з вашими віртуальними машинами та віддаленими серверами."
 
 #: src/widget/window.blp:81 src/widget/window.blp:189
 msgid "Add Connection"
@@ -1606,7 +1667,7 @@ msgstr "Головне меню"
 
 #: src/widget/window.blp:271
 msgid "_Reload Connections"
-msgstr ""
+msgstr "П_ерезавантажити з'єднання"
 
 #: src/widget/window.rs:334
 msgid "Close Connection?"
@@ -1614,19 +1675,19 @@ msgstr "Закрити з'єднання?"
 
 #: src/widget/window.rs:336
 msgid "Closing the connection will disconnect from the remote server."
-msgstr ""
+msgstr "Закриття з'єднання призведе до від'єднання від віддаленого сервера."
 
 #: src/widget/window.rs:527
 msgid "Showing active connection"
-msgstr ""
+msgstr "Показ активного з'єднання"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is
 #. a variable name.
 #: src/widget/window.rs:532
 #, rust-format
 msgid "Showing connection: {title}"
-msgstr ""
+msgstr "Показ з'єднання: {title}"
 
 #: src/widget/window.rs:537
 msgid "Showing connection list"
-msgstr ""
+msgstr "Показ списку з'єднань"
