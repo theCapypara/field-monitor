@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: FieldMonitor main\n"
 "Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
 "POT-Creation-Date: 2026-10-13 12:31+0000\n"
-"PO-Revision-Date: 2026-10-23 21:31+0300\n"
+"PO-Revision-Date: 2026-10-24 21:21+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -41,27 +41,27 @@ msgstr "Пароль"
 
 #: connection/generic-group/src/lib.rs:58
 msgid "Generic Connection Group"
-msgstr ""
+msgstr "Загальна група з'єднань"
 
 #: connection/generic-group/src/lib.rs:62
 msgid "Generic Connection Groups"
-msgstr ""
+msgstr "Загальні групи з'єднань"
 
 #: connection/generic-group/src/lib.rs:66
 msgid "Add Generic Connection Group"
-msgstr ""
+msgstr "Додати загальну групу з'єднань"
 
 #: connection/generic-group/src/lib.rs:74
 msgid "Connection to one or more RDP, SPICE and VNC servers"
-msgstr ""
+msgstr "З'єднання з одним або декількома серверами RDP, SPICE або VNC"
 
 #: connection/generic-group/src/lib.rs:148
 msgid "One or more fields contain invalid values."
-msgstr ""
+msgstr "В одному або декількох полях містяться некоректні значення."
 
 #: connection/generic-group/src/lib.rs:371
 msgid "Failed to load password."
-msgstr ""
+msgstr "Не вдалося завантажити пароль."
 
 #: connection/generic-group/src/preferences.blp:20
 msgid "Group Name"
@@ -78,7 +78,7 @@ msgstr "Додати сервер"
 
 #: connection/generic-group/src/preferences.rs:473
 msgid "No servers added yet."
-msgstr ""
+msgstr "Ще не додано жодного сервера."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -90,7 +90,7 @@ msgstr "Змінити «{title}»"
 
 #: connection/generic-group/src/preferences.rs:594
 msgid "Update"
-msgstr ""
+msgstr "Оновити"
 
 #: connection/generic-group/src/preferences.rs:596
 #: src/widget/add_connection_dialog.rs:133
@@ -153,6 +153,10 @@ msgid ""
 "sure that the graphics adapter's listen type is set to 'address' and that "
 "the adapter is listening on all interfaces."
 msgstr ""
+"Не знайдено жодної підтримуваної графічної кінцевої точки. Порада: якщо з'єдн"
+"ання здійснюється через SSH, переконайтеся, що для графічного адаптера встано"
+"влено тип очікування на дані «address» і що адаптер очікує на дані на усіх ін"
+"терфейсах."
 
 #: connection/libvirt/src/connection/graphics.rs:255
 msgid "D-Bus"
@@ -160,7 +164,7 @@ msgstr "D-Bus"
 
 #: connection/libvirt/src/connection/mod.rs:162
 msgid "(Unable to load server name)"
-msgstr ""
+msgstr "(Не вдалося завантажити назву сервера)"
 
 #: connection/libvirt/src/connection/mod.rs:216
 #: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:66
@@ -177,12 +181,12 @@ msgstr "Вимкнути"
 #: connection/libvirt/src/connection/mod.rs:218
 #: connection/proxmox/src/api/vm.rs:73
 msgid "Force Reset"
-msgstr ""
+msgstr "Примусове скидання"
 
 #: connection/libvirt/src/connection/mod.rs:219
 #: connection/proxmox/src/api/vm.rs:68 connection/proxmox/src/api/vm.rs:74
 msgid "Force Poweroff"
-msgstr ""
+msgstr "Примусове вимикання"
 
 #. TRANSLATORS: Verb
 #: connection/libvirt/src/connection/mod.rs:226
@@ -192,58 +196,58 @@ msgstr "Запуск"
 
 #: connection/libvirt/src/connection/mod.rs:257
 msgid "Reboot command successfully sent to domain."
-msgstr ""
+msgstr "Команду перезавантаження успішно надіслано до домену."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/mod.rs:262
 #, rust-format
 msgid "Failed to send reboot command: {err}"
-msgstr ""
+msgstr "Не вдалося надіслати команду перезавантаження: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:283
 msgid "Shutdown command successfully sent to domain."
-msgstr ""
+msgstr "Команду вимикання успішно надіслано до домену."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/mod.rs:288
 #, rust-format
 msgid "Failed to send shutdown command: {err}"
-msgstr ""
+msgstr "Не вдалося надіслати команду вимикання: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:309
 msgid "Domain successfully reset."
-msgstr ""
+msgstr "Домен успішно відновлено до початкових параметрів."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/mod.rs:314
 #, rust-format
 msgid "Failed to reset domain: {err}"
-msgstr ""
+msgstr "Не вдалося відновити початкові параметри домену: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:335
 msgid "Domain successfully shut down."
-msgstr ""
+msgstr "Домен успішно вимкнено."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/mod.rs:340
 #, rust-format
 msgid "Failed to send destroy command: {err}"
-msgstr ""
+msgstr "Не вдалося надіслати команду знищення: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:366
 msgid "Domain successfully started."
-msgstr ""
+msgstr "Домен успішно запущено."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/mod.rs:371
 #, rust-format
 msgid "Failed to send create command: {err}"
-msgstr ""
+msgstr "Не вдалося надіслати команду створення: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:398
 msgid "Domain is not running."
@@ -256,7 +260,7 @@ msgstr "Домен вже запущено."
 #: connection/libvirt/src/connection/mod.rs:414
 #: connection/proxmox/src/api/mod.rs:84
 msgid "Internal error while trying to execute command."
-msgstr ""
+msgstr "Внутрішня помилка під час спроби виконати команду."
 
 #: connection/libvirt/src/connection/mod.rs:442
 msgid "Serial Console"
@@ -264,13 +268,16 @@ msgstr "Послідовна консоль"
 
 #: connection/libvirt/src/connection/qemu_dbus.rs:130
 msgid "Try enabling the 'p2p' option for the D-Bus graphics adapter."
-msgstr ""
+msgstr "Спробуйте увімкнути параметр «p2p» для графічного адаптера D-Bus."
 
 #: connection/libvirt/src/connection/qemu_dbus.rs:143
 msgid ""
 "If you are connecting to a qemu:///system domain, you may not be able to "
 "connect via D-Bus unless you enable the 'p2p' option."
 msgstr ""
+"Якщо ви встановлюєте з'єднання з доменом qemu:///system, можливо, вам не вдас"
+"ться встановити з'єднання за допомогою D-Bus, доки ви не увімкнете параметр «"
+"p2p»."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -279,24 +286,26 @@ msgstr ""
 msgid ""
 "Your user account does not have permission to connect to the bus.{group_hint}"
 msgstr ""
+"Ваш обліковий запис користувача не має прав доступу для встановлення з'єднанн"
+"я з bus.{group_hint}"
 
 #: connection/libvirt/src/connection/qemu_dbus.rs:194
 msgid "The following information may help you to troubleshoot the issue:"
-msgstr ""
+msgstr "Ці дані можуть допомогти вам у вирішенні проблеми:"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/qemu_dbus.rs:206
 #, rust-format
 msgid "Failed to connect via D-Bus.{extra_info}"
-msgstr ""
+msgstr "Не вдалося встановити з'єднання за допомогою D-Bus.{extra_info}"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/qemu_dbus.rs:253
 #, rust-format
 msgid "Try adding your account to the '{group_name}' group."
-msgstr ""
+msgstr "Спробуйте додати ваш обліковий запис до групи «{group_name}»."
 
 #: connection/libvirt/src/hypervisor/qemu.rs:46
 #: connection/libvirt/src/hypervisor/qemu.rs:50
@@ -305,11 +314,11 @@ msgstr "QEMU/KVM"
 
 #: connection/libvirt/src/hypervisor/qemu.rs:54
 msgid "Add QEMU/KVM Connection"
-msgstr ""
+msgstr "Додати з'єднання QEMU/KVM"
 
 #: connection/libvirt/src/hypervisor/qemu.rs:62
 msgid "QEMU/KVM hypervisor connection via libvirt."
-msgstr ""
+msgstr "З'єднання гіпервізора QEMU/KVM за допомогою libvirt."
 
 #: connection/libvirt/src/qemu_preferences.blp:13
 #: connection/proxmox/src/preferences.blp:12
@@ -322,11 +331,11 @@ msgstr "Тип сеансу"
 
 #: connection/libvirt/src/qemu_preferences.blp:22
 msgid "System Session"
-msgstr ""
+msgstr "Загальносистемний сеанс"
 
 #: connection/libvirt/src/qemu_preferences.blp:23
 msgid "This is the QEMU/KVM default."
-msgstr ""
+msgstr "Це типовий варіант для QEMU/KVM."
 
 #: connection/libvirt/src/qemu_preferences.blp:33
 msgid "User Session"
@@ -338,31 +347,34 @@ msgstr "Віддалене з'єднання"
 
 #: connection/libvirt/src/qemu_preferences.blp:47
 msgid "Connect via SSH"
-msgstr ""
+msgstr "З'єднатися за допомогою SSH"
 
 #: connection/proxmox/src/api/connection.rs:60
 msgid "Unable to build a valid URL to connect to. Check your settings."
 msgstr ""
+"Не вдалося побудувати адресу для з'єднання. Перевірте вказані параметри."
 
 #: connection/proxmox/src/api/connection.rs:72
 msgid "Failed to retrieve API Key or Password from secrets service."
 msgstr ""
+"Не вдалося отримати ключ до програмного інтерфейсу або пароль від служби реєс"
+"траційних даних."
 
 #: connection/proxmox/src/api/node.rs:100
 msgid "Reboot command successfully sent to server."
-msgstr ""
+msgstr "Команду перезавантаження успішно надіслано на сервер."
 
 #: connection/proxmox/src/api/node.rs:103 connection/proxmox/src/api/vm.rs:135
 msgid "Failed to send reboot command."
-msgstr ""
+msgstr "Не вдалося надіслати команду перезавантаження."
 
 #: connection/proxmox/src/api/node.rs:125
 msgid "Shutdown command successfully sent to server."
-msgstr ""
+msgstr "Команду вимикання успішно надіслано на сервер."
 
 #: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:168
 msgid "Failed to send shutdown command."
-msgstr ""
+msgstr "Не вдалося надіслати команду вимикання."
 
 #: connection/proxmox/src/api/node.rs:164
 msgid "Console"
@@ -373,57 +385,59 @@ msgstr "Консоль"
 #: connection/proxmox/src/api/provider.rs:52
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
 msgid "Proxmox"
-msgstr ""
+msgstr "Proxmox"
 
 #: connection/proxmox/src/api/provider.rs:56
 msgid "Add Proxmox Connection"
-msgstr ""
+msgstr "Додати з'єднання Proxmox"
 
 #: connection/proxmox/src/api/provider.rs:64
 msgid "Proxmox Virtual Environment hypervisor connection"
-msgstr ""
+msgstr "З'єднання з гіпервізором віртуального середовища Proxmox"
 
 #: connection/proxmox/src/api/vm.rs:132
 msgid "Reboot command successfully sent to VM."
-msgstr ""
+msgstr "Команду перезавантаження успішно надіслано до віртуальної машини."
 
 #: connection/proxmox/src/api/vm.rs:165
 msgid "Shutdown command successfully sent to VM."
-msgstr ""
+msgstr "Команду вимикання успішно надіслано до віртуальної машини."
 
 #: connection/proxmox/src/api/vm.rs:197
 msgid "VM was successfully reset."
-msgstr ""
+msgstr "Віртуальну машину успішно відновлено до початкових параметрів."
 
 #: connection/proxmox/src/api/vm.rs:200
 msgid "Failed to send reset command."
-msgstr ""
+msgstr "Не вдалося надіслати команду скидання."
 
 #: connection/proxmox/src/api/vm.rs:230
 msgid "VM is now stopping."
-msgstr ""
+msgstr "Зараз відбувається зупинення роботи віртуальної машини."
 
 #: connection/proxmox/src/api/vm.rs:233
 msgid "Failed to send stop command."
-msgstr ""
+msgstr "Не вдалося надіслати команду зупинення."
 
 #: connection/proxmox/src/api/vm.rs:263
 msgid "VM is now starting."
-msgstr ""
+msgstr "Зараз відбувається запуск віртуальної машини."
 
 #: connection/proxmox/src/api/vm.rs:266
 msgid "Failed to send start command."
-msgstr ""
+msgstr "На вдалося надіслати команду запуску."
 
 #: connection/proxmox/src/credential_preferences.blp:10
 msgid ""
 "The Proxmox user needs at least the permissions <tt>VM.Console</tt>, "
 "<tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>."
 msgstr ""
+"Користувачу Proxmox потрібні принаймні права доступу <tt>VM.Console</tt>, <tt"
+">VM.Audit</tt> і <tt>VM.PowerMgmt</tt>."
 
 #: connection/proxmox/src/credential_preferences.blp:13
 msgid "Authentication Mode"
-msgstr ""
+msgstr "Режим розпізнавання"
 
 #: connection/proxmox/src/credential_preferences.blp:19
 #: connection/proxmox/src/credential_preferences.rs:195
@@ -440,13 +454,16 @@ msgstr "З'єднання"
 
 #: connection/proxmox/src/preferences.blp:33
 msgid "Trust Any SSL Certificate"
-msgstr ""
+msgstr "Довіряти будь-яким сертифікатам SSL"
 
 #: connection/proxmox/src/preferences.blp:34
 msgid ""
 "Allows connecting to servers with self-signed and otherwise invalid SSL "
 "certificates. Be careful, as this is a potential security risk."
 msgstr ""
+"Дозволяє встановлювати з'єднання з серверами із самопідписаними або іншим чин"
+"ом недійсними SSL-сертифікатами. Будьте обережні, оскільки це створює потенці"
+"йний ризик щодо захисту."
 
 #. Translators: The name of the application.
 #: data/de.capypara.FieldMonitor.desktop.in.in:2
@@ -454,7 +471,7 @@ msgstr ""
 #: src/widget/window.blp:61 src/widget/window.blp:67 src/widget/window.blp:116
 #: src/widget/window.blp:218 src/widget/window.blp:235 src/widget/window.rs:405
 msgid "Field Monitor"
-msgstr ""
+msgstr "Field Monitor"
 
 #: data/de.capypara.FieldMonitor.desktop.in.in:3
 msgid "Remote Desktop Viewer"
@@ -464,12 +481,12 @@ msgstr "Перегляд віддалених стільниць"
 #: data/de.capypara.FieldMonitor.desktop.in.in:4
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
 msgid "Access VMs and external screens"
-msgstr ""
+msgstr "Доступ до віртуальних машин і зовнішніх екранів"
 
 #. Translators: The keywords from the desktop file.
 #: data/de.capypara.FieldMonitor.desktop.in.in:12
 msgid "proxmox;vnc;spice;rdp;kvm;qemu;"
-msgstr ""
+msgstr "proxmox;vnc;spice;rdp;kvm;qemu;проскмокс;віенсі;спайс;квм;кему;"
 
 #: data/de.capypara.FieldMonitor.desktop.in.in:17
 msgid "New Window"
@@ -488,7 +505,7 @@ msgstr "KVM"
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:34
 msgid "QEMU"
-msgstr ""
+msgstr "QEMU"
 
 #. Translators: Keyword in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:36
@@ -505,6 +522,7 @@ msgstr "GNOME"
 msgid ""
 "Field Monitor is a remote-desktop client designed for the GNOME platform."
 msgstr ""
+"Field Monitor — клієнт віддаленої стільниці, розроблений для платформи GNOME."
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
@@ -512,21 +530,26 @@ msgid ""
 "It is focused on connecting to virtual machines, but can connect to any "
 "server supporting the RDP, SPICE or VNC protocols."
 msgstr ""
+"Програму зорієнтовано на з'єднання з віртуальними машинами, але може встановл"
+"ювати з'єднання з будь-яким сервером, де передбачено підтримку протоколів RDP"
+", SPICE і VNC."
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
 msgid ""
 "It has support for directly connecting to VMs of the following hypervisors:"
 msgstr ""
+"Передбачено підтримку безпосереднього з'єднання з віртуальними машинами таких"
+" гіпервізорів:"
 
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
 msgid "Proxmox Virtual Environment"
-msgstr ""
+msgstr "Віртуальне середовище Proxmox"
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
 msgid "QEMU/KVM via libvirt"
-msgstr ""
+msgstr "QEMU/KVM за допомогою libvirt"
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
@@ -534,6 +557,9 @@ msgid ""
 "For supported VM hypervisors, Field Monitor also offers options to manage "
 "the basic power state of VMs, such as starting, stopping, rebooting, etc."
 msgstr ""
+"Для підтримуваних гіпервізорів віртуальних машин Field Monitor також пропонує"
+" можливості керування основним станом живлення віртуальних машин, зокрема їх "
+"запуском, зупинкою, перезавантаженням тощо."
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
@@ -541,11 +567,14 @@ msgid ""
 "Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
 msgstr ""
+"Крім того, у Field Monitor передбачено підтримку відкриття файлів з'єднань RD"
+"P та Virt-Viewer, а також швидке з'єднання з серверами RDP, SPICE або VNC за "
+"допомогою адреси."
 
 #. Translators: Caption of the first screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:204
 msgid "Screen of a connected graphical display"
-msgstr ""
+msgstr "Екран з'єднаного графічного дисплея"
 
 #. Translators: Caption of the second screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:214
@@ -555,57 +584,58 @@ msgstr "Вікно вітання"
 #. Translators: Caption of the third screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:221
 msgid "A list of servers in a Proxmox cluster to connect to"
-msgstr ""
+msgstr "Список серверів у кластері Proxmox для встановлення з'єднання"
 
 #. Translators: Caption of the 4th screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:231
 msgid "Screen of a connected console"
-msgstr ""
+msgstr "Екран з'єднаної консолі"
 
 #. Translators: Caption of the 5th screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:241
 msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
 msgstr ""
+"Додавання нового з'єднання з гіпервізором віртуального середовища Proxmox"
 
 #: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
 msgid "Remote Desktop file"
-msgstr ""
+msgstr "файл віддаленої стільниці"
 
 #: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
 msgid "Virt-Viewer connection file"
-msgstr ""
+msgstr "файл з'єднання Virt-Viewer"
 
 #: lib/src/adapter/usbredir/error.rs:35
 msgid "The device can not be attached to the connection"
-msgstr ""
+msgstr "Пристрій може бути долучено до з'єднання"
 
 #: lib/src/adapter/usbredir/error.rs:38
 msgid "The device was already attached to the connection"
-msgstr ""
+msgstr "Пристрій вже долучено до з'єднання"
 
 #: lib/src/adapter/usbredir/portal.rs:254
 #, rust-format
 msgid "Failed to communicate with the system portal: {details}"
-msgstr ""
+msgstr "Не вдалося обмінятися даними з загальносистемним порталом: {details}"
 
 #: lib/src/adapter/usbredir/portal.rs:258
 #, rust-format
 msgid "USB portal request failed: {details}"
-msgstr ""
+msgstr "Помилка запиту до порталу USB: {details}"
 
 #: lib/src/adapter/usbredir/portal.rs:262
 #, rust-format
 msgid "USB redirection initialization failed: {details}"
-msgstr ""
+msgstr "Помилка ініціалізації переспрямування USB: {details}"
 
 #: lib/src/adapter/usbredir/qemu_dbus/mod.rs:258
 #: lib/src/adapter/usbredir/spice.rs:132
 msgid "Failed to attach the USB device"
-msgstr ""
+msgstr "Не вдалося долучити пристрій USB"
 
 #: lib/src/cert_security.rs:134
 msgid "Server certificate verification failed"
-msgstr ""
+msgstr "Сертифікат сервера не пройшов перевірки"
 
 #: lib/src/connection/instance.rs:191
 msgid "Unknown error"
@@ -621,19 +651,19 @@ msgstr "Загальна помилка"
 
 #: lib/src/gtk/save_credentials_button.blp:23
 msgid "Save and remember"
-msgstr ""
+msgstr "Зберегти і запам'ятати"
 
 #: lib/src/gtk/save_credentials_button.blp:29
 msgid "Ask for this every time"
-msgstr ""
+msgstr "Питати кожного разу"
 
 #: lib/src/lib.rs:43
 msgid "The connection configuration is invalid"
-msgstr ""
+msgstr "Некоректні налаштування з'єднання"
 
 #: src/application.rs:131
 msgid "Open the app with a new window"
-msgstr ""
+msgstr "Відкрити програму у новому вікні"
 
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
 #: src/application.rs:584
@@ -655,18 +685,18 @@ msgstr "Гаразд"
 
 #: src/application.rs:645
 msgid "Connection successfully added."
-msgstr ""
+msgstr "З'єднання успішно додано."
 
 #: src/application.rs:700
 msgid "Connection successfully updated."
-msgstr ""
+msgstr "З'єднання успішно оновлено."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/application.rs:738
 #, rust-format
 msgid "Permanently Remove “{title}”?"
-msgstr ""
+msgstr "Остаточно вилучити «{title}»?"
 
 #: src/application.rs:742 src/widget/window.rs:339
 msgid "No"
@@ -678,15 +708,15 @@ msgstr "Так"
 
 #: src/application.rs:748
 msgid "Connection successfully removed."
-msgstr ""
+msgstr "З'єднання успішно вилучено."
 
 #: src/application.rs:809
 msgid "Authentication successfully updated"
-msgstr ""
+msgstr "Дані розпізнавання успішно оновлено"
 
 #: src/connection_loader.rs:83 src/connection_loader.rs:93
 msgid "Connection not found."
-msgstr ""
+msgstr "З'єднання не знайдено."
 
 #: src/connection_loader.rs:193 src/connection_loader.rs:204
 msgid "Server not found."
@@ -694,11 +724,11 @@ msgstr "Сервер не знайдено."
 
 #: src/connection_loader.rs:246 src/connection_loader.rs:364
 msgid "Failed to load or connect to server"
-msgstr ""
+msgstr "Не вдалося завантажити або встановити з'єднання з сервером"
 
 #: src/quick_connect/mod.rs:118
 msgid "Untitled Server"
-msgstr ""
+msgstr "Сервер без назви"
 
 #: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
 #: src/widget/window.blp:95 src/widget/window.blp:204
@@ -707,7 +737,7 @@ msgstr "Швидке з’єднання"
 
 #: src/quick_connect/mod.rs:320
 msgid "via Quick Connect"
-msgstr ""
+msgstr "за допомогою «Швидкого з'єднання»"
 
 #: src/quick_connect/rdp.rs:78
 msgid "Failed to read file"
@@ -715,35 +745,35 @@ msgstr "Не вдалося прочитати файл"
 
 #: src/quick_connect/rdp.rs:169
 msgid "Invalid RDP parameters"
-msgstr ""
+msgstr "Некоректні параметри RDP"
 
 #: src/quick_connect/spice.rs:208
 msgid "Invalid SPICE URI"
-msgstr ""
+msgstr "Некоректна адреса SPICE"
 
 #: src/quick_connect/util.rs:58 src/quick_connect/util.rs:63
 msgid "Invalid port in URI"
-msgstr ""
+msgstr "Некоректний порт в адресі"
 
 #: src/quick_connect/vnc.rs:111
 msgid "Invalid VNC URI"
-msgstr ""
+msgstr "Некоректна адреса VNC"
 
 #: src/remote_server_info.rs:47
 msgid "Field Monitor does not support this URI scheme"
-msgstr ""
+msgstr "У Field Monitor не передбачено підтримки цієї схеми адрес"
 
 #: src/remote_server_info.rs:61
 msgid "Unable to detect supported file format"
-msgstr ""
+msgstr "Не вдалося визначити підтримуваний формат файлів"
 
 #: src/remote_server_info.rs:69
 msgid "Field Monitor was unable to read the file"
-msgstr ""
+msgstr "Field Monitor не вдалося прочитати файл"
 
 #: src/secrets.rs:91
 msgid "A secret value used by Field Monitor"
-msgstr ""
+msgstr "Значення ключа, яке використано Field Monitor"
 
 #: src/shortcuts-dialog.blp:6
 msgctxt "shortcut window"
@@ -843,17 +873,17 @@ msgstr "Додати нове з'єднання"
 #: src/widget/authenticate_connection_dialog.rs:163
 #: src/widget/update_connection_dialog.rs:173
 msgid "Failed to save connection"
-msgstr ""
+msgstr "Не вдалося зберегти дані з'єднання"
 
 #: src/widget/add_connection_dialog.rs:206
 #: src/widget/authenticate_connection_dialog.rs:166
 #: src/widget/update_connection_dialog.rs:176
 msgid "An error occurred while trying to save the connection"
-msgstr ""
+msgstr "Під час спроби зберегти дані з'єднання сталася помилка"
 
 #: src/widget/app_status.blp:30
 msgid "Field Monitor is starting..."
-msgstr ""
+msgstr "Запускаємо Field Monitor…"
 
 #: src/widget/app_status.blp:50
 msgid "Failed to Initialize"
@@ -871,7 +901,7 @@ msgstr "Вийти"
 
 #: src/widget/app_status.blp:78
 msgid "Failed to Initialize - Secrets Invalid"
-msgstr ""
+msgstr "Не вдалося ініціалізувати — некоректний ключ"
 
 #: src/widget/app_status.blp:79
 msgid ""
@@ -914,11 +944,11 @@ msgstr "Закрити"
 
 #: src/widget/certificate_details_window.rs:160
 msgid "PEM Certificate"
-msgstr ""
+msgstr "Сертифікат PEM"
 
 #: src/widget/certificate_details_window.rs:165
 msgid "DER Certificate"
-msgstr ""
+msgstr "Сертифікат DER"
 
 #: src/widget/certificate_details_window.rs:171
 msgid "Export Certificate..."
@@ -930,11 +960,11 @@ msgstr "Не вдалося зберегти"
 
 #: src/widget/certificate_details_window.rs:232
 msgid "Field Monitor was unable to save the provided file."
-msgstr ""
+msgstr "Field Monitor не вдалося зберегти наданий файл."
 
 #: src/widget/certificate_trust_dialog.rs:136
 msgid "Trust this server?"
-msgstr ""
+msgstr "Довіряти цьому серверу?"
 
 #: src/widget/certificate_trust_dialog.rs:139
 msgid "Do you trust this certificate and want to establish a connection?"
