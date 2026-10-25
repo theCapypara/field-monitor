@@ -17,7 +17,7 @@
 	<maintainer>
 		<foaf:Person>
 			<foaf:name>Marco Köpcke</foaf:name>
-			<foaf:mbox rdf:resource="mailto:hello@capypara.de"/>
+			<foaf:mbox rdf:resource="mailto:hello@parakoopa.de"/>
 			<foaf:account>
 				<foaf:OnlineAccount>
 					<foaf:accountServiceHomepage rdf:resource="https://github.com/"/>
