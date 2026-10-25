@@ -66,18 +66,7 @@ You can also develop Field Monitor by using [GNOME Builder](https://apps.gnome.o
 Flatpak manifest
 at [build-aux/flatpak/de.capypara.FieldMonitor.Devel.json](build-aux/flatpak/de.capypara.FieldMonitor.Devel.json).
 
-## Localization
+## Translations
 
-Field Monitor can currently only be localized locally, there is no web-based platform yet.
-
-To localize Field Monitor, generate an up-to-date pot file using:
-
-```sh
-# Once:
-meson setup build
-# To rebuild the pot file:
-meson compile de.capypara.FieldMonitor-pot -C build
-```
-
-You can then use this pot file to update or generate the po files per locale. Update the `data/LINGUAS` if you add a new
-language.
+Translations of Field Monitor are managed using [Damned Lies](https://l10n.gnome.org/module/FieldMonitor/). Thanks for
+helping out!
