@@ -1,0 +1,1777 @@
+# Slovenian translation for FieldMonitor.
+# Copyright (C) 2026 FieldMonitor's COPYRIGHT HOLDER
+# This file is distributed under the same license as the FieldMonitor package.
+#
+# Martin Srebotnjak <miles@filmsi.net>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: FieldMonitor main\n"
+"Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
+"POT-Creation-Date: 2026-10-13 12:31+0000\n"
+"PO-Revision-Date: 2026-10-25 10:00+0100\n"
+"Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
+"Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
+"Language: sl_SI\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || "
+"n%100==4 ? 3 : 0);\n"
+"X-Poedit-SourceCharset: utf-8\n"
+"X-Generator: Poedit 3.8\n"
+
+#: connection/generic-group/src/credential_preferences.blp:5
+#: connection/proxmox/src/credential_preferences.blp:5
+msgid "Credentials"
+msgstr "Poverila"
+
+#: connection/generic-group/src/credential_preferences.blp:10
+#: connection/libvirt/src/qemu_preferences.blp:57
+#: connection/proxmox/src/credential_preferences.blp:31
+#: src/quick_connect/preferences.blp:9
+msgid "Username"
+msgstr "Uporabniško ime"
+
+#: connection/generic-group/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:18
+#: connection/proxmox/src/credential_preferences.blp:36
+#: connection/proxmox/src/credential_preferences.rs:197
+#: src/quick_connect/preferences.blp:14
+msgid "Password"
+msgstr "Geslo"
+
+#: connection/generic-group/src/lib.rs:58
+#, fuzzy
+msgid "Generic Connection Group"
+msgstr "Povezava ni bila splošna povezava."
+
+#: connection/generic-group/src/lib.rs:62
+#, fuzzy
+msgid "Generic Connection Groups"
+msgstr "Povezava ni bila splošna povezava."
+
+#: connection/generic-group/src/lib.rs:66
+#, fuzzy
+msgid "Add Generic Connection Group"
+msgstr "Povezava ni bila splošna povezava."
+
+#: connection/generic-group/src/lib.rs:74
+msgid "Connection to one or more RDP, SPICE and VNC servers"
+msgstr "Povezava z enim ali več strežniki RDP, SPICE in VNC"
+
+#: connection/generic-group/src/lib.rs:148
+#, fuzzy
+msgid "One or more fields contain invalid values."
+msgstr "Določena polja imajo neveljavne vrednosti"
+
+#: connection/generic-group/src/lib.rs:371
+msgid "Failed to load password."
+msgstr "Nalaganje gesla je spodletelo."
+
+#: connection/generic-group/src/preferences.blp:20
+msgid "Group Name"
+msgstr "Ime skupine"
+
+#: connection/generic-group/src/preferences.blp:26
+msgid "Servers"
+msgstr "Strežniki"
+
+#: connection/generic-group/src/preferences.blp:32
+#: connection/generic-group/src/preferences.rs:586
+msgid "Add Server"
+msgstr "Dodaj strežnik"
+
+#: connection/generic-group/src/preferences.rs:473
+#, fuzzy
+msgid "No servers added yet."
+msgstr "Strežniki"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/generic-group/src/preferences.rs:582
+#: src/widget/update_connection_dialog.rs:102
+#, rust-format
+msgid "Edit “{title}”"
+msgstr "Uredi »{title}«"
+
+#: connection/generic-group/src/preferences.rs:594
+msgid "Update"
+msgstr "Posodobi"
+
+#: connection/generic-group/src/preferences.rs:596
+#: src/widget/add_connection_dialog.rs:133
+msgid "Add"
+msgstr "Dodaj"
+
+#: connection/generic-group/src/preferences.rs:617
+msgid "Remove Server"
+msgstr "Odstrani strežnik"
+
+#: connection/generic-group/src/server_preferences.blp:12
+msgid "Server Name"
+msgstr "Ime strežnika"
+
+#: connection/generic-group/src/server_preferences.blp:17
+msgid "Server Type"
+msgstr "Vrsta strežnika"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:22
+#: connection/libvirt/src/connection/graphics.rs:261
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:26
+#: lib/src/adapter/rdp.rs:53
+msgid "RDP"
+msgstr "RDP"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:23
+#: connection/libvirt/src/connection/graphics.rs:258
+#: connection/proxmox/src/api/node.rs:162
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:30
+#: lib/src/adapter/spice.rs:216
+msgid "SPICE"
+msgstr "SPICE"
+
+#. Translators: Keyword in the metainfo.
+#: connection/generic-group/src/server_preferences.blp:24
+#: connection/libvirt/src/connection/graphics.rs:264
+#: connection/proxmox/src/api/node.rs:163
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:28
+#: lib/src/adapter/vnc.rs:135
+msgid "VNC"
+msgstr "VNC"
+
+#: connection/generic-group/src/server_preferences.blp:32
+#: connection/libvirt/src/qemu_preferences.blp:52
+#: connection/proxmox/src/preferences.blp:21
+#: src/widget/certificate_trust_dialog.rs:159
+msgid "Hostname"
+msgstr "Ime gostitelja"
+
+#: connection/generic-group/src/server_preferences.blp:37
+#: connection/proxmox/src/preferences.blp:26
+msgid "Port"
+msgstr "Vrata"
+
+#: connection/libvirt/src/connection/adapter.rs:209
+#, fuzzy
+msgid ""
+"No supported graphics endpoint available. Tip: If connected via SSH, make "
+"sure that the graphics adapter's listen type is set to 'address' and that "
+"the adapter is listening on all interfaces."
+msgstr ""
+"Ni na voljo nobene podprte grafične končne točke. Nasvet: Če ste povezani "
+"prek SSH, se prepričajte, da je vrsta poslušanja grafičnega vmesnika "
+"nastavljena na naslov (»address«) in da vmesnik posluša na vseh vmesnikih."
+
+#: connection/libvirt/src/connection/graphics.rs:255
+msgid "D-Bus"
+msgstr "D-Bus"
+
+#: connection/libvirt/src/connection/mod.rs:162
+msgid "(Unable to load server name)"
+msgstr "(imena strežnika ni možno naložiti)"
+
+#: connection/libvirt/src/connection/mod.rs:216
+#: connection/proxmox/src/api/node.rs:60 connection/proxmox/src/api/vm.rs:66
+#: connection/proxmox/src/api/vm.rs:71
+msgid "Reboot"
+msgstr "Ponovni zagon"
+
+#: connection/libvirt/src/connection/mod.rs:217
+#: connection/proxmox/src/api/node.rs:61 connection/proxmox/src/api/vm.rs:67
+#: connection/proxmox/src/api/vm.rs:72
+msgid "Shutdown"
+msgstr "Izklop računalnika"
+
+#: connection/libvirt/src/connection/mod.rs:218
+#: connection/proxmox/src/api/vm.rs:73
+msgid "Force Reset"
+msgstr "Vsili ponastavitev"
+
+#: connection/libvirt/src/connection/mod.rs:219
+#: connection/proxmox/src/api/vm.rs:68 connection/proxmox/src/api/vm.rs:74
+msgid "Force Poweroff"
+msgstr "Vsili izklop"
+
+#. TRANSLATORS: Verb
+#: connection/libvirt/src/connection/mod.rs:226
+#: connection/proxmox/src/api/vm.rs:82
+#, fuzzy
+msgid "Start"
+msgstr "Začetek"
+
+#: connection/libvirt/src/connection/mod.rs:257
+#, fuzzy
+msgid "Reboot command successfully sent to domain."
+msgstr "Uspešno poslana datoteka »{}«"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:262
+#, fuzzy, rust-format
+msgid "Failed to send reboot command: {err}"
+msgstr "Ponovni zagon ni uspel"
+
+#: connection/libvirt/src/connection/mod.rs:283
+#, fuzzy
+msgid "Shutdown command successfully sent to domain."
+msgstr "Uspešno poslana datoteka »{}«"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:288
+#, fuzzy, rust-format
+msgid "Failed to send shutdown command: {err}"
+msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+
+#: connection/libvirt/src/connection/mod.rs:309
+#, fuzzy
+msgid "Domain successfully reset."
+msgstr "Uspešno ponastavljene konfiguracijske vrednosti"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:314
+#, fuzzy, rust-format
+msgid "Failed to reset domain: {err}"
+msgstr "Pridružitev v domeno je spodletela"
+
+#: connection/libvirt/src/connection/mod.rs:335
+#, fuzzy
+msgid "Domain successfully shut down."
+msgstr "Izklopi računalnik"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:340
+#, fuzzy, rust-format
+msgid "Failed to send destroy command: {err}"
+msgstr "ni možno uničiti predmeta: %s"
+
+#: connection/libvirt/src/connection/mod.rs:366
+#, fuzzy
+msgid "Domain successfully started."
+msgstr "Domena"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/mod.rs:371
+#, fuzzy, rust-format
+msgid "Failed to send create command: {err}"
+msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+
+#: connection/libvirt/src/connection/mod.rs:398
+#, fuzzy
+msgid "Domain is not running."
+msgstr "Domena"
+
+#: connection/libvirt/src/connection/mod.rs:405
+#, fuzzy
+msgid "Domain is already running."
+msgstr "Naprava je že pridružena domeni"
+
+#: connection/libvirt/src/connection/mod.rs:414
+#: connection/proxmox/src/api/mod.rs:84
+#, fuzzy
+msgid "Internal error while trying to execute command."
+msgstr "Prišlo je do notranje napake med iskanjem programa:"
+
+#: connection/libvirt/src/connection/mod.rs:442
+#, fuzzy
+msgid "Serial Console"
+msgstr "Zaporedna številka"
+
+#: connection/libvirt/src/connection/qemu_dbus.rs:130
+msgid "Try enabling the 'p2p' option for the D-Bus graphics adapter."
+msgstr "Poskusite vklopiti možnost »p2p« za grafični adapter D-Bus."
+
+#: connection/libvirt/src/connection/qemu_dbus.rs:143
+msgid ""
+"If you are connecting to a qemu:///system domain, you may not be able to "
+"connect via D-Bus unless you enable the 'p2p' option."
+msgstr ""
+"Če se povezujete z domeno qemu:///system, se morda ne boste mogli povezati "
+"prek D-Bus, razen če omogočite možnost »p2p«."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/qemu_dbus.rs:170
+#, rust-format
+msgid ""
+"Your user account does not have permission to connect to the bus.{group_hint}"
+msgstr ""
+"Vaš uporabniški račun nima dovoljenja za povezavo z vodilom.{group_hint}"
+
+#: connection/libvirt/src/connection/qemu_dbus.rs:194
+msgid "The following information may help you to troubleshoot the issue:"
+msgstr "Naslednje informacije vam lahko pomagajo pri odpravljanju težave:"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/qemu_dbus.rs:206
+#, rust-format
+msgid "Failed to connect via D-Bus.{extra_info}"
+msgstr "Povezava prek D-Bus ni uspela.{extra_info}"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: connection/libvirt/src/connection/qemu_dbus.rs:253
+#, fuzzy, rust-format
+msgid "Try adding your account to the '{group_name}' group."
+msgstr ""
+"Vrste skupine ni mogoče najti.\n"
+"Preverite seznam skupin in poskusite znova."
+
+#: connection/libvirt/src/hypervisor/qemu.rs:46
+#: connection/libvirt/src/hypervisor/qemu.rs:50
+msgid "QEMU/KVM"
+msgstr "QEMU/KVM"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:54
+#, fuzzy
+msgid "Add QEMU/KVM Connection"
+msgstr "Odtis diska QEMU QED"
+
+#: connection/libvirt/src/hypervisor/qemu.rs:62
+msgid "QEMU/KVM hypervisor connection via libvirt."
+msgstr "Povezava s hipervizorjem QEMU/KVM prek knjižnice libvirt."
+
+#: connection/libvirt/src/qemu_preferences.blp:13
+#: connection/proxmox/src/preferences.blp:12
+msgid "Connection Name"
+msgstr "Ime povezave"
+
+#: connection/libvirt/src/qemu_preferences.blp:19
+msgid "Session Type"
+msgstr "Vrsta seje"
+
+#: connection/libvirt/src/qemu_preferences.blp:22
+msgid "System Session"
+msgstr "Sistemska seja"
+
+#: connection/libvirt/src/qemu_preferences.blp:23
+#, fuzzy
+msgid "This is the QEMU/KVM default."
+msgstr "Odtis diska QEMU QCOW"
+
+#: connection/libvirt/src/qemu_preferences.blp:33
+#, fuzzy
+msgid "User Session"
+msgstr ""
+"Preverjanje pristnosti je potrebno za začetek ali zaključek seje uporabnika."
+
+#: connection/libvirt/src/qemu_preferences.blp:44
+#, fuzzy
+msgid "Remote Connection"
+msgstr "Dodaj oddaljeno povezavo"
+
+#: connection/libvirt/src/qemu_preferences.blp:47
+msgid "Connect via SSH"
+msgstr "Poveži prek SSH"
+
+#: connection/proxmox/src/api/connection.rs:60
+msgid "Unable to build a valid URL to connect to. Check your settings."
+msgstr ""
+"Ni mogoče ustvariti veljavnega URL-ja za povezavo. Preverite nastavitve."
+
+#: connection/proxmox/src/api/connection.rs:72
+msgid "Failed to retrieve API Key or Password from secrets service."
+msgstr ""
+"Pridobivanje API-ključa ali gesla iz storitve za shranjevanje skrivnosti ni "
+"uspelo."
+
+#: connection/proxmox/src/api/node.rs:100
+#, fuzzy
+msgid "Reboot command successfully sent to server."
+msgstr "Uspešno poslana datoteka »{}«"
+
+#: connection/proxmox/src/api/node.rs:103 connection/proxmox/src/api/vm.rs:135
+#, fuzzy
+msgid "Failed to send reboot command."
+msgstr "Ponovni zagon ni uspel"
+
+#: connection/proxmox/src/api/node.rs:125
+#, fuzzy
+msgid "Shutdown command successfully sent to server."
+msgstr "Shrani poslana sporočila na strežnik"
+
+#: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:168
+#, fuzzy
+msgid "Failed to send shutdown command."
+msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+
+#: connection/proxmox/src/api/node.rs:164
+msgid "Console"
+msgstr "Konzola"
+
+#. Translators: Keyword in the metainfo.
+#: connection/proxmox/src/api/provider.rs:48
+#: connection/proxmox/src/api/provider.rs:52
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:38
+msgid "Proxmox"
+msgstr "Proxmox"
+
+#: connection/proxmox/src/api/provider.rs:56
+#, fuzzy
+msgid "Add Proxmox Connection"
+msgstr "Dodajanje nove povezave je spodletelo."
+
+#: connection/proxmox/src/api/provider.rs:64
+#, fuzzy
+msgid "Proxmox Virtual Environment hypervisor connection"
+msgstr "Vsebuje virtualno okolje Python (venv)"
+
+#: connection/proxmox/src/api/vm.rs:132
+#, fuzzy
+msgid "Reboot command successfully sent to VM."
+msgstr "Uspešno poslana datoteka »{}«"
+
+#: connection/proxmox/src/api/vm.rs:165
+#, fuzzy
+msgid "Shutdown command successfully sent to VM."
+msgstr "Uspešno poslana datoteka »{}«"
+
+#: connection/proxmox/src/api/vm.rs:197
+#, fuzzy
+msgid "VM was successfully reset."
+msgstr "Uspešno ponastavljene konfiguracijske vrednosti"
+
+#: connection/proxmox/src/api/vm.rs:200
+#, fuzzy
+msgid "Failed to send reset command."
+msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+
+#: connection/proxmox/src/api/vm.rs:230
+#, fuzzy
+msgid "VM is now stopping."
+msgstr "Začetek navideznega pomnilnika"
+
+#: connection/proxmox/src/api/vm.rs:233
+#, fuzzy
+msgid "Failed to send stop command."
+msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+
+#: connection/proxmox/src/api/vm.rs:263
+#, fuzzy
+msgid "VM is now starting."
+msgstr "Začenjanje …"
+
+#: connection/proxmox/src/api/vm.rs:266
+#, fuzzy
+msgid "Failed to send start command."
+msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+
+#: connection/proxmox/src/credential_preferences.blp:10
+msgid ""
+"The Proxmox user needs at least the permissions <tt>VM.Console</tt>, "
+"<tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>."
+msgstr ""
+
+#: connection/proxmox/src/credential_preferences.blp:13
+msgid "Authentication Mode"
+msgstr "Način overjanja"
+
+#: connection/proxmox/src/credential_preferences.blp:19
+#: connection/proxmox/src/credential_preferences.rs:195
+msgid "API Key"
+msgstr "Ključ API"
+
+#: connection/proxmox/src/credential_preferences.blp:26
+#, fuzzy
+msgid "Token ID"
+msgstr "Žeton"
+
+#: connection/proxmox/src/preferences.blp:18
+msgid "Connection"
+msgstr "Povezava"
+
+#: connection/proxmox/src/preferences.blp:33
+#, fuzzy
+msgid "Trust Any SSL Certificate"
+msgstr "Odstrani nastavitev _zaupljivosti potrdilo SSL/TLS"
+
+#: connection/proxmox/src/preferences.blp:34
+msgid ""
+"Allows connecting to servers with self-signed and otherwise invalid SSL "
+"certificates. Be careful, as this is a potential security risk."
+msgstr ""
+
+#. Translators: The name of the application.
+#: data/de.capypara.FieldMonitor.desktop.in.in:2
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/widget/window.blp:9
+#: src/widget/window.blp:61 src/widget/window.blp:67 src/widget/window.blp:116
+#: src/widget/window.blp:218 src/widget/window.blp:235 src/widget/window.rs:405
+#, fuzzy
+msgid "Field Monitor"
+msgstr "Kot na &zaslonu"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:3
+#, fuzzy
+msgid "Remote Desktop Viewer"
+msgstr "Oddaljeno namizje"
+
+#. Translators: The summary of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.desktop.in.in:4
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
+#, fuzzy
+msgid "Access VMs and external screens"
+msgstr "SPICE (za povezovanje z oddaljenimi navideznimi računalniki)"
+
+#. Translators: The keywords from the desktop file.
+#: data/de.capypara.FieldMonitor.desktop.in.in:12
+msgid "proxmox;vnc;spice;rdp;kvm;qemu;"
+msgstr "proxmox;vnc;spice;rdp;kvm;qemu;"
+
+#: data/de.capypara.FieldMonitor.desktop.in.in:17
+msgid "New Window"
+msgstr "Novo okno"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:24
+msgid "remote desktop"
+msgstr "Oddaljeno namizje"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:32
+msgid "KVM"
+msgstr "KVM"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:34
+msgid "QEMU"
+msgstr "QEMU"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:36
+msgid "libvirt"
+msgstr "libvirt"
+
+#. Translators: Keyword in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:40
+msgid "GNOME"
+msgstr "GNOME"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:49
+msgid ""
+"Field Monitor is a remote-desktop client designed for the GNOME platform."
+msgstr ""
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
+msgid ""
+"It is focused on connecting to virtual machines, but can connect to any "
+"server supporting the RDP, SPICE or VNC protocols."
+msgstr ""
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
+msgid ""
+"It has support for directly connecting to VMs of the following hypervisors:"
+msgstr ""
+
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
+#, fuzzy
+msgid "Proxmox Virtual Environment"
+msgstr "Ponovno izgradi navidezno okolje"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
+#, fuzzy
+msgid "QEMU/KVM via libvirt"
+msgstr "Odtis diska QEMU QED"
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
+msgid ""
+"For supported VM hypervisors, Field Monitor also offers options to manage "
+"the basic power state of VMs, such as starting, stopping, rebooting, etc."
+msgstr ""
+
+#. Translators: Part of the description of the application in the metainfo.
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
+msgid ""
+"Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
+"files and quickly connecting to RDP, SPICE or VNC servers via URI."
+msgstr ""
+
+#. Translators: Caption of the first screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:204
+#, fuzzy
+msgid "Screen of a connected graphical display"
+msgstr "Izberite vrsto povezanega zaslona."
+
+#. Translators: Caption of the second screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:214
+msgid "Welcome screen"
+msgstr "Zaslon dobrodošlice"
+
+#. Translators: Caption of the third screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:221
+#, fuzzy
+msgid "A list of servers in a Proxmox cluster to connect to"
+msgstr "Izpiši seznam, prilagodi in zaženi jezikovne strežnike"
+
+#. Translators: Caption of the 4th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:231
+#, fuzzy
+msgid "Screen of a connected console"
+msgstr "povezano"
+
+#. Translators: Caption of the 5th screenshot in the metainfo
+#: data/de.capypara.FieldMonitor.metainfo.xml.in.in:241
+msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
+msgstr ""
+
+#: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
+#, fuzzy
+msgid "Remote Desktop file"
+msgstr "Datoteka (VNC) oddaljenega namizja"
+
+#: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
+#, fuzzy
+msgid "Virt-Viewer connection file"
+msgstr "Pregledovalnik:"
+
+#: lib/src/adapter/usbredir/error.rs:35
+#, fuzzy
+msgid "The device can not be attached to the connection"
+msgstr "_Priloženo"
+
+#: lib/src/adapter/usbredir/error.rs:38
+#, fuzzy
+msgid "The device was already attached to the connection"
+msgstr "Datoteka »%s« je že priložena za pošiljanje."
+
+#: lib/src/adapter/usbredir/portal.rs:254
+#, fuzzy, rust-format
+msgid "Failed to communicate with the system portal: {details}"
+msgstr "Povezovanje s čitalcem prstnih odtisov je spodletelo."
+
+#: lib/src/adapter/usbredir/portal.rs:258
+#, fuzzy, rust-format
+msgid "USB portal request failed: {details}"
+msgstr "Storitev portala ni uspela: {}"
+
+#: lib/src/adapter/usbredir/portal.rs:262
+#, fuzzy, rust-format
+msgid "USB redirection initialization failed: {details}"
+msgstr "Inicializacija GDK je spodletela."
+
+#: lib/src/adapter/usbredir/qemu_dbus/mod.rs:258
+#: lib/src/adapter/usbredir/spice.rs:132
+#, fuzzy
+msgid "Failed to attach the USB device"
+msgstr "Prikaz naprave USB ni uspel"
+
+#: lib/src/cert_security.rs:134
+#, fuzzy
+msgid "Server certificate verification failed"
+msgstr "Napaka pri preverjanju potrdila."
+
+#: lib/src/connection/instance.rs:191
+msgid "Unknown error"
+msgstr "Neznana napaka"
+
+#: lib/src/connection/types.rs:49
+msgid "Authentication failed"
+msgstr "Overitev je spodletela"
+
+#: lib/src/connection/types.rs:50
+msgid "General Error"
+msgstr "Splošna napaka"
+
+#: lib/src/gtk/save_credentials_button.blp:23
+msgid "Save and remember"
+msgstr "Shrani in pomni"
+
+#: lib/src/gtk/save_credentials_button.blp:29
+#, fuzzy
+msgid "Ask for this every time"
+msgstr "Vsakič vprašaj za geslo"
+
+#: lib/src/lib.rs:43
+#, fuzzy
+msgid "The connection configuration is invalid"
+msgstr "neveljavna prilagoditev"
+
+#: src/application.rs:131
+#, fuzzy
+msgid "Open the app with a new window"
+msgstr "Odpri novo okno pripetega programa 1"
+
+#. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
+#: src/application.rs:584
+msgid "translator-credits"
+msgstr "Martin Srebotnjak <miles@filmsi.net>"
+
+#: src/application.rs:603 src/connection_loader.rs:437
+#: src/widget/add_connection_dialog.rs:210
+#: src/widget/authenticate_connection_dialog.rs:170
+#: src/widget/certificate_details_window.rs:235
+#: src/widget/quick_connect_dialog.rs:101
+#: src/widget/quick_connect_dialog.rs:161
+#: src/widget/update_connection_dialog.rs:180
+#: src/widget/usb_redir/settings.rs:214
+#: src/widget/usb_redir/settings_dialog.rs:387
+#: src/widget/usb_redir/settings_dialog.rs:403
+msgid "OK"
+msgstr "V redu"
+
+#: src/application.rs:645
+#, fuzzy
+msgid "Connection successfully added."
+msgstr "Povezava '%s' (%s) je bila uspešno dodana.\n"
+
+#: src/application.rs:700
+#, fuzzy
+msgid "Connection successfully updated."
+msgstr "Povezava »%s« (%s) je bila uspešno posodobljena.\n"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/application.rs:738
+#, fuzzy, rust-format
+msgid "Permanently Remove “{title}”?"
+msgstr "Ali želite trajno odstraniti z diska?"
+
+#: src/application.rs:742 src/widget/window.rs:339
+msgid "No"
+msgstr "Ne"
+
+#: src/application.rs:743 src/widget/window.rs:340
+msgid "Yes"
+msgstr "Da"
+
+#: src/application.rs:748
+#, fuzzy
+msgid "Connection successfully removed."
+msgstr "Naprava »%s« uspešno odstranjena.\n"
+
+#: src/application.rs:809
+#, fuzzy
+msgid "Authentication successfully updated"
+msgstr "Tema %s je uspešno posodobljena"
+
+#: src/connection_loader.rs:83 src/connection_loader.rs:93
+#, fuzzy
+msgid "Connection not found."
+msgstr "Povezave z UUID »{}« ni mogoče najti"
+
+#: src/connection_loader.rs:193 src/connection_loader.rs:204
+msgid "Server not found."
+msgstr "Strežnika ni možno najti."
+
+#: src/connection_loader.rs:246 src/connection_loader.rs:364
+#, fuzzy
+msgid "Failed to load or connect to server"
+msgstr "Poveži s _strežnikom"
+
+#: src/quick_connect/mod.rs:118
+msgid "Untitled Server"
+msgstr "Neimenovani strežnik"
+
+#: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
+#: src/widget/window.blp:95 src/widget/window.blp:204
+#, fuzzy
+msgid "Quick Connect"
+msgstr "Določilo URI za hitro povezavo"
+
+#: src/quick_connect/mod.rs:320
+#, fuzzy
+msgid "via Quick Connect"
+msgstr "Določilo URI za hitro povezavo"
+
+#: src/quick_connect/rdp.rs:78
+msgid "Failed to read file"
+msgstr "Branje datoteke je spodletelo"
+
+#: src/quick_connect/rdp.rs:169
+#, fuzzy
+msgid "Invalid RDP parameters"
+msgstr "Neveljavni parametri uporabe: %s"
+
+#: src/quick_connect/spice.rs:208
+#, fuzzy
+msgid "Invalid SPICE URI"
+msgstr "Neveljaven URI"
+
+#: src/quick_connect/util.rs:58 src/quick_connect/util.rs:63
+#, fuzzy
+msgid "Invalid port in URI"
+msgstr "neveljavna vrata"
+
+#: src/quick_connect/vnc.rs:111
+#, fuzzy
+msgid "Invalid VNC URI"
+msgstr "Neveljaven URI"
+
+#: src/remote_server_info.rs:47
+msgid "Field Monitor does not support this URI scheme"
+msgstr ""
+
+#: src/remote_server_info.rs:61
+#, fuzzy
+msgid "Unable to detect supported file format"
+msgstr "Oblika zapisa ni podprta ali pa je datoteka poškodovana"
+
+#: src/remote_server_info.rs:69
+#, fuzzy
+msgid "Field Monitor was unable to read the file"
+msgstr "Ni mogoče brati datoteke"
+
+#: src/secrets.rs:91
+#, fuzzy
+msgid "A secret value used by Field Monitor"
+msgstr "Neveljavna vrednost za polje"
+
+#: src/shortcuts-dialog.blp:6
+msgctxt "shortcut window"
+msgid "Window"
+msgstr "Okno"
+
+#: src/shortcuts-dialog.blp:9
+msgctxt "shortcut window"
+msgid "Close Window"
+msgstr "Zapri okno"
+
+#: src/shortcuts-dialog.blp:14
+msgctxt "shortcut window"
+msgid "New Window"
+msgstr "Novo okno"
+
+#: src/shortcuts-dialog.blp:19
+msgctxt "shortcut window"
+msgid "Open Menu"
+msgstr "Odpre meni"
+
+#: src/shortcuts-dialog.blp:24
+msgctxt "shortcut window"
+msgid "Toggle Fullscreen"
+msgstr "Vključi/izključi celozaslonski pogled"
+
+#: src/shortcuts-dialog.blp:30
+msgctxt "shortcut window"
+msgid "Connection"
+msgstr "Povezava"
+
+#: src/shortcuts-dialog.blp:33
+msgctxt "shortcut window"
+msgid "Close Connection"
+msgstr "Zapri povezavo"
+
+#: src/shortcuts-dialog.blp:39
+msgctxt "shortcut window"
+msgid "Terminal"
+msgstr "Terminal"
+
+#: src/shortcuts-dialog.blp:42
+msgctxt "shortcut window"
+msgid "Copy"
+msgstr "Kopira izbor"
+
+#: src/shortcuts-dialog.blp:47
+msgctxt "shortcut window"
+msgid "Paste"
+msgstr "Prilepi"
+
+#: src/shortcuts-dialog.blp:52
+msgctxt "shortcut window"
+msgid "Select All"
+msgstr "Izberi vse"
+
+#: src/shortcuts-dialog.blp:57
+msgctxt "shortcut window"
+msgid "Zoom In"
+msgstr "Približaj"
+
+#: src/shortcuts-dialog.blp:62
+msgctxt "shortcut window"
+msgid "Zoom Out"
+msgstr "Oddalji"
+
+#: src/shortcuts-dialog.blp:67
+msgctxt "shortcut window"
+msgid "Reset Zoom"
+msgstr "Ponastavi povečavo"
+
+#: src/shortcuts-dialog.blp:73
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Splošno"
+
+#: src/shortcuts-dialog.blp:76
+msgctxt "shortcut window"
+msgid "Preferences"
+msgstr "Nastavitve"
+
+#: src/shortcuts-dialog.blp:81
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Pokaži tipkovne bližnjice‫"
+
+#: src/shortcuts-dialog.blp:86
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Izhod"
+
+#: src/widget/add_connection_dialog.blp:11 src/widget/window.blp:266
+msgid "Add New Connection"
+msgstr "Dodaj novo povezavo"
+
+#: src/widget/add_connection_dialog.rs:203
+#: src/widget/authenticate_connection_dialog.rs:163
+#: src/widget/update_connection_dialog.rs:173
+msgid "Failed to save connection"
+msgstr "Shranjevanje povezave je spodletelo"
+
+#: src/widget/add_connection_dialog.rs:206
+#: src/widget/authenticate_connection_dialog.rs:166
+#: src/widget/update_connection_dialog.rs:176
+#, fuzzy
+msgid "An error occurred while trying to save the connection"
+msgstr "Pri poskusu tiskanja je prišlo do napake:"
+
+#: src/widget/app_status.blp:30
+#, fuzzy
+msgid "Field Monitor is starting..."
+msgstr "Začenjanje …"
+
+#: src/widget/app_status.blp:50
+#, fuzzy
+msgid "Failed to Initialize"
+msgstr "Ni mogoče začeti opravila"
+
+#: src/widget/app_status.blp:51
+msgid ""
+"Field Monitor could not start, because it could not connect to your system's "
+"secret service for accessing passwords."
+msgstr ""
+
+#: src/widget/app_status.blp:56 src/widget/app_status.blp:84
+msgid "Quit"
+msgstr "Izhod"
+
+#: src/widget/app_status.blp:78
+#, fuzzy
+msgid "Failed to Initialize - Secrets Invalid"
+msgstr "Ni mogoče začeti opravila"
+
+#: src/widget/app_status.blp:79
+msgid ""
+"Field Monitor could not start, because the secrets backend reports that the "
+"system secrets are invalid or corrupted.\n"
+"\n"
+"This can happen if you moved your HOME directory to another system.\n"
+"\n"
+"You may be able to resolve this with <a href='https://github.com/theCapypara/"
+"field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
+msgstr ""
+
+#: src/widget/authenticate_connection_dialog.blp:6
+#: src/widget/connection_list/info_page.blp:74
+#: src/widget/connection_list/info_page.rs:273
+msgid "Authentication required"
+msgstr "Zahtevana je overitev"
+
+#: src/widget/authenticate_connection_dialog.blp:19
+msgid "Apply"
+msgstr "Uveljavi"
+
+#: src/widget/authenticate_connection_dialog.rs:105
+#, fuzzy
+msgid "This connection needs additional authentication to proceed."
+msgstr "Dodatno preverjanje pristnosti TLS ali šifriranje"
+
+#: src/widget/certificate_details_window.blp:5
+msgid "Certificate Viewer"
+msgstr "Pregledovalnik potrdil"
+
+#: src/widget/certificate_details_window.blp:23
+msgid "Export"
+msgstr "Izvozi"
+
+#: src/widget/certificate_details_window.blp:32
+#: src/widget/close_warning_dialog.rs:72
+#: src/widget/connection_view/server_screen.blp:140
+msgid "Close"
+msgstr "Zapri"
+
+#: src/widget/certificate_details_window.rs:160
+msgid "PEM Certificate"
+msgstr "Potrdilo PEM"
+
+#: src/widget/certificate_details_window.rs:165
+msgid "DER Certificate"
+msgstr "Potrdilo DER"
+
+#: src/widget/certificate_details_window.rs:171
+msgid "Export Certificate..."
+msgstr "Izvozi potrdilo …"
+
+#: src/widget/certificate_details_window.rs:230
+#, fuzzy
+msgid "Failed to save"
+msgstr "Datoteke ni mogoče shraniti: %s\n"
+
+#: src/widget/certificate_details_window.rs:232
+#, fuzzy
+msgid "Field Monitor was unable to save the provided file."
+msgstr "Predloge datoteke z metapodatki ni mogoče shraniti: %s"
+
+#: src/widget/certificate_trust_dialog.rs:136
+#, fuzzy
+msgid "Trust this server?"
+msgstr "_Zaupaj strežniku"
+
+#: src/widget/certificate_trust_dialog.rs:139
+#, fuzzy
+msgid "Do you trust this certificate and want to establish a connection?"
+msgstr ""
+"Ali želite zamenjati povezavo %s z nastavitvami povezave VPN, ki jih "
+"shranjujete?"
+
+#: src/widget/certificate_trust_dialog.rs:167
+msgid "Fingerprint"
+msgstr "Prstni odtis"
+
+#: src/widget/certificate_trust_dialog.rs:177
+msgid "Show Certificate"
+msgstr "Pokaži potrdilo"
+
+#: src/widget/certificate_trust_dialog.rs:197
+#, fuzzy
+msgid ""
+"This certificate is the certificate authority (CA) issuing the connection "
+"certificate."
+msgstr ""
+"Overitelj potrdil (CA), ki je podpisal potrdilo oddaljenega gostitelja."
+
+#: src/widget/certificate_trust_dialog.rs:202
+msgid "Info"
+msgstr "Podrobnosti"
+
+#: src/widget/certificate_trust_dialog.rs:207
+msgid ""
+"After you choose to trust the CA, Field Monitor will confirm that the "
+"connection is established using a certificate issued by the CA. If not, "
+"Field Monitor will refuse the connection."
+msgstr ""
+
+#: src/widget/certificate_trust_dialog.rs:229
+#, rust-format
+msgid ""
+"If you choose to trust this certificate, your choice will be remembered for "
+"future connections to <tt>{host}</tt>."
+msgstr ""
+
+#: src/widget/certificate_trust_dialog.rs:239
+#: src/widget/close_warning_dialog.rs:71
+msgid "Cancel"
+msgstr "Prekliči"
+
+#: src/widget/certificate_trust_dialog.rs:240
+msgid "Trust Certificate"
+msgstr "Zaupaj potrdilu"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/close_warning_dialog.rs:62
+#, rust-format
+msgid ""
+"This window is still connected to “{label}”. Closing it will disconnect from "
+"the server."
+msgstr ""
+
+#: src/widget/close_warning_dialog.rs:67
+msgid "Close Window?"
+msgstr "Ali želite zapreti okno?"
+
+#: src/widget/connection_list/connection_list_navbar.blp:12
+msgid "Connections"
+msgstr "Povezave"
+
+#: src/widget/connection_list/connection_list_navbar.blp:13
+#, fuzzy
+msgid "List of configured connections."
+msgstr "Seznam povezav"
+
+#: src/widget/connection_list/connection_list_navbar.blp:33
+#: src/widget/connection_list/info_page.blp:17
+#: src/widget/connection_list/info_page.blp:21
+msgid "Edit Connection"
+msgstr "Uredi povezavo"
+
+#: src/widget/connection_list/connection_list_navbar.blp:38
+#: src/widget/update_connection_dialog.blp:19
+#: src/widget/update_connection_dialog.blp:23
+msgid "Remove Connection"
+msgstr "Odstrani povezavo"
+
+#: src/widget/connection_list/info_page.blp:65
+#: src/widget/connection_list/info_page.rs:257
+#, fuzzy
+msgid "Failed to load connection"
+msgstr "Napaka: nalaganje povezave ni uspelo: %s."
+
+#: src/widget/connection_list/info_page.blp:75
+#, fuzzy
+msgid "This connection requires additional authentication."
+msgstr "St_režnik zahteva overitev"
+
+#: src/widget/connection_list/info_page.blp:78
+msgid "Authenticate"
+msgstr "Overi"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/info_page.rs:138
+#, fuzzy, rust-format
+msgid "Loading connection: {title}"
+msgstr "Poteka nalaganje …"
+
+#: src/widget/connection_list/info_page.rs:192
+#, fuzzy
+msgid "No servers available"
+msgstr "Izpiši seznam razpoložljivih jezikovnih strežnikov"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/info_page.rs:233
+#, fuzzy, rust-format
+msgid "Loaded connection: {title}"
+msgstr "Naloženo"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_list/info_page.rs:262
+#, fuzzy, rust-format
+msgid "Failed to load connection: {detail}"
+msgstr "Napaka: nalaganje povezave ni uspelo: %s."
+
+#. TODO: Getting the server name here isn't really easy...
+#: src/widget/connection_list/server_actions.rs:124
+#: src/widget/update_connection_dialog.rs:97
+msgid "Edit Server"
+msgstr "Uredi strežnik"
+
+#: src/widget/connection_list/server_actions.rs:226
+msgid "Actions"
+msgstr "Dejanja"
+
+#: src/widget/connection_list/server_actions.rs:324
+#: src/widget/quick_connect_dialog.blp:40
+#: src/widget/usb_redir/settings_dialog.rs:206
+msgid "Connect"
+msgstr "Poveži"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_list/server_actions.rs:343
+#, fuzzy, rust-format
+msgid "Connect via {adapter}"
+msgstr "Avtor adaptacije"
+
+#: src/widget/connection_view/server_screen.blp:30
+#: src/widget/connection_view/server_screen.blp:34 src/widget/window.blp:123
+#: src/widget/window.blp:127
+msgid "Toggle Fullscreen"
+msgstr "Vključi/izključi celozaslonski pogled"
+
+#: src/widget/connection_view/server_screen.blp:45 src/widget/window.blp:135
+msgid "Menu"
+msgstr "Meni"
+
+#: src/widget/connection_view/server_screen.blp:48
+#, fuzzy
+msgid "Connection menu"
+msgstr "Meni oddaljene povezave"
+
+#: src/widget/connection_view/server_screen.blp:58
+#: src/widget/connection_view/server_screen.blp:61
+#: src/widget/usb_redir/settings_dialog.blp:7
+#: src/widget/usb_redir/settings_dialog.blp:13
+#: src/widget/usb_redir/settings_dialog.rs:399
+msgid "USB Devices"
+msgstr "Naprave USB"
+
+#: src/widget/connection_view/server_screen.blp:76
+#: src/widget/connection_view/server_screen.blp:79
+#, fuzzy
+msgid "Open Monitor in New Window"
+msgstr "Odprite novo okno"
+
+#: src/widget/connection_view/server_screen.blp:119
+msgid "Connecting..."
+msgstr "Vzpostavljanje povezave …"
+
+#: src/widget/connection_view/server_screen.blp:150
+msgid "Reconnect"
+msgstr "Ponovno poveži"
+
+#: src/widget/connection_view/server_screen.blp:157
+msgid "Show Output"
+msgstr "Pokaži izhod"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:465
+#, fuzzy, rust-format
+msgid "Connecting to {title}"
+msgstr "V povezovanju"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:792
+#, fuzzy, rust-format
+msgid "Connected to {title}"
+msgstr "Ni povezave"
+
+#: src/widget/connection_view/server_screen.rs:972
+#, fuzzy
+msgid "Disconnected"
+msgstr "Prekinjena povezava"
+
+#: src/widget/connection_view/server_screen.rs:974
+#, fuzzy
+msgid "The connection to the server was closed."
+msgstr "Povezava s posredniškim strežnikom HTTP je nepričakovano končana."
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_view/server_screen.rs:979
+#, fuzzy, rust-format
+msgid "Disconnected from {title}"
+msgstr "Prekinjena povezava"
+
+#: src/widget/connection_view/server_screen.rs:1023
+#, fuzzy
+msgid "Connection Failed"
+msgstr "Povezovanje je spodletelo"
+
+#: src/widget/connection_view/server_screen.rs:1024
+#, fuzzy
+msgid "The connection was closed due to an error."
+msgstr "Povezava z oddaljenim gostiteljem je prekinjena."
+
+#: src/widget/connection_view/server_screen.rs:1031
+msgid "Connection failed"
+msgstr "Povezovanje je spodletelo"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/connection_view/server_screen.rs:1035
+#, rust-format
+msgid "Connection failed: {detail}"
+msgstr "Povezovanje je spodletelo: {detail}"
+
+#: src/widget/connection_view/server_screen.rs:1197
+#, fuzzy
+msgid "_Dynamic Resize"
+msgstr "Dinamično"
+
+#: src/widget/connection_view/server_screen.rs:1201
+#, fuzzy
+msgid "_Scale to Window"
+msgstr "_Prilagodi velikost"
+
+#: src/widget/connection_view/server_screen.rs:1211
+#, fuzzy
+msgid "_Resize Window to Screen"
+msgstr "Spremeni velikost okna"
+
+#: src/widget/connection_view/server_screen.rs:1215
+#, fuzzy
+msgid "Send _Keys"
+msgstr "Pošlji: {}"
+
+#: src/widget/connection_view/server_screen.rs:1219
+msgid "Ctrl+Alt L"
+msgstr "Krmilka+dvigalka+L"
+
+#: src/widget/connection_view/server_screen.rs:1223
+msgid "Ctrl+Alt+Backspace"
+msgstr "Krmilka (Ctrl) + izmenjalka (Alt) + vračalka"
+
+#: src/widget/connection_view/server_screen.rs:1227
+#, fuzzy
+msgid "Ctrl+Alt+Delete"
+msgstr ""
+"Krmilka (Ctrl) je preslikana na izmenjalki (Alt), izmenjalki (Alt) na tipki "
+"Win"
+
+#: src/widget/connection_view/server_screen.rs:1233
+#, fuzzy
+msgid "Ctrl+Alt+F1"
+msgstr "Ctrl + Alt + F1"
+
+#: src/widget/connection_view/server_screen.rs:1237
+#, fuzzy
+msgid "Ctrl+Alt+F2"
+msgstr "Ctrl + Alt + F2"
+
+#: src/widget/connection_view/server_screen.rs:1241
+#, fuzzy
+msgid "Ctrl+Alt+F3"
+msgstr "Ctrl + Alt + F3"
+
+#: src/widget/connection_view/server_screen.rs:1245
+#, fuzzy
+msgid "Ctrl+Alt+F4"
+msgstr "Izmenjalka (Alt)+krmilka (Ctrl)"
+
+#: src/widget/connection_view/server_screen.rs:1249
+#, fuzzy
+msgid "Ctrl+Alt+F5"
+msgstr ""
+"Krmilka (Ctrl) je preslikana na izmenjalki (Alt), izmenjalki (Alt) na tipki "
+"Win"
+
+#: src/widget/connection_view/server_screen.rs:1253
+#, fuzzy
+msgid "Ctrl+Alt+F6"
+msgstr ""
+"Krmilka (Ctrl) je preslikana na izmenjalki (Alt), izmenjalki (Alt) na tipki "
+"Win"
+
+#: src/widget/connection_view/server_screen.rs:1257
+#, fuzzy
+msgid "Ctrl+Alt+F7"
+msgstr "Ctrl + Alt + F7"
+
+#: src/widget/connection_view/server_screen.rs:1261
+#, fuzzy
+msgid "Ctrl+Alt+F8"
+msgstr ""
+"Krmilka (Ctrl) je preslikana na izmenjalki (Alt), izmenjalki (Alt) na tipki "
+"Win"
+
+#: src/widget/connection_view/server_screen.rs:1265
+#, fuzzy
+msgid "Ctrl+Alt+F9"
+msgstr "Preklopi spodnji pladenj (krmilka+F9)"
+
+#: src/widget/connection_view/server_screen.rs:1269
+#, fuzzy
+msgid "Ctrl+Alt+F10"
+msgstr "Izmenjalka (Alt)+krmilka (Ctrl)"
+
+#: src/widget/connection_view/server_screen.rs:1273
+#, fuzzy
+msgid "Ctrl+Alt+F11"
+msgstr "F11"
+
+#: src/widget/connection_view/server_screen.rs:1277
+#, fuzzy
+msgid "Ctrl+Alt+F12"
+msgstr "Izmenjalka (Alt)+krmilka (Ctrl)"
+
+#: src/widget/connection_view/server_screen.rs:1283
+msgid "Print"
+msgstr "Natisni"
+
+#: src/widget/connection_view/server_screen.rs:1294
+#, fuzzy
+msgid "_Zoom"
+msgstr "_Povečava"
+
+#: src/widget/connection_view/server_screen.rs:1317
+#, fuzzy
+msgid "Server _Actions"
+msgstr "Dejanja strežnika"
+
+#: src/widget/connection_view/server_screen.rs:1321
+msgid "_Close Window"
+msgstr "_Zapri okno"
+
+#: src/widget/connection_view/server_screen.rs:1323
+msgid "_Close Connection"
+msgstr "_Zapri povezavo"
+
+#: src/widget/connection_view/server_screen.rs:1340 src/widget/window.blp:278
+msgid "_New Window"
+msgstr "_Novo okno"
+
+#: src/widget/connection_view/server_screen.rs:1345 src/widget/window.blp:283
+msgid "_Preferences"
+msgstr "_Nastavitve"
+
+#: src/widget/connection_view/server_screen.rs:1349 src/widget/window.blp:288
+msgid "_Keyboard Shortcuts"
+msgstr "_Tipkovne bližnjice"
+
+#: src/widget/connection_view/server_screen.rs:1353 src/widget/window.blp:293
+#, fuzzy
+msgid "_About Field Monitor"
+msgstr "O programu Sistemski nadzornik"
+
+#: src/widget/connection_view/server_screen.rs:1372
+#, fuzzy, rust-format
+msgid "Show Monitor {number}"
+msgstr "Prikaz urnika iz spremljevalnika je spodletel"
+
+#: src/widget/connection_view/server_screen.rs:1383
+msgid "_Copy"
+msgstr "_Kopiraj"
+
+#: src/widget/connection_view/server_screen.rs:1387
+msgid "_Paste"
+msgstr "_Prilepi"
+
+#: src/widget/connection_view/server_screen.rs:1391
+msgid "Select _All"
+msgstr "Izberi _vse"
+
+#: src/widget/connection_view/server_screen.rs:1400
+msgid "Zoom In"
+msgstr "Približaj"
+
+#: src/widget/connection_view/server_screen.rs:1404
+msgid "Zoom Out"
+msgstr "Oddalji"
+
+#: src/widget/connection_view/server_screen.rs:1408
+msgid "Reset Zoom"
+msgstr "Ponastavi povečavo"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is a
+#. variable name.
+#: src/widget/connection_view/server_screen.rs:1462
+#, fuzzy, rust-format
+msgid "Press {keycombo} to ungrab the mouse and keyboard."
+msgstr "Najverjetneje zahteva uporabo miške in tipkovnice"
+
+#: src/widget/connection_view/server_screen.rs:1485
+#, fuzzy
+msgid "Input released."
+msgstr ""
+"Če je ta možnost omogočena, se tek začne, ko se sprosti gumb, priključen na "
+"RCA-vhod.\n"
+"Za začetek sprostite gumb. t = 0 je trenutek sprostitve."
+
+#: src/widget/focus_grabber.rs:215
+#, fuzzy
+msgid "Remote Server Screen"
+msgstr "_Oddaljeni strežnik …"
+
+#: src/widget/focus_grabber.rs:216
+#, fuzzy
+msgid "Press any key to grab input."
+msgstr "»Predogled. Za izhod pritisnite poljubno tipko.«"
+
+#: src/widget/preferences.blp:12
+msgid "Preferences"
+msgstr "Nastavitve"
+
+#: src/widget/preferences.blp:15
+msgid "Behavior"
+msgstr "Vedenje"
+
+#: src/widget/preferences.blp:18
+#, fuzzy
+msgid "Open connections in new windows"
+msgstr "Odpri meni žičnih povezav"
+
+#: src/widget/preferences.blp:23
+msgid "Appearance"
+msgstr "Videz"
+
+#: src/widget/preferences.blp:26 src/widget/preferences.rs:204
+#, fuzzy
+msgid "Sharp window corners"
+msgstr "Ostro"
+
+#: src/widget/preferences.blp:46 src/widget/preferences.rs:234
+#, fuzzy
+msgid "Header bars for active connections"
+msgstr "Ni mogoče najti veljavnih dejavnih povezav!"
+
+#: src/widget/preferences.blp:66
+#, fuzzy
+msgid "Show ungrab key combination"
+msgstr "Uredi kombinacijo tipk"
+
+#: src/widget/preferences.blp:67
+msgid ""
+"Show a brief message indicating which key combination ungrabs the mouse and "
+"keyboard, every time input is grabbed from an active connection."
+msgstr ""
+
+#: src/widget/preferences.rs:180 src/widget/preferences.rs:207
+msgid "Automatic"
+msgstr "Samodejno"
+
+#: src/widget/preferences.rs:181 src/widget/preferences.rs:208
+msgid "Always"
+msgstr "Vedno"
+
+#: src/widget/preferences.rs:182 src/widget/preferences.rs:209
+msgid "Never"
+msgstr "Nikoli"
+
+#: src/widget/preferences.rs:190 src/widget/preferences.rs:237
+msgid "Default"
+msgstr "Privzeto"
+
+#: src/widget/preferences.rs:191 src/widget/preferences.rs:238
+#, fuzzy
+msgid "Show Above"
+msgstr "Pokaži zadevo nad poljem pošiljatelja v stolpcu sporočil"
+
+#: src/widget/preferences.rs:192 src/widget/preferences.rs:239
+#, fuzzy
+msgid "Overlay and Hide"
+msgstr "Prekrito"
+
+#: src/widget/preferences.rs:205
+msgid ""
+"Configure whether and when Field Monitor will use sharp, right-angle window "
+"corners instead of the default corner radius. This is useful to make sure "
+"the corners of connected screens are not cut off."
+msgstr ""
+
+#: src/widget/preferences.rs:207
+msgid ""
+"Use the default corner radius, but make window corners sharp whenever input "
+"is grabbed."
+msgstr ""
+
+#: src/widget/preferences.rs:208
+#, fuzzy
+msgid "Always use sharp window corners."
+msgstr "Vedno pokaži to _okno"
+
+#: src/widget/preferences.rs:209
+#, fuzzy
+msgid "Never use sharp window corners."
+msgstr "Nikoli ne uporablj tega omrežja za privzeto pot"
+
+#: src/widget/preferences.rs:235
+msgid "Change how the header bar is presented for active connection screens."
+msgstr ""
+
+#: src/widget/preferences.rs:237
+msgid ""
+"The header bar is shown above the connection screen. In fullscreen mode, the "
+"header bar is instead overlaid and hides whenever input is grabbed."
+msgstr ""
+
+#: src/widget/preferences.rs:238
+msgid ""
+"The header bar is always shown above the connection screen, even in "
+"fullscreen mode."
+msgstr ""
+
+#: src/widget/preferences.rs:239
+msgid ""
+"The header bar is always shown as an overlay on top of the connection "
+"screen; it is hidden whenever input is grabbed."
+msgstr ""
+
+#: src/widget/quick_connect_dialog.blp:20
+#, no-c-format
+msgid ""
+"Enter the URL of the server you want to connect to.\n"
+"Supported protocols are: RDP, SPICE, VNC.\n"
+"\n"
+"<b>Examples:</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://server:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://user@server?VncPassword=password123</i>"
+msgstr ""
+
+#: src/widget/quick_connect_dialog.blp:23
+msgid "Connection URL"
+msgstr "URL povezave"
+
+#: src/widget/quick_connect_dialog.blp:34
+msgid "Open File..."
+msgstr "Odpri datoteko …"
+
+#: src/widget/quick_connect_dialog.rs:94 src/widget/quick_connect_dialog.rs:156
+#, fuzzy
+msgid "Failed to open"
+msgstr "Natisnjenega ni bilo mogoče odpreti: %s"
+
+#: src/widget/quick_connect_dialog.rs:97
+msgid ""
+"Field Monitor could not connect to the server using the specified file or URI"
+msgstr ""
+
+#: src/widget/quick_connect_dialog.rs:119
+msgid "Supported files"
+msgstr "Vse podprte datoteke"
+
+#: src/widget/quick_connect_dialog.rs:126
+msgid "RDP file"
+msgstr "Datoteka RDP"
+
+#: src/widget/quick_connect_dialog.rs:133
+#, fuzzy
+msgid "Virt-Viewer file"
+msgstr "Pregledovalnik:"
+
+#: src/widget/quick_connect_dialog.rs:137
+msgid "Any file"
+msgstr "Poljubna datoteka"
+
+#: src/widget/quick_connect_dialog.rs:145
+#, fuzzy
+msgid "Open Connection from file..."
+msgstr "Odpre datoteko iz odložišča"
+
+#: src/widget/quick_connect_dialog.rs:158
+#, fuzzy
+msgid "Field Monitor was unable to open the provided file."
+msgstr "Datoteke KPL ni možno odpreti"
+
+#: src/widget/update_connection_dialog.blp:33
+msgid "Save"
+msgstr "Shrani"
+
+#. XXX: These are here because (1) some of them we need in multiple places and (2) they are used inside
+#. glib::clone where they can't be picked up by gettext's scanner
+#: src/widget/usb_redir/mod.rs:23
+#, fuzzy
+msgid "USB device connected"
+msgstr "Nova naprava USB"
+
+#: src/widget/usb_redir/mod.rs:25
+#, fuzzy
+msgid "Failed to connect device"
+msgstr "Povezovanje je spodletelo"
+
+#: src/widget/usb_redir/mod.rs:26
+#, fuzzy
+msgid "USB device disconnected"
+msgstr "Naprava za prijavo s prstnim odtisom ni priklopljena"
+
+#: src/widget/usb_redir/mod.rs:28
+#, fuzzy
+msgid "Failed to disconnect device"
+msgstr "Odklapljanje naprave je spodletelo."
+
+#: src/widget/usb_redir/mod.rs:29
+#, fuzzy
+msgid "No devices available."
+msgstr "Naprave niso na voljo"
+
+#: src/widget/usb_redir/settings.blp:23
+#, fuzzy
+msgid "No devices connected."
+msgstr ""
+"Prilagodi izolacijo dostopne točke, ki preprečuje komunikacijo med "
+"brezžičnimi napravami, povezanimi s to dostopno točko. To lastnost lahko "
+"nastavite na vrednost, ki se razlikuje od »default« (-1) samo, če je vmesnik "
+"prilagojen v načinu dostopne točke (AP). Če je nastavljena na »true« (1), "
+"naprave ne morejo komunicirati med seboj. To poveča varnost, saj ščiti "
+"naprave pred napadi drugih odjemalcev v omrežju. Hkrati napravam preprečuje "
+"dostop do virov v istih brezžičnih omrežjih, kot je skupna raba datotek, "
+"tiskalniki itn. Če je nastavljena na »false« (0), se lahko naprave med seboj "
+"pogovarjajo. Če je nastavljena na »default« (-1), se uporabi globalna "
+"privzeta vrednost; Če globalno privzeto stanje ni določeno, se domneva, da "
+"je »false« (0)."
+
+#: src/widget/usb_redir/settings.blp:48
+msgid "Manage Devices..."
+msgstr "Upravljaj naprave …"
+
+#: src/widget/usb_redir/settings.rs:167
+#: src/widget/usb_redir/settings_dialog.rs:213
+msgid "Disconnect"
+msgstr "Prekini povezavo"
+
+#: src/widget/usb_redir/settings_dialog.blp:19
+msgid "Help"
+msgstr "Pomoč"
+
+#: src/widget/usb_redir/settings_dialog.blp:31
+msgid "Devices"
+msgstr "Naprave"
+
+#: src/widget/usb_redir/settings_dialog.blp:45
+msgid "Show All Devices"
+msgstr "Pokaži vse naprave"
+
+#: src/widget/usb_redir/settings_dialog.rs:164
+#, fuzzy
+msgid "1 channel free"
+msgstr "{n} kanalov"
+
+#. Translators: {free} = number of free USB redirection channels
+#: src/widget/usb_redir/settings_dialog.rs:167
+#, fuzzy, rust-format
+msgid "{free} channels free"
+msgstr "Prosto:"
+
+#: src/widget/usb_redir/settings_dialog.rs:201
+msgid "This device can not be connected; you might be missing permissions."
+msgstr ""
+
+#: src/widget/usb_redir/settings_dialog.rs:401
+msgid ""
+"This dialog allows you to share USB devices with the remote server or "
+"virtual machine.\n"
+"\n"
+"The number of devices that can be shared may be limited by the remote "
+"server.\n"
+"\n"
+"The list hides some devices (USB hubs, etc.) by default. Use the toggle "
+"button to show all devices, but note that USB hubs can not be properly "
+"shared with remote servers.\n"
+"\n"
+"To share a device, your user account may need read and write permissions on "
+"the raw device. Consult your distribution documentation for more information."
+msgstr ""
+
+#: src/widget/window.blp:37 src/widget/window.blp:41
+#, fuzzy
+msgid "About Field Monitor"
+msgstr "O programu Sistemski nadzornik"
+
+#: src/widget/window.blp:68
+msgid "Connect to your virtual machines and remote servers."
+msgstr ""
+
+#: src/widget/window.blp:81 src/widget/window.blp:189
+msgid "Add Connection"
+msgstr "Dodaj povezavo"
+
+#: src/widget/window.blp:139
+msgid "Main menu"
+msgstr "Glavni meni"
+
+#: src/widget/window.blp:271
+#, fuzzy
+msgid "_Reload Connections"
+msgstr "Napaka: povezav ni bilo mogoče ponovno naložiti: %s."
+
+#: src/widget/window.rs:334
+#, fuzzy
+msgid "Close Connection?"
+msgstr "Zapri povezavo"
+
+#: src/widget/window.rs:336
+#, fuzzy
+msgid "Closing the connection will disconnect from the remote server."
+msgstr "Prekini povezavo z: {connection}"
+
+#: src/widget/window.rs:527
+#, fuzzy
+msgid "Showing active connection"
+msgstr "Podrobnosti o aktivni povezavi"
+
+#. Translators: Do NOT translate the content between '{' and '}', this is
+#. a variable name.
+#: src/widget/window.rs:532
+#, fuzzy, rust-format
+msgid "Showing connection: {title}"
+msgstr "Začni prikazovanje pri:"
+
+#: src/widget/window.rs:537
+#, fuzzy
+msgid "Showing connection list"
+msgstr "Vsak vnos seznama predstavlja povezavo."
