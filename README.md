@@ -1,6 +1,6 @@
 <img style="vertical-align: middle;" src="data/icons/hicolor/scalable/apps/de.capypara.FieldMonitor.svg" width="120" height="120" align="left">
 
-# Field Monitor ![Build Status](https://github.com/theCapypara/field-monitor/actions/workflows/build.yml/badge.svg)
+# Field Monitor ![Build Status](https://github.com/theCapypara/field-monitor/actions/workflows/build.yml/badge.svg) [![GNOME l10n](https://img.shields.io/badge/Translations-Damned%20Lies-4a86cf?logo=gnome)](https://l10n.gnome.org/module/FieldMonitor/)
 
 Access virtual machines and other external screens
 
@@ -41,7 +41,7 @@ Field Monitor can be installed via `nixpkgs`:
 
 An AUR package for Field Monitor: [AUR](https://aur.archlinux.org/packages/field-monitor)
 
-> [!WARNING]  
+> [!WARNING]
 > Please note that this package is not officially maintained by the Field Monitor developers.
 
 ### All distro repositories
