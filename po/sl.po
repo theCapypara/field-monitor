@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: FieldMonitor main\n"
 "Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
 "POT-Creation-Date: 2026-10-13 12:31+0000\n"
-"PO-Revision-Date: 2026-10-26 09:21+0100\n"
+"PO-Revision-Date: 2026-10-26 14:52+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -239,7 +239,7 @@ msgstr "Pridružitev v domeno je spodletela"
 #: connection/libvirt/src/connection/mod.rs:335
 #, fuzzy
 msgid "Domain successfully shut down."
-msgstr "Izklopi računalnik"
+msgstr "Domena uspešno ustavljena."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -249,9 +249,8 @@ msgid "Failed to send destroy command: {err}"
 msgstr "ni možno uničiti predmeta: %s"
 
 #: connection/libvirt/src/connection/mod.rs:366
-#, fuzzy
 msgid "Domain successfully started."
-msgstr "Domena"
+msgstr "Domena uspešno zagnana."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -263,7 +262,7 @@ msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
 #: connection/libvirt/src/connection/mod.rs:398
 #, fuzzy
 msgid "Domain is not running."
-msgstr "Domena"
+msgstr "Domena ne teče."
 
 #: connection/libvirt/src/connection/mod.rs:405
 #, fuzzy
@@ -279,7 +278,7 @@ msgstr "Prišlo je do notranje napake med iskanjem programa:"
 #: connection/libvirt/src/connection/mod.rs:442
 #, fuzzy
 msgid "Serial Console"
-msgstr "Zaporedna številka"
+msgstr "Serijska konzola"
 
 #: connection/libvirt/src/connection/qemu_dbus.rs:130
 msgid "Try enabling the 'p2p' option for the D-Bus graphics adapter."
@@ -394,7 +393,7 @@ msgstr "Shrani poslana sporočila na strežnik"
 #: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:168
 #, fuzzy
 msgid "Failed to send shutdown command."
-msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+msgstr "Ni mogoče poslati ukaza na izklop."
 
 #: connection/proxmox/src/api/node.rs:164
 msgid "Console"
@@ -408,9 +407,8 @@ msgid "Proxmox"
 msgstr "Proxmox"
 
 #: connection/proxmox/src/api/provider.rs:56
-#, fuzzy
 msgid "Add Proxmox Connection"
-msgstr "Dodajanje nove povezave je spodletelo."
+msgstr "Dodaj povezavo Proxmox"
 
 #: connection/proxmox/src/api/provider.rs:64
 #, fuzzy
@@ -440,7 +438,7 @@ msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
 #: connection/proxmox/src/api/vm.rs:230
 #, fuzzy
 msgid "VM is now stopping."
-msgstr "Začetek navideznega pomnilnika"
+msgstr "Navidezni računalnik se zdaj ustavlja."
 
 #: connection/proxmox/src/api/vm.rs:233
 #, fuzzy
@@ -450,7 +448,7 @@ msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
 #: connection/proxmox/src/api/vm.rs:263
 #, fuzzy
 msgid "VM is now starting."
-msgstr "Začenjanje …"
+msgstr "Navidezni računalnik se zdaj zaganja."
 
 #: connection/proxmox/src/api/vm.rs:266
 #, fuzzy
@@ -475,18 +473,16 @@ msgid "API Key"
 msgstr "Ključ API"
 
 #: connection/proxmox/src/credential_preferences.blp:26
-#, fuzzy
 msgid "Token ID"
-msgstr "Žeton"
+msgstr "ID žetona"
 
 #: connection/proxmox/src/preferences.blp:18
 msgid "Connection"
 msgstr "Povezava"
 
 #: connection/proxmox/src/preferences.blp:33
-#, fuzzy
 msgid "Trust Any SSL Certificate"
-msgstr "Odstrani nastavitev _zaupljivosti potrdilo SSL/TLS"
+msgstr "Zaupaj vsem potrdilom SSL"
 
 #: connection/proxmox/src/preferences.blp:34
 msgid ""
@@ -600,10 +596,13 @@ msgstr ""
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
+#, fuzzy
 msgid ""
 "Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
 msgstr ""
+"Poleg tega program Field Monitor omogoča odpiranje datotek za povezavo RDP "
+"in Virt-Viewer ter hitro povezovanje s strežniki RDP, SPICE ali VNC prek URI."
 
 #. Translators: Caption of the first screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:204
@@ -630,16 +629,15 @@ msgstr "Zaslon povezane konzole"
 #. Translators: Caption of the 5th screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:241
 msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
-msgstr ""
+msgstr "Dodajanje nove povezave s hipervizorjem Proxmox Virtual Environment"
 
 #: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
 msgid "Remote Desktop file"
 msgstr "Datoteka oddaljenega namizja"
 
 #: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
-#, fuzzy
 msgid "Virt-Viewer connection file"
-msgstr "Pregledovalnik:"
+msgstr "Datoteka povezave Virt-Viewer"
 
 #: lib/src/adapter/usbredir/error.rs:35
 #, fuzzy
@@ -725,21 +723,19 @@ msgid "OK"
 msgstr "V redu"
 
 #: src/application.rs:645
-#, fuzzy
 msgid "Connection successfully added."
-msgstr "Povezava '%s' (%s) je bila uspešno dodana.\n"
+msgstr "Povezava je bila uspešno dodana."
 
 #: src/application.rs:700
-#, fuzzy
 msgid "Connection successfully updated."
-msgstr "Povezava »%s« (%s) je bila uspešno posodobljena.\n"
+msgstr "Povezava je bila uspešno posodobljena."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/application.rs:738
-#, fuzzy, rust-format
+#, rust-format
 msgid "Permanently Remove “{title}”?"
-msgstr "Ali želite trajno odstraniti z diska?"
+msgstr "Ali želite trajno odstraniti »{title}«?"
 
 #: src/application.rs:742 src/widget/window.rs:339
 msgid "No"
@@ -750,9 +746,8 @@ msgid "Yes"
 msgstr "Da"
 
 #: src/application.rs:748
-#, fuzzy
 msgid "Connection successfully removed."
-msgstr "Naprava »%s« uspešno odstranjena.\n"
+msgstr "Povezava uspešno odstranjena."
 
 #: src/application.rs:809
 #, fuzzy
@@ -760,9 +755,8 @@ msgid "Authentication successfully updated"
 msgstr "Tema %s je uspešno posodobljena"
 
 #: src/connection_loader.rs:83 src/connection_loader.rs:93
-#, fuzzy
 msgid "Connection not found."
-msgstr "Povezave z UUID »{}« ni mogoče najti"
+msgstr "Povezave ni mogoče najti."
 
 #: src/connection_loader.rs:193 src/connection_loader.rs:204
 msgid "Server not found."
@@ -813,8 +807,9 @@ msgid "Invalid VNC URI"
 msgstr "Neveljaven URI"
 
 #: src/remote_server_info.rs:47
+#, fuzzy
 msgid "Field Monitor does not support this URI scheme"
-msgstr ""
+msgstr "Field Monitor ne podpira te sheme URI"
 
 #: src/remote_server_info.rs:61
 #, fuzzy
@@ -1098,9 +1093,8 @@ msgid "Connections"
 msgstr "Povezave"
 
 #: src/widget/connection_list/connection_list_navbar.blp:13
-#, fuzzy
 msgid "List of configured connections."
-msgstr "Seznam povezav"
+msgstr "Seznam nastavljenih povezav."
 
 #: src/widget/connection_list/connection_list_navbar.blp:33
 #: src/widget/connection_list/info_page.blp:17
@@ -1116,14 +1110,12 @@ msgstr "Odstrani povezavo"
 
 #: src/widget/connection_list/info_page.blp:65
 #: src/widget/connection_list/info_page.rs:257
-#, fuzzy
 msgid "Failed to load connection"
-msgstr "Napaka: nalaganje povezave ni uspelo: %s."
+msgstr "Nalaganje povezave ni uspelo"
 
 #: src/widget/connection_list/info_page.blp:75
-#, fuzzy
 msgid "This connection requires additional authentication."
-msgstr "St_režnik zahteva overitev"
+msgstr "Ta povezava zahteva dodatno overitev."
 
 #: src/widget/connection_list/info_page.blp:78
 msgid "Authenticate"
@@ -1132,9 +1124,9 @@ msgstr "Overi"
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/widget/connection_list/info_page.rs:138
-#, fuzzy, rust-format
+#, rust-format
 msgid "Loading connection: {title}"
-msgstr "Poteka nalaganje …"
+msgstr "Nalaganje povezave: {title}"
 
 #: src/widget/connection_list/info_page.rs:192
 #, fuzzy
@@ -1144,16 +1136,16 @@ msgstr "Izpiši seznam razpoložljivih jezikovnih strežnikov"
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/widget/connection_list/info_page.rs:233
-#, fuzzy, rust-format
+#, rust-format
 msgid "Loaded connection: {title}"
-msgstr "Naloženo"
+msgstr "Naložena povezava: {title}"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is
 #. a variable name.
 #: src/widget/connection_list/info_page.rs:262
-#, fuzzy, rust-format
+#, rust-format
 msgid "Failed to load connection: {detail}"
-msgstr "Napaka: nalaganje povezave ni uspelo: %s."
+msgstr "Nalaganje povezave ni uspelo: {detail}"
 
 #. TODO: Getting the server name here isn't really easy...
 #: src/widget/connection_list/server_actions.rs:124
@@ -1234,9 +1226,8 @@ msgid "Connected to {title}"
 msgstr "Ni povezave"
 
 #: src/widget/connection_view/server_screen.rs:972
-#, fuzzy
 msgid "Disconnected"
-msgstr "Prekinjena povezava"
+msgstr "Povezava je prekinjena"
 
 #: src/widget/connection_view/server_screen.rs:974
 #, fuzzy
@@ -1246,12 +1237,11 @@ msgstr "Povezava s posredniškim strežnikom HTTP je nepričakovano končana."
 #. Translators: Do NOT translate the content between '{' and '}', this is
 #. a variable name.
 #: src/widget/connection_view/server_screen.rs:979
-#, fuzzy, rust-format
+#, rust-format
 msgid "Disconnected from {title}"
-msgstr "Prekinjena povezava"
+msgstr "Prekinjena povezava z {title}"
 
 #: src/widget/connection_view/server_screen.rs:1023
-#, fuzzy
 msgid "Connection Failed"
 msgstr "Povezovanje je spodletelo"
 
@@ -1554,6 +1544,7 @@ msgstr "Nikoli ne uporablj tega omrežja za privzeto pot"
 #: src/widget/preferences.rs:235
 msgid "Change how the header bar is presented for active connection screens."
 msgstr ""
+"Spremenite, kako se vrstica glave prikaže pri zaslonih dejavne povezave."
 
 #: src/widget/preferences.rs:237
 msgid ""
@@ -1585,6 +1576,14 @@ msgid ""
 "<i>spice://me@localhost:999?password=1234</i>\n"
 "<i>vnc://user@server?VncPassword=password123</i>"
 msgstr ""
+"Vnesite URL strežnika, s katerim se želite povezati.\n"
+"Podprti protokoli so RDP, SPICE in VNC.\n"
+"\n"
+"<b>Primeri:</b>\n"
+"<i>rdp://full%20address=s:mypc:3389</i>\n"
+"<i>spice://streznik:15900</i>\n"
+"<i>spice://me@localhost:999?password=1234</i>\n"
+"<i>vnc://uporabnik@streznik?VncPassword=password123</i>"
 
 #: src/widget/quick_connect_dialog.blp:23
 msgid "Connection URL"
@@ -1603,6 +1602,8 @@ msgstr "Ni bilo mogoče odpreti"
 msgid ""
 "Field Monitor could not connect to the server using the specified file or URI"
 msgstr ""
+"Field Monitor se ne more povezati s strežnikom z uporabo navedene datoteke "
+"ali URI-ja"
 
 #: src/widget/quick_connect_dialog.rs:119
 msgid "Supported files"
@@ -1693,7 +1694,7 @@ msgstr "Prosto:"
 
 #: src/widget/usb_redir/settings_dialog.rs:201
 msgid "This device can not be connected; you might be missing permissions."
-msgstr ""
+msgstr "Te naprave ni možno povezati; morda nimate zadostnih pravic."
 
 #: src/widget/usb_redir/settings_dialog.rs:401
 msgid ""
@@ -1719,6 +1720,7 @@ msgstr "O programu Sistemski nadzornik"
 #: src/widget/window.blp:68
 msgid "Connect to your virtual machines and remote servers."
 msgstr ""
+"Povežite se s svojimi virtualnimi računalniki in oddaljenimi strežniki."
 
 #: src/widget/window.blp:81 src/widget/window.blp:189
 msgid "Add Connection"
