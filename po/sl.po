@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: FieldMonitor main\n"
 "Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
 "POT-Creation-Date: 2026-10-13 12:31+0000\n"
-"PO-Revision-Date: 2026-10-25 10:00+0100\n"
+"PO-Revision-Date: 2026-10-26 09:21+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -83,9 +83,8 @@ msgid "Add Server"
 msgstr "Dodaj strežnik"
 
 #: connection/generic-group/src/preferences.rs:473
-#, fuzzy
 msgid "No servers added yet."
-msgstr "Strežniki"
+msgstr "Strežniki še niso dodani."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -198,9 +197,8 @@ msgstr "Vsili izklop"
 #. TRANSLATORS: Verb
 #: connection/libvirt/src/connection/mod.rs:226
 #: connection/proxmox/src/api/vm.rs:82
-#, fuzzy
 msgid "Start"
-msgstr "Začetek"
+msgstr "Začni"
 
 #: connection/libvirt/src/connection/mod.rs:257
 #, fuzzy
@@ -330,9 +328,8 @@ msgid "QEMU/KVM"
 msgstr "QEMU/KVM"
 
 #: connection/libvirt/src/hypervisor/qemu.rs:54
-#, fuzzy
 msgid "Add QEMU/KVM Connection"
-msgstr "Odtis diska QEMU QED"
+msgstr "Dodaj povezavo QEMU/KVM"
 
 #: connection/libvirt/src/hypervisor/qemu.rs:62
 msgid "QEMU/KVM hypervisor connection via libvirt."
@@ -357,15 +354,12 @@ msgid "This is the QEMU/KVM default."
 msgstr "Odtis diska QEMU QCOW"
 
 #: connection/libvirt/src/qemu_preferences.blp:33
-#, fuzzy
 msgid "User Session"
-msgstr ""
-"Preverjanje pristnosti je potrebno za začetek ali zaključek seje uporabnika."
+msgstr "Seja uporabnika"
 
 #: connection/libvirt/src/qemu_preferences.blp:44
-#, fuzzy
 msgid "Remote Connection"
-msgstr "Dodaj oddaljeno povezavo"
+msgstr "Oddaljena povezava"
 
 #: connection/libvirt/src/qemu_preferences.blp:47
 msgid "Connect via SSH"
@@ -468,6 +462,8 @@ msgid ""
 "The Proxmox user needs at least the permissions <tt>VM.Console</tt>, "
 "<tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>."
 msgstr ""
+"Uporabnik Proxmox potrebuje vsaj pravice <tt>VM.Console</tt>, <tt>VM.Audit</"
+"tt> in <tt>VM.PowerMgmt</tt>."
 
 #: connection/proxmox/src/credential_preferences.blp:13
 msgid "Authentication Mode"
@@ -497,6 +493,9 @@ msgid ""
 "Allows connecting to servers with self-signed and otherwise invalid SSL "
 "certificates. Be careful, as this is a potential security risk."
 msgstr ""
+"Omogoča povezovanje s strežniki s samopodpisanimi in drugače neveljavnimi "
+"SSL-potrdili. Bodite previdni, saj to predstavlja potencialno varnostno "
+"tveganje."
 
 #. Translators: The name of the application.
 #: data/de.capypara.FieldMonitor.desktop.in.in:2
@@ -555,9 +554,12 @@ msgstr "GNOME"
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:49
+#, fuzzy
 msgid ""
 "Field Monitor is a remote-desktop client designed for the GNOME platform."
 msgstr ""
+"Field Monitor je odjemalec za oddaljeni dostop do namizja, zasnovan za "
+"platformo GNOME."
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:53
@@ -565,30 +567,36 @@ msgid ""
 "It is focused on connecting to virtual machines, but can connect to any "
 "server supporting the RDP, SPICE or VNC protocols."
 msgstr ""
+"Namenjen je povezovanju z virtualnimi računalniki, vendar se lahko poveže s "
+"poljubnim strežnikom, ki podpira protokole RDP, SPICE ali VNC."
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:58
 msgid ""
 "It has support for directly connecting to VMs of the following hypervisors:"
 msgstr ""
+"Podpira neposredno povezovanje z virtualnimi računalniki naslednjih "
+"hipervizorjev:"
 
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:62
-#, fuzzy
 msgid "Proxmox Virtual Environment"
-msgstr "Ponovno izgradi navidezno okolje"
+msgstr "Navidezno okolje Proxmox"
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:64
-#, fuzzy
 msgid "QEMU/KVM via libvirt"
-msgstr "Odtis diska QEMU QED"
+msgstr "QEMU/KVM prek libvirt"
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
+#, fuzzy
 msgid ""
 "For supported VM hypervisors, Field Monitor also offers options to manage "
 "the basic power state of VMs, such as starting, stopping, rebooting, etc."
 msgstr ""
+"Za podprte hipervizorje virtualnih računalnikov program Field Monitor ponuja "
+"tudi možnosti za upravljanje osnovnih stanj napajanja virtualnih "
+"računalnikov, kot so zagon, zaustavitev, ponovni zagon itn."
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
@@ -616,9 +624,8 @@ msgstr "Izpiši seznam, prilagodi in zaženi jezikovne strežnike"
 
 #. Translators: Caption of the 4th screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:231
-#, fuzzy
 msgid "Screen of a connected console"
-msgstr "povezano"
+msgstr "Zaslon povezane konzole"
 
 #. Translators: Caption of the 5th screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:241
@@ -626,9 +633,8 @@ msgid "Adding a new Proxmox Virtual Environment hypervisor connection"
 msgstr ""
 
 #: data/de.capypara.FieldMonitor.mime.rdp.xml.in:5
-#, fuzzy
 msgid "Remote Desktop file"
-msgstr "Datoteka (VNC) oddaljenega namizja"
+msgstr "Datoteka oddaljenega namizja"
 
 #: data/de.capypara.FieldMonitor.mime.virt-viewer.xml.in:5
 #, fuzzy
@@ -662,14 +668,12 @@ msgstr "Inicializacija GDK je spodletela."
 
 #: lib/src/adapter/usbredir/qemu_dbus/mod.rs:258
 #: lib/src/adapter/usbredir/spice.rs:132
-#, fuzzy
 msgid "Failed to attach the USB device"
-msgstr "Prikaz naprave USB ni uspel"
+msgstr "Priklop naprave USB ni uspel"
 
 #: lib/src/cert_security.rs:134
-#, fuzzy
 msgid "Server certificate verification failed"
-msgstr "Napaka pri preverjanju potrdila."
+msgstr "Napaka pri preverjanju potrdila strežnika"
 
 #: lib/src/connection/instance.rs:191
 msgid "Unknown error"
@@ -690,7 +694,7 @@ msgstr "Shrani in pomni"
 #: lib/src/gtk/save_credentials_button.blp:29
 #, fuzzy
 msgid "Ask for this every time"
-msgstr "Vsakič vprašaj za geslo"
+msgstr "Vsakič vprašaj"
 
 #: lib/src/lib.rs:43
 #, fuzzy
@@ -1518,12 +1522,11 @@ msgstr "Privzeto"
 #: src/widget/preferences.rs:191 src/widget/preferences.rs:238
 #, fuzzy
 msgid "Show Above"
-msgstr "Pokaži zadevo nad poljem pošiljatelja v stolpcu sporočil"
+msgstr "Pokaži zgoraj"
 
 #: src/widget/preferences.rs:192 src/widget/preferences.rs:239
-#, fuzzy
 msgid "Overlay and Hide"
-msgstr "Prekrito"
+msgstr "Prekrij in skrij"
 
 #: src/widget/preferences.rs:205
 msgid ""
@@ -1594,7 +1597,7 @@ msgstr "Odpri datoteko …"
 #: src/widget/quick_connect_dialog.rs:94 src/widget/quick_connect_dialog.rs:156
 #, fuzzy
 msgid "Failed to open"
-msgstr "Natisnjenega ni bilo mogoče odpreti: %s"
+msgstr "Ni bilo mogoče odpreti"
 
 #: src/widget/quick_connect_dialog.rs:97
 msgid ""
@@ -1610,18 +1613,16 @@ msgid "RDP file"
 msgstr "Datoteka RDP"
 
 #: src/widget/quick_connect_dialog.rs:133
-#, fuzzy
 msgid "Virt-Viewer file"
-msgstr "Pregledovalnik:"
+msgstr "Datoteka Virt-Viewer"
 
 #: src/widget/quick_connect_dialog.rs:137
 msgid "Any file"
 msgstr "Poljubna datoteka"
 
 #: src/widget/quick_connect_dialog.rs:145
-#, fuzzy
 msgid "Open Connection from file..."
-msgstr "Odpre datoteko iz odložišča"
+msgstr "Odpri povezavo iz datoteke …"
 
 #: src/widget/quick_connect_dialog.rs:158
 #, fuzzy
@@ -1635,45 +1636,28 @@ msgstr "Shrani"
 #. XXX: These are here because (1) some of them we need in multiple places and (2) they are used inside
 #. glib::clone where they can't be picked up by gettext's scanner
 #: src/widget/usb_redir/mod.rs:23
-#, fuzzy
 msgid "USB device connected"
-msgstr "Nova naprava USB"
+msgstr "Naprava USB je povezana"
 
 #: src/widget/usb_redir/mod.rs:25
-#, fuzzy
 msgid "Failed to connect device"
-msgstr "Povezovanje je spodletelo"
+msgstr "Povezovanje naprave je spodletelo"
 
 #: src/widget/usb_redir/mod.rs:26
-#, fuzzy
 msgid "USB device disconnected"
-msgstr "Naprava za prijavo s prstnim odtisom ni priklopljena"
+msgstr "Naprava USB je odklopljena"
 
 #: src/widget/usb_redir/mod.rs:28
-#, fuzzy
 msgid "Failed to disconnect device"
-msgstr "Odklapljanje naprave je spodletelo."
+msgstr "Odklapljanje naprave je spodletelo"
 
 #: src/widget/usb_redir/mod.rs:29
-#, fuzzy
 msgid "No devices available."
-msgstr "Naprave niso na voljo"
+msgstr "Naprave niso na voljo."
 
 #: src/widget/usb_redir/settings.blp:23
-#, fuzzy
 msgid "No devices connected."
-msgstr ""
-"Prilagodi izolacijo dostopne točke, ki preprečuje komunikacijo med "
-"brezžičnimi napravami, povezanimi s to dostopno točko. To lastnost lahko "
-"nastavite na vrednost, ki se razlikuje od »default« (-1) samo, če je vmesnik "
-"prilagojen v načinu dostopne točke (AP). Če je nastavljena na »true« (1), "
-"naprave ne morejo komunicirati med seboj. To poveča varnost, saj ščiti "
-"naprave pred napadi drugih odjemalcev v omrežju. Hkrati napravam preprečuje "
-"dostop do virov v istih brezžičnih omrežjih, kot je skupna raba datotek, "
-"tiskalniki itn. Če je nastavljena na »false« (0), se lahko naprave med seboj "
-"pogovarjajo. Če je nastavljena na »default« (-1), se uporabi globalna "
-"privzeta vrednost; Če globalno privzeto stanje ni določeno, se domneva, da "
-"je »false« (0)."
+msgstr "Nobena naprava ni povezana."
 
 #: src/widget/usb_redir/settings.blp:48
 msgid "Manage Devices..."
@@ -1745,9 +1729,8 @@ msgid "Main menu"
 msgstr "Glavni meni"
 
 #: src/widget/window.blp:271
-#, fuzzy
 msgid "_Reload Connections"
-msgstr "Napaka: povezav ni bilo mogoče ponovno naložiti: %s."
+msgstr "_Ponovno naloži povezave"
 
 #: src/widget/window.rs:334
 #, fuzzy
@@ -1760,18 +1743,16 @@ msgid "Closing the connection will disconnect from the remote server."
 msgstr "Prekini povezavo z: {connection}"
 
 #: src/widget/window.rs:527
-#, fuzzy
 msgid "Showing active connection"
-msgstr "Podrobnosti o aktivni povezavi"
+msgstr "Prikazovanje aktivne povezave"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is
 #. a variable name.
 #: src/widget/window.rs:532
-#, fuzzy, rust-format
+#, rust-format
 msgid "Showing connection: {title}"
-msgstr "Začni prikazovanje pri:"
+msgstr "Prikazovanje povezave: {title}"
 
 #: src/widget/window.rs:537
-#, fuzzy
 msgid "Showing connection list"
-msgstr "Vsak vnos seznama predstavlja povezavo."
+msgstr "Prikazovanje seznama povezav"
