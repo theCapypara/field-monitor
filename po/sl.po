@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: FieldMonitor main\n"
 "Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
 "POT-Creation-Date: 2026-10-13 12:31+0000\n"
-"PO-Revision-Date: 2026-10-26 14:52+0100\n"
+"PO-Revision-Date: 2026-10-27 09:14+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -350,7 +350,7 @@ msgstr "Sistemska seja"
 #: connection/libvirt/src/qemu_preferences.blp:23
 #, fuzzy
 msgid "This is the QEMU/KVM default."
-msgstr "Odtis diska QEMU QCOW"
+msgstr "To je privzeto za QEMU/KVM."
 
 #: connection/libvirt/src/qemu_preferences.blp:33
 msgid "User Session"
@@ -936,7 +936,7 @@ msgstr "Pri poskusu tiskanja je prišlo do napake:"
 #: src/widget/app_status.blp:30
 #, fuzzy
 msgid "Field Monitor is starting..."
-msgstr "Začenjanje …"
+msgstr "Field Monitor se zaganja …"
 
 #: src/widget/app_status.blp:50
 #, fuzzy
@@ -944,10 +944,13 @@ msgid "Failed to Initialize"
 msgstr "Ni mogoče začeti opravila"
 
 #: src/widget/app_status.blp:51
+#, fuzzy
 msgid ""
 "Field Monitor could not start, because it could not connect to your system's "
 "secret service for accessing passwords."
 msgstr ""
+"Program Field Monitor se ni mogel zagnati, ker se ni mogel povezati s "
+"skrivno službo vašega sistema, ki omogoča dostop do gesel."
 
 #: src/widget/app_status.blp:56 src/widget/app_status.blp:84
 msgid "Quit"
@@ -959,6 +962,7 @@ msgid "Failed to Initialize - Secrets Invalid"
 msgstr "Ni mogoče začeti opravila"
 
 #: src/widget/app_status.blp:79
+#, fuzzy
 msgid ""
 "Field Monitor could not start, because the secrets backend reports that the "
 "system secrets are invalid or corrupted.\n"
@@ -968,6 +972,13 @@ msgid ""
 "You may be able to resolve this with <a href='https://github.com/theCapypara/"
 "field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
 msgstr ""
+"Program Field Monitor se ni mogel zagnati, ker podsistem za skrivnosti "
+"poroča, da so sistemske skrivnosti neveljavne ali poškodovane.\n"
+"\n"
+"To se lahko zgodi, če ste mapo HOME prenesli na drug sistem.\n"
+"\n"
+"To težavo lahko morda odpravite z orodjem <a href='https://github.com/"
+"theCapypara/field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
 
 #: src/widget/authenticate_connection_dialog.blp:6
 #: src/widget/connection_list/info_page.blp:74
@@ -1011,9 +1022,8 @@ msgid "Export Certificate..."
 msgstr "Izvozi potrdilo …"
 
 #: src/widget/certificate_details_window.rs:230
-#, fuzzy
 msgid "Failed to save"
-msgstr "Datoteke ni mogoče shraniti: %s\n"
+msgstr "Shranjevanje ni uspelo"
 
 #: src/widget/certificate_details_window.rs:232
 #, fuzzy
@@ -1021,16 +1031,12 @@ msgid "Field Monitor was unable to save the provided file."
 msgstr "Predloge datoteke z metapodatki ni mogoče shraniti: %s"
 
 #: src/widget/certificate_trust_dialog.rs:136
-#, fuzzy
 msgid "Trust this server?"
-msgstr "_Zaupaj strežniku"
+msgstr "Ali zaupate temu strežniku?"
 
 #: src/widget/certificate_trust_dialog.rs:139
-#, fuzzy
 msgid "Do you trust this certificate and want to establish a connection?"
-msgstr ""
-"Ali želite zamenjati povezavo %s z nastavitvami povezave VPN, ki jih "
-"shranjujete?"
+msgstr "Ali želite zaupati temu potrdilu in želite vzpostaviti povezavo?"
 
 #: src/widget/certificate_trust_dialog.rs:167
 msgid "Fingerprint"
@@ -1053,11 +1059,16 @@ msgid "Info"
 msgstr "Podrobnosti"
 
 #: src/widget/certificate_trust_dialog.rs:207
+#, fuzzy
 msgid ""
 "After you choose to trust the CA, Field Monitor will confirm that the "
 "connection is established using a certificate issued by the CA. If not, "
 "Field Monitor will refuse the connection."
 msgstr ""
+"Ko se odločite, da boste zaupali overitelju potrdil, bo program Field "
+"Monitor preveril, ali je povezava vzpostavljena s pomočjo potrdila, ki ga je "
+"overila ta agencija. Če to ni tako, bo program Field Monitor povezavo "
+"zavrnil."
 
 #: src/widget/certificate_trust_dialog.rs:229
 #, rust-format
@@ -1065,6 +1076,8 @@ msgid ""
 "If you choose to trust this certificate, your choice will be remembered for "
 "future connections to <tt>{host}</tt>."
 msgstr ""
+"Če se odločite, da boste temu potrdilu zaupali, se bo vaša izbira shranila "
+"za prihodnje povezave z <tt>{host}</tt>."
 
 #: src/widget/certificate_trust_dialog.rs:239
 #: src/widget/close_warning_dialog.rs:71
@@ -1083,6 +1096,8 @@ msgid ""
 "This window is still connected to “{label}”. Closing it will disconnect from "
 "the server."
 msgstr ""
+"To okno je še vedno povezano z »{label}«. Če ga zaprete, se bo povezava s "
+"strežnikom prekinila."
 
 #: src/widget/close_warning_dialog.rs:67
 msgid "Close Window?"
@@ -1129,9 +1144,8 @@ msgid "Loading connection: {title}"
 msgstr "Nalaganje povezave: {title}"
 
 #: src/widget/connection_list/info_page.rs:192
-#, fuzzy
 msgid "No servers available"
-msgstr "Izpiši seznam razpoložljivih jezikovnih strežnikov"
+msgstr "Strežniki niso na voljo"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
@@ -1166,9 +1180,9 @@ msgstr "Poveži"
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/widget/connection_list/server_actions.rs:343
-#, fuzzy, rust-format
+#, rust-format
 msgid "Connect via {adapter}"
-msgstr "Avtor adaptacije"
+msgstr "Poveži prek vmesnika {adapter}"
 
 #: src/widget/connection_view/server_screen.blp:30
 #: src/widget/connection_view/server_screen.blp:34 src/widget/window.blp:123
@@ -1183,7 +1197,7 @@ msgstr "Meni"
 #: src/widget/connection_view/server_screen.blp:48
 #, fuzzy
 msgid "Connection menu"
-msgstr "Meni oddaljene povezave"
+msgstr "Meni povezave"
 
 #: src/widget/connection_view/server_screen.blp:58
 #: src/widget/connection_view/server_screen.blp:61
@@ -1195,9 +1209,8 @@ msgstr "Naprave USB"
 
 #: src/widget/connection_view/server_screen.blp:76
 #: src/widget/connection_view/server_screen.blp:79
-#, fuzzy
 msgid "Open Monitor in New Window"
-msgstr "Odprite novo okno"
+msgstr "Odpri zaslon v novem oknu"
 
 #: src/widget/connection_view/server_screen.blp:119
 msgid "Connecting..."
@@ -1214,25 +1227,24 @@ msgstr "Pokaži izhod"
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/widget/connection_view/server_screen.rs:465
-#, fuzzy, rust-format
+#, rust-format
 msgid "Connecting to {title}"
-msgstr "V povezovanju"
+msgstr "Vzpostavljanje povezave ({title})"
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/widget/connection_view/server_screen.rs:792
-#, fuzzy, rust-format
+#, rust-format
 msgid "Connected to {title}"
-msgstr "Ni povezave"
+msgstr "Povezani ({title})"
 
 #: src/widget/connection_view/server_screen.rs:972
 msgid "Disconnected"
 msgstr "Povezava je prekinjena"
 
 #: src/widget/connection_view/server_screen.rs:974
-#, fuzzy
 msgid "The connection to the server was closed."
-msgstr "Povezava s posredniškim strežnikom HTTP je nepričakovano končana."
+msgstr "Povezava s strežnikom je prekinjena."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is
 #. a variable name.
@@ -1246,9 +1258,8 @@ msgid "Connection Failed"
 msgstr "Povezovanje je spodletelo"
 
 #: src/widget/connection_view/server_screen.rs:1024
-#, fuzzy
 msgid "The connection was closed due to an error."
-msgstr "Povezava z oddaljenim gostiteljem je prekinjena."
+msgstr "Povezava je prekinjena zaradi napake."
 
 #: src/widget/connection_view/server_screen.rs:1031
 msgid "Connection failed"
@@ -1262,24 +1273,21 @@ msgid "Connection failed: {detail}"
 msgstr "Povezovanje je spodletelo: {detail}"
 
 #: src/widget/connection_view/server_screen.rs:1197
-#, fuzzy
 msgid "_Dynamic Resize"
-msgstr "Dinamično"
+msgstr "_Dinamično spreminjanje velikosti"
 
 #: src/widget/connection_view/server_screen.rs:1201
-#, fuzzy
 msgid "_Scale to Window"
-msgstr "_Prilagodi velikost"
+msgstr "_Prilagodi velikost oknu"
 
 #: src/widget/connection_view/server_screen.rs:1211
-#, fuzzy
 msgid "_Resize Window to Screen"
-msgstr "Spremeni velikost okna"
+msgstr "Prilagodi okno _zaslonu"
 
 #: src/widget/connection_view/server_screen.rs:1215
 #, fuzzy
 msgid "Send _Keys"
-msgstr "Pošlji: {}"
+msgstr "Pošlji _tipke/ključe"
 
 #: src/widget/connection_view/server_screen.rs:1219
 msgid "Ctrl+Alt L"
@@ -1290,91 +1298,68 @@ msgid "Ctrl+Alt+Backspace"
 msgstr "Krmilka (Ctrl) + izmenjalka (Alt) + vračalka"
 
 #: src/widget/connection_view/server_screen.rs:1227
-#, fuzzy
 msgid "Ctrl+Alt+Delete"
-msgstr ""
-"Krmilka (Ctrl) je preslikana na izmenjalki (Alt), izmenjalki (Alt) na tipki "
-"Win"
+msgstr "Krmilka+izmenjalka+brisalka"
 
 #: src/widget/connection_view/server_screen.rs:1233
-#, fuzzy
 msgid "Ctrl+Alt+F1"
-msgstr "Ctrl + Alt + F1"
+msgstr "Krmilka+izmenjalka+F1"
 
 #: src/widget/connection_view/server_screen.rs:1237
-#, fuzzy
 msgid "Ctrl+Alt+F2"
-msgstr "Ctrl + Alt + F2"
+msgstr "Krmilka+izmenjalka+F2"
 
 #: src/widget/connection_view/server_screen.rs:1241
-#, fuzzy
 msgid "Ctrl+Alt+F3"
-msgstr "Ctrl + Alt + F3"
+msgstr "Krmilka+izmenjalka+F3"
 
 #: src/widget/connection_view/server_screen.rs:1245
-#, fuzzy
 msgid "Ctrl+Alt+F4"
-msgstr "Izmenjalka (Alt)+krmilka (Ctrl)"
+msgstr "Krmilka+izmenjalka+F4"
 
 #: src/widget/connection_view/server_screen.rs:1249
-#, fuzzy
 msgid "Ctrl+Alt+F5"
-msgstr ""
-"Krmilka (Ctrl) je preslikana na izmenjalki (Alt), izmenjalki (Alt) na tipki "
-"Win"
+msgstr "Krmilka+izmenjalka+F5"
 
 #: src/widget/connection_view/server_screen.rs:1253
-#, fuzzy
 msgid "Ctrl+Alt+F6"
-msgstr ""
-"Krmilka (Ctrl) je preslikana na izmenjalki (Alt), izmenjalki (Alt) na tipki "
-"Win"
+msgstr "Krmilka+izmenjalka+F6"
 
 #: src/widget/connection_view/server_screen.rs:1257
-#, fuzzy
 msgid "Ctrl+Alt+F7"
-msgstr "Ctrl + Alt + F7"
+msgstr "Krmilka+izmenjalka+F7"
 
 #: src/widget/connection_view/server_screen.rs:1261
-#, fuzzy
 msgid "Ctrl+Alt+F8"
-msgstr ""
-"Krmilka (Ctrl) je preslikana na izmenjalki (Alt), izmenjalki (Alt) na tipki "
-"Win"
+msgstr "Krmilka+izmenjalka+F8"
 
 #: src/widget/connection_view/server_screen.rs:1265
-#, fuzzy
 msgid "Ctrl+Alt+F9"
-msgstr "Preklopi spodnji pladenj (krmilka+F9)"
+msgstr "Krmilka+izmenjalka+F9"
 
 #: src/widget/connection_view/server_screen.rs:1269
-#, fuzzy
 msgid "Ctrl+Alt+F10"
-msgstr "Izmenjalka (Alt)+krmilka (Ctrl)"
+msgstr "Krmilka+izmenjalka+F10"
 
 #: src/widget/connection_view/server_screen.rs:1273
-#, fuzzy
 msgid "Ctrl+Alt+F11"
-msgstr "F11"
+msgstr "Krmilka+izmenjalka+F11"
 
 #: src/widget/connection_view/server_screen.rs:1277
-#, fuzzy
 msgid "Ctrl+Alt+F12"
-msgstr "Izmenjalka (Alt)+krmilka (Ctrl)"
+msgstr "Krmilka+izmenjalka+F12"
 
 #: src/widget/connection_view/server_screen.rs:1283
 msgid "Print"
 msgstr "Natisni"
 
 #: src/widget/connection_view/server_screen.rs:1294
-#, fuzzy
 msgid "_Zoom"
 msgstr "_Povečava"
 
 #: src/widget/connection_view/server_screen.rs:1317
-#, fuzzy
 msgid "Server _Actions"
-msgstr "Dejanja strežnika"
+msgstr "_Dejanja strežnika"
 
 #: src/widget/connection_view/server_screen.rs:1321
 msgid "_Close Window"
@@ -1440,20 +1425,15 @@ msgstr "Najverjetneje zahteva uporabo miške in tipkovnice"
 #: src/widget/connection_view/server_screen.rs:1485
 #, fuzzy
 msgid "Input released."
-msgstr ""
-"Če je ta možnost omogočena, se tek začne, ko se sprosti gumb, priključen na "
-"RCA-vhod.\n"
-"Za začetek sprostite gumb. t = 0 je trenutek sprostitve."
+msgstr "Vhod sproščen."
 
 #: src/widget/focus_grabber.rs:215
-#, fuzzy
 msgid "Remote Server Screen"
-msgstr "_Oddaljeni strežnik …"
+msgstr "Zaslon oddaljenega strežnika"
 
 #: src/widget/focus_grabber.rs:216
-#, fuzzy
 msgid "Press any key to grab input."
-msgstr "»Predogled. Za izhod pritisnite poljubno tipko.«"
+msgstr "Za zajem vhoda pritisnite poljubno tipko."
 
 #: src/widget/preferences.blp:12
 msgid "Preferences"
@@ -1464,18 +1444,16 @@ msgid "Behavior"
 msgstr "Vedenje"
 
 #: src/widget/preferences.blp:18
-#, fuzzy
 msgid "Open connections in new windows"
-msgstr "Odpri meni žičnih povezav"
+msgstr "Odpri povezave v novih oknih"
 
 #: src/widget/preferences.blp:23
 msgid "Appearance"
 msgstr "Videz"
 
 #: src/widget/preferences.blp:26 src/widget/preferences.rs:204
-#, fuzzy
 msgid "Sharp window corners"
-msgstr "Ostro"
+msgstr "Ostra oglišča oken"
 
 #: src/widget/preferences.blp:46 src/widget/preferences.rs:234
 #, fuzzy
@@ -1492,6 +1470,9 @@ msgid ""
 "Show a brief message indicating which key combination ungrabs the mouse and "
 "keyboard, every time input is grabbed from an active connection."
 msgstr ""
+"Vsakič, ko je zajet vnos iz aktivne povezave, prikaži kratko sporočilo, v "
+"katerem je navedena kombinacija tipl, s katero se sprosti zajem miške in "
+"tipkovnice."
 
 #: src/widget/preferences.rs:180 src/widget/preferences.rs:207
 msgid "Automatic"
@@ -1519,17 +1500,24 @@ msgid "Overlay and Hide"
 msgstr "Prekrij in skrij"
 
 #: src/widget/preferences.rs:205
+#, fuzzy
 msgid ""
 "Configure whether and when Field Monitor will use sharp, right-angle window "
 "corners instead of the default corner radius. This is useful to make sure "
 "the corners of connected screens are not cut off."
 msgstr ""
+"Nastavite, ali in kdaj bo program Field Monitor uporabljal ostra, pravokotna "
+"oglišča oken namesto privzetega polmera oglišč. To je koristno, da zagotovi "
+"te, da oglišča povezanih zaslonov ne bodo odrezana."
 
 #: src/widget/preferences.rs:207
+#, fuzzy
 msgid ""
 "Use the default corner radius, but make window corners sharp whenever input "
 "is grabbed."
 msgstr ""
+"Uporabi privzeti polmer oglišč, vendar ob zajetju vnosa poskrbi, da so "
+"oglišča oken ostra."
 
 #: src/widget/preferences.rs:208
 #, fuzzy
@@ -1547,22 +1535,32 @@ msgstr ""
 "Spremenite, kako se vrstica glave prikaže pri zaslonih dejavne povezave."
 
 #: src/widget/preferences.rs:237
+#, fuzzy
 msgid ""
 "The header bar is shown above the connection screen. In fullscreen mode, the "
 "header bar is instead overlaid and hides whenever input is grabbed."
 msgstr ""
+"Zgornja vrstica se prikaže nad zaslonom povezave. V celozaslonskem načinu se "
+"naslovna vrstica namesto tega prikaže kot prekrivni sloj in se skrije, ko se "
+"aktivira vnos."
 
 #: src/widget/preferences.rs:238
+#, fuzzy
 msgid ""
 "The header bar is always shown above the connection screen, even in "
 "fullscreen mode."
 msgstr ""
+"Zgornja vrstica je vedno prikazana nad zaslonom za povezavo, tudi v "
+"celozaslonskem načinu."
 
 #: src/widget/preferences.rs:239
+#, fuzzy
 msgid ""
 "The header bar is always shown as an overlay on top of the connection "
 "screen; it is hidden whenever input is grabbed."
 msgstr ""
+"Zgornja vrstica se vedno pokaže kot prekritje na vrhu okna povezave; ko je "
+"zajet vhod, se skrije."
 
 #: src/widget/quick_connect_dialog.blp:20
 #, no-c-format
@@ -1711,6 +1709,19 @@ msgid ""
 "To share a device, your user account may need read and write permissions on "
 "the raw device. Consult your distribution documentation for more information."
 msgstr ""
+"To pogovorno okno omogoča deljenje naprav USB z oddaljenim strežnikom ali "
+"navideznim računalnikom.\n"
+"\n"
+"Število naprav, ki jih lahko delite, je lahko omejeno na strani oddaljenega "
+"strežnika.\n"
+"\n"
+"Seznam privzeto skrije nekatere naprave (preklopnike USB itn.). Uporabite "
+"gumb za preklop, da vidite vse naprave, vendar se zavedajte, da preklopnikov "
+"USB ni možno pravilno deliti z oddaljenimi strežniki.\n"
+"\n"
+"Če želite napravo postaviti v skupno rabo, bo vaš uporabniški račun morda "
+"potreboval pravice branja in pisanja na samo napravo. Podrobnosti preverite "
+"v dokumentaciji svoje distribucije."
 
 #: src/widget/window.blp:37 src/widget/window.blp:41
 #, fuzzy
