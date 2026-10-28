@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: FieldMonitor main\n"
 "Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
 "POT-Creation-Date: 2026-10-13 12:31+0000\n"
-"PO-Revision-Date: 2026-10-27 09:14+0100\n"
+"PO-Revision-Date: 2026-10-28 22:20+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -42,28 +42,24 @@ msgid "Password"
 msgstr "Geslo"
 
 #: connection/generic-group/src/lib.rs:58
-#, fuzzy
 msgid "Generic Connection Group"
-msgstr "Povezava ni bila splošna povezava."
+msgstr "Splošna skupina povezav"
 
 #: connection/generic-group/src/lib.rs:62
-#, fuzzy
 msgid "Generic Connection Groups"
-msgstr "Povezava ni bila splošna povezava."
+msgstr "Splošne skupine povezav"
 
 #: connection/generic-group/src/lib.rs:66
-#, fuzzy
 msgid "Add Generic Connection Group"
-msgstr "Povezava ni bila splošna povezava."
+msgstr "Dodaj splošno skupino povezav"
 
 #: connection/generic-group/src/lib.rs:74
 msgid "Connection to one or more RDP, SPICE and VNC servers"
 msgstr "Povezava z enim ali več strežniki RDP, SPICE in VNC"
 
 #: connection/generic-group/src/lib.rs:148
-#, fuzzy
 msgid "One or more fields contain invalid values."
-msgstr "Določena polja imajo neveljavne vrednosti"
+msgstr "Eno ali več polj vsebuje neveljavne vrednosti."
 
 #: connection/generic-group/src/lib.rs:371
 msgid "Failed to load password."
@@ -201,16 +197,15 @@ msgid "Start"
 msgstr "Začni"
 
 #: connection/libvirt/src/connection/mod.rs:257
-#, fuzzy
 msgid "Reboot command successfully sent to domain."
-msgstr "Uspešno poslana datoteka »{}«"
+msgstr "Ukaz za ponovni zagon je bil uspešno poslan domeni."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/mod.rs:262
-#, fuzzy, rust-format
+#, rust-format
 msgid "Failed to send reboot command: {err}"
-msgstr "Ponovni zagon ni uspel"
+msgstr "Pošiljanje ukaza za ponovni zagon ni uspelo: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:283
 #, fuzzy
