@@ -44,14 +44,58 @@ pub const PTY_DRIVER_BIN: &str = "de.capypara.FieldMonitor.PtyDrv.Proxmox";
 
 fn map_proxmox_error(error: proxmox_api::Error) -> ConnectionError {
     match error {
+        proxmox_api::Error::InvalidTotp => ConnectionError::AuthFailed(
+            Some(gettext("Enter a 6 to 8 digit authentication code.")),
+            error.into(),
+        ),
+        proxmox_api::Error::UnsupportedTfa => ConnectionError::General(
+            Some(gettext(
+                "This account requires a second factor that Field Monitor does not support yet. Use TOTP or an API key.",
+            )),
+            error.into(),
+        ),
         proxmox_api::Error::AuthFailed => ConnectionError::AuthFailed(None, error.into()),
+        proxmox_api::Error::TfaRequired => ConnectionError::AuthFailed(
+            Some(gettext(
+                "Enter the current code from your authenticator app.",
+            )),
+            error.into(),
+        ),
+        proxmox_api::Error::TfaRejected => ConnectionError::AuthFailed(
+            Some(gettext(
+                "The authentication code was rejected. Enter a new code and try again.",
+            )),
+            error.into(),
+        ),
         _ => ConnectionError::General(None, error.into()),
     }
 }
 
 fn map_proxmox_error_ref(error: &proxmox_api::Error) -> ConnectionError {
     match error {
+        proxmox_api::Error::InvalidTotp => ConnectionError::AuthFailed(
+            Some(gettext("Enter a 6 to 8 digit authentication code.")),
+            anyhow!("{}", error),
+        ),
+        proxmox_api::Error::UnsupportedTfa => ConnectionError::General(
+            Some(gettext(
+                "This account requires a second factor that Field Monitor does not support yet. Use TOTP or an API key.",
+            )),
+            anyhow!("{}", error),
+        ),
         proxmox_api::Error::AuthFailed => ConnectionError::AuthFailed(None, anyhow!("{}", error)),
+        proxmox_api::Error::TfaRequired => ConnectionError::AuthFailed(
+            Some(gettext(
+                "Enter the current code from your authenticator app.",
+            )),
+            anyhow!("{}", error),
+        ),
+        proxmox_api::Error::TfaRejected => ConnectionError::AuthFailed(
+            Some(gettext(
+                "The authentication code was rejected. Enter a new code and try again.",
+            )),
+            anyhow!("{}", error),
+        ),
         _ => ConnectionError::General(None, anyhow!("{}", error)),
     }
 }
@@ -192,12 +236,24 @@ fn create_proxmox_adapter<'a>(
                     .unwrap(),
             )),
             AdapterCreds::Term(termproxy) => {
+                let session = client.session_ticket().await.map_err(map_proxmox_error)?;
+                let (connection_type, credential) = if let Some(session) = session {
+                    ("session", session.unsecure().to_string())
+                } else {
+                    (
+                        client.clientconfig_connection_type(),
+                        client
+                            .clientconfig_password_or_apikey()
+                            .unsecure()
+                            .to_string(),
+                    )
+                };
                 let (node_id, vm_type, vm_id) = match entity {
                     ProxmoxEntity::Node(node_id) => {
                         (node_id.to_string(), String::new(), String::new())
                     }
                     ProxmoxEntity::Vm(vm_type, node_id, vm_id) => {
-                        (vm_type.to_string(), node_id.to_string(), vm_id.to_string())
+                        (node_id.to_string(), vm_type.to_string(), vm_id.to_string())
                     }
                 };
                 let ignore_ssl_errors = if client.clientconfig_ignore_ssl_errors() {
@@ -212,10 +268,10 @@ fn create_proxmox_adapter<'a>(
                     adapter_tag,
                     libexec_path(PTY_DRIVER_BIN).expect("failed to find libvirt vte driver in path. Is Field Monitor correctly installed?"),
                     vec![
-                        client.clientconfig_connection_type().to_string(),
+                        connection_type.to_string(),
                         client.clientconfig_root().to_string(),
                         client.clientconfig_user_or_tokenid().to_string(),
-                        client.clientconfig_password_or_apikey().unsecure().to_string(),
+                        credential,
                         ignore_ssl_errors.to_string(),
                         node_id,
                         vm_type,

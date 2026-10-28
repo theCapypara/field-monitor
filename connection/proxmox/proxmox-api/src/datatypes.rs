@@ -267,11 +267,36 @@ pub struct Vncproxy {
     pub user: String,
 }
 
-#[derive(Eq, PartialEq, Deserialize, Debug, Clone)]
+#[derive(Eq, PartialEq, Deserialize, Serialize, Clone)]
 pub(crate) struct Ticket {
     pub ticket: String,
     #[serde(rename = "CSRFPreventionToken")]
     pub csrf_prevention_token: String,
+    #[serde(rename = "NeedTFA")]
+    pub need_tfa: Option<serde_json::Value>,
+}
+
+impl Ticket {
+    pub fn is_challenge(&self) -> bool {
+        matches!(self.need_tfa, Some(Value::Bool(true)))
+            || self
+                .need_tfa
+                .as_ref()
+                .and_then(Value::as_u64)
+                .is_some_and(|v| v != 0)
+            || self.ticket.starts_with("PVE:!tfa!")
+            || self.ticket.starts_with("PVE:tfa-challenge:")
+    }
+
+    pub fn validate_session(&self) -> crate::Result<()> {
+        if self.is_challenge() {
+            return Err(crate::Error::TfaRequired);
+        }
+        if !self.ticket.starts_with("PVE:") || self.csrf_prevention_token.is_empty() {
+            return Err(crate::Error::InvalidAuthResponse);
+        }
+        Ok(())
+    }
 }
 
 #[derive(Eq, PartialEq, Deserialize, Debug, Clone)]

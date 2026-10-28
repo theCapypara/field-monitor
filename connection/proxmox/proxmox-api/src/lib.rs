@@ -18,6 +18,7 @@
 use std::borrow::Cow;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
+use std::time::{Duration, Instant};
 
 pub use crate::datatypes::*;
 use futures::future::BoxFuture;
@@ -30,6 +31,8 @@ use serde::Serialize;
 use serde::de::DeserializeOwned;
 use thiserror::Error;
 
+#[cfg(test)]
+mod auth_tests;
 mod datatypes;
 
 #[derive(Debug, Error)]
@@ -44,6 +47,16 @@ pub enum Error {
     InvalidIdValue,
     #[error("authentication failed")]
     AuthFailed,
+    #[error("two-factor authentication is required")]
+    TfaRequired,
+    #[error("the server returned an invalid authentication response")]
+    InvalidAuthResponse,
+    #[error("the authentication code was rejected; enter a new code or restart authentication")]
+    TfaRejected,
+    #[error("enter a 6 to 8 digit authentication code")]
+    InvalidTotp,
+    #[error("this account requires a second factor other than TOTP")]
+    UnsupportedTfa,
     #[error("API returned no data")]
     MissingData,
     #[error("API failed with status {0}")]
@@ -93,29 +106,113 @@ struct TicketProvider {
     client: Client,
     user: String,
     password: SecureString,
+    tfa_response: Mutex<Option<SecureString>>,
     just_reauth: AtomicBool,
     current_ticket: Arc<Mutex<Option<Ticket>>>,
+    pending_challenge: Mutex<Option<Ticket>>,
+    auth_lock: Mutex<()>,
+    renewed_at: Mutex<Option<Instant>>,
 }
 
 impl TicketProvider {
+    // Callers hold auth_lock across the entire exchange to avoid racing OTP consumption.
     async fn reauth(&self) -> Result<()> {
         debug!("re-issuing ticket");
         self.just_reauth.store(true, Ordering::Release);
-        self.current_ticket.lock().await.replace(
-            self.client
-                .request(Method::POST, "access/ticket")
-                .form(&[
-                    ("username", &*self.user),
-                    ("password", self.password.unsecure()),
+        let previous = self.current_ticket.lock().await.clone();
+        let pending = self.pending_challenge.lock().await.clone();
+        let mut ticket = if let Some(pending) = pending {
+            pending
+        } else {
+            let password = previous
+                .as_ref()
+                .map(|t| t.ticket.as_str())
+                .unwrap_or_else(|| self.password.unsecure());
+            match self
+                .request_ticket(&[
+                    ("username", &self.user),
+                    ("password", password),
+                    ("new-format", "1"),
                 ])
-                .send()
-                .await?
-                .json::<Wrapper<Ticket>>()
-                .await?
-                .data
-                .ok_or(Error::MissingData)?,
-        );
+                .await
+            {
+                Ok(ticket) => ticket,
+                Err(err) => {
+                    self.current_ticket.lock().await.take();
+                    return Err(err);
+                }
+            }
+        };
+
+        if ticket.is_challenge() {
+            self.pending_challenge.lock().await.replace(ticket.clone());
+            if let Some(encoded) = ticket
+                .ticket
+                .strip_prefix("PVE:!tfa!")
+                .and_then(|s| s.split(':').next())
+            {
+                let decoded =
+                    urlencoding::decode(encoded).map_err(|_| Error::InvalidAuthResponse)?;
+                let challenge: serde_json::Value =
+                    serde_json::from_str(&decoded).map_err(|_| Error::InvalidAuthResponse)?;
+                if challenge.get("totp").and_then(serde_json::Value::as_bool) != Some(true) {
+                    self.tfa_response.lock().await.take();
+                    return Err(Error::UnsupportedTfa);
+                }
+            }
+            let tfa_response = self
+                .tfa_response
+                .lock()
+                .await
+                .take()
+                .ok_or(Error::TfaRequired)?;
+            let response = SecureString::from(format!("totp:{}", tfa_response.unsecure().trim()));
+            ticket = match self
+                .request_ticket(&[
+                    ("username", self.user.as_str()),
+                    ("tfa-challenge", ticket.ticket.as_str()),
+                    ("password", response.unsecure()),
+                    ("new-format", "1"),
+                ])
+                .await
+            {
+                Ok(ticket) => ticket,
+                Err(Error::AuthFailed) => {
+                    self.pending_challenge.lock().await.take();
+                    return Err(Error::TfaRejected);
+                }
+                Err(err) => return Err(err),
+            };
+        }
+
+        ticket.validate_session()?;
+        self.pending_challenge.lock().await.take();
+        self.tfa_response.lock().await.take();
+        self.current_ticket.lock().await.replace(ticket);
+        self.renewed_at.lock().await.replace(Instant::now());
         Ok(())
+    }
+
+    async fn request_ticket(&self, form: &[(&str, &str)]) -> Result<Ticket> {
+        let response = self
+            .client
+            .request(Method::POST, "access/ticket")
+            .timeout(Duration::from_secs(30))
+            .form(form)
+            .send()
+            .await?;
+        let status = response.status();
+        if status == StatusCode::UNAUTHORIZED || status == StatusCode::FORBIDDEN {
+            return Err(Error::AuthFailed);
+        }
+        if !status.is_success() {
+            return Err(Error::ApiUnknown(status));
+        }
+        response
+            .json::<Wrapper<Ticket>>()
+            .await?
+            .data
+            .ok_or(Error::MissingData)
     }
 }
 
@@ -135,7 +232,16 @@ trait ApiAccessProvider {
     fn password_or_apikey(&self) -> &SecureString;
     fn provide_auth_headers(&self) -> BoxFuture<'_, Result<AuthHeaders<'_>>>;
     fn auth_success(&self) {}
-    fn failed_auth(&self) -> BoxFuture<'_, DoAfterAuthRetry>;
+    fn failed_auth<'a>(&'a self, rejected_auth: &'a str) -> BoxFuture<'a, DoAfterAuthRetry>;
+    fn invalidate_session<'a>(&'a self, _rejected_auth: &'a str) -> BoxFuture<'a, ()> {
+        Box::pin(async {})
+    }
+    fn session_ticket(&self) -> BoxFuture<'_, Result<Option<SecureString>>> {
+        Box::pin(async { Ok(None) })
+    }
+    fn submit_totp(&self, _code: SecureString) -> BoxFuture<'_, Result<()>> {
+        Box::pin(async { Err(Error::InvalidAuthResponse) })
+    }
 }
 
 impl ApiAccessProvider for ApikeyProvider {
@@ -161,7 +267,7 @@ impl ApiAccessProvider for ApikeyProvider {
         })
     }
 
-    fn failed_auth(&self) -> BoxFuture<'_, DoAfterAuthRetry> {
+    fn failed_auth<'a>(&'a self, _rejected_auth: &'a str) -> BoxFuture<'a, DoAfterAuthRetry> {
         Box::pin(async move { DoAfterAuthRetry::Fail })
     }
 }
@@ -182,6 +288,15 @@ impl ApiAccessProvider for TicketProvider {
     fn provide_auth_headers(&self) -> BoxFuture<'_, Result<AuthHeaders<'_>>> {
         let current_ticket = self.current_ticket.clone();
         Box::pin(async move {
+            let _auth = self.auth_lock.lock().await;
+            let needs_renewal = self
+                .renewed_at
+                .lock()
+                .await
+                .is_some_and(|at| at.elapsed() >= Duration::from_secs(90 * 60));
+            if current_ticket.lock().await.is_none() || needs_renewal {
+                self.reauth().await?;
+            }
             let lock = current_ticket.lock().await;
             if let Some(ticket) = &*lock {
                 let mut extra_headers = HeaderMap::with_capacity(1);
@@ -194,10 +309,36 @@ impl ApiAccessProvider for TicketProvider {
                     extra_headers,
                 })
             } else {
-                drop(lock);
-                self.reauth().await?;
-                self.provide_auth_headers().await
+                Err(Error::AuthFailed)
             }
+        })
+    }
+
+    fn session_ticket(&self) -> BoxFuture<'_, Result<Option<SecureString>>> {
+        Box::pin(async move {
+            self.provide_auth_headers().await?;
+            let ticket = self.current_ticket.lock().await;
+            let ticket = ticket.as_ref().ok_or(Error::AuthFailed)?;
+            Ok(Some(SecureString::from(
+                serde_json::to_string(ticket).map_err(|_| Error::InvalidAuthResponse)?,
+            )))
+        })
+    }
+
+    fn submit_totp(&self, code: SecureString) -> BoxFuture<'_, Result<()>> {
+        Box::pin(async move {
+            let value = code.unsecure().trim();
+            if !(6..=8).contains(&value.len()) || !value.bytes().all(|b| b.is_ascii_digit()) {
+                return Err(Error::InvalidTotp);
+            }
+            let _auth = self.auth_lock.lock().await;
+            if self.current_ticket.lock().await.is_some() {
+                return Ok(());
+            }
+            self.tfa_response.lock().await.replace(code);
+            let result = self.reauth().await;
+            self.tfa_response.lock().await.take();
+            result
         })
     }
 
@@ -205,9 +346,31 @@ impl ApiAccessProvider for TicketProvider {
         self.just_reauth.store(false, Ordering::Release)
     }
 
-    fn failed_auth(&self) -> BoxFuture<'_, DoAfterAuthRetry> {
+    fn invalidate_session<'a>(&'a self, rejected_auth: &'a str) -> BoxFuture<'a, ()> {
         Box::pin(async move {
+            let _auth = self.auth_lock.lock().await;
+            let mut ticket = self.current_ticket.lock().await;
+            if ticket.as_ref().is_some_and(|t| {
+                rejected_auth.strip_prefix("PVEAuthCookie=") == Some(t.ticket.as_str())
+            }) {
+                ticket.take();
+                self.renewed_at.lock().await.take();
+            }
+        })
+    }
+
+    fn failed_auth<'a>(&'a self, rejected_auth: &'a str) -> BoxFuture<'a, DoAfterAuthRetry> {
+        Box::pin(async move {
+            let _auth = self.auth_lock.lock().await;
+            // A concurrent request may already have renewed this session. A late 401 for
+            // the old ticket must not discard or renew the replacement again.
+            if self.current_ticket.lock().await.as_ref().is_some_and(|t| {
+                rejected_auth.strip_prefix("PVEAuthCookie=") != Some(t.ticket.as_str())
+            }) {
+                return DoAfterAuthRetry::Retry;
+            }
             if self.just_reauth.load(Ordering::Acquire) {
+                self.current_ticket.lock().await.take();
                 DoAfterAuthRetry::Fail
             } else {
                 match self.reauth().await {
@@ -250,6 +413,7 @@ impl ProxmoxApiClient {
         root: &Uri,
         user: &str,
         password: SecureString,
+        tfa_response: Option<SecureString>,
         ignore_ssl_errors: bool,
     ) -> Result<Self> {
         debug!("creating proxmox client with username and password");
@@ -260,8 +424,63 @@ impl ProxmoxApiClient {
                 client,
                 user: user.to_string(),
                 password,
+                tfa_response: Mutex::new(tfa_response),
                 just_reauth: Default::default(),
                 current_ticket: Arc::new(Default::default()),
+                pending_challenge: Default::default(),
+                auth_lock: Default::default(),
+                renewed_at: Default::default(),
+            }),
+        })
+    }
+
+    /// Completes an interactive TOTP exchange. The code is consumed, never cached.
+    pub async fn submit_totp(&self, code: SecureString) -> Result<()> {
+        self.api_access_provider.submit_totp(code).await
+    }
+
+    pub async fn authenticate(&self) -> Result<()> {
+        self.api_access_provider
+            .provide_auth_headers()
+            .await
+            .map(|_| ())
+    }
+
+    /// Transfer a session to a trusted helper over private IPC, never command-line arguments.
+    pub async fn session_ticket(&self) -> Result<Option<SecureString>> {
+        self.api_access_provider.session_ticket().await
+    }
+
+    pub fn connect_with_session(
+        root: &Uri,
+        user: &str,
+        session: SecureString,
+        ignore_ssl_errors: bool,
+    ) -> Result<Self> {
+        let ticket: Ticket =
+            serde_json::from_str(session.unsecure()).map_err(|_| Error::InvalidAuthResponse)?;
+        ticket.validate_session()?;
+        let ticket_user = ticket
+            .ticket
+            .split(':')
+            .nth(1)
+            .ok_or(Error::InvalidAuthResponse)?;
+        if urlencoding::decode(ticket_user).map_err(|_| Error::InvalidAuthResponse)? != user {
+            return Err(Error::InvalidAuthResponse);
+        }
+        let client = Client::new(root, ignore_ssl_errors)?;
+        Ok(Self {
+            client: client.clone(),
+            api_access_provider: Box::new(TicketProvider {
+                client,
+                user: user.to_string(),
+                password: SecureString::from(""),
+                tfa_response: Default::default(),
+                just_reauth: Default::default(),
+                current_ticket: Arc::new(Mutex::new(Some(ticket))),
+                pending_challenge: Default::default(),
+                auth_lock: Default::default(),
+                renewed_at: Mutex::new(Some(Instant::now())),
             }),
         })
     }
@@ -724,13 +943,14 @@ impl ProxmoxApiClient {
             .await
     }
 
-    async fn base_request(&self, method: Method, route: &str) -> Result<RequestBuilder> {
+    async fn base_request(&self, method: Method, route: &str) -> Result<(RequestBuilder, String)> {
         let auth_header = self.api_access_provider.provide_auth_headers().await?;
-        Ok(self
+        let request = self
             .client
             .request(method, route)
             .headers(auth_header.extra_headers)
-            .header(header::AUTHORIZATION, auth_header.auth_header.as_ref()))
+            .header(header::AUTHORIZATION, auth_header.auth_header.as_ref());
+        Ok((request, auth_header.auth_header.into_owned()))
     }
 
     async fn do_request<F>(
@@ -742,29 +962,23 @@ impl ProxmoxApiClient {
     where
         F: Fn(RequestBuilder) -> RequestBuilder,
     {
-        let mut response = modify_request(self.base_request(method.clone(), route).await?)
-            .send()
-            .await;
+        let (request, auth) = self.base_request(method.clone(), route).await?;
+        let mut response = modify_request(request).send().await?;
 
-        let status = response
-            .as_ref()
-            .map(|resp| Some(resp.status()))
-            .unwrap_or_else(|err| err.status());
-
-        if status == Some(StatusCode::UNAUTHORIZED) {
+        if response.status() == StatusCode::UNAUTHORIZED {
             debug!("request failed with 401");
             // Retry with re-auth potentially
-            match self.api_access_provider.failed_auth().await {
+            match self.api_access_provider.failed_auth(&auth).await {
                 DoAfterAuthRetry::Retry => {
                     debug!("access backend indicated retry possible: retrying");
-                    response = modify_request(self.base_request(method, route).await?)
-                        .send()
-                        .await;
+                    let (request, auth) = self.base_request(method, route).await?;
+                    response = modify_request(request).send().await?;
 
-                    if response.is_ok() {
+                    if response.status() != StatusCode::UNAUTHORIZED {
                         debug!("retry success");
                     } else {
                         debug!("retry failed");
+                        self.api_access_provider.invalidate_session(&auth).await;
                         return Err(Error::AuthFailed);
                     }
                 }
@@ -775,11 +989,11 @@ impl ProxmoxApiClient {
             }
         }
 
-        if response.is_ok() {
+        if response.status().is_success() {
             self.api_access_provider.auth_success();
         }
 
-        response.map_err(Into::into)
+        Ok(response)
     }
 
     fn handle_wrapper<T>(&self, status_code: StatusCode, wrapper: Wrapper<T>) -> Result<T> {
