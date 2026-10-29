@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: FieldMonitor main\n"
 "Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
 "POT-Creation-Date: 2026-10-13 12:31+0000\n"
-"PO-Revision-Date: 2026-10-28 22:20+0100\n"
+"PO-Revision-Date: 2026-10-29 15:38+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -150,7 +150,6 @@ msgid "Port"
 msgstr "Vrata"
 
 #: connection/libvirt/src/connection/adapter.rs:209
-#, fuzzy
 msgid ""
 "No supported graphics endpoint available. Tip: If connected via SSH, make "
 "sure that the graphics adapter's listen type is set to 'address' and that "
@@ -208,40 +207,37 @@ msgid "Failed to send reboot command: {err}"
 msgstr "Pošiljanje ukaza za ponovni zagon ni uspelo: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:283
-#, fuzzy
 msgid "Shutdown command successfully sent to domain."
-msgstr "Uspešno poslana datoteka »{}«"
+msgstr "Ukaz za zaustavitev je bil uspešno poslan domeni."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/mod.rs:288
-#, fuzzy, rust-format
+#, rust-format
 msgid "Failed to send shutdown command: {err}"
-msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+msgstr "Pošiljanje ukaza za zaustavitev ni uspelo: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:309
-#, fuzzy
 msgid "Domain successfully reset."
-msgstr "Uspešno ponastavljene konfiguracijske vrednosti"
+msgstr "Domena je bila uspešno ponastavljena."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/mod.rs:314
-#, fuzzy, rust-format
+#, rust-format
 msgid "Failed to reset domain: {err}"
-msgstr "Pridružitev v domeno je spodletela"
+msgstr "Ponastavitev domene ni uspela: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:335
-#, fuzzy
 msgid "Domain successfully shut down."
-msgstr "Domena uspešno ustavljena."
+msgstr "Domena je bila uspešno onemogočena."
 
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/mod.rs:340
-#, fuzzy, rust-format
+#, rust-format
 msgid "Failed to send destroy command: {err}"
-msgstr "ni možno uničiti predmeta: %s"
+msgstr "Pošiljanje ukaza za uničenje ni uspelo: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:366
 msgid "Domain successfully started."
@@ -250,9 +246,9 @@ msgstr "Domena uspešno zagnana."
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/mod.rs:371
-#, fuzzy, rust-format
+#, rust-format
 msgid "Failed to send create command: {err}"
-msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+msgstr "Pošiljanje ukaza za ustvarjanje ni uspelo: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:398
 #, fuzzy
@@ -266,9 +262,8 @@ msgstr "Naprava je že pridružena domeni"
 
 #: connection/libvirt/src/connection/mod.rs:414
 #: connection/proxmox/src/api/mod.rs:84
-#, fuzzy
 msgid "Internal error while trying to execute command."
-msgstr "Prišlo je do notranje napake med iskanjem programa:"
+msgstr "Pri poskusu izvedbe ukaza je prišlo do notranje napake."
 
 #: connection/libvirt/src/connection/mod.rs:442
 #, fuzzy
@@ -310,11 +305,9 @@ msgstr "Povezava prek D-Bus ni uspela.{extra_info}"
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: connection/libvirt/src/connection/qemu_dbus.rs:253
-#, fuzzy, rust-format
+#, rust-format
 msgid "Try adding your account to the '{group_name}' group."
-msgstr ""
-"Vrste skupine ni mogoče najti.\n"
-"Preverite seznam skupin in poskusite znova."
+msgstr "Poskusi dodati svoj račun v skupino »{group_name}«."
 
 #: connection/libvirt/src/hypervisor/qemu.rs:46
 #: connection/libvirt/src/hypervisor/qemu.rs:50
