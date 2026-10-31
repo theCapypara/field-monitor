@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: FieldMonitor main\n"
 "Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
 "POT-Creation-Date: 2026-10-13 12:31+0000\n"
-"PO-Revision-Date: 2026-10-31 17:51+0100\n"
+"PO-Revision-Date: 2026-10-31 23:20+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -264,7 +264,6 @@ msgid "Internal error while trying to execute command."
 msgstr "Pri poskusu izvedbe ukaza je prišlo do notranje napake."
 
 #: connection/libvirt/src/connection/mod.rs:442
-#, fuzzy
 msgid "Serial Console"
 msgstr "Serijska konzola"
 
@@ -334,9 +333,8 @@ msgid "System Session"
 msgstr "Sistemska seja"
 
 #: connection/libvirt/src/qemu_preferences.blp:23
-#, fuzzy
 msgid "This is the QEMU/KVM default."
-msgstr "To je privzeto za QEMU/KVM."
+msgstr "To je privzeta nastavitev za QEMU/KVM."
 
 #: connection/libvirt/src/qemu_preferences.blp:33
 msgid "User Session"
@@ -393,24 +391,20 @@ msgid "Add Proxmox Connection"
 msgstr "Dodaj povezavo Proxmox"
 
 #: connection/proxmox/src/api/provider.rs:64
-#, fuzzy
 msgid "Proxmox Virtual Environment hypervisor connection"
-msgstr "Vsebuje virtualno okolje Python (venv)"
+msgstr "Povezava s hipervizorjem Proxmox Virtual Environment"
 
 #: connection/proxmox/src/api/vm.rs:132
-#, fuzzy
 msgid "Reboot command successfully sent to VM."
-msgstr "Uspešno poslana datoteka »{}«"
+msgstr "Ukaz za ponovni zagon je bil uspešno poslan virtualnemu računalniku."
 
 #: connection/proxmox/src/api/vm.rs:165
-#, fuzzy
 msgid "Shutdown command successfully sent to VM."
-msgstr "Uspešno poslana datoteka »{}«"
+msgstr "Ukaz za zaustavitev je bil uspešno poslan virtualnemu računalniku."
 
 #: connection/proxmox/src/api/vm.rs:197
-#, fuzzy
 msgid "VM was successfully reset."
-msgstr "Navidezni računalnik uspešno ponastavljen."
+msgstr "VM je bil uspešno ponastavljen."
 
 #: connection/proxmox/src/api/vm.rs:200
 msgid "Failed to send reset command."
@@ -429,9 +423,8 @@ msgid "VM is now starting."
 msgstr "Navidezni računalnik se zdaj zaganja."
 
 #: connection/proxmox/src/api/vm.rs:266
-#, fuzzy
 msgid "Failed to send start command."
-msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+msgstr "Pošiljanje ukaza za zagon ni uspelo."
 
 #: connection/proxmox/src/credential_preferences.blp:10
 msgid ""
@@ -476,19 +469,16 @@ msgstr ""
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:7 src/widget/window.blp:9
 #: src/widget/window.blp:61 src/widget/window.blp:67 src/widget/window.blp:116
 #: src/widget/window.blp:218 src/widget/window.blp:235 src/widget/window.rs:405
-#, fuzzy
 msgid "Field Monitor"
-msgstr "Kot na &zaslonu"
+msgstr "Zaslon s terena"
 
 #: data/de.capypara.FieldMonitor.desktop.in.in:3
-#, fuzzy
 msgid "Remote Desktop Viewer"
 msgstr "Ogledovalnik oddaljenih namizij"
 
 #. Translators: The summary of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.desktop.in.in:4
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
-#, fuzzy
 msgid "Access VMs and external screens"
 msgstr "Dostopajte do navideznih računalnikov in zunanjih zaslonov"
 
@@ -528,11 +518,10 @@ msgstr "GNOME"
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:49
-#, fuzzy
 msgid ""
 "Field Monitor is a remote-desktop client designed for the GNOME platform."
 msgstr ""
-"Field Monitor je odjemalec za oddaljeni dostop do namizja, zasnovan za "
+"Zaslon s terena je odjemalec za oddaljeni dostop do namizij, zasnovan za "
 "platformo GNOME."
 
 #. Translators: Part of the description of the application in the metainfo.
@@ -563,23 +552,21 @@ msgstr "QEMU/KVM prek libvirt"
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:67
-#, fuzzy
 msgid ""
 "For supported VM hypervisors, Field Monitor also offers options to manage "
 "the basic power state of VMs, such as starting, stopping, rebooting, etc."
 msgstr ""
-"Za podprte hipervizorje virtualnih računalnikov program Field Monitor ponuja "
-"tudi možnosti za upravljanje osnovnih stanj napajanja virtualnih "
+"Za podprte hipervizorje virtualnih računalnikov program Zaslon s terena "
+"ponuja tudi možnosti za upravljanje osnovnih stanj napajanja virtualnih "
 "računalnikov, kot so zagon, zaustavitev, ponovni zagon itn."
 
 #. Translators: Part of the description of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:72
-#, fuzzy
 msgid ""
 "Additionally, Field Monitor supports opening RDP and Virt-Viewer connection "
 "files and quickly connecting to RDP, SPICE or VNC servers via URI."
 msgstr ""
-"Poleg tega program Field Monitor omogoča odpiranje datotek za povezavo RDP "
+"Poleg tega program Zaslon s terena omogoča odpiranje datotek za povezave RDP "
 "in Virt-Viewer ter hitro povezovanje s strežniki RDP, SPICE ali VNC prek URI."
 
 #. Translators: Caption of the first screenshot in the metainfo
@@ -594,7 +581,6 @@ msgstr "Zaslon dobrodošlice"
 
 #. Translators: Caption of the third screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:221
-#, fuzzy
 msgid "A list of servers in a Proxmox cluster to connect to"
 msgstr "Seznam strežnikov v klastru Proxmox, s katerimi se je mogoče povezati"
 
@@ -722,9 +708,8 @@ msgid "Connection successfully removed."
 msgstr "Povezava uspešno odstranjena."
 
 #: src/application.rs:809
-#, fuzzy
 msgid "Authentication successfully updated"
-msgstr "Tema %s je uspešno posodobljena"
+msgstr "Preverjanje pristnosti je bilo uspešno posodobljeno"
 
 #: src/connection_loader.rs:83 src/connection_loader.rs:93
 msgid "Connection not found."
@@ -735,9 +720,8 @@ msgid "Server not found."
 msgstr "Strežnika ni možno najti."
 
 #: src/connection_loader.rs:246 src/connection_loader.rs:364
-#, fuzzy
 msgid "Failed to load or connect to server"
-msgstr "Poveži s _strežnikom"
+msgstr "Nalaganje ali povezava s strežnikom ni uspela"
 
 #: src/quick_connect/mod.rs:118
 msgid "Untitled Server"
@@ -745,58 +729,48 @@ msgstr "Neimenovani strežnik"
 
 #: src/quick_connect/mod.rs:197 src/widget/quick_connect_dialog.blp:6
 #: src/widget/window.blp:95 src/widget/window.blp:204
-#, fuzzy
 msgid "Quick Connect"
-msgstr "Določilo URI za hitro povezavo"
+msgstr "Hitro poveži"
 
 #: src/quick_connect/mod.rs:320
-#, fuzzy
 msgid "via Quick Connect"
-msgstr "Določilo URI za hitro povezavo"
+msgstr "prek hitre povezave"
 
 #: src/quick_connect/rdp.rs:78
 msgid "Failed to read file"
 msgstr "Branje datoteke je spodletelo"
 
 #: src/quick_connect/rdp.rs:169
-#, fuzzy
 msgid "Invalid RDP parameters"
-msgstr "Neveljavni parametri uporabe: %s"
+msgstr "Neveljavni parametri RDP"
 
 #: src/quick_connect/spice.rs:208
-#, fuzzy
 msgid "Invalid SPICE URI"
-msgstr "Neveljaven URI"
+msgstr "Neveljaven URI SPICE"
 
 #: src/quick_connect/util.rs:58 src/quick_connect/util.rs:63
-#, fuzzy
 msgid "Invalid port in URI"
-msgstr "neveljavna vrata"
+msgstr "Neveljavna vrata v URI"
 
 #: src/quick_connect/vnc.rs:111
-#, fuzzy
 msgid "Invalid VNC URI"
-msgstr "Neveljaven URI"
+msgstr "Neveljaven URI VNC"
 
 #: src/remote_server_info.rs:47
-#, fuzzy
 msgid "Field Monitor does not support this URI scheme"
-msgstr "Field Monitor ne podpira te sheme URI"
+msgstr "Zaslon s terena ne podpira te sheme URI"
 
 #: src/remote_server_info.rs:61
-#, fuzzy
 msgid "Unable to detect supported file format"
-msgstr "Oblika zapisa ni podprta ali pa je datoteka poškodovana"
+msgstr "Ni možno zaznati podprte vrste datotek"
 
 #: src/remote_server_info.rs:69
-#, fuzzy
 msgid "Field Monitor was unable to read the file"
-msgstr "Ni mogoče brati datoteke"
+msgstr "Zaslon s terena ne more brati datoteke"
 
 #: src/secrets.rs:91
-#, fuzzy
 msgid "A secret value used by Field Monitor"
-msgstr "Neveljavna vrednost za polje"
+msgstr "Skrivna vrednost, ki jo uporablja Zaslon s terena"
 
 #: src/shortcuts-dialog.blp:6
 msgctxt "shortcut window"
@@ -905,22 +879,19 @@ msgid "An error occurred while trying to save the connection"
 msgstr "Pri poskusu shranjevanja povezave je prišlo do napake"
 
 #: src/widget/app_status.blp:30
-#, fuzzy
 msgid "Field Monitor is starting..."
-msgstr "Field Monitor se zaganja …"
+msgstr "Zaslon s terena se zaganja …"
 
 #: src/widget/app_status.blp:50
-#, fuzzy
 msgid "Failed to Initialize"
-msgstr "Ni mogoče začeti opravila"
+msgstr "Ni možno inicializirati"
 
 #: src/widget/app_status.blp:51
-#, fuzzy
 msgid ""
 "Field Monitor could not start, because it could not connect to your system's "
 "secret service for accessing passwords."
 msgstr ""
-"Program Field Monitor se ni mogel zagnati, ker se ni mogel povezati s "
+"Program Zaslon s terena se ni mogel zagnati, ker se ni mogel povezati s "
 "skrivno službo vašega sistema, ki omogoča dostop do gesel."
 
 #: src/widget/app_status.blp:56 src/widget/app_status.blp:84
@@ -928,12 +899,10 @@ msgid "Quit"
 msgstr "Izhod"
 
 #: src/widget/app_status.blp:78
-#, fuzzy
 msgid "Failed to Initialize - Secrets Invalid"
-msgstr "Ni mogoče začeti opravila"
+msgstr "Ni možno inicializirati - neveljavne skrivnosti"
 
 #: src/widget/app_status.blp:79
-#, fuzzy
 msgid ""
 "Field Monitor could not start, because the secrets backend reports that the "
 "system secrets are invalid or corrupted.\n"
@@ -943,7 +912,7 @@ msgid ""
 "You may be able to resolve this with <a href='https://github.com/theCapypara/"
 "field-monitor/issues/18#issuecomment-2763807003'>oo7-cli</a>."
 msgstr ""
-"Program Field Monitor se ni mogel zagnati, ker podsistem za skrivnosti "
+"Program Zaslon s terena se ni mogel zagnati, ker podsistem za skrivnosti "
 "poroča, da so sistemske skrivnosti neveljavne ali poškodovane.\n"
 "\n"
 "To se lahko zgodi, če ste mapo HOME prenesli na drug sistem.\n"
@@ -962,9 +931,8 @@ msgid "Apply"
 msgstr "Uveljavi"
 
 #: src/widget/authenticate_connection_dialog.rs:105
-#, fuzzy
 msgid "This connection needs additional authentication to proceed."
-msgstr "Dodatno preverjanje pristnosti TLS ali šifriranje"
+msgstr "Ta povezava zahteva dodatno preverjanje pristnosti za nadaljevanje."
 
 #: src/widget/certificate_details_window.blp:5
 msgid "Certificate Viewer"
@@ -997,9 +965,8 @@ msgid "Failed to save"
 msgstr "Shranjevanje ni uspelo"
 
 #: src/widget/certificate_details_window.rs:232
-#, fuzzy
 msgid "Field Monitor was unable to save the provided file."
-msgstr "Predloge datoteke z metapodatki ni mogoče shraniti: %s"
+msgstr "Zaslon s terena podane datoteke ne more shraniti."
 
 #: src/widget/certificate_trust_dialog.rs:136
 msgid "Trust this server?"
@@ -1022,23 +989,21 @@ msgstr "Pokaži potrdilo"
 msgid ""
 "This certificate is the certificate authority (CA) issuing the connection "
 "certificate."
-msgstr ""
-"Overitelj potrdil (CA), ki je podpisal potrdilo oddaljenega gostitelja."
+msgstr "To potrdilo je overitelj potrdil (CA), ki je izdal potrdilo povezave."
 
 #: src/widget/certificate_trust_dialog.rs:202
 msgid "Info"
 msgstr "Podrobnosti"
 
 #: src/widget/certificate_trust_dialog.rs:207
-#, fuzzy
 msgid ""
 "After you choose to trust the CA, Field Monitor will confirm that the "
 "connection is established using a certificate issued by the CA. If not, "
 "Field Monitor will refuse the connection."
 msgstr ""
-"Ko se odločite, da boste zaupali overitelju potrdil, bo program Field "
-"Monitor preveril, ali je povezava vzpostavljena s pomočjo potrdila, ki ga je "
-"overila ta agencija. Če to ni tako, bo program Field Monitor povezavo "
+"Ko se odločite, da boste zaupali overitelju potrdil, bo program Zaslon s "
+"terena preveril, ali je povezava vzpostavljena s pomočjo potrdila, ki ga je "
+"overila ta agencija. Če to ni tako, bo program Zaslon s terena povezavo "
 "zavrnil."
 
 #: src/widget/certificate_trust_dialog.rs:229
@@ -1166,7 +1131,6 @@ msgid "Menu"
 msgstr "Meni"
 
 #: src/widget/connection_view/server_screen.blp:48
-#, fuzzy
 msgid "Connection menu"
 msgstr "Meni povezave"
 
@@ -1353,14 +1317,13 @@ msgid "_Keyboard Shortcuts"
 msgstr "_Tipkovne bližnjice"
 
 #: src/widget/connection_view/server_screen.rs:1353 src/widget/window.blp:293
-#, fuzzy
 msgid "_About Field Monitor"
-msgstr "O programu Sistemski nadzornik"
+msgstr "_O programu Zaslon s terena"
 
 #: src/widget/connection_view/server_screen.rs:1372
-#, fuzzy, rust-format
+#, rust-format
 msgid "Show Monitor {number}"
-msgstr "Prikaz urnika iz spremljevalnika je spodletel"
+msgstr "Pokaži zaslon {number}"
 
 #: src/widget/connection_view/server_screen.rs:1383
 msgid "_Copy"
@@ -1389,12 +1352,13 @@ msgstr "Ponastavi povečavo"
 #. Translators: Do NOT translate the content between '{' and '}', this is a
 #. variable name.
 #: src/widget/connection_view/server_screen.rs:1462
-#, fuzzy, rust-format
+#, rust-format
 msgid "Press {keycombo} to ungrab the mouse and keyboard."
-msgstr "Najverjetneje zahteva uporabo miške in tipkovnice"
+msgstr ""
+"Pritisnite kombinacijo tipk {keycombo}, da prevzamete nadzor nadzor nad "
+"miško in tipkovnico."
 
 #: src/widget/connection_view/server_screen.rs:1485
-#, fuzzy
 msgid "Input released."
 msgstr "Vhod sproščen."
 
@@ -1427,14 +1391,12 @@ msgid "Sharp window corners"
 msgstr "Ostra oglišča oken"
 
 #: src/widget/preferences.blp:46 src/widget/preferences.rs:234
-#, fuzzy
 msgid "Header bars for active connections"
-msgstr "Ni mogoče najti veljavnih dejavnih povezav!"
+msgstr "Naslovne vrstice za aktivne povezave"
 
 #: src/widget/preferences.blp:66
-#, fuzzy
 msgid "Show ungrab key combination"
-msgstr "Uredi kombinacijo tipk"
+msgstr "Pokaži kombinacijo tipk za prevzem nadzora"
 
 #: src/widget/preferences.blp:67
 msgid ""
@@ -1462,27 +1424,24 @@ msgid "Default"
 msgstr "Privzeto"
 
 #: src/widget/preferences.rs:191 src/widget/preferences.rs:238
-#, fuzzy
 msgid "Show Above"
-msgstr "Pokaži zgoraj"
+msgstr "Pokaži nad"
 
 #: src/widget/preferences.rs:192 src/widget/preferences.rs:239
 msgid "Overlay and Hide"
 msgstr "Prekrij in skrij"
 
 #: src/widget/preferences.rs:205
-#, fuzzy
 msgid ""
 "Configure whether and when Field Monitor will use sharp, right-angle window "
 "corners instead of the default corner radius. This is useful to make sure "
 "the corners of connected screens are not cut off."
 msgstr ""
-"Nastavite, ali in kdaj bo program Field Monitor uporabljal ostra, pravokotna "
-"oglišča oken namesto privzetega polmera oglišč. To je koristno, da zagotovi "
-"te, da oglišča povezanih zaslonov ne bodo odrezana."
+"Nastavite, ali in kdaj bo program Zaslon s terena uporabljal ostra, "
+"pravokotna oglišča oken namesto privzetega polmera oglišč. To je koristno, "
+"da zagotovite, da oglišča povezanih zaslonov ne bodo odrezana."
 
 #: src/widget/preferences.rs:207
-#, fuzzy
 msgid ""
 "Use the default corner radius, but make window corners sharp whenever input "
 "is grabbed."
@@ -1491,14 +1450,12 @@ msgstr ""
 "oglišča oken ostra."
 
 #: src/widget/preferences.rs:208
-#, fuzzy
 msgid "Always use sharp window corners."
-msgstr "Vedno pokaži to _okno"
+msgstr "Vedno uporabi ostre vogale oken."
 
 #: src/widget/preferences.rs:209
-#, fuzzy
 msgid "Never use sharp window corners."
-msgstr "Nikoli ne uporablj tega omrežja za privzeto pot"
+msgstr "Nikoli ne uporabi ostrih vogalov oken."
 
 #: src/widget/preferences.rs:235
 msgid "Change how the header bar is presented for active connection screens."
@@ -1506,32 +1463,29 @@ msgstr ""
 "Spremenite, kako se vrstica glave prikaže pri zaslonih dejavne povezave."
 
 #: src/widget/preferences.rs:237
-#, fuzzy
 msgid ""
 "The header bar is shown above the connection screen. In fullscreen mode, the "
 "header bar is instead overlaid and hides whenever input is grabbed."
 msgstr ""
-"Zgornja vrstica se prikaže nad zaslonom povezave. V celozaslonskem načinu se "
-"naslovna vrstica namesto tega prikaže kot prekrivni sloj in se skrije, ko se "
-"aktivira vnos."
+"Naslovna vrstica se prikaže nad zaslonom povezave. V celozaslonskem načinu "
+"se naslovna vrstica namesto tega prikaže kot prekrivni sloj in se skrije, ko "
+"prevzet vhod."
 
 #: src/widget/preferences.rs:238
-#, fuzzy
 msgid ""
 "The header bar is always shown above the connection screen, even in "
 "fullscreen mode."
 msgstr ""
-"Zgornja vrstica je vedno prikazana nad zaslonom za povezavo, tudi v "
+"Naslovna vrstica je vedno prikazana nad zaslonom za povezavo, tudi v "
 "celozaslonskem načinu."
 
 #: src/widget/preferences.rs:239
-#, fuzzy
 msgid ""
 "The header bar is always shown as an overlay on top of the connection "
 "screen; it is hidden whenever input is grabbed."
 msgstr ""
-"Zgornja vrstica se vedno pokaže kot prekritje na vrhu okna povezave; ko je "
-"zajet vhod, se skrije."
+"Naslovna vrstica se vedno pokaže kot prekritje na vrhu okna povezave; ko je "
+"prevzet vhod, se skrije."
 
 #: src/widget/quick_connect_dialog.blp:20
 #, no-c-format
@@ -1563,9 +1517,8 @@ msgid "Open File..."
 msgstr "Odpri datoteko …"
 
 #: src/widget/quick_connect_dialog.rs:94 src/widget/quick_connect_dialog.rs:156
-#, fuzzy
 msgid "Failed to open"
-msgstr "Ni bilo mogoče odpreti"
+msgstr "Ni bilo možno odpreti"
 
 #: src/widget/quick_connect_dialog.rs:97
 msgid ""
@@ -1595,9 +1548,8 @@ msgid "Open Connection from file..."
 msgstr "Odpri povezavo iz datoteke …"
 
 #: src/widget/quick_connect_dialog.rs:158
-#, fuzzy
 msgid "Field Monitor was unable to open the provided file."
-msgstr "Datoteke KPL ni možno odpreti"
+msgstr "Zaslon s terena podane datoteke ne more odpreti."
 
 #: src/widget/update_connection_dialog.blp:33
 msgid "Save"
@@ -1694,9 +1646,8 @@ msgstr ""
 "v dokumentaciji svoje distribucije."
 
 #: src/widget/window.blp:37 src/widget/window.blp:41
-#, fuzzy
 msgid "About Field Monitor"
-msgstr "O programu Sistemski nadzornik"
+msgstr "O programu Zaslon s terena"
 
 #: src/widget/window.blp:68
 msgid "Connect to your virtual machines and remote servers."
@@ -1716,14 +1667,12 @@ msgid "_Reload Connections"
 msgstr "_Ponovno naloži povezave"
 
 #: src/widget/window.rs:334
-#, fuzzy
 msgid "Close Connection?"
-msgstr "Zapri povezavo"
+msgstr "Želite zapreti povezavo?"
 
 #: src/widget/window.rs:336
-#, fuzzy
 msgid "Closing the connection will disconnect from the remote server."
-msgstr "Prekini povezavo z: {connection}"
+msgstr "Če zaprete povezavo, boste prekinili povezavo z oddaljenim strežnikom."
 
 #: src/widget/window.rs:527
 msgid "Showing active connection"
