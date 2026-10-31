@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: FieldMonitor main\n"
 "Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
 "POT-Creation-Date: 2026-10-13 12:31+0000\n"
-"PO-Revision-Date: 2026-10-29 15:38+0100\n"
+"PO-Revision-Date: 2026-10-31 12:39+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -416,7 +416,7 @@ msgstr "Uspešno poslana datoteka »{}«"
 #: connection/proxmox/src/api/vm.rs:197
 #, fuzzy
 msgid "VM was successfully reset."
-msgstr "Uspešno ponastavljene konfiguracijske vrednosti"
+msgstr "Navidezni računalnik uspešno ponastavljen."
 
 #: connection/proxmox/src/api/vm.rs:200
 #, fuzzy
@@ -424,7 +424,6 @@ msgid "Failed to send reset command."
 msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
 
 #: connection/proxmox/src/api/vm.rs:230
-#, fuzzy
 msgid "VM is now stopping."
 msgstr "Navidezni računalnik se zdaj ustavlja."
 
@@ -434,7 +433,6 @@ msgid "Failed to send stop command."
 msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
 
 #: connection/proxmox/src/api/vm.rs:263
-#, fuzzy
 msgid "VM is now starting."
 msgstr "Navidezni računalnik se zdaj zaganja."
 
@@ -493,14 +491,14 @@ msgstr "Kot na &zaslonu"
 #: data/de.capypara.FieldMonitor.desktop.in.in:3
 #, fuzzy
 msgid "Remote Desktop Viewer"
-msgstr "Oddaljeno namizje"
+msgstr "Ogledovalnik oddaljenih namizij"
 
 #. Translators: The summary of the application in the metainfo.
 #: data/de.capypara.FieldMonitor.desktop.in.in:4
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:9
 #, fuzzy
 msgid "Access VMs and external screens"
-msgstr "SPICE (za povezovanje z oddaljenimi navideznimi računalniki)"
+msgstr "Dostopajte do navideznih računalnikov in zunanjih zaslonov"
 
 #. Translators: The keywords from the desktop file.
 #: data/de.capypara.FieldMonitor.desktop.in.in:12
@@ -594,9 +592,8 @@ msgstr ""
 
 #. Translators: Caption of the first screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:204
-#, fuzzy
 msgid "Screen of a connected graphical display"
-msgstr "Izberite vrsto povezanega zaslona."
+msgstr "Zaslon priključenega grafičnega zaslona"
 
 #. Translators: Caption of the second screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:214
@@ -607,7 +604,7 @@ msgstr "Zaslon dobrodošlice"
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:221
 #, fuzzy
 msgid "A list of servers in a Proxmox cluster to connect to"
-msgstr "Izpiši seznam, prilagodi in zaženi jezikovne strežnike"
+msgstr "Seznam strežnikov v klastru Proxmox, s katerimi se je mogoče povezati"
 
 #. Translators: Caption of the 4th screenshot in the metainfo
 #: data/de.capypara.FieldMonitor.metainfo.xml.in.in:231
@@ -628,29 +625,27 @@ msgid "Virt-Viewer connection file"
 msgstr "Datoteka povezave Virt-Viewer"
 
 #: lib/src/adapter/usbredir/error.rs:35
-#, fuzzy
 msgid "The device can not be attached to the connection"
-msgstr "_Priloženo"
+msgstr "Naprave ni mogoče priključiti na priključek"
 
 #: lib/src/adapter/usbredir/error.rs:38
-#, fuzzy
 msgid "The device was already attached to the connection"
-msgstr "Datoteka »%s« je že priložena za pošiljanje."
+msgstr "Naprava je bila že priključena na priključek"
 
 #: lib/src/adapter/usbredir/portal.rs:254
-#, fuzzy, rust-format
+#, rust-format
 msgid "Failed to communicate with the system portal: {details}"
-msgstr "Povezovanje s čitalcem prstnih odtisov je spodletelo."
+msgstr "Komunikacija s sistemskim portalom ni uspela: {details}"
 
 #: lib/src/adapter/usbredir/portal.rs:258
-#, fuzzy, rust-format
+#, rust-format
 msgid "USB portal request failed: {details}"
-msgstr "Storitev portala ni uspela: {}"
+msgstr "Zahteva za USB-portal ni uspela: {details}"
 
 #: lib/src/adapter/usbredir/portal.rs:262
-#, fuzzy, rust-format
+#, rust-format
 msgid "USB redirection initialization failed: {details}"
-msgstr "Inicializacija GDK je spodletela."
+msgstr "Inicializacija preusmeritve USB ni uspela: {details}"
 
 #: lib/src/adapter/usbredir/qemu_dbus/mod.rs:258
 #: lib/src/adapter/usbredir/spice.rs:132
@@ -678,19 +673,16 @@ msgid "Save and remember"
 msgstr "Shrani in pomni"
 
 #: lib/src/gtk/save_credentials_button.blp:29
-#, fuzzy
 msgid "Ask for this every time"
 msgstr "Vsakič vprašaj"
 
 #: lib/src/lib.rs:43
-#, fuzzy
 msgid "The connection configuration is invalid"
-msgstr "neveljavna prilagoditev"
+msgstr "Prilagoditev povezave ni veljavna"
 
 #: src/application.rs:131
-#, fuzzy
 msgid "Open the app with a new window"
-msgstr "Odpri novo okno pripetega programa 1"
+msgstr "Odpri program v novem oknu"
 
 #. Translators: Add yourself here. Format: YOUR NAME <YOUR@EMAIL.TLD>
 #: src/application.rs:584
@@ -917,9 +909,8 @@ msgstr "Shranjevanje povezave je spodletelo"
 #: src/widget/add_connection_dialog.rs:206
 #: src/widget/authenticate_connection_dialog.rs:166
 #: src/widget/update_connection_dialog.rs:176
-#, fuzzy
 msgid "An error occurred while trying to save the connection"
-msgstr "Pri poskusu tiskanja je prišlo do napake:"
+msgstr "Pri poskusu shranjevanja povezave je prišlo do napake"
 
 #: src/widget/app_status.blp:30
 #, fuzzy
@@ -1668,15 +1659,14 @@ msgid "Show All Devices"
 msgstr "Pokaži vse naprave"
 
 #: src/widget/usb_redir/settings_dialog.rs:164
-#, fuzzy
 msgid "1 channel free"
-msgstr "{n} kanalov"
+msgstr "1 prost kanal"
 
 #. Translators: {free} = number of free USB redirection channels
 #: src/widget/usb_redir/settings_dialog.rs:167
-#, fuzzy, rust-format
+#, rust-format
 msgid "{free} channels free"
-msgstr "Prosto:"
+msgstr "{free} prostih kanalov"
 
 #: src/widget/usb_redir/settings_dialog.rs:201
 msgid "This device can not be connected; you might be missing permissions."
