@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: FieldMonitor main\n"
 "Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
 "POT-Creation-Date: 2026-10-13 12:31+0000\n"
-"PO-Revision-Date: 2026-10-31 12:39+0100\n"
+"PO-Revision-Date: 2026-10-31 17:51+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -251,14 +251,12 @@ msgid "Failed to send create command: {err}"
 msgstr "Pošiljanje ukaza za ustvarjanje ni uspelo: {err}"
 
 #: connection/libvirt/src/connection/mod.rs:398
-#, fuzzy
 msgid "Domain is not running."
-msgstr "Domena ne teče."
+msgstr "Domena ne deluje."
 
 #: connection/libvirt/src/connection/mod.rs:405
-#, fuzzy
 msgid "Domain is already running."
-msgstr "Naprava je že pridružena domeni"
+msgstr "Domena že deluje."
 
 #: connection/libvirt/src/connection/mod.rs:414
 #: connection/proxmox/src/api/mod.rs:84
@@ -364,24 +362,20 @@ msgstr ""
 "uspelo."
 
 #: connection/proxmox/src/api/node.rs:100
-#, fuzzy
 msgid "Reboot command successfully sent to server."
-msgstr "Uspešno poslana datoteka »{}«"
+msgstr "Ukaz za ponovni zagon je bil uspešno poslan strežniku."
 
 #: connection/proxmox/src/api/node.rs:103 connection/proxmox/src/api/vm.rs:135
-#, fuzzy
 msgid "Failed to send reboot command."
-msgstr "Ponovni zagon ni uspel"
+msgstr "Pošiljanje ukaza za ponovni zagon ni uspelo."
 
 #: connection/proxmox/src/api/node.rs:125
-#, fuzzy
 msgid "Shutdown command successfully sent to server."
-msgstr "Shrani poslana sporočila na strežnik"
+msgstr "Ukaz za zaustavitev je bil uspešno poslan strežniku."
 
 #: connection/proxmox/src/api/node.rs:128 connection/proxmox/src/api/vm.rs:168
-#, fuzzy
 msgid "Failed to send shutdown command."
-msgstr "Ni mogoče poslati ukaza na izklop."
+msgstr "Pošiljanje ukaza za izklop ni uspelo."
 
 #: connection/proxmox/src/api/node.rs:164
 msgid "Console"
@@ -419,18 +413,16 @@ msgid "VM was successfully reset."
 msgstr "Navidezni računalnik uspešno ponastavljen."
 
 #: connection/proxmox/src/api/vm.rs:200
-#, fuzzy
 msgid "Failed to send reset command."
-msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+msgstr "Pošiljanje ukaza za ponastavitev ni uspelo."
 
 #: connection/proxmox/src/api/vm.rs:230
 msgid "VM is now stopping."
 msgstr "Navidezni računalnik se zdaj ustavlja."
 
 #: connection/proxmox/src/api/vm.rs:233
-#, fuzzy
 msgid "Failed to send stop command."
-msgstr "Ni mogoče poslati ukaza na podrejeno opravilo: %s"
+msgstr "Pošiljanje ukaza za zaustavitev ni uspelo."
 
 #: connection/proxmox/src/api/vm.rs:263
 msgid "VM is now starting."
