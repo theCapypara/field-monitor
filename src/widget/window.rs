@@ -640,6 +640,13 @@ impl FieldMonitorWindow {
     }
 
     fn on_app_state_changed(&self, app: &FieldMonitorApplication) {
+        // Only run the switch logic for the connection list / initial welcome if
+        // we aren't already on the connection view (this could happen if the app was
+        // started via a URL/file).
+        if self.is_connection_view_visible() {
+            return;
+        }
+
         if app.state() == AppState::Ready {
             self.update_connection_list(app, true);
         } else {
