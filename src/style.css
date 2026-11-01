@@ -64,11 +64,45 @@ window.use-sharp-corners.overlay-headerbar.connection-view-grabbed, window.use-s
     transition: background-color 0.25s ease, box-shadow 0.25s ease;
 }
 
+/* prevent the overlaid shadow that the normal AdwToolbarView headerbar has and replace it with a solid border */
+.connection-view-toolbarview .top-bar.border {
+    box-shadow: none;
+    border-bottom: 1px solid var(--headerbar-darker-shade-color);
+}
+
 @media (prefers-contrast: more) {
-    .connection-view-toolbarview .border {
-        /* this is the HC default from libadwaita */
-        box-shadow: 0 1px color-mix(in srgb, currentColor var(--border-opacity), transparent);
+    .connection-view-toolbarview .top-bar.border {
+        box-shadow: none;
+        border-bottom: 1px solid color-mix(in srgb, currentColor var(--border-opacity), transparent);
     }
+}
+
+focus-grabber {
+    outline: 0 solid transparent;
+    outline-offset: 4px;
+    transition: outline-color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    outline-width 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    outline-offset 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+    border-bottom-left-radius: var(--window-radius);
+    border-bottom-right-radius: var(--window-radius);
+}
+
+focus-grabber:focus:focus-visible {
+    outline-color: color-mix(in srgb, var(--accent-color) 50%, transparent);
+    outline-width: 2px;
+    outline-offset: -2px;
+}
+
+@media (prefers-contrast: more) {
+    focus-grabber:focus:focus-visible {
+        outline-color: color-mix(in srgb, var(--accent-color) 80%, transparent);
+    }
+}
+
+window.use-sharp-corners.connection-view-grabbed focus-grabber, window.use-sharp-corners.always-sharp focus-grabber {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
 }
 
 .connection-view-grabbed .connection-view-toolbarview .border {
