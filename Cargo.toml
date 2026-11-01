@@ -55,34 +55,34 @@ version = "0.9"
 package = "rdw4"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "a84b580e8d39a07b56dd60b0c9c4ccaf98fb10c1"
+rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "a84b580e8d39a07b56dd60b0c9c4ccaf98fb10c1"
+rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "a84b580e8d39a07b56dd60b0c9c4ccaf98fb10c1"
+rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "a84b580e8d39a07b56dd60b0c9c4ccaf98fb10c1"
+rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
 default-features = false
 
 [workspace.dependencies.rdw-qemu]
 package = "rdw4-qemu"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "a84b580e8d39a07b56dd60b0c9c4ccaf98fb10c1"
+rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
 default-features = false
 
 [workspace.dependencies.spice-gtk-usb-portal]
