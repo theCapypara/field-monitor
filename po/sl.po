@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: FieldMonitor main\n"
 "Report-Msgid-Bugs-To: https://github.com/theCapypara/field-monitor/issues\n"
 "POT-Creation-Date: 2026-10-13 12:31+0000\n"
-"PO-Revision-Date: 2026-10-31 23:20+0100\n"
+"PO-Revision-Date: 2026-11-01 09:14+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Slovenian GNOME Translation Team <gnome-si@googlegroups.com>\n"
 "Language: sl_SI\n"
@@ -985,11 +985,12 @@ msgid "Show Certificate"
 msgstr "Pokaži potrdilo"
 
 #: src/widget/certificate_trust_dialog.rs:197
-#, fuzzy
 msgid ""
 "This certificate is the certificate authority (CA) issuing the connection "
 "certificate."
-msgstr "To potrdilo je overitelj potrdil (CA), ki je izdal potrdilo povezave."
+msgstr ""
+"To potrdilo predstavlja overitelja potrdil (CA), ki je izdal potrdilo za "
+"povezavo."
 
 #: src/widget/certificate_trust_dialog.rs:202
 msgid "Info"
@@ -1220,9 +1221,8 @@ msgid "_Resize Window to Screen"
 msgstr "Prilagodi okno _zaslonu"
 
 #: src/widget/connection_view/server_screen.rs:1215
-#, fuzzy
 msgid "Send _Keys"
-msgstr "Pošlji _tipke/ključe"
+msgstr "Pošlji _tipke"
 
 #: src/widget/connection_view/server_screen.rs:1219
 msgid "Ctrl+Alt L"
