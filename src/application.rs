@@ -372,7 +372,7 @@ impl FieldMonitorApplication {
         glib::Object::builder()
             .property("application-id", application_id)
             .property("flags", flags)
-            .property("settings", FieldMonitorSettings::new(APP_ID))
+            .property("settings", FieldMonitorSettings::new(application_id))
             .build()
     }
 
