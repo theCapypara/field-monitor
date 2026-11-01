@@ -1423,6 +1423,7 @@ impl FieldMonitorServerScreen {
 
         focus_grabber.set_vexpand(true);
         focus_grabber.set_hexpand(true);
+        focus_grabber.set_focusable(true);
         focus_grabber.connect_grabbed_notify(glib::clone!(
             #[weak(rename_to=slf)]
             self,
