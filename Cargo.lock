@@ -1560,7 +1560,7 @@ dependencies = [
  "secure-string",
  "serde",
  "virt",
- "zbus 5.19.0",
+ "zbus 6.2.1",
 ]
 
 [[package]]
@@ -3322,7 +3322,7 @@ dependencies = [
  "uuid",
  "vte4",
  "x509-cert",
- "zbus 5.19.0",
+ "zbus 6.2.1",
 ]
 
 [[package]]

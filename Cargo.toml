@@ -35,7 +35,7 @@ parking_lot = "0.12"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 proxmox-api = { path = "connection/proxmox/proxmox-api" }
 tokio = { version = "1.53", features = ["parking_lot", "rt-multi-thread"] }
-zbus = "5.19"
+zbus = "6.2"
 
 [workspace.dependencies.glib]
 features = ["log"]

@@ -100,7 +100,7 @@ impl LibvirtQemuDbusAdapter {
 
         // create d-bus connection
         let creds_result = getsockopt(&stream, PeerCredentials);
-        let mut builder = zbus::connection::Builder::async_io_unix_stream(stream).p2p();
+        let mut builder = zbus::connection::Builder::unix_stream(stream).p2p();
         if let Ok(creds) = creds_result {
             builder = builder.user_id(creds.uid())
         };
@@ -153,7 +153,6 @@ impl LibvirtQemuDbusAdapter {
             return Err((self, error_hints));
         };
         let conn = match zbus::connection::Builder::address(bus_address.clone())
-            .unwrap() // this is infallible since bus_address is already an Address
             .build()
             .await
         {
