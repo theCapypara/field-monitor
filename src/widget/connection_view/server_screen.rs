@@ -70,6 +70,8 @@ mod imp {
         #[template_child]
         pub status_stack: TemplateChild<gtk::Stack>,
         #[template_child]
+        pub close_button: TemplateChild<gtk::Button>,
+        #[template_child]
         pub error_status_page: TemplateChild<adw::StatusPage>,
         #[template_child]
         pub button_fullscreen: TemplateChild<gtk::Button>,
@@ -1048,6 +1050,9 @@ impl FieldMonitorServerScreen {
         {
             usb_redir.disconnect(handler);
         }
+
+        // Move focus to the close button (otherwise keyboard navigation might break)
+        self.imp().close_button.grab_focus();
     }
 
     fn configure_action_support(&self, display: &AdapterDisplayWidget) {
@@ -1418,6 +1423,7 @@ impl FieldMonitorServerScreen {
 
         focus_grabber.set_vexpand(true);
         focus_grabber.set_hexpand(true);
+        focus_grabber.set_focusable(true);
         focus_grabber.connect_grabbed_notify(glib::clone!(
             #[weak(rename_to=slf)]
             self,

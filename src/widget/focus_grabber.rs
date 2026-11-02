@@ -34,6 +34,8 @@ mod imp {
     #[derive(Debug, Default, glib::Properties)]
     #[properties(wrapper_type = super::FieldMonitorFocusGrabber)]
     pub struct FieldMonitorFocusGrabber {
+        #[property(nullable, get, set = Self::set_child)]
+        pub child: RefCell<Option<gtk::Widget>>,
         #[property(get)]
         pub grabbed: Cell<bool>,
         pub display: RefCell<WeakRef<rdw::Display>>,
@@ -45,10 +47,11 @@ mod imp {
     impl ObjectSubclass for FieldMonitorFocusGrabber {
         const NAME: &'static str = "FieldMonitorFocusGrabber";
         type Type = super::FieldMonitorFocusGrabber;
-        type ParentType = adw::Bin;
+        type ParentType = gtk::Widget;
 
         fn class_init(klass: &mut Self::Class) {
             klass.set_layout_manager_type::<BinLayout>();
+            klass.set_css_name("focus-grabber");
         }
     }
 
@@ -144,6 +147,7 @@ mod imp {
             self.obj().set_focusable(true);
         }
     }
+
     impl WidgetImpl for FieldMonitorFocusGrabber {
         fn realize(&self) {
             self.parent_realize();
@@ -170,7 +174,6 @@ mod imp {
             }
         }
     }
-    impl BinImpl for FieldMonitorFocusGrabber {}
 
     impl Drop for FieldMonitorFocusGrabber {
         fn drop(&mut self) {
@@ -185,6 +188,19 @@ mod imp {
     }
 
     impl FieldMonitorFocusGrabber {
+        pub fn set_child(&self, new_child: Option<gtk::Widget>) {
+            let mut child_brw = self.child.borrow_mut();
+            if *child_brw == new_child {
+                return;
+            }
+            if let Some(new_child) = &new_child {
+                new_child.unparent();
+                new_child.set_parent(&*self.obj());
+            }
+            *child_brw = new_child;
+            self.obj().notify_child();
+        }
+
         fn unregister_window_is_active(
             &self,
             (window, signal_handler): (WeakRef<gtk::Window>, Option<glib::SignalHandlerId>),
@@ -200,7 +216,7 @@ mod imp {
 
 glib::wrapper! {
     pub struct FieldMonitorFocusGrabber(ObjectSubclass<imp::FieldMonitorFocusGrabber>)
-        @extends gtk::Widget, adw::Bin,
+        @extends gtk::Widget,
         @implements gtk::ConstraintTarget, gtk::Buildable, gtk::Accessible;
 }
 
