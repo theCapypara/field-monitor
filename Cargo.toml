@@ -15,7 +15,7 @@ members = [
 
 [workspace.package]
 edition = "2024"
-rust-version = "1.92"
+rust-version = "1.98"
 
 [workspace.dependencies]
 libc = "0.2"
@@ -55,39 +55,39 @@ version = "0.9"
 package = "rdw4"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
+rev = "9575d305a25429404d79fb868783560b5e5ef8eb"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
+rev = "9575d305a25429404d79fb868783560b5e5ef8eb"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
+rev = "9575d305a25429404d79fb868783560b5e5ef8eb"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
+rev = "9575d305a25429404d79fb868783560b5e5ef8eb"
 default-features = false
 
 [workspace.dependencies.rdw-qemu]
 package = "rdw4-qemu"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
 #branch = "master"
-rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
+rev = "9575d305a25429404d79fb868783560b5e5ef8eb"
 default-features = false
 
 [workspace.dependencies.spice-gtk-usb-portal]
 git = "https://github.com/theCapypara/spice-gtk-usb-portal.git"
-rev = "6089d7a04ea3673c4086769f8c49db4b7fe0f511"
+rev = "a7779ca33b046b13a3b9037b8121c0f3e88b8a14"
 
 [workspace.dependencies.vte]
 package = "vte4"
@@ -145,3 +145,8 @@ field-monitor-debug = { path = "./connection/debug", optional = true }
 
 [lints]
 workspace = true
+
+[patch.crates-io]
+ironrdp = { git = "https://github.com/Devolutions/IronRDP.git", rev = "37ce7d1b6957b9901edfc511aedba8e8d548cb55" }
+ironrdp-tokio = { git = "https://github.com/Devolutions/IronRDP.git", rev = "37ce7d1b6957b9901edfc511aedba8e8d548cb55" }
+ironrdp-tls = { git = "https://github.com/Devolutions/IronRDP.git", rev = "37ce7d1b6957b9901edfc511aedba8e8d548cb55" }
