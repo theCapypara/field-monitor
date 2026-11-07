@@ -204,6 +204,7 @@ async fn main() {
                 &http::Uri::from_str(&args.url).expect("failed to parse URL"),
                 &username,
                 SecureString::from(password),
+                None,
                 args.ignore_ssl_errors,
             )
             .await
