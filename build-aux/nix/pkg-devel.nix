@@ -13,6 +13,7 @@
   libepoxy,
   libGL,
   libvirt,
+  aws-lc,
   openssl,
   spice-glib,
   spice-protocol,
@@ -46,6 +47,7 @@ stdenv.mkDerivation {
     libepoxy
     libGL
     libvirt
+    aws-lc
     openssl
     (enableDebugging spice-glib)
     (enableDebugging spice-protocol)
