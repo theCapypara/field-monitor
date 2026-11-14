@@ -39,7 +39,9 @@ mod imp {
     #[template(resource = "/de/capypara/FieldMonitor/widget/authenticate_connection_dialog.ui")]
     pub struct FieldMonitorAuthenticateConnectionDialog {
         #[template_child]
-        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        pub auth_message: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub preferences_container: TemplateChild<gtk::Box>,
         #[property(get, construct_only)]
         pub application: RefCell<Option<FieldMonitorApplication>>,
         #[property(get, construct_only)]
@@ -123,7 +125,7 @@ impl FieldMonitorAuthenticateConnectionDialog {
                 }
             };
 
-            imp.toast_overlay.set_child(Some(&prfpage));
+            imp.preferences_container.append(&prfpage);
         });
 
         slf
@@ -157,6 +159,7 @@ impl FieldMonitorAuthenticateConnectionDialog {
 
         self.set_can_close(false);
         self.set_sensitive(false);
+        imp.auth_message.set_visible(false);
 
         fn error(err: anyhow::Error, window: Option<&impl IsA<gtk::Widget>>) {
             let alert = adw::AlertDialog::builder()
@@ -213,12 +216,10 @@ impl FieldMonitorAuthenticateConnectionDialog {
                     return;
                 }
             }
-            Err(err) => imp.toast_overlay.add_toast(
-                adw::Toast::builder()
-                    .title(glib::markup_escape_text(&err.to_string()))
-                    .timeout(5)
-                    .build(),
-            ),
+            Err(err) => {
+                imp.auth_message.set_text(&err.to_string());
+                imp.auth_message.set_visible(true);
+            }
         }
         self.set_sensitive(true);
         self.set_can_close(true);
