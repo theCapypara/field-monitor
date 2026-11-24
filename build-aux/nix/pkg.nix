@@ -28,7 +28,6 @@
   usbredir,
   libepoxy,
   libGL,
-  aws-lc,
   openssl,
   pixman,
 }:
@@ -73,7 +72,6 @@ stdenv.mkDerivation rec {
     libepoxy
     libGL
     libvirt
-    aws-lc
     openssl
     pixman
     spice-glib

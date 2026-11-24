@@ -5,7 +5,7 @@ rust-version.workspace = true
 
 [dependencies]
 futures = { workspace = true }
-reqwest = { version = "0.13", features = ["json", "default-tls", "form", "query"] }
+reqwest = { version = "0.13", default-features = false, features = ["json", "form", "query", "native-tls", "http2", "charset", "system-proxy"] }
 log = { workspace = true }
 http = "1.5"
 thiserror = "2"
