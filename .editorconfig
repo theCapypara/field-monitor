@@ -24,3 +24,11 @@ trim_trailing_whitespace = false
 
 [*.{xml,xml.in,xml.in.in,doap}]
 indent_style = tab
+
+# Managed by Damned Lies
+[*.po]
+end_of_line = unset
+trim_trailing_whitespace = unset
+insert_final_newline = unset
+indent_style = unset
+
