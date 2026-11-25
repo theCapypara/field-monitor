@@ -227,10 +227,6 @@ mod imp {
             // TODO: If somebody knows a more elegant way, let me know.
             obj.remove_accels();
             obj.add_accels();
-
-            // Prefer dark style by default
-            obj.style_manager()
-                .set_color_scheme(adw::ColorScheme::PreferDark);
         }
 
         fn handle_local_options(&self, options: &VariantDict) -> ControlFlow<ExitCode> {
