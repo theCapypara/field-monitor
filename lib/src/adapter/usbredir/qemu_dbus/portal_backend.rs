@@ -90,7 +90,7 @@ impl PortalUsbredirAttacher for QemuDbusAttacher {
             // device state), qemu_display treats this as a no-op and still returns Ok.
             let _ = self
                 .redir
-                .set_device_state(&self.key, false)
+                .disconnect_device(&self.key)
                 .await
                 .map(drop)
                 .inspect_err(|e| warn!("failed to detach the USB device: {}", e));

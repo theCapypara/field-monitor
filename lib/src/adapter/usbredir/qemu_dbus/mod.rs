@@ -116,7 +116,7 @@ mod imp {
 
                     // 2. Attach device
                     if let Err(err) = redir
-                        .set_device_state(&key, true)
+                        .connect_device(key.clone(), key.clone())
                         .await
                         .map_err(|e| FmUsbRedirError(format!("{}: {}", failed_text(), e)))
                     {
@@ -198,7 +198,7 @@ impl FieldMonitorUsbRedirQemuDbus {
         trace!("FieldMonitorUsbRedirQemuDbus::handle_session_disconnected");
         debug!("QEMU usbredir session for {key:?} disconnected");
         if let Some(redir) = self.imp().inner.get()
-            && let Err(err) = redir.set_device_state(key, false).await
+            && let Err(err) = redir.disconnect_device(key).await
         {
             warn!("failed to clean up disconnected USB device session: {err}");
         }

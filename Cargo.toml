@@ -15,7 +15,7 @@ members = [
 
 [workspace.package]
 edition = "2024"
-rust-version = "1.92"
+rust-version = "1.96"
 
 [workspace.dependencies]
 gettext-rs = { version = "0.8", features = ["gettext-system"] }
@@ -34,7 +34,7 @@ parking_lot = "0.12"
 field-monitor-vte-driver-lib = { path = "vte-pty-driver/lib" }
 proxmox-api = { path = "connection/proxmox/proxmox-api" }
 tokio = { version = "1.53", features = ["parking_lot", "rt-multi-thread"] }
-zbus = "5.19"
+zbus = "6.2"
 
 [workspace.dependencies.glib]
 features = ["log"]
@@ -53,35 +53,30 @@ version = "0.9"
 [workspace.dependencies.rdw]
 package = "rdw4"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
-#branch = "master"
-rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
+rev = "ed5ab7eec2073667f17006b311138b0ceee53bf1"
 
 [workspace.dependencies.rdw-spice]
 package = "rdw4-spice"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
-#branch = "master"
-rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
+rev = "ed5ab7eec2073667f17006b311138b0ceee53bf1"
 default-features = false
 
 [workspace.dependencies.rdw-vnc]
 package = "rdw4-vnc"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
-#branch = "master"
-rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
+rev = "ed5ab7eec2073667f17006b311138b0ceee53bf1"
 default-features = false
 
 [workspace.dependencies.rdw-rdp]
 package = "rdw4-rdp"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
-#branch = "master"
-rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
+rev = "ed5ab7eec2073667f17006b311138b0ceee53bf1"
 default-features = false
 
 [workspace.dependencies.rdw-qemu]
 package = "rdw4-qemu"
 git = "https://gitlab.gnome.org/theCapypara/rdw.git"
-#branch = "master"
-rev = "937537b619cd7e4c039fda3e5a5e1eea0ad29a0c"
+rev = "ed5ab7eec2073667f17006b311138b0ceee53bf1"
 default-features = false
 
 [workspace.dependencies.spice-gtk-usb-portal]
@@ -144,3 +139,14 @@ field-monitor-debug = { path = "./connection/debug", optional = true }
 
 [lints]
 workspace = true
+
+[patch.crates-io]
+epoxy = { git = "https://github.com/theCapypara/epoxy-rs", branch = "master" }
+# ironrdp 0.17.0 on crates.io is stale (it still requires ironrdp-connector 0.10,
+# which pins picky =7.0.0-rc.25). git master has the 0.18 development series.
+# Commit cabd27f1a365a7ef9b197237551a5bcc36e50a04 is branch field-monitor on my fork, which includes
+# #2495 and #2498 - TODO: Wait for merge and stable release.
+ironrdp = { git = "https://github.com/theCapypara/IronRDP.git", rev = "cabd27f1a365a7ef9b197237551a5bcc36e50a04" }
+ironrdp-tokio = { git = "https://github.com/theCapypara/IronRDP.git", rev = "cabd27f1a365a7ef9b197237551a5bcc36e50a04" }
+ironrdp-tls = { git = "https://github.com/theCapypara/IronRDP.git", rev = "cabd27f1a365a7ef9b197237551a5bcc36e50a04" }
+ironrdp-egfx = { git = "https://github.com/theCapypara/IronRDP.git", rev = "cabd27f1a365a7ef9b197237551a5bcc36e50a04" }

@@ -41,17 +41,16 @@ pub struct FmRedirectBackend {
 // Session started with QEMU -> connect acquired PORTAL device
 #[async_trait::async_trait]
 impl qemu_display::UsbRedirBackend for FmRedirectBackend {
-    type Device = FmDeviceKey;
+    type SessionInput = FmDeviceKey;
     type Key = FmDeviceKey;
     type Session = FmRedirectSession;
 
     async fn start_session(
         &self,
-        device: &Self::Device,
+        input: Self::SessionInput,
         stream: UnixStream,
     ) -> qemu_display::Result<Self::Session> {
         trace!("FmRedirectSession::start_session");
-        let device_key = device.clone();
         let implementation = self.implementation.clone();
         MainContext::default()
             .spawn_from_within(move || async move {
@@ -59,11 +58,11 @@ impl qemu_display::UsbRedirBackend for FmRedirectBackend {
                     .upgrade()
                     .ok_or_else(|| qemu_display::Error::Failed("backend gone".to_string()))?;
                 let device = implementation_strong
-                    .move_acquired_device(&device_key)
+                    .move_acquired_device(&input)
                     .ok_or_else(|| {
                         qemu_display::Error::Failed("device not acquired".to_string())
                     })?;
-                FmRedirectSession::new(implementation, device_key, device, stream)
+                FmRedirectSession::new(implementation, input, device, stream)
             })
             .await
             .map_err(|_| qemu_display::Error::Failed("backend session join failed".to_string()))
