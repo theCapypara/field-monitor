@@ -46,6 +46,8 @@ mod imp {
         pub visible_connection_id: RefCell<Option<String>>,
         pub has_selection: Cell<bool>,
         pub pages: RefCell<Option<gtk::SelectionModel>>,
+        /// The widget inside the stack that had keyboard focus when the app's status became busy
+        pub focus_before_busy: glib::WeakRef<gtk::Widget>,
     }
 
     #[glib::object_subclass]
@@ -119,9 +121,14 @@ mod imp {
                     }
                 ),
             );
-            app.bind_property("busy", &*obj.imp().stack, "sensitive")
-                .invert_boolean()
-                .build();
+            app.connect_notify_local(
+                Some("busy"),
+                glib::clone!(
+                    #[weak]
+                    obj,
+                    move |app, _| obj.on_app_busy_changed(app.busy())
+                ),
+            );
             if !app.loading_connections() {
                 self.outer_stack.set_visible_child_name("content");
             }
@@ -264,6 +271,39 @@ impl FieldMonitorConnectionStack {
             Some(v) => {
                 self.imp().has_selection.set(true);
                 self.imp().stack.set_visible_child_name(&v);
+            }
+        }
+    }
+
+    /// Makes the stack insensitive while the app is busy and remembers the focused widget
+    /// to restore keyboard focus afterwards.
+    fn on_app_busy_changed(&self, busy: bool) {
+        let imp = self.imp();
+        let stack = &*imp.stack;
+        if busy {
+            let focus = self
+                .root()
+                .and_then(|root| root.focus())
+                .filter(|focus| focus.is_ancestor(stack))
+                // For popovers, focus the button instead.
+                .map(|focus| {
+                    focus
+                        .ancestor(gtk::Popover::static_type())
+                        .and_then(|popover| popover.parent())
+                        .unwrap_or(focus)
+                });
+            imp.focus_before_busy.set(focus.as_ref());
+            stack.set_sensitive(false);
+        } else {
+            stack.set_sensitive(true);
+            let Some(focus) = imp.focus_before_busy.upgrade() else {
+                return;
+            };
+            imp.focus_before_busy.set(None);
+            // If the focus has moved already, don't try to restore it.
+            let focus_is_unset = self.root().is_some_and(|root| root.focus().is_none());
+            if focus_is_unset && focus.is_ancestor(stack) && focus.is_mapped() {
+                focus.grab_focus();
             }
         }
     }

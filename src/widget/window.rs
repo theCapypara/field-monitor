@@ -362,6 +362,11 @@ impl FieldMonitorWindow {
 
     fn do_close_connection_view(&self) {
         let imp = self.imp();
+
+        // first switch view, then empty bin afterwards, to not break focus
+        debug!("switching to connection list");
+        self.unselect_connection_view();
+
         let bin = &imp.current_server_screen_bin;
         if let Some(screen) = bin.child().and_downcast::<FieldMonitorServerScreen>() {
             // XXX: For some reason when closing the window, even after removing the tab page,
@@ -369,10 +374,6 @@ impl FieldMonitorWindow {
             screen.force_eject_adapter();
             bin.set_child(None::<&gtk::Widget>);
         }
-        debug!("switching to welcome view");
-        self.unselect_connection_view();
-        imp.connection_list_content_stack
-            .set_visible_child_name("welcome");
     }
 
     // Taken in parts from Showtime:

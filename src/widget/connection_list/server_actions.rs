@@ -249,8 +249,17 @@ impl FieldMonitorServerActions {
                 slot.set(Some(v));
             }
             (Some(v), Some(old)) => {
+                // Removing a focused widget drops the keyboard focus of the window; hand it over
+                // to the replacement instead.
+                let had_focus = old
+                    .root()
+                    .and_then(|root| root.focus())
+                    .is_some_and(|focus| focus == old || focus.is_ancestor(&old));
                 replace_in_box(self.upcast_ref(), &old, Some(v));
                 slot.set(Some(v));
+                if had_focus {
+                    v.grab_focus();
+                }
             }
             (None, Some(old)) => {
                 replace_in_box(self.upcast_ref(), &old, None);
