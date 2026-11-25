@@ -48,6 +48,7 @@ in
       echo 'rdw4-spice = { path = "${rdwSrc}/rdw4-spice" }' >> $unpacked/Cargo.toml
       echo 'rdw4-vnc = { path = "${rdwSrc}/rdw4-vnc" }' >> $unpacked/Cargo.toml
       echo 'rdw4-rdp = { path = "${rdwSrc}/rdw4-rdp" }' >> $unpacked/Cargo.toml
+      echo 'rdw4-qemu = { path = "${rdwSrc}/rdw4-qemu" }' >> $unpacked/Cargo.toml
 
       sed -i '/^source = "git+https:\/\/gitlab\.gnome\.org\/theCapypara\/rdw\.git/d' $unpacked/Cargo.lock
     '';
