@@ -89,14 +89,17 @@ focus-grabber {
 }
 
 focus-grabber:focus:focus-visible {
-    outline-color: color-mix(in srgb, var(--accent-color) 50%, transparent);
+    /* The outline is drawn on top of the remote display, we don't know if it's light or dark,
+       so we use the bg accent color (opaque), that works better for contrast. */
+    outline-color: var(--accent-bg-color);
     outline-width: 2px;
     outline-offset: -2px;
 }
 
 @media (prefers-contrast: more) {
     focus-grabber:focus:focus-visible {
-        outline-color: color-mix(in srgb, var(--accent-color) 80%, transparent);
+        outline-width: 3px;
+        outline-offset: -3px;
     }
 }
 
