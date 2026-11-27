@@ -19,7 +19,7 @@
 use std::cell::Cell;
 use std::cell::RefCell;
 
-use adw::prelude::{ComboRowExt, PreferencesRowExt};
+use adw::prelude::{ComboRowExt, PreferencesGroupExt, PreferencesRowExt};
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
@@ -27,7 +27,7 @@ use gtk::glib;
 use gtk::prelude::*;
 use secure_string::SecureString;
 
-use libfieldmonitor::connection::ConnectionConfiguration;
+use libfieldmonitor::connection::{ConfigAccess, ConnectionConfiguration};
 use libfieldmonitor::gtk::FieldMonitorSaveCredentialsButton;
 
 use crate::preferences::ProxmoxConfiguration;
@@ -52,12 +52,16 @@ mod imp {
         pub username_entry: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub tokenid_entry: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        pub tfa_entry: TemplateChild<adw::EntryRow>,
         #[property(get, set, default = "root@pam")]
         username: RefCell<String>,
         #[property(get, set)]
         tokenid: RefCell<String>,
         #[property(get, set)]
         password_or_apikey: RefCell<String>,
+        #[property(get, set)]
+        tfa_response: RefCell<String>,
         #[property(get, set)]
         use_apikey: Cell<bool>,
         #[property(get, construct_only, default = true)]
@@ -88,6 +92,14 @@ mod imp {
     impl ObjectImpl for ProxmoxCredentialPreferences {
         fn constructed(&self) {
             self.parent_constructed();
+            // Authentication temporarily disables the dialog. Focus the code
+            // after it becomes sensitive again, not while input is disabled.
+            self.obj().connect_state_flags_changed(|widget, _| {
+                let entry = &widget.imp().tfa_entry;
+                if widget.is_sensitive() && entry.is_visible() {
+                    entry.grab_focus();
+                }
+            });
             if !self.use_temporary_credentials.get() {
                 self.password_entry_save_button
                     .bind_property("save_password", &*self.password_entry, "editable")
@@ -114,6 +126,21 @@ glib::wrapper! {
 }
 
 impl ProxmoxCredentialPreferences {
+    pub fn show_tfa_prompt(&self) {
+        if !self.use_temporary_credentials() {
+            return;
+        }
+        self.set_title(&gettext("Two-factor authentication"));
+        self.set_description(Some(&gettext(
+            "Enter the current code from your authenticator app.",
+        )));
+        self.imp().auth_mode_combo.set_visible(false);
+        self.imp().username_entry.set_visible(false);
+        self.imp().tokenid_entry.set_visible(false);
+        self.imp().password_entry.set_visible(false);
+        self.imp().tfa_entry.set_visible(true);
+        self.imp().tfa_entry.grab_focus();
+    }
     pub fn new(
         existing_configuration: Option<&ConnectionConfiguration>,
         use_temporary_credentials: bool,
@@ -139,8 +166,16 @@ impl ProxmoxCredentialPreferences {
         self.set_username(existing_configuration.username().unwrap_or_default());
         self.set_tokenid(existing_configuration.tokenid().unwrap_or_default());
         self.set_use_apikey(existing_configuration.use_apikey());
-        if let Ok(Some(v)) = existing_configuration.password_or_apikey().await {
-            self.set_password_or_apikey(v.unsecure());
+        if let Ok(value) = existing_configuration
+            .get_secret("password-or-apikey")
+            .await
+        {
+            self.imp()
+                .password_entry_save_button
+                .set_save_password(value.is_some());
+            if let Some(value) = value {
+                self.set_password_or_apikey(value.unsecure());
+            }
         }
     }
 
@@ -151,7 +186,13 @@ impl ProxmoxCredentialPreferences {
         config.set_username(&self.username());
         config.set_tokenid(&self.tokenid());
         config.set_use_apikey(self.use_apikey());
-        config.set_password_or_apikey(Some(SecureString::from(self.password_or_apikey())));
+        config.set_password_or_apikey(
+            self.imp()
+                .password_entry_save_button
+                .save_password()
+                .then(|| SecureString::from(self.password_or_apikey())),
+        );
+        config.set_password_or_apikey_session(None);
         Ok(())
     }
 
@@ -169,6 +210,21 @@ impl ProxmoxCredentialPreferences {
 
 #[gtk::template_callbacks]
 impl ProxmoxCredentialPreferences {
+    #[template_callback]
+    fn on_back_to_login(&self) {
+        self.imp().tfa_entry.set_visible(false);
+        self.set_tfa_response("");
+        self.set_title(&gettext("Credentials"));
+        self.set_description(Some(&gettext(
+            "The Proxmox user needs at least the permissions <tt>VM.Console</tt>, <tt>VM.Audit</tt> and <tt>VM.PowerMgmt</tt>.",
+        )));
+        self.imp().auth_mode_combo.set_visible(true);
+        self.imp().username_entry.set_visible(!self.use_apikey());
+        self.imp().tokenid_entry.set_visible(self.use_apikey());
+        self.imp().password_entry.set_visible(true);
+        self.imp().password_entry.grab_focus();
+    }
+
     #[template_callback]
     fn on_self_use_apikey_changed(&self) {
         let new_v = if self.use_apikey() {
@@ -191,6 +247,10 @@ impl ProxmoxCredentialPreferences {
         self.set_use_apikey(use_apikey);
         self.imp().tokenid_entry.set_visible(use_apikey);
         self.imp().username_entry.set_visible(!use_apikey);
+        if use_apikey {
+            self.imp().tfa_entry.set_visible(false);
+            self.set_tfa_response("");
+        }
         self.imp().password_entry.set_title(&if use_apikey {
             gettext("API Key")
         } else {

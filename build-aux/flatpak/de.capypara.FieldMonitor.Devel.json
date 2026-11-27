@@ -4,7 +4,8 @@
   "runtime-version": "51",
   "sdk": "org.gnome.Sdk",
   "sdk-extensions": [
-    "org.freedesktop.Sdk.Extension.rust-stable"
+    "org.freedesktop.Sdk.Extension.rust-stable",
+    "org.freedesktop.Sdk.Extension.llvm22"
   ],
   "command": "de.capypara.FieldMonitor.Devel",
   "finish-args": [
@@ -29,7 +30,8 @@
       "--share=network"
     ],
     "env": {
-      "RUST_BACKTRACE": "1"
+      "RUST_BACKTRACE": "1",
+      "AWS_LC_SYS_CC": "/usr/lib/sdk/llvm22/bin/clang"
     }
   },
   "cleanup": [
@@ -67,7 +69,8 @@
       "name": "gtk-vnc",
       "buildsystem": "meson",
       "config-opts": [
-        "-Dpulseaudio=enabled"
+        "-Dpulseaudio=enabled",
+        "-Dgi-docs=disabled"
       ],
       "sources": [
         {
